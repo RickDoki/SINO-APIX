@@ -14,4 +14,12 @@
   <version>1.0.0-SNAPSHOT</version>
   <description>服务集模块</description>
 
+  <modules>
+    <module>service-user</module>
+    <module>service-auth</module>
+    <module>service-event-bridge</module>
+    <module>service-support-log</module>
+    <module>service-api-management</module>
+  </modules>
+
 </project>

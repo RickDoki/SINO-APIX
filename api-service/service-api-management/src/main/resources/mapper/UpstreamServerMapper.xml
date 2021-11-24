@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sinosdx.service.management.dao.mapper.UpstreamServerMapper">
+
+    <resultMap id="upstreamList" type="java.util.Map"/>
+    <resultMap id="upstreamCount" type="Integer">
+        <result column="total"/>
+    </resultMap>
+
+    <select id="queryUpstreamServerList" resultMap="upstreamList,upstreamCount">
+        SELECT SQL_CALC_FOUND_ROWS
+        id, name, description, protocol, server_address, port, prefix_path, load_balance, creation_by, last_updated_by,
+        date_format(creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,
+        date_format(last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate
+        FROM
+        upstream_server
+        <where>
+            del_flag = 0
+            <if test="name != null and name != '' ">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="limit != null and offset != null">
+                LIMIT ${(offset -1)*limit},#{limit}
+            </if>;
+        </where>
+        <!-- 查询数据量 -->
+        SELECT FOUND_ROWS() AS total;
+    </select>
+
+</mapper>

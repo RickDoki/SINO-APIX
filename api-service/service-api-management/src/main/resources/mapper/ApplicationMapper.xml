@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sinosdx.service.management.dao.mapper.ApplicationMapper">
+    
+    <resultMap id="appDetails" type="java.util.Map">
+        <id column="appId" property="appId" javaType="Integer"/>
+        <result column="appName" property="appName" javaType="String"/>
+        <result column="appCode" property="appCode" javaType="String"/>
+        <result column="productId" property="productId" javaType="String"/>
+        <result column="label" property="label" javaType="String"/>
+        <result column="appDescription" property="appDescription" javaType="String"/>
+        <result column="appMarkdown" property="appMarkdown" javaType="String"/>
+        <result column="iconUrl" property="iconUrl" javaType="String"/>
+        <result column="appIsPublished" property="isPublished" javaType="String"/>
+        <result column="appCreationDate" property="appCreationDate" javaType="String"/>
+        <result column="appCreationUser" property="appCreationUser" javaType="String"/>
+        <result column="appLastUpdateDate" property="appLastUpdateDate" javaType="String"/>
+        <result column="appLastUpdateUser" property="appLastUpdateUser" javaType="String"/>
+        <collection property="appVersions" column="appCode" ofType="java.util.Map" select="queryAppVersionDetails"/>
+    </resultMap>
+    
+    <resultMap id="appVersion" type="java.util.Map">
+        <result column="appVersion" property="version" javaType="String"/>
+        <result column="appVersionDesc" property="description" javaType="String"/>
+        <collection property="apiVersionList" javaType="java.util.ArrayList" ofType="java.util.Map">
+            <id column="apiVersionId" property="apiVersionId" javaType="Integer"/>
+            <result column="apiId" property="apiId" javaType="Integer"/>
+            <result column="apiName" property="apiName" javaType="String"/>
+            <result column="apiDescription" property="description" javaType="String"/>
+            <result column="apiMarkdown" property="apiMarkdown" javaType="String"/>
+            <result column="apiVersion" property="version" javaType="String"/>
+            <result column="url" property="url" javaType="String"/>
+            <result column="requestMethod" property="requestMethod" javaType="String"/>
+            <result column="requestParams" property="requestParams" javaType="String"/>
+            <result column="requestExample" property="requestExample" javaType="String"/>
+            <result column="responseExample" property="responseExample" javaType="String"/>
+            <result column="apiCreationDate" property="apiCreationDate" javaType="String"/>
+            <result column="apiCreationUser" property="apiCreationUser" javaType="String"/>
+            <result column="apiLastUpdateDate" property="apiLastUpdateDate" javaType="String"/>
+            <result column="apiLastUpdateUser" property="apiLastUpdateUser" javaType="String"/>
+        </collection>
+    </resultMap>
+
+    <select id="queryAppVoList" resultType="java.util.Map">
+        SELECT distinct a.id as appId,
+            a.name as appName,
+            a.code as appCode,
+            a.product_id as productId,
+            a.label as label,
+            a.description as description,
+            a.markdown as markdown,
+            a.icon_url as iconUrl,
+            a.is_published as isPublished,
+            date_format(a.creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,
+            a.creation_by_username AS creationByUsername,
+            date_format(a.last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate,
+            a.last_updated_by_username AS lastUpdatedByUsername
+        from application a
+        INNER JOIN application_developer ad on a.id = ad.app_id
+        <where>
+            a.del_flag = 0
+            <if test="userIdList.size() > 0">
+                and ad.user_id in
+                <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+                and ad.del_flag = 0
+            </if>
+<!--            <if test="developerId != null">-->
+<!--                and ad.user_id = #{developerId} and ad.del_flag = 0-->
+<!--            </if>-->
+            <if test="isPublished != null and isPublished != '' ">
+                and a.is_published = #{isPublished}
+            </if>
+            <if test="statusList != null">
+                and a.is_published in
+                <foreach collection="statusList" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="appName != null and appName != '' ">
+                and a.name like concat('%', #{appName}, '%')
+            </if>
+            <if test="appCode != null and appCode != '' ">
+                and a.code like concat('%', #{appCode}, '%')
+            </if>
+            <if test="appId != null">
+                and a.id = #{appId}
+            </if>
+            <if test="startTime != null and endTime != null">
+                and a.creation_date BETWEEN #{startTime} and #{endTime}
+            </if>
+            <if test="limit != null and offset !=null">
+                limit #{offset},#{limit}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryAppDetails" resultMap="appDetails">
+        SELECT
+            app.id AS appId,
+            app.`name` AS appName,
+            app.`code` AS appCode,
+            app.product_id as productId,
+            app.label as label,
+            app.description AS appDescription,
+            app.markdown AS appMarkdown,
+            app.icon_url AS iconUrl,
+            app.is_published AS appIsPublished,
+            date_format(app.creation_date, '%Y-%m-%d %H:%i:%S') AS appCreationDate,
+            app.creation_by AS appCreationBy,
+            date_format(app.last_update_date, '%Y-%m-%d %H:%i:%S') AS appLastUpdateDate,
+            app.last_updated_by AS appLastUpdateBy
+        FROM
+            application app
+        <where>
+            app.code = #{appCode} and app.del_flag = 0
+        </where>
+    </select>
+
+    <select id="queryAppVersionDetails" resultMap="appVersion">
+        SELECT
+        av.version AS appVersion,
+        av.description AS appVersionDesc,
+        apiv.id AS apiVersionId,
+        apiv.api_id AS apiId,
+        apiv.api_name AS apiName,
+        apiv.description AS apiDescription,
+        apiv.markdown AS apiMarkdown,
+        apiv.version AS apiVersion,
+        apiv.url AS url,
+        apiv.request_method AS requestMethod,
+        apiv.request_params AS requestParams,
+        apiv.request_example AS requestExample,
+        apiv.response_example AS responseExample,
+        date_format(apiv.creation_date, '%Y-%m-%d %H:%i:%S') AS apiCreationDate,
+        apiv.creation_by_username AS apiCreationUser,
+        date_format(apiv.last_update_date, '%Y-%m-%d %H:%i:%S') AS apiLastUpdateDate,
+        apiv.last_updated_by_username AS apiLastUpdateUser
+        FROM
+        application_version av
+        LEFT JOIN application_api ON application_api.app_version_id = av.id
+        LEFT JOIN api_version apiv ON application_api.api_version_id = apiv.id
+        <where>
+            av.app_code = #{appCode} and av.del_flag = 0 and application_api.del_flag = 0 and apiv.del_flag = 0
+        </where>
+        order by av.id desc
+    </select>
+
+    <select id="queryUsingAppList" resultType="java.util.Map">
+        SELECT
+            app.id AS appId,
+            app.NAME AS appName,
+            app.CODE AS appCode,
+            al.client_id AS clientId,
+            al.client_secret AS clientSecret
+        FROM
+            application app
+                JOIN application_lease al ON al.app_lessor_id = app.id
+        WHERE
+            al.app_lessee_code = #{appCode} and app.del_flag = 0 and al.del_flag = 0
+    </select>
+
+    <select id="queryAppByCode" resultType="com.sinosdx.service.management.dao.entity.Application">
+        SELECT
+        id, name, code, description, markdown, icon_url, is_published, creation_date, creation_by, creation_by_username, last_update_date, last_updated_by, last_updated_by_username
+        FROM
+        application
+        <where>
+            code = #{appCode} and del_flag = 0
+        </where>
+    </select>
+
+    <select id="queryAppNameListForDashboard" resultType="java.util.Map">
+        select name, is_published from application
+        <where>
+            del_flag = 0
+        </where>
+    </select>
+
+    <select id="queryAppNameAndCodeForLease" resultType="java.util.Map">
+        select app.name, app.code from application app
+        INNER JOIN application_developer ad on app.id = ad.app_id
+        <where>
+            app.code &lt;&gt; #{appCode} and app.del_flag = 0
+            and app.is_published in
+            <foreach collection="statusList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="developerId != null">
+                and ad.user_id = #{developerId} and ad.del_flag = 0
+            </if>
+    </where>
+    </select>
+
+    <select id="queryAppForLease" resultType="com.sinosdx.service.management.dao.entity.Application">
+        select app.* from application app
+        INNER JOIN application_developer ad on app.id = ad.app_id
+        <where>
+            app.code = #{appCode} and app.del_flag = 0
+            and app.is_published in
+            <foreach collection="statusList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="developerId != null">
+                and ad.user_id = #{developerId} and ad.del_flag = 0
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="subscribedAppList" type="java.util.Map"/>
+    <resultMap id="subscribedAppCount" type="Integer">
+        <result column="total"/>
+    </resultMap>
+
+    <select id="querySubscribedAppList" resultMap="subscribedAppList,subscribedAppCount">
+        SELECT SQL_CALC_FOUND_ROWS DISTINCT
+        app.id AS appId,
+        app.`name` AS appName,
+        app.`code` AS appCode
+        FROM
+        application app
+        JOIN application_lease al ON al.app_lessor_id = app.id
+        JOIN application_developer ad ON al.app_lessee_id = ad.app_id
+        <where>
+            app.del_flag = 0
+            <if test="userIdList.size() > 0">
+                and ad.user_id in
+                <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+                and ad.del_flag = 0
+            </if>
+            <if test="appCode != null and appCode != '' ">
+                and app.code like concat('%',#{appCode},'%')
+            </if>
+            <if test="appName != null and appName != '' ">
+                and app.name like concat('%',#{appName},'%')
+            </if>
+            <if test="appId != null">
+                and app.id = #{appId}
+            </if>
+            <if test="limit != null and offset != null">
+                LIMIT ${(offset -1)*limit},#{limit}
+            </if>;
+        </where>
+        <!-- 查询数据量 -->
+        SELECT FOUND_ROWS() AS total;
+    </select>
+
+    <select id="querySubscribeCurrentAppList" resultType="com.sinosdx.service.management.dao.entity.Application">
+        SELECT distinct  app.* FROM application app
+            JOIN application_lease al on al.app_lessee_code = app.`code`
+            JOIN application_developer ad ON app.id = ad.app_id
+        <where>
+            app.del_flag = 0 and al.del_flag = 0 and al.app_lessor_code = #{appCode}
+<!--            <if test="developerId != null">-->
+<!--                and ad.user_id = #{developerId}-->
+<!--            </if>-->
+            <if test="userIdList.size() > 0">
+                and ad.user_id in
+                <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+                and ad.del_flag = 0
+            </if>
+        </where>
+    </select>
+
+</mapper>

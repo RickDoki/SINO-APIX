@@ -15,6 +15,7 @@
   <description>SDK模块</description>
   <modules>
     <module>client-gateway</module>
+    <module>client-event</module>
   </modules>
 
 </project>

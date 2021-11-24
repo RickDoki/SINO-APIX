@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sinosdx.service.management.dao.mapper.ApplicationLeaseMapper">
+
+    <select id="queryAllAppLeaseByDeveloper" resultType="java.util.Map">
+        SELECT DISTINCT
+            al.id AS id,
+            al.app_lessee_code AS lesseeCode,
+            al.app_lessee_name AS lesseeName,
+            al.app_lessee_id AS lesseeId,
+            al.app_lessor_code AS lessorCode,
+            al.app_lessor_name AS lessorName,
+            al.app_lessor_id AS lessorId,
+            al.client_id AS clientId,
+            al.client_secret AS clientSecret,
+            date_format(al.creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,
+            al.creation_by_username AS creationUser
+        FROM application_lease al
+        INNER JOIN application_developer ad ON ad.app_id = al.app_lessee_id
+        <where>
+            ad.user_id = #{developerId} and ad.del_flag = 0 and al.del_flag = 0
+        </where>
+    </select>
+
+    <select id="queryAppCodeListByLessorAppCode" resultType="java.lang.String">
+        SELECT al.app_lessee_code
+        FROM application_lease al
+        <where>
+            al.app_lessor_code = #{lessorAppCode} and al.del_flag = 0
+        </where>
+    </select>
+
+    <select id="queryClientListByAppCode" resultType="java.lang.String">
+        select distinct client_id from application_lease
+        <where>
+            del_flag = 0
+            and app_lessee_code = #{appCode} or app_lessor_code = #{appCode}
+        </where>
+    </select>
+
+    <select id="queryOAuthInfo" resultType="java.util.Map">
+        SELECT
+            al.client_id AS clientId,
+            al.client_secret AS clientSecret
+        FROM
+            application_lease al
+                JOIN application_developer ad ON ad.app_code = al.app_lessee_code
+        <where>
+            al.app_lessor_code = #{lessorAppCode}
+            <if test="userIdList.size() > 0">
+                and ad.user_id in
+                <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            LIMIT 1
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sinosdx.service.log.dao.mapper.AuditLogMapper">
+
+    <resultMap id="auditLogList" type="java.util.Map">
+        <id column="id" property="id" javaType="Integer"/>
+        <result column="userId" property="userId" javaType="Integer"/>
+        <result column="username" property="username" javaType="String"/>
+        <result column="eventType" property="eventType" javaType="String"/>
+        <result column="resourceName" property="resourceName" javaType="String"/>
+        <result column="eventTime" property="eventTime" javaType="String"/>
+    </resultMap>
+    <resultMap id="auditLogCount" type="Integer">
+        <result column="total"/>
+    </resultMap>
+
+    <select id="queryAuditLogByCondition" resultMap="auditLogList, auditLogCount">
+        select SQL_CALC_FOUND_ROWS
+        id, user_id as userId, user_name as username, event_type as eventType, resource_name as resourceName,
+        from_unixtime(event_time / 1000, '%Y-%m-%d %H:%i:%S') AS eventTime
+        from audit_log
+        where
+        1 = 1
+        <if test="username != null and username != '' ">
+            and user_name like concat('%', #{username}, '%')
+        </if>
+        <if test="userId != null and userId != '' ">
+            and user_id = #{userId}
+        </if>
+        <if test="userIdList.size() > 0 and userId == null">
+            and user_id in
+            <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="eventType != null and eventType != '' ">
+            and event_type like concat('%', #{eventType}, '%')
+        </if>
+        <if test="resourceName != null and resourceName != '' ">
+            and resource_name like concat('%', #{resourceName}, '%')
+        </if>
+        <if test="startTime != null and endTime != null">
+            and event_time BETWEEN #{startTime} and #{endTime}
+        </if>
+        order by event_time desc
+        <if test="limit != null and offset != null">
+            LIMIT ${(offset -1)*limit},#{limit}
+        </if>;
+        <!-- 查询数据量 -->
+        SELECT FOUND_ROWS() AS total;
+    </select>
+
+</mapper>

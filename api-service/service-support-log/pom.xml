@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>api-service</artifactId>
+        <groupId>com.sinosdx</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>service-support-log</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>${project.artifactId}</name>
+    <description>日志支撑服务</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sinosdx.cloud</groupId>
+            <artifactId>common-usf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sinosdx.cloud</groupId>
+            <artifactId>sinosdx-feign-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sinosdx.cloud</groupId>
+            <artifactId>sinosdx-redis-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sinosdx.cloud</groupId>
+            <artifactId>sinosdx-swagger-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+        </dependency>
+        <!--    <dependency>-->
+        <!--      <groupId>org.springframework.boot</groupId>-->
+        <!--      <artifactId>spring-boot-starter-data-mongodb</artifactId>-->
+        <!--    </dependency>-->
+        <dependency>
+            <groupId>com.sinosdx.cloud</groupId>
+            <artifactId>sinosdx-log-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sinosdx.cloud</groupId>
+            <artifactId>sinosdx-api-version-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sinosdx.cloud</groupId>
+            <artifactId>sinosdx-mysql-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sinosdx.cloud</groupId>
+            <artifactId>sinosdx-alarm-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-dao-redis</artifactId>
+            <version>1.26.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+    </dependencies>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <profile.active>dev</profile.active>
+                <nacos.server-addr>http://open-api8848.zzfgs.shjq-uat-a.sxc.sh</nacos.server-addr>
+                <nacos.username>nacos</nacos.username>
+                <nacos.password>openapi-nacos</nacos.password>
+                <nacos.config.namespace>a689d12e-62df-4cf4-a77e-d4f8695836e3</nacos.config.namespace>
+                <nacos.discovery.namespace>a689d12e-62df-4cf4-a77e-d4f8695836e3</nacos.discovery.namespace>
+                <!--<logstash.server.addr>49.234.211.224:4560</logstash.server.addr>-->
+            </properties>
+        </profile>
+    </profiles>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

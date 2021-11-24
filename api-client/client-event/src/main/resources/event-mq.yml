@@ -1,0 +1,7 @@
+#新版spring cloud stream 3.x后版本使用简化写法
+#spring:
+#  cloud:
+#    stream:
+#      bindings:
+#        event_bridge-out-0:
+#          destination: event_bridge

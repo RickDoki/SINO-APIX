@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sinosdx.service.user.dao.mapper.SysUserMapper">
+
+    <select id="queryByMobile" resultType="com.sinosdx.service.user.dao.entity.SysUser">
+        select * from sys_user
+        <where>
+            mobile = #{mobile} and del_flag = 0
+        </where>
+    </select>
+
+    <select id="queryUserLoginInfo" resultType="java.util.Map">
+        select u.id,
+        u.account,
+        u.username,
+        l.password,
+        u.mobile,
+        u.email,
+        u.enabled from sys_user u
+        join sys_login l on u.id = l.user_id
+        <where>
+            u.mobile = #{mobile} and u.del_flag = 0 and l.del_flag = 0
+        </where>
+    </select>
+
+    <resultMap id="userList" type="com.sinosdx.service.user.dao.entity.SysUser"/>
+    <resultMap id="userCount" type="Integer">
+        <result column="total"/>
+    </resultMap>
+
+    <select id="queryUserByCondition" resultMap="userList,userCount">
+        select SQL_CALC_FOUND_ROWS
+        u.*,
+        ur.role_id as roleId,
+        r.role_name as roleName
+        from sys_user u
+        join sys_user_role ur on u.id = ur.user_id
+        join sys_role r on ur.role_id = r.role_id
+        where u.del_flag = 0
+        <if test="userIdList.size() > 0">
+            and u.id in
+            <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        <if test="username != null and username != '' ">
+            and u.username like concat('%',#{username},'%')
+        </if>
+        <if test="roleId != null">
+            and ur.role_id = #{roleId}
+        </if>
+        order by last_updated_by desc
+        <if test="limit != null and offset != null">
+            LIMIT ${(offset -1)*limit},#{limit}
+        </if>;
+        <!-- 查询数据量 -->
+        SELECT FOUND_ROWS() AS total;
+    </select>
+
+    <!-- 查询用户的所有菜单ID -->
+    <select id="queryAllMenuId" resultType="long">
+        select distinct rm.menu_id
+        from sys_user_role ur
+                 LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
+        where ur.user_id = #{userId}
+    </select>
+
+    <!-- 查询用户的所有权限 -->
+    <select id="queryAllPerms" resultType="string">
+        select m.perms from sys_user_role ur
+                                LEFT JOIN sys_role_menu rm on ur.role_id = rm.role_id
+                                LEFT JOIN sys_menu m on rm.menu_id = m.menu_id
+        where ur.user_id = #{userId}
+    </select>
+
+    <select id="queryAllUserIdList" resultType="java.lang.Integer">
+        select id from sys_user where del_flag = 0
+    </select>
+
+    <select id="queryByUserId" resultType="com.sinosdx.service.user.dao.entity.SysUser">
+        SELECT su.*, so.name as orgName from sys_user su
+             JOIN sys_user_org suo ON suo.user_id = su.id
+             JOIN sys_org so ON so.id = suo.org_id
+        WHERE su.del_flag = 0 AND su.id = #{userId}
+    </select>
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sinosdx.service.user.dao.mapper.SysRoleDao">
+	
+	<!-- 查询用户创建的角色ID列表 -->
+	<select id="queryRoleIdList" resultType="long">
+		select role_id from sys_role where create_user_id = #{createUserId} 
+	</select>
+    <select id="queryListParentId" resultType="com.sinosdx.service.user.dao.entity.SysRoleEntity">
+		select * from sys_role where parent_id = #{parentId} order by create_time desc
+	</select>
+	<select id="queryListParentIdWithOrgId" resultType="com.sinosdx.service.user.dao.entity.SysRoleEntity">
+		SELECT sr.* FROM sys_user_org suo
+							 LEFT JOIN sys_role_org sro on suo.org_id =sro.org_id
+							 LEFT JOIN sys_role sr on sr.role_id = sro.role_id
+		WHERE suo.user_id = #{userId} AND  sr.parent_id = #{parentId} ORDER BY sr.create_time DESC
+	</select>
+	<select id="queryRoleIdByUserId" resultType="long">
+		SELECT sro.role_id FROM sys_role_org sro
+		LEFT JOIN sys_user_org suo on sro.org_id = suo.org_id WHERE suo.user_id = #{userId};
+	</select>
+
+	<select id="queryAllUserIdListByRole" resultType="java.lang.Integer">
+		SELECT DISTINCT
+			su.id
+		FROM
+			sys_user su
+				JOIN sys_user_org suo ON suo.user_id = su.id
+				JOIN sys_role_org sro ON sro.org_id = suo.org_id
+				JOIN sys_role sr ON sr.role_id = sro.role_id
+		WHERE
+				sro.org_id = ( SELECT suo.org_id FROM sys_user_org suo WHERE suo.user_id = #{userId} LIMIT 1 )
+		  AND sr.parent_id >= #{roleParentId};
+	</select>
+
+	<select id="queryRoleByUserId" resultType="com.sinosdx.service.user.dao.entity.SysRoleEntity">
+		SELECT sr.* from sys_role sr
+		    JOIN sys_user_role sur ON sur.role_id = sr.role_id
+		WHERE sur.user_id = #{userId} limit 1
+	</select>
+</mapper>

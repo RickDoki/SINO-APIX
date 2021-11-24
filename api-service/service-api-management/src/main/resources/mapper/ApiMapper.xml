@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sinosdx.service.management.dao.mapper.ApiMapper">
+
+    <resultMap id="apiList" type="java.util.Map">
+        <id column="apiId" property="apiId" javaType="Integer"/>
+        <result column="apiName" property="apiName" javaType="String"/>
+        <result column="appCode" property="appCode" javaType="String"/>
+        <result column="description" property="description" javaType="String"/>
+        <result column="markdown" property="markdown" javaType="String"/>
+        <result column="apiUrl" property="apiUrl" javaType="String"/>
+        <result column="domain" property="domain" javaType="String"/>
+        <result column="requestMethod" property="requestMethod" javaType="String"/>
+        <result column="requestParams" property="requestParams" javaType="String"/>
+        <result column="requestExample" property="requestExample" javaType="String"/>
+        <result column="responseExample" property="responseExample" javaType="String"/>
+        <result column="apiVersion" property="apiVersion" javaType="String"/>
+        <result column="isPublished" property="isPublished" javaType="String"/>
+        <result column="apiCreationDate" property="apiCreationDate" javaType="String"/>
+        <result column="apiCreationUser" property="apiCreationUser" javaType="String"/>
+        <result column="apiLastUpdateDate" property="apiLastUpdateDate" javaType="String"/>
+        <result column="apiLastUpdateUser" property="apiLastUpdateUser" javaType="String"/>
+        <collection property="apiVersions" column="apiId" ofType="java.util.Map" select="queryApiVersions"/>
+    </resultMap>
+
+    <select id="queryApiList" resultMap="apiList">
+        SELECT
+            api.id AS apiId,
+            api.name AS apiName,
+            api.url AS apiUrl,
+            api.domain AS domain,
+            api.request_method AS requestMethod,
+            api.request_params AS requestParams,
+            api.request_example AS requestExample,
+            api.response_example AS responseExample,
+            api.description AS description,
+            api.markdown AS markdown,
+            api.version AS apiVersion,
+            api.is_published as isPublished,
+            date_format(api.creation_date, '%Y-%m-%d %H:%i:%S') AS apiCreationDate,
+            api.creation_by_username AS apiCreationUser,
+            date_format(api.last_update_date, '%Y-%m-%d %H:%i:%S') AS apiLastUpdateDate,
+            api.last_updated_by_username AS apiLastUpdateUser
+        FROM api api
+        <where>
+            api.del_flag = 0
+            <if test="userIdList.size() > 0">
+                and api.creation_by in
+                <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="apiName != null and apiName != '' ">
+                and api.name like concat('%', #{apiName}, '%')
+            </if>
+            <if test="apiUrl != null and apiUrl != '' ">
+                and api.url like concat('%', #{apiUrl}, '%')
+            </if>
+            <if test="apiVersion != null and apiVersion != '' ">
+                and api.version like concat('%', #{apiVersion}, '%')
+            </if>
+            <if test="requestMethod != null and requestMethod != '' ">
+                and api.request_method = #{requestMethod}
+            </if>
+            <if test="startTime != null and endTime != null">
+                and api.creation_date between #{startTime} and #{endTime}
+            </if>
+<!--            <if test="developerId != null">-->
+<!--                and api.creation_by = #{developerId}-->
+<!--            </if>-->
+            <if test="limit != null and offset !=null">
+                limit #{offset},#{limit}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryApiVersions" resultType="java.util.Map">
+        SELECT
+        av.id AS versionId,
+        av.api_id AS apiId,
+        av.api_name AS apiName,
+        av.url AS apiUrl,
+        av.domain AS domain,
+        av.request_method AS requestMethod,
+        av.request_params AS requestParams,
+        av.request_example AS requestExample,
+        av.response_example AS responseExample,
+        av.description AS description,
+        av.markdown AS markdown,
+        av.version AS apiVersion,
+        av.is_published as isPublished,
+        date_format(av.creation_date, '%Y-%m-%d %H:%i:%S') AS apiCreationDate,
+        av.creation_by_username AS apiCreationUser,
+        date_format(av.last_update_date, '%Y-%m-%d %H:%i:%S') AS apiLastUpdateDate,
+        av.last_updated_by_username AS apiLastUpdateUser
+        FROM api_version av
+        <where>
+            av.del_flag = 0 and av.api_id = #{apiId}
+        </where>
+        order by av.id desc
+    </select>
+</mapper>

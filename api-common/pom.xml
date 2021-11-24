@@ -16,7 +16,6 @@
   <modules>
     <module>common-base</module>
     <module>common-gateway</module>
-    <module>client-gateway</module>
   </modules>
 
 </project>

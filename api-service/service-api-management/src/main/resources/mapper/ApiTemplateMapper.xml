@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sinosdx.service.management.dao.mapper.ApiTemplateMapper">
+
+    <resultMap id="apiTemplateList" type="com.sinosdx.service.management.dao.entity.ApiTemplate"/>
+    <resultMap id="apiTemplateCount" type="Integer">
+        <result column="total"/>
+    </resultMap>
+
+    <select id="queryApiTemplateByCondition" resultMap="apiTemplateList,apiTemplateCount">
+        select SQL_CALC_FOUND_ROWS * from api_template
+        where del_flag = 0
+        <if test="name != null and name != '' ">
+            and name like concat('%',#{name},'%')
+        </if>
+        <if test="url != null and url != '' ">
+            and url like concat('%',#{url},'%')
+        </if>
+        <if test="requestMethod != null and requestMethod != '' ">
+            and request_method = #{requestMethod}
+        </if>
+        <if test="limit != null and offset != null">
+            LIMIT ${(offset -1)*limit},#{limit}
+        </if>;
+        <!-- 查询数据量 -->
+        SELECT FOUND_ROWS() AS total;
+    </select>
+
+</mapper>

@@ -55,11 +55,11 @@
         <artifactId>com.auth0.jwt</artifactId>
         <version>${auth0.jwt.version}</version>
       </dependency>
-      <dependency>
-        <groupId>com.tencentcloudapi</groupId>
-        <artifactId>tencentcloud-sdk-java</artifactId>
-        <version>${tencentcloud-sdk-java.version}</version>
-      </dependency>
+<!--      <dependency>-->
+<!--        <groupId>com.tencentcloudapi</groupId>-->
+<!--        <artifactId>tencentcloud-sdk-java</artifactId>-->
+<!--        <version>${tencentcloud-sdk-java.version}</version>-->
+<!--      </dependency>-->
       <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>javax.mail-api</artifactId>
@@ -71,23 +71,27 @@
         <version>${javax.mail.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.saic.csp2.middle</groupId>
-        <artifactId>api-event</artifactId>
+<!--        <groupId>com.saic.csp2.middle</groupId>-->
+        <groupId>com.sinosdx</groupId>
+        <artifactId>client-event</artifactId>
         <version>${event-api.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.saic.csp2.middle</groupId>
+<!--        <groupId>com.saic.csp2.middle</groupId>-->
+        <groupId>com.sinosdx</groupId>
         <artifactId>common-base</artifactId>
         <version>${common-base.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.saic.csp2.middle</groupId>
+<!--        <groupId>com.saic.csp2.middle</groupId>-->
+        <groupId>com.sinosdx</groupId>
         <artifactId>common-gateway</artifactId>
         <version>${common-base.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.saic.csp2.middle</groupId>
-        <artifactId>api-gateway-client</artifactId>
+<!--        <groupId>com.saic.csp2.middle</groupId>-->
+        <groupId>com.sinosdx</groupId>
+        <artifactId>client-gateway</artifactId>
         <version>${api-gateway-client.version}</version>
       </dependency>
     </dependencies>
