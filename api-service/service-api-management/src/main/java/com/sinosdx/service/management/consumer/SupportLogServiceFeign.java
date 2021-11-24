@@ -11,7 +11,7 @@ import java.util.List;
  * @author wendy
  * @date 2021/7/22
  */
-@FeignClient("support-log")
+@FeignClient("service-support-log")
 public interface SupportLogServiceFeign {
 
     @GetMapping("gateway/log/queryListByAppCode")

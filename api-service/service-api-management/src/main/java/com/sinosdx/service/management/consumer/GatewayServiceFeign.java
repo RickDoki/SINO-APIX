@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wendy
  * @date 2021/7/22
  */
-@FeignClient("mt-gateway")
+@FeignClient("api-gateway")
 public interface GatewayServiceFeign {
 
     @PostMapping("/gateway/route")
