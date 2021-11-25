@@ -141,8 +141,8 @@
         <nacos.server-addr>http://nacos:8848</nacos.server-addr>
         <nacos.username>sinosdx</nacos.username>
         <nacos.password>sinosdx2020</nacos.password>
-        <nacos.config.namespace>d8290b4c-2b0c-40e5-8293-41d7792dc11b</nacos.config.namespace>
-        <nacos.discovery.namespace>d8290b4c-2b0c-40e5-8293-41d7792dc11b</nacos.discovery.namespace>
+        <nacos.config.namespace>6297863e-d91a-4fb1-8e55-00f822d507fc</nacos.config.namespace>
+        <nacos.discovery.namespace>6297863e-d91a-4fb1-8e55-00f822d507fc</nacos.discovery.namespace>
         <logstash.server.addr>49.234.211.224:4560</logstash.server.addr>
       </properties>
     </profile>
@@ -153,8 +153,8 @@
         <nacos.server-addr>http://nacos:8848</nacos.server-addr>
         <nacos.username>sinosdx</nacos.username>
         <nacos.password>sinosdx2020</nacos.password>
-        <nacos.config.namespace>d8290b4c-2b0c-40e5-8293-41d7792dc11b</nacos.config.namespace>
-        <nacos.discovery.namespace>d8290b4c-2b0c-40e5-8293-41d7792dc11b</nacos.discovery.namespace>
+        <nacos.config.namespace>6297863e-d91a-4fb1-8e55-00f822d507fc</nacos.config.namespace>
+        <nacos.discovery.namespace>6297863e-d91a-4fb1-8e55-00f822d507fc</nacos.discovery.namespace>
         <logstash.server.addr>10.135.141.252:22829</logstash.server.addr>
       </properties>
     </profile>
@@ -165,8 +165,8 @@
         <nacos.server-addr>http://nacos8848.cspv2-rancher.zzjk-prod-a.sxc.sh</nacos.server-addr>
         <nacos.username>sinosdx</nacos.username>
         <nacos.password>sinosdx2020</nacos.password>
-        <nacos.config.namespace>86070a24-775a-4d90-800f-2d1d19c7f63c</nacos.config.namespace>
-        <nacos.discovery.namespace>86070a24-775a-4d90-800f-2d1d19c7f63c</nacos.discovery.namespace>
+        <nacos.config.namespace>6297863e-d91a-4fb1-8e55-00f822d507fc</nacos.config.namespace>
+        <nacos.discovery.namespace>6297863e-d91a-4fb1-8e55-00f822d507fc</nacos.discovery.namespace>
         <logstash.server.addr>logstash:4560</logstash.server.addr>
       </properties>
     </profile>
@@ -177,8 +177,8 @@
         <nacos.server-addr>http://nacos:8848</nacos.server-addr>
         <nacos.username>sinosdx</nacos.username>
         <nacos.password>sinosdx2020</nacos.password>
-        <nacos.config.namespace>d8290b4c-2b0c-40e5-8293-41d7792dc11b</nacos.config.namespace>
-        <nacos.discovery.namespace>d8290b4c-2b0c-40e5-8293-41d7792dc11b</nacos.discovery.namespace>
+        <nacos.config.namespace>6297863e-d91a-4fb1-8e55-00f822d507fc</nacos.config.namespace>
+        <nacos.discovery.namespace>6297863e-d91a-4fb1-8e55-00f822d507fc</nacos.discovery.namespace>
         <logstash.server.addr>logstash:4560</logstash.server.addr>
       </properties>
     </profile>

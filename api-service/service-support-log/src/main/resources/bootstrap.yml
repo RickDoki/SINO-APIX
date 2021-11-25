@@ -9,7 +9,7 @@ spring:
         server-addr: '@nacos.server-addr@'
         namespace: '@nacos.config.namespace@'
         group: APPLICATION_GROUP
-        prefix: support-log
+        prefix: service-support-log
         file-extension: yml
         extension-configs:
           - dataId: common-management-endpoint.yml
