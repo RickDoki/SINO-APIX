@@ -9,6 +9,10 @@ import com.sinosdx.service.log.properties.LogConfig;
 import com.sinosdx.service.log.service.*;
 import com.sinosdx.starter.redis.service.RedisService;
 import com.sinosdx.support.email.EmailService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +24,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.function.Function;
 
 /**
  * @author pengjiahu
@@ -113,14 +115,14 @@ public class LogStreamMessage {
                             break;
                         case LogConstant.AUDIT:
                             AuditLog auditLog = jsonObject.toJavaObject(AuditLog.class);
-                           /* if (StringUtils.isNotEmpty(auditLog.getAuthorization())) {
+                            if (StringUtils.isNotEmpty(auditLog.getAuthorization())) {
                                 Claims claims = Jwts.parser()
                                         .setSigningKey("sinosdx".getBytes(StandardCharsets.UTF_8))
                                         .parseClaimsJws(auditLog.getAuthorization()).getBody();
                                 auditLog.setUserId((Integer) claims.get("userId"));
                                 auditLog.setUserName((String) claims.get("username"));
                                 auditLog.setMobile((String) claims.get("phone"));
-                            }*/
+                            }
                             // TODO: 登录注册的审计日志可能需要特殊处理
                             auditLogService.save(auditLog);
                             break;
