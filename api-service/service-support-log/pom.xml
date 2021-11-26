@@ -69,23 +69,6 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <profile.active>dev</profile.active>
-                <nacos.server-addr>http://open-api8848.zzfgs.shjq-uat-a.sxc.sh</nacos.server-addr>
-                <nacos.username>nacos</nacos.username>
-                <nacos.password>openapi-nacos</nacos.password>
-                <nacos.config.namespace>a689d12e-62df-4cf4-a77e-d4f8695836e3</nacos.config.namespace>
-                <nacos.discovery.namespace>a689d12e-62df-4cf4-a77e-d4f8695836e3</nacos.discovery.namespace>
-                <!--<logstash.server.addr>49.234.211.224:4560</logstash.server.addr>-->
-            </properties>
-        </profile>
-    </profiles>
     <build>
         <plugins>
             <plugin>
