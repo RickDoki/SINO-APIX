@@ -52,6 +52,6 @@ spec:
   ports:
     - port: 8811
       targetPort: 8811
-      nodePort: 30001
+      nodePort: 30003
   selector:
     app: service-event-bridge

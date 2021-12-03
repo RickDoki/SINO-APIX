@@ -52,6 +52,6 @@ spec:
   ports:
     - port: 18765
       targetPort: 18765
-      nodePort: 30001
+      nodePort: 30006
   selector:
     app: api-gateway

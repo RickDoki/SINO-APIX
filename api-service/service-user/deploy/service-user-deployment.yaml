@@ -52,6 +52,6 @@ spec:
   ports:
     - port: 8093
       targetPort: 8093
-      nodePort: 30001
+      nodePort: 30002
   selector:
     app: service-user

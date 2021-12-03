@@ -52,6 +52,6 @@ spec:
   ports:
     - port: 8094
       targetPort: 8094
-      nodePort: 30001
+      nodePort: 30004
   selector:
     app: service-auth
