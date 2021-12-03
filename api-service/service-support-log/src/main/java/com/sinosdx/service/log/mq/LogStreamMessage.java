@@ -153,9 +153,10 @@ public class LogStreamMessage {
             log.warn("异常请求客户端ip缓存错误，参数ip为空!");
             return;
         }
-        boolean allow = redisService
-                .allowLimitTimes(LogConstant.EXCEPTION_LOG_CACHE_KEY, ip, logConfig.getInterval(),
-                        logConfig.getCount());
+//        boolean allow = redisService
+//                .allowLimitTimes(LogConstant.EXCEPTION_LOG_CACHE_KEY, ip, logConfig.getInterval(),
+//                        logConfig.getCount());
+        boolean allow = true;
         if (!allow) {
             redisService.set(LogConstant.EXCEPTION_LOG_BLACKLIST_CACHE_KEY + ":" + ip, ip,
                     logConfig.getBlacklistTime());
