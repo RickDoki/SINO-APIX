@@ -1,0 +1,57 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: service-support-log
+  namespace: sinosdx-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-support-log
+  template:
+    metadata:
+      labels:
+        app: service-support-log
+    spec:
+      containers:
+      - name: service-support-log
+        image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-support-log:prod
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9021
+          name: web
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 4
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 4Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-support-log
+  namespace: vota
+spec:
+  ports:
+    - port: 9021
+      targetPort: 9021
+      protocol: TCP
+  selector:
+    app: service-support-log
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-support-log-nodeport
+  namespace: vota
+spec:
+  type: NodePort
+  ports:
+    - port: 9021
+      targetPort: 9021
+      nodePort: 30001
+  selector:
+    app: service-support-log
