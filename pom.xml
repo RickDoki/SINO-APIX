@@ -116,7 +116,8 @@
     </repository>
     <repository>
       <id>Team Nexus Repository</id>
-      <url>http://10.130.174.47:8081/repository/maven-public/</url>
+<!--      <url>http://10.130.174.47:8081/repository/maven-public/</url>-->
+      <url>http://47.103.141.217:8081/repository/maven-public/</url>
       <releases>
         <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>
