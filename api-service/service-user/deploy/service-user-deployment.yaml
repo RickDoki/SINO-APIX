@@ -18,7 +18,7 @@ spec:
         image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-user:prod
         imagePullPolicy: Always
         ports:
-        - containerPort: 9021
+        - containerPort: 8093
           name: web
           protocol: TCP
         resources:
