@@ -1,5 +1,5 @@
 #基础镜像：拉取alpine版本的
-FROM registry.sxc.sh/public/alpine-oraclejdk8:skywalking-agent-v2
+FROM registry.cn-shanghai.aliyuncs.com/sinosdx/alpine-oraclejdk8:skywalking-agent-v2
 MAINTAINER pengjiahu jiahu.peng@sinosdx.com
 # 添加变量，如果使用dockerfile-maven-plugin，则会自动替换这里的变量内容
 ARG JAR_FILE=target/*.jar
