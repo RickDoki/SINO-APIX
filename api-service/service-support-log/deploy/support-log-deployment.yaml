@@ -33,7 +33,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: service-support-log
-  namespace: vota
+  namespace: sinosdx-api
 spec:
   ports:
     - port: 9021
@@ -46,7 +46,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: service-support-log-nodeport
-  namespace: vota
+  namespace: sinosdx-api
 spec:
   type: NodePort
   ports:
