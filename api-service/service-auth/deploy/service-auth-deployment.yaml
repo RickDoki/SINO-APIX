@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-auth
+  namespace: sinosdx-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-auth
+  template:
+    metadata:
+      labels:
+        app: service-auth
+    spec:
+      containers:
+      - name: service-auth
+        image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-auth:prod
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9021
+          name: web
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 4
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 4Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-auth
+  namespace: sinosdx-api
+spec:
+  ports:
+    - port: 9021
+      targetPort: 9021
+      protocol: TCP
+  selector:
+    app: service-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-auth-nodeport
+  namespace: sinosdx-api
+spec:
+  type: NodePort
+  ports:
+    - port: 9021
+      targetPort: 9021
+      nodePort: 30001
+  selector:
+    app: service-auth

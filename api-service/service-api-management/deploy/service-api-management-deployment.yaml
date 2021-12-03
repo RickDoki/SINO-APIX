@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-api-management
+  namespace: sinosdx-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-api-management
+  template:
+    metadata:
+      labels:
+        app: service-api-management
+    spec:
+      containers:
+      - name: service-api-management
+        image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-api-management:prod
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9021
+          name: web
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 4
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 4Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-api-management
+  namespace: sinosdx-api
+spec:
+  ports:
+    - port: 9021
+      targetPort: 9021
+      protocol: TCP
+  selector:
+    app: service-api-management
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-api-management-nodeport
+  namespace: sinosdx-api
+spec:
+  type: NodePort
+  ports:
+    - port: 9021
+      targetPort: 9021
+      nodePort: 30001
+  selector:
+    app: service-api-management
