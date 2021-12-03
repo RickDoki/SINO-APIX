@@ -36,8 +36,8 @@ metadata:
   namespace: sinosdx-api
 spec:
   ports:
-    - port: 9021
-      targetPort: 9021
+    - port: 8095
+      targetPort: 8095
       protocol: TCP
   selector:
     app: service-api-management
@@ -50,8 +50,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 9021
-      targetPort: 9021
+    - port: 8095
+      targetPort: 8095
       nodePort: 30001
   selector:
     app: service-api-management
