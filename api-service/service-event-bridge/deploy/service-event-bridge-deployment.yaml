@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: service-event-bridge
-        image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-event-bridge:prod
+        image: ${IMAGE}
         imagePullPolicy: Always
         ports:
         - containerPort: 8811

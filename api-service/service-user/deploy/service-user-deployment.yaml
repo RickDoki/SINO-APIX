@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: service-user
-        image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-user:prod
+        image: ${IMAGE}
         imagePullPolicy: Always
         ports:
         - containerPort: 8093

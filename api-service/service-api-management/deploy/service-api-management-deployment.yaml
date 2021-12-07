@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: service-api-management
-        image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-api-management:prod
+        image: ${IMAGE}
         imagePullPolicy: Always
         ports:
         - containerPort: 8095

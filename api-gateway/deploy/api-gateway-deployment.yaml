@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-api-gateway:prod
+        image: ${IMAGE}
         imagePullPolicy: Always
         ports:
         - containerPort: 18765

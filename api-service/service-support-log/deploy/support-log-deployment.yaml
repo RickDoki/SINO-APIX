@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: service-support-log
-        image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-support-log:prod
+        image: ${IMAGE}
         imagePullPolicy: Always
         ports:
         - containerPort: 9021
