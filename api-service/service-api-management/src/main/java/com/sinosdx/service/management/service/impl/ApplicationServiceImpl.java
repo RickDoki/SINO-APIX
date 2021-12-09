@@ -214,17 +214,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         // 查询创建者姓名
-        //        R<Map<String, Object>> appCreationByR = sysUserService.findUserById((Integer) appDetailMap.get("appCreationBy"));
-        JSONObject appCreationBy = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appCreationBy"), null).getData();
+                Map<String, Object> appCreationBy = sysUserService.findUserById((Integer) appDetailMap.get("appCreationBy")).getData();
+//        JSONObject appCreationBy = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appCreationBy"), null).getData();
         if (null != appCreationBy) {
-            appDetailMap.put("appCreationUser", appCreationBy.getString("username"));
+            appDetailMap.put("appCreationUser", appCreationBy.get("username"));
         } else {
             appDetailMap.put("appCreationUser", "-");
         }
 
         // 查询修改者姓名
-        //        R<Map<String, Object>> appLastUpdateR;
-        JSONObject appLastUpdate;
+                Map<String, Object> appLastUpdate;
+//        JSONObject appLastUpdate;
         if (appDetailMap.get("appCreationBy").equals(appDetailMap.get("appLastUpdateBy"))) {
             appLastUpdate = appCreationBy;
         } else {
@@ -232,7 +232,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             appLastUpdate = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appLastUpdateBy"), null).getData();
         }
         if (null != appLastUpdate) {
-            appDetailMap.put("appLastUpdateUser", appLastUpdate.getString("username"));
+            appDetailMap.put("appLastUpdateUser", appLastUpdate.get("username"));
         } else {
             appDetailMap.put("appLastUpdateUser", "-");
         }
