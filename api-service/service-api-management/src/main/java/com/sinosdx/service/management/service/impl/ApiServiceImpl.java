@@ -155,7 +155,7 @@ public class ApiServiceImpl implements ApiService {
             oldApi.setUrl(apiVo.getApiUrl());
         }
         if (StringUtils.isNotEmpty(apiVo.getDomain())) {
-            oldApi.setUrl(apiVo.getDomain());
+            oldApi.setDomain(apiVo.getDomain());
         }
         if (StringUtils.isNotEmpty(apiVo.getApiName())) {
             oldApi.setName(apiVo.getApiName());

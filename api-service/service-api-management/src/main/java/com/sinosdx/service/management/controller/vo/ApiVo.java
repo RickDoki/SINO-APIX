@@ -26,6 +26,7 @@ public class ApiVo implements Serializable {
     private String description;
     private String markdown;
     private String domain;
+    private Long port;
     private String apiUrl;
     private String prefixPath;
     private String upstreamPrefixPath;
