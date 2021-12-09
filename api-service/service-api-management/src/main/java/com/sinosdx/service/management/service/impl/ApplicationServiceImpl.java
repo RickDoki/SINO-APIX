@@ -86,7 +86,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Resource
     private ProductMapper productMapper;
 
-    @Value("${domain.gateway:https://saic-aws.saicmotor.com/cspv2-web/api}")
+    @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
 
     /**
