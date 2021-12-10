@@ -8,17 +8,37 @@
 ## 设计
 ### 模块结构
 ```lua
-api-linker
-    └── docs
-        ├── shell
-        ├── 分支管理.md
-        └── 升级日志.md
-    └── api-client                                  
-    └── api-common                                 
-    └── api-core                            
-    └── api-gateway                           
-    └── api-service                                 
-    └── api-spring-boot-starter                                
+SinoSdx
+    └── docs                                --开发文档
+        ├── deploy                          --包含多种部署方式说明（k8s、虚机、docker），及对应的sql脚本、nacos配置、启动脚本等文件
+        ├── images                  
+        ├── 分支管理.md              
+        ├── 升级日志.md              
+        ├── 自定义配置.md              
+        └── 常见问题.md              
+    └── sinosdx-dependencies                --框架依赖模块                                 
+        ├── parent                          --基本库，负责引入lib库版本定义、maven发布配置、环境配置等
+        ├── starter-dependencies            --自定义组件依赖定义
+        └── service-dependencies            --微服务依赖定义
+    └── sinosdx-client                      --客户端模块                                  
+        ├── client-gateway                  --客户端调用接口SDK
+        ├── client-collect-api              --客户端快速收集API push到平台SDK
+    └── sinosdx-common                      --公共模块                                 
+        ├── common-base                     --基础公共类（BaseResponse、Exception、Constants...）
+        └── common-gateway                  --网关公共类（用于后期支持不同类型网关）
+    └── sinosdx-core                        --框架及核心代码                            
+    └── sinosdx-gateway                     --网关模块
+        ├── spring-cloud-gateway            --spring cloud gateway网关
+        └── gateway-plugin                  --插件库核心代码（用于后期支持不同类型网关）                          
+    └── sinosdx-service                     --微服务集                                 
+        ├── service-api-management          --管理平台服务
+        ├── service-auth                    --认证授权服务
+        ├── service-support-log             --日志服务
+        └── service-user                    --用户服务
+    └── sinosdx-spring-boot-starter         --自定义组件模块                                
+    └── sinosdx-example                     --测试服务模块                                
+        ├── demo1              
+        └── demo2
 ```
 
 ### 目录约定
