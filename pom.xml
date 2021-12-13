@@ -10,19 +10,21 @@
   </parent>
 
   <groupId>com.sinosdx</groupId>
-  <artifactId>api-linker</artifactId>
+  <artifactId>SinoSdx</artifactId>
   <packaging>pom</packaging>
   <version>1.0.0-SNAPSHOT</version>
   <name>${project.artifactId}</name>
   <description>CSP2.0-技术中台</description>
 
   <modules>
-    <module>api-core</module>
-    <module>api-client</module>
-    <module>api-common</module>
-    <module>api-spring-boot-starter</module>
-    <module>api-service</module>
-    <module>api-gateway</module>
+    <module>sinosdx-core</module>
+    <module>sinosdx-client</module>
+    <module>sinosdx-common</module>
+    <module>sinosdx-spring-boot-starter</module>
+    <module>sinosdx-service</module>
+    <module>sinosdx-gateway</module>
+    <module>sinosdx-dependencies</module>
+    <module>sinosdx-example</module>
   </modules>
 
   <organization>
