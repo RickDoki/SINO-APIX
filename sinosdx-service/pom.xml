@@ -17,7 +17,7 @@
   <modules>
     <module>service-user</module>
     <module>service-auth</module>
-    <module>service-event-bridge</module>
+<!--    <module>service-event-bridge</module>-->
     <module>service-support-log</module>
     <module>service-api-management</module>
   </modules>
