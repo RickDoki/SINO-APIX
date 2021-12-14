@@ -44,7 +44,7 @@ public class GatewayBlacklistServiceImpl implements GatewayBlacklistService {
             return R.fail(ResultCodeEnum.BLACKLIST_CONTENT_IS_NOT_IP);
         }
 
-        Integer count = gatewayBlacklistMapper.selectCount(new QueryWrapper<GatewayBlacklist>()
+        Long count = gatewayBlacklistMapper.selectCount(new QueryWrapper<GatewayBlacklist>()
                 .eq("type", gatewayBlacklist.getType())
                 .eq("content", gatewayBlacklist.getContent())
                 .eq("del_flag", 0));

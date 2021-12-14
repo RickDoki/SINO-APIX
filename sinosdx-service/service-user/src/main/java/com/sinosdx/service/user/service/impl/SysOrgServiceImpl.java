@@ -5,22 +5,20 @@ import com.sinosdx.common.base.context.ThreadContext;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.user.constants.Constants;
 import com.sinosdx.service.user.dao.entity.SysOrg;
-import com.sinosdx.service.user.dao.entity.SysUser;
 import com.sinosdx.service.user.dao.mapper.SysOrgMapper;
 import com.sinosdx.service.user.result.ResultCodeEnum;
 import com.sinosdx.service.user.service.SysOrgService;
 import com.sinosdx.service.user.service.SysRoleService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author wendy
@@ -50,7 +48,7 @@ public class SysOrgServiceImpl implements SysOrgService {
         }
 
         if (StringUtils.isNotEmpty(sysOrg.getName()) && !sysOrg.getName().equals(oldOrg.getName())) {
-            Integer count = sysOrgMapper.selectCount(new LambdaQueryWrapper<SysOrg>().eq(SysOrg::getName, sysOrg.getName()));
+            Long count = sysOrgMapper.selectCount(new LambdaQueryWrapper<SysOrg>().eq(SysOrg::getName, sysOrg.getName()));
             if (count > 0) {
                 return R.fail(ResultCodeEnum.ORG_NAME_IS_EXISTED);
             }

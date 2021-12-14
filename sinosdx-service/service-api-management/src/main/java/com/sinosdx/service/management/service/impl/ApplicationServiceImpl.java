@@ -122,7 +122,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         application.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         application.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-        int existApp = applicationMapper.selectCount(new QueryWrapper<Application>()
+        Long existApp = applicationMapper.selectCount(new QueryWrapper<Application>()
                 .eq("name", application.getName())
                 .or().eq("code", application.getCode())
                 .eq("del_flag", 0));
@@ -261,7 +261,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         if (StringUtils.isNotEmpty(applicationVo.getAppName())) {
             if (!applicationVo.getAppName().equals(oldApp.getName())) {
-                Integer count = applicationMapper.selectCount(
+                Long count = applicationMapper.selectCount(
                         new QueryWrapper<Application>().eq("name", applicationVo.getAppName()).eq("del_flag", 0));
                 if (count > 0) {
                     return R.fail(ResultCodeEnum.APPLICATION_IS_EXIST);
@@ -294,7 +294,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     // 只有已发布状态可以上架
                     if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_PUBLISHED)) {
                         // 上架前必须发布过应用版本
-                        Integer count = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
+                        Long count = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
                                 .eq("app_code", oldApp.getCode()).eq("del_flag", 0));
                         if (count < 1) {
                             return R.fail(ResultCodeEnum.APP_VERSION_IS_NOT_EXIST);
@@ -349,7 +349,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(rollbackFor = Exception.class)
     public R<Object> deleteApplication(String appCode) {
         // 判断应用是否绑定了其他服务
-        Integer count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
+        Long count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
                 .eq("app_lessee_code", appCode).or().eq("app_lessor_code", appCode).eq("del_flag", 0));
         if (count > 0) {
             return R.fail(ResultCodeEnum.APP_BE_USED_OR_USING_OTHER_APP);
@@ -387,7 +387,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.PARAM_IS_BLANK);
         }
 
-        Integer count = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
+        Long count = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
                 .eq("app_code", applicationVersionVo.getAppCode())
                 .eq("version", applicationVersionVo.getAppVersion())
                 .eq("del_flag", 0));
@@ -579,13 +579,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.LESSOR_APP_IS_NOT_EXIST);
         }
 
-        Integer appVersionCount = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
+        Long appVersionCount = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
                 .eq("app_code", appLessorCode).eq("del_flag", 0));
         if (appVersionCount == 0) {
             return R.fail(ResultCodeEnum.NONE_APP_VERSION);
         }
 
-        Integer count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
+        Long count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
                 .eq("app_lessee_code", appLesseeCode)
                 .eq("app_lessor_code", appLessorCode)
                 .eq("del_flag", 0));
@@ -650,7 +650,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
         }
 
-        Integer count = applicationDeveloperMapper.selectCount(new QueryWrapper<ApplicationDeveloper>()
+        Long count = applicationDeveloperMapper.selectCount(new QueryWrapper<ApplicationDeveloper>()
                 .eq("app_code", appCode)
                 .eq("phone", phone).eq("del_flag", 0));
         if (count > 0) {
@@ -786,7 +786,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 开发者应用总数
         dashboardMap.put("appTotalCount", nameListForDashboard.size());
         // 开发者API总数
-        Integer apiTotalCount = apiMapper.selectCount(new QueryWrapper<Api>().eq("del_flag", 0));
+        Long apiTotalCount = apiMapper.selectCount(new QueryWrapper<Api>().eq("del_flag", 0));
         dashboardMap.put("apiTotalCount", apiTotalCount);
         // 上架开放应用总数
         dashboardMap.put("publishedAppTotalCount", addedStatusAppList.size() + errorStatusAppList.size());
@@ -891,7 +891,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public R<Boolean> verifyClientId(String clientId) {
         // 通过查询clientId验证ApplicationLease是否存在（是否解除对接）
-        Integer count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
+        Long count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
                 .eq("client_id", clientId).eq("del_flag", 0));
         if (count <= 0) {
             log.error(String.format("client_id %s 对接已删除", clientId));
@@ -910,7 +910,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             log.error("解析clientId错误: " + clientId);
             return R.fail();
         }
-        Integer count1 = applicationMapper.selectCount(new QueryWrapper<Application>()
+        Long count1 = applicationMapper.selectCount(new QueryWrapper<Application>()
                 .in("code", Arrays.asList(lesseeAppCode, lessorAppCode))
                 .eq("is_published", Constants.APP_STATUS_OFF)
                 .eq("del_flag", 0));
@@ -1025,7 +1025,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 注册应用数
         Integer appCount = applicationMapper.queryAppVoList(developerId, null, null, null, null, null, null, null, null, null, userIdList).size();
         // api 数量
-        Integer apiCount = apiMapper.selectCount(new LambdaQueryWrapper<Api>().eq(Api::getCreationBy, developerId).eq(Api::getDelFlag, 0));
+        Long apiCount = apiMapper.selectCount(new LambdaQueryWrapper<Api>().eq(Api::getCreationBy, developerId).eq(Api::getDelFlag, 0));
 
         applicationNumDTO.setApplicationNum(appCount).setApiNum(apiCount).setSubscribedNum(subscribedCount);
         return applicationNumDTO;

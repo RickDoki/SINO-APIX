@@ -8,6 +8,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class ApplicationNumDTO {
     private Integer subscribedNum;
-    private Integer apiNum;
+    private Long apiNum;
     private Integer applicationNum;
 }

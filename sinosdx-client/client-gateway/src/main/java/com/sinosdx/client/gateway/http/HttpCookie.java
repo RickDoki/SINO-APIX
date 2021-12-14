@@ -1,7 +1,7 @@
 package com.sinosdx.client.gateway.http;
 
+import com.sinosdx.client.gateway.util.Assert;
 import lombok.Getter;
-import org.springframework.util.Assert;
 
 /**
  * @author pengjiahu

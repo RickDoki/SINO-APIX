@@ -28,7 +28,7 @@ public class PlatformMarkdownServiceImpl implements PlatformMarkdownService {
      */
     @Override
     public R<PlatformMarkdown> createNewMarkdown(PlatformMarkdown platformMarkdown) {
-        Integer count = platformMarkdownMapper.selectCount(new QueryWrapper<PlatformMarkdown>()
+        Long count = platformMarkdownMapper.selectCount(new QueryWrapper<PlatformMarkdown>()
                 .eq("plat_name", platformMarkdown.getPlatName()).eq("del_flag", 0));
         if (count > 0) {
             return R.fail(ResultCodeEnum.PLATFORM_MARKDOWN_IS_EXIST);

@@ -90,7 +90,7 @@ public class UpstreamServerServiceImpl implements UpstreamServerService {
                 return R.fail(ResultCodeEnum.SERVER_ADDRESS_IS_WRONG);
         }
 
-        Integer count = upstreamServerMapper.selectCount(new QueryWrapper<UpstreamServer>().eq("name", upstreamServer.getName())
+        Long count = upstreamServerMapper.selectCount(new QueryWrapper<UpstreamServer>().eq("name", upstreamServer.getName())
                 .eq("server_address", serverAddress)
                 .eq("port", upstreamServer.getPort()));
         if (count > 0) {

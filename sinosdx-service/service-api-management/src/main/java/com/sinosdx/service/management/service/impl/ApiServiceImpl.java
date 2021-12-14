@@ -83,7 +83,7 @@ public class ApiServiceImpl implements ApiService {
         }
 
         // 判断api是否已存在
-        Integer count1 = apiMapper.selectCount(new QueryWrapper<Api>()
+        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
                 .eq("url", api.getUrl())
                 .eq("request_method", api.getRequestMethod())
                 .eq("prefix_path", api.getPrefixPath())
@@ -186,7 +186,7 @@ public class ApiServiceImpl implements ApiService {
         }
 
         // 判断修改后的api是否重复
-        Integer count1 = apiMapper.selectCount(new QueryWrapper<Api>()
+        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
                 .eq("url", oldApi.getUrl()).eq("request_method", oldApi.getRequestMethod())
                 .eq("version", oldApi.getVersion()).eq("del_flag", 0));
         if (count1 > 0) {
@@ -215,7 +215,7 @@ public class ApiServiceImpl implements ApiService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public R<Object> deleteApi(Integer apiId) {
-        Integer count = applicationApiMapper.selectCount(new QueryWrapper<ApplicationApi>()
+        Long count = applicationApiMapper.selectCount(new QueryWrapper<ApplicationApi>()
                 .eq("api_id", apiId).eq("del_flag", 0));
         if (count > 0) {
             return R.fail(ResultCodeEnum.API_IS_BE_USED);
@@ -287,7 +287,7 @@ public class ApiServiceImpl implements ApiService {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
         }
 
-        Integer count = apiVersionMapper.selectCount(new QueryWrapper<ApiVersion>()
+        Long count = apiVersionMapper.selectCount(new QueryWrapper<ApiVersion>()
                 .eq("api_id", apiVersion.getApiId()).eq("version", apiVersion.getVersion())
                 .eq("del_flag", 0));
         if (count > 0) {
