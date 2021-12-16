@@ -61,6 +61,11 @@
         <artifactId>client-gateway</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.sinosdx</groupId>
+        <artifactId>gateway-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 </project>
