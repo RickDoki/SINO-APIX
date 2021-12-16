@@ -19,7 +19,7 @@ sinosdx-common/common-public,^
 sinosdx-common/common-tools,^
 sinosdx-common/common-usf,^
 sinosdx-common-model/common-model-log,^
-sinosdx-parent,^
+parent,^
 sinosdx-spring-boot-starter/sinosdx-alarm-spring-boot-starter,^
 sinosdx-spring-boot-starter/sinosdx-api-version-spring-boot-starter,^
 sinosdx-spring-boot-starter/sinosdx-dingtalk-robot-spring-boot-starter,^

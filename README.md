@@ -39,6 +39,7 @@ SinoSdx
     └── sinosdx-example                     --测试服务模块                                
         ├── demo1              
         └── demo2
+    └── sinosdx-website                     --前端工程                                
 ```
 
 ### 目录约定

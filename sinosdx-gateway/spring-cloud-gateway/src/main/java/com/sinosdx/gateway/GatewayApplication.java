@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @Slf4j
 @EnableAsync
 @SpringBootApplication
-@ComponentScan(value = {"com.sinosdx.gateway", "com.saic.csp2.middle.common.gateway"})
+@ComponentScan(value = {"com.sinosdx.gateway", "com.sinosdx.common.gateway"})
 public class GatewayApplication {
 
     public static void main(String[] args) {

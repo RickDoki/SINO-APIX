@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.sinosdx</groupId>
+    <artifactId>base-dependencies</artifactId>
+    <version>1.0.55-SNAPSHOT</version>
+    <relativePath>../base-dependencies/pom.xml</relativePath>
+  </parent>
+  <groupId>com.sinosdx</groupId>
+  <artifactId>parent</artifactId>
+  <version>1.0.55-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>基本库，负责引入lib库版本定义、maven发布配置、环境配置等</description>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>manual</distribution>
+    </license>
+  </licenses>
+</project>

@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.sinosdx.cloud</groupId>
     <artifactId>parent</artifactId>
     <version>1.0.2-SNAPSHOT</version>
   </parent>
-
   <groupId>com.sinosdx</groupId>
   <artifactId>SinoSdx</artifactId>
+  <version>1.0.55-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <version>${revision}</version>
   <name>${project.artifactId}</name>
   <description>CSP2.0-技术中台</description>
-
-  <properties>
-    <revision>1.0.55-SNAPSHOT</revision>
-    <jdk.version>1.8</jdk.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-    <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
-  </properties>
-
+  <organization>
+    <name>SinoSDX</name>
+    <url>http://www.sinosdx.com/</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>manual</distribution>
+    </license>
+  </licenses>
   <modules>
     <module>sinosdx-core</module>
     <module>sinosdx-client</module>
@@ -34,30 +34,18 @@
     <module>sinosdx-dependencies</module>
     <module>sinosdx-example</module>
   </modules>
-
-  <organization>
-    <name>SinoSDX</name>
-    <url>http://www.sinosdx.com/</url>
-  </organization>
-
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
-
+  <properties>
+    <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+    <jdk.version>1.8</jdk.version>
+    <revision>1.0.55-SNAPSHOT</revision>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-        <version>${flatten-maven-plugin.version}</version>
-        <configuration>
-          <updatePomFile>true</updatePomFile>
-          <flattenMode>resolveCiFriendliesOnly</flattenMode>
-        </configuration>
+        <version>1.2.7</version>
         <executions>
           <execution>
             <id>flatten</id>
@@ -74,23 +62,25 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+          <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
       </plugin>
     </plugins>
   </build>
-
   <profiles>
     <profile>
       <id>dev</id>
       <properties>
-        <profile.active>dev</profile.active>
-        <nacos.server-addr>47.103.109.225:30848</nacos.server-addr>
-        <nacos.username>nacos</nacos.username>
-        <nacos.password>AKrymz6()g*C</nacos.password>
-        <nacos.config.namespace>b6db7ffa-da1a-4600-9f96-f581bb660b5e</nacos.config.namespace>
         <nacos.discovery.namespace>b6db7ffa-da1a-4600-9f96-f581bb660b5e</nacos.discovery.namespace>
+        <nacos.password>AKrymz6()g*C</nacos.password>
+        <nacos.server-addr>47.103.109.225:30848</nacos.server-addr>
+        <profile.active>dev</profile.active>
         <logstash.server.addr>49.234.211.224:4560</logstash.server.addr>
+        <nacos.config.namespace>b6db7ffa-da1a-4600-9f96-f581bb660b5e</nacos.config.namespace>
+        <nacos.username>nacos</nacos.username>
       </properties>
     </profile>
   </profiles>
-
 </project>
