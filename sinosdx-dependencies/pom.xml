@@ -7,8 +7,8 @@
   <groupId>com.sinosdx</groupId>
   <artifactId>sinosdx-dependencies</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}</version>
-  <description>框架依赖模块</description>
+  <version>1.0</version>
+  <description>依赖模块</description>
 
   <modules>
     <module>base-dependencies</module>
