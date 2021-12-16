@@ -5,12 +5,12 @@
   <parent>
     <groupId>com.sinosdx</groupId>
     <artifactId>parent</artifactId>
-    <version>1.0.55-SNAPSHOT</version>
-    <relativePath>../sinosdx-dependencies/parent/pom.xml</relativePath>
+    <version>1.0.0-SNAPSHOT</version>
+    <relativePath>../sinosdx-dependencies/parent</relativePath>
   </parent>
   <groupId>com.sinosdx</groupId>
   <artifactId>sinosdx-gateway</artifactId>
-  <version>1.0.55-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>网关模块</description>
   <licenses>

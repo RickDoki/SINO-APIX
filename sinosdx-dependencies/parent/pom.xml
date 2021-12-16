@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <artifactId>base-dependencies</artifactId>
-        <groupId>com.sinosdx</groupId>
-        <version>${revision}</version>
-        <relativePath>../base-dependencies</relativePath>
-    </parent>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>base-dependencies</artifactId>
+    <groupId>com.sinosdx</groupId>
+    <version>${revision}</version>
+    <relativePath>../base-dependencies</relativePath>
+  </parent>
 
-    <artifactId>parent</artifactId>
-    <packaging>pom</packaging>
-    <name>${project.artifactId}</name>
-    <description>基本库，负责引入lib库版本定义、maven发布配置、环境配置等</description>
+  <artifactId>parent</artifactId>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>
+    该模块继承自base-dependencies，可直接使用固化版本后的依赖，是构建其他模块的统一父依赖
+  </description>
 
 </project>

@@ -5,12 +5,11 @@
   <parent>
     <groupId>com.sinosdx</groupId>
     <artifactId>sinosdx-gateway</artifactId>
-    <version>1.0.55-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <groupId>com.sinosdx</groupId>
   <artifactId>gateway-plugin</artifactId>
-  <version>1.0.55-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <version>1.0.0-SNAPSHOT</version>
   <description>插件库核心代码</description>
   <licenses>
     <license>

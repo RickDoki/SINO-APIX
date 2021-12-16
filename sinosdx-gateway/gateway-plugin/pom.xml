@@ -10,7 +10,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>gateway-plugin</artifactId>
-  <packaging>pom</packaging>
   <description>插件库核心代码</description>
 
 </project>
