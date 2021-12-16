@@ -22,6 +22,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+    <sinosdx.nexus.version>
+      http://47.103.141.217:8081/repository/maven-public/
+    </sinosdx.nexus.version>
   </properties>
 
   <modules>
@@ -47,6 +50,39 @@
       <distribution>manual</distribution>
     </license>
   </licenses>
+
+  <repositories>
+    <repository>
+      <id>aliyun-repos</id>
+      <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>spring-releases</id>
+      <url>https://repo.spring.io/libs-release</url>
+    </repository>
+    <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>Team Nexus Repository</id>
+      <url>${sinosdx.nexus.version}</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>
