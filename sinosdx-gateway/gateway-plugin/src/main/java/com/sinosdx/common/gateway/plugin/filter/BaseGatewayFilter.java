@@ -56,6 +56,7 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
                 if(log.isDebugEnabled()) {
                     log.debug("config:{}", JSON.toJSONString(config));
                 }
+                //TODO 判断请求对应的服务是否配置了相应插件
                 return customApply(exchange, chain, config);
             }
             return chain.filter(exchange);

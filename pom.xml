@@ -117,6 +117,9 @@
   <profiles>
     <profile>
       <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <profile.active>dev</profile.active>
         <nacos.server-addr>47.103.109.225:30848</nacos.server-addr>

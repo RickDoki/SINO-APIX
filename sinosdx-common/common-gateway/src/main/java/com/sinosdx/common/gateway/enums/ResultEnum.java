@@ -10,7 +10,7 @@ import com.sinosdx.common.base.result.enums.ExpEnumCodeUtil;
  * @description
  */
 @GlobalExpEnumType(module = 10, kind = 90)
-public enum ResultEnum implements BaseEnum {
+public enum ResultEnum implements BaseEnum<Integer, String> {
 
     /**
      * 当前请求参数为空或数据缺失
@@ -29,9 +29,9 @@ public enum ResultEnum implements BaseEnum {
      */
     UN_SAFE_REQUEST(110, "非法请求，请稍后重试");
 
-    private Integer code;
+    private final Integer code;
 
-    private String message;
+    private final String message;
 
     ResultEnum(Integer code, String message) {
         this.code = code;
