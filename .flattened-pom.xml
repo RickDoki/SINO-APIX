@@ -8,7 +8,7 @@
     <version>1.0.2-SNAPSHOT</version>
   </parent>
   <groupId>com.sinosdx</groupId>
-  <artifactId>SinoSdx</artifactId>
+  <artifactId>sinoapix</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
@@ -25,16 +25,17 @@
     </license>
   </licenses>
   <modules>
-    <module>sinosdx-core</module>
-    <module>sinosdx-client</module>
-    <module>sinosdx-common</module>
-    <module>sinosdx-spring-boot-starter</module>
-    <module>sinosdx-service</module>
-    <module>sinosdx-gateway</module>
-    <module>sinosdx-dependencies</module>
-    <module>sinosdx-example</module>
+    <module>sinoapix-core</module>
+    <module>sinoapix-client</module>
+    <module>sinoapix-common</module>
+    <module>sinoapix-spring-boot-starter</module>
+    <module>sinoapix-service</module>
+    <module>sinoapix-gateway</module>
+    <module>sinoapix-dependencies</module>
+    <module>sinoapix-example</module>
   </modules>
   <properties>
+    <sinosdx.nexus.version>http://47.103.141.217:8081/repository/maven-public/</sinosdx.nexus.version>
     <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     <jdk.version>1.8</jdk.version>
     <revision>1.0.0-SNAPSHOT</revision>
@@ -70,7 +71,7 @@
         <checksumPolicy>warn</checksumPolicy>
       </snapshots>
       <id>Team Nexus Repository</id>
-      <url>http://47.103.141.217:8081/repository/maven-public/</url>
+      <url>${sinosdx.nexus.version}</url>
     </repository>
   </repositories>
   <build>
@@ -105,6 +106,9 @@
   <profiles>
     <profile>
       <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <nacos.discovery.namespace>b6db7ffa-da1a-4600-9f96-f581bb660b5e</nacos.discovery.namespace>
         <nacos.password>AKrymz6()g*C</nacos.password>

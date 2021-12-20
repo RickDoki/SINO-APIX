@@ -10,7 +10,7 @@
   </parent>
 
   <groupId>com.sinosdx</groupId>
-  <artifactId>SinoSdx</artifactId>
+  <artifactId>sinoapix</artifactId>
   <packaging>pom</packaging>
   <version>${revision}</version>
   <name>${project.artifactId}</name>
@@ -28,14 +28,14 @@
   </properties>
 
   <modules>
-    <module>sinosdx-core</module>
-    <module>sinosdx-client</module>
-    <module>sinosdx-common</module>
-    <module>sinosdx-spring-boot-starter</module>
-    <module>sinosdx-service</module>
-    <module>sinosdx-gateway</module>
-    <module>sinosdx-dependencies</module>
-    <module>sinosdx-example</module>
+    <module>sinoapix-core</module>
+    <module>sinoapix-client</module>
+    <module>sinoapix-common</module>
+    <module>sinoapix-spring-boot-starter</module>
+    <module>sinoapix-service</module>
+    <module>sinoapix-gateway</module>
+    <module>sinoapix-dependencies</module>
+    <module>sinoapix-example</module>
   </modules>
 
   <organization>
