@@ -5,6 +5,7 @@ import com.sinosdx.service.management.controller.vo.ApplicationNumVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVo;
 import com.sinosdx.service.management.dao.entity.Application;
+import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.result.R;
 
 import java.util.List;
@@ -241,4 +242,20 @@ public interface ApplicationService {
      * @return
      */
     R<Object> querySubscribedAppList(String appCode, Integer developerId);
+
+    /**
+     * 服务添加插件
+     *
+     * @param applicationPlugin
+     * @return
+     */
+    R<Object> addAppPlugin(ApplicationPlugin applicationPlugin);
+
+    /**
+     * 修改服务插件
+     *
+     * @param applicationPlugin
+     * @return
+     */
+    R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin);
 }

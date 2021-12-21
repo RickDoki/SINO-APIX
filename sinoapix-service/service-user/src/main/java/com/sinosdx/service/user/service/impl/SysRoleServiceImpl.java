@@ -15,7 +15,7 @@ import com.sinosdx.service.user.dao.entity.SysRoleOrgEntity;
 import com.sinosdx.service.user.dao.entity.SysUserOrgEntity;
 import com.sinosdx.service.user.dao.mapper.SysRoleDao;
 import com.sinosdx.service.user.dao.mapper.SysUserMapper;
-import com.sinosdx.service.user.result.ResultCodeEnum;
+import com.sinosdx.service.user.enums.ResultCodeEnum;
 import com.sinosdx.service.user.service.*;
 import com.sinosdx.service.user.utils.PageUtils;
 import com.sinosdx.service.user.utils.Query;

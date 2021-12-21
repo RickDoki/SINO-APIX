@@ -2,15 +2,13 @@ package com.sinosdx.service.user.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.interfaces.Claim;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.user.constants.Constants;
 import com.sinosdx.service.user.consumer.IamServiceFeign;
-import com.sinosdx.service.user.dao.entity.UserDigest;
 import com.sinosdx.service.user.dao.mapper.UserDigestMapper;
-import com.sinosdx.service.user.result.ResultCodeEnum;
+import com.sinosdx.service.user.enums.ResultCodeEnum;
 import com.sinosdx.service.user.service.SocService;
 import com.sinosdx.service.user.service.UserDigestService;
 import com.sinosdx.service.user.utils.AESUtil;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.Map;
 
 /**

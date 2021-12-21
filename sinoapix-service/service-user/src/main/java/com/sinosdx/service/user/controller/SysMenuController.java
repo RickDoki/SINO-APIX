@@ -1,13 +1,12 @@
 package com.sinosdx.service.user.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.Lists;
 import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.common.base.result.AssertsUtil;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.user.constants.SysConstant;
 import com.sinosdx.service.user.dao.entity.SysMenuEntity;
-import com.sinosdx.service.user.result.ResultCodeEnum;
+import com.sinosdx.service.user.enums.ResultCodeEnum;
 import com.sinosdx.service.user.service.ShiroService;
 import com.sinosdx.service.user.service.SysMenuService;
 import com.sinosdx.service.user.service.SysRoleMenuService;
@@ -17,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 

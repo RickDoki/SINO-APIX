@@ -11,7 +11,7 @@ import com.sinosdx.service.user.constants.SysConstant;
 import com.sinosdx.service.user.consumer.AuthenticationServiceFeign;
 import com.sinosdx.service.user.dao.entity.*;
 import com.sinosdx.service.user.dao.mapper.*;
-import com.sinosdx.service.user.result.ResultCodeEnum;
+import com.sinosdx.service.user.enums.ResultCodeEnum;
 import com.sinosdx.service.user.service.SysRoleOrgService;
 import com.sinosdx.service.user.service.SysRoleService;
 import com.sinosdx.service.user.service.SysUserRoleService;

@@ -6,7 +6,7 @@ import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.user.constants.Constants;
 import com.sinosdx.service.user.dao.entity.SysOrg;
 import com.sinosdx.service.user.dao.mapper.SysOrgMapper;
-import com.sinosdx.service.user.result.ResultCodeEnum;
+import com.sinosdx.service.user.enums.ResultCodeEnum;
 import com.sinosdx.service.user.service.SysOrgService;
 import com.sinosdx.service.user.service.SysRoleService;
 import java.time.LocalDateTime;

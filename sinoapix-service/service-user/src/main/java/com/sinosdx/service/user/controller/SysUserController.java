@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.user.dao.entity.SysUser;
-import com.sinosdx.service.user.result.ResultCodeEnum;
+import com.sinosdx.service.user.enums.ResultCodeEnum;
 import com.sinosdx.service.user.service.SysUserService;
 import com.sinosdx.service.user.service.dto.SysRegisterDTO;
 import org.apache.commons.lang3.StringUtils;
