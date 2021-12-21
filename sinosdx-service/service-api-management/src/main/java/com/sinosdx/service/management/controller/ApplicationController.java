@@ -4,6 +4,7 @@ import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVo;
 import com.sinosdx.service.management.dao.entity.Application;
+import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApplicationService;
@@ -422,5 +423,16 @@ public class ApplicationController {
     public R<Object> querySubscribedAppList(@RequestParam String appCode,
                                             @RequestParam(value = "developerId", required = false) Integer developerId) {
         return applicationService.querySubscribedAppList(appCode, developerId);
+    }
+
+    /**
+     * 服务添加插件
+     *
+     * @param applicationPlugin
+     * @return
+     */
+    @PostMapping("/plugin")
+    public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
+        return applicationService.addAppPlugin(applicationPlugin);
     }
 }

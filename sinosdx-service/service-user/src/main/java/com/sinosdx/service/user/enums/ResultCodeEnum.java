@@ -1,4 +1,4 @@
-package com.sinosdx.service.user.result;
+package com.sinosdx.service.user.enums;
 
 import com.sinosdx.common.base.result.enums.BaseEnum;
 

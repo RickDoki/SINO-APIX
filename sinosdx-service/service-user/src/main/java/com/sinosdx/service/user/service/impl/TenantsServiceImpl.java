@@ -7,7 +7,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.user.constants.Constants;
 import com.sinosdx.service.user.constants.UrlConstant;
-import com.sinosdx.service.user.result.ResultCodeEnum;
+import com.sinosdx.service.user.enums.ResultCodeEnum;
 import com.sinosdx.service.user.service.SocService;
 import com.sinosdx.service.user.service.TenantsService;
 import com.sinosdx.service.user.service.dto.Tenant;

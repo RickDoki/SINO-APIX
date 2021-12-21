@@ -86,6 +86,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Resource
     private ProductMapper productMapper;
 
+    @Resource
+    private ApplicationPluginMapper applicationPluginMapper;
+
     @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
 
@@ -1042,5 +1045,44 @@ public class ApplicationServiceImpl implements ApplicationService {
     public R<Object> querySubscribedAppList(String appCode, Integer developerId) {
         List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         return R.success(applicationMapper.querySubscribeCurrentAppList(appCode, userIdList));
+    }
+
+    /**
+     * 服务添加插件
+     *
+     * @param applicationPlugin
+     * @return
+     */
+    @Override
+    public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
+        Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
+        if (null == application) {
+            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
+        }
+
+        applicationPlugin.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        applicationPlugin.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        applicationPluginMapper.insert(applicationPlugin);
+        return R.success();
+    }
+
+    /**
+     * 修改服务插件
+     *
+     * @param applicationPlugin
+     * @return
+     */
+    @Override
+    public R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin) {
+        Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
+        if (null == application) {
+            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
+        }
+
+        applicationPlugin.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        applicationPlugin.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        applicationPluginMapper.updateById(applicationPlugin);
+
+        return R.success();
     }
 }
