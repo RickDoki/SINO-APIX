@@ -228,8 +228,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (appDetailMap.get("appCreationBy").equals(appDetailMap.get("appLastUpdateBy"))) {
             appLastUpdate = appCreationBy;
         } else {
-            //            appLastUpdateR = sysUserService.findUserById((Integer) appDetailMap.get("appLastUpdateBy"));
-            appLastUpdate = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appLastUpdateBy"), null).getData();
+                        appLastUpdate = sysUserService.findUserById((Integer) appDetailMap.get("appLastUpdateBy")).getData();
+//            appLastUpdate = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appLastUpdateBy"), null).getData();
         }
         if (null != appLastUpdate) {
             appDetailMap.put("appLastUpdateUser", appLastUpdate.get("username"));
