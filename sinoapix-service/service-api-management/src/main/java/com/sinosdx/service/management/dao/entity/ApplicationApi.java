@@ -19,5 +19,4 @@ public class ApplicationApi extends Entity<Integer> {
     private String appCode;
     private Integer appVersionId;
     private Integer apiId;
-    private Integer apiVersionId;
 }

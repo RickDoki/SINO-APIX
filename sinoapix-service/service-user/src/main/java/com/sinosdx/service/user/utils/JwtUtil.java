@@ -24,7 +24,7 @@ public class JwtUtil {
 
     public static String createJwt(String secretKey, Map<String, String> claimMap, long timeoutMs) throws IllegalArgumentException, UnsupportedEncodingException {
         Algorithm al = Algorithm.HMAC256(secretKey);
-        JWTCreator.Builder jwtBuilder = JWT.create().withIssuer("csp2").withSubject("csp2").withExpiresAt(new Date(System.currentTimeMillis() + timeoutMs));
+        JWTCreator.Builder jwtBuilder = JWT.create().withIssuer("sinosdx").withSubject("sinosdx").withExpiresAt(new Date(System.currentTimeMillis() + timeoutMs));
         if (MapUtils.isNotEmpty(claimMap)) {
             claimMap.forEach(jwtBuilder::withClaim);
         }

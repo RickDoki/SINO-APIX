@@ -33,5 +33,9 @@ public class ApplicationApiGateway {
     private String domain;
     private String gatewayId;
     private Integer isInternal;
+    /**
+     * 过滤器插件（以,分隔）
+     */
+    private String filters;
 
 }

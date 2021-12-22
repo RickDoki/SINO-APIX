@@ -45,8 +45,8 @@ public class ApiServiceImpl implements ApiService {
     @Resource
     private ApplicationApiMapper applicationApiMapper;
 
-    @Resource
-    private ApiVersionMapper apiVersionMapper;
+//    @Resource
+//    private ApiVersionMapper apiVersionMapper;
 
     @Autowired
     private GatewayServiceFeign gatewayService;
@@ -93,47 +93,18 @@ public class ApiServiceImpl implements ApiService {
         if (count1 > 0) {
             return R.fail(ResultCodeEnum.API_IS_EXIST);
         }
-//        Integer count2 = apiMapper.selectCount(new QueryWrapper<Api>()
-//                .eq("url", api.getUrl()).eq("name", api.getName())
-//                .eq("version", api.getVersion()).eq("del_flag", 0));
-//        if (count2 > 0) {
-//            return R.fail(ResultCodeEnum.API_IS_EXIST);
-//        }
 
-        // TODO：拦截器提供发布者
         api.setIsPublished(Constants.API_IS_NOT_PUBLISHED);
         api.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         api.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         api.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
         apiMapper.insert(api);
 
-        ApiVersion apiVersion = new ApiVersion(api);
-        apiVersion.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        apiVersion.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        apiVersion.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-        apiVersionMapper.insert(apiVersion);
-
-//        // 插入网关数据库
-//        JSONObject gatewayConfig = new JSONObject();
-//        gatewayConfig.put("id", api.getId());
-//        gatewayConfig.put("uri", api.getUrl());
-//        Map<String, Object> predicate = new HashMap<>();
-//        predicate.put("name", "Path");
-//        String uri = "";
-//        String url = api.getUrl();
-//        if (url.contains("http")) {
-//            if (url.split("/").length > 3) {
-//                uri = url.substring(url.split("/")[0].length() + 3 + url.split("/")[2].length());
-//            }
-//        } else {
-//            if (url.contains("/")) {
-//                uri = url.substring(url.split("/")[0].length() + 1);
-//            }
-//        }
-//        predicate.put("args", Collections.singletonMap("Pattern", uri));
-//        gatewayConfig.put("predicates", Collections.singletonList(predicate));
-//        log.info("create gateway config: " + gatewayConfig.toJSONString());
-//        gatewayService.create(gatewayConfig);
+//        ApiVersion apiVersion = new ApiVersion(api);
+//        apiVersion.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+//        apiVersion.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+//        apiVersion.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+//        apiVersionMapper.insert(apiVersion);
 
         return R.success(api);
     }
@@ -223,8 +194,8 @@ public class ApiServiceImpl implements ApiService {
 
         apiMapper.deleteById(apiId);
 
-        apiVersionMapper.delete(new QueryWrapper<ApiVersion>()
-                .eq("api_id", apiId).eq("del_flag", 0));
+//        apiVersionMapper.delete(new QueryWrapper<ApiVersion>()
+//                .eq("api_id", apiId).eq("del_flag", 0));
         return R.success();
     }
 
@@ -277,39 +248,39 @@ public class ApiServiceImpl implements ApiService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public R<Object> addNewApiVersion(ApiVersion apiVersion) {
-        Api api = apiMapper.selectOne(new QueryWrapper<Api>()
-                .eq("id", apiVersion.getApiId()).eq("del_flag", 0));
-        if (null == api) {
-            return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
-        }
+//        Api api = apiMapper.selectOne(new QueryWrapper<Api>()
+//                .eq("id", apiVersion.getApiId()).eq("del_flag", 0));
+//        if (null == api) {
+//            return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
+//        }
+//
+//        if (StringUtils.isAnyEmpty(apiVersion.getApiName(), apiVersion.getUrl(), apiVersion.getVersion(), apiVersion.getDomain())) {
+//            return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
+//        }
 
-        if (StringUtils.isAnyEmpty(apiVersion.getApiName(), apiVersion.getUrl(), apiVersion.getVersion(), apiVersion.getDomain())) {
-            return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
-        }
+//        Long count = apiVersionMapper.selectCount(new QueryWrapper<ApiVersion>()
+//                .eq("api_id", apiVersion.getApiId()).eq("version", apiVersion.getVersion())
+//                .eq("del_flag", 0));
+//        if (count > 0) {
+//            return R.fail(ResultCodeEnum.API_VERSION_IS_EXIST);
+//        }
 
-        Long count = apiVersionMapper.selectCount(new QueryWrapper<ApiVersion>()
-                .eq("api_id", apiVersion.getApiId()).eq("version", apiVersion.getVersion())
-                .eq("del_flag", 0));
-        if (count > 0) {
-            return R.fail(ResultCodeEnum.API_VERSION_IS_EXIST);
-        }
-
-        apiVersion.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        apiVersion.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        apiVersion.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-        apiVersionMapper.insert(apiVersion);
+//        apiVersion.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+//        apiVersion.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+//        apiVersion.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+//        apiVersionMapper.insert(apiVersion);
 
         // 修改api最新版本号
-        api = new Api(apiVersion);
+//        api = new Api(apiVersion);
 //        api.setVersion(apiVersion.getVersion());
 //        api.setUrl(apiVersion.getUrl());
 //        api.setRequestMethod(apiVersion.getRequestMethod());
 //        api.setDescription(apiVersion.getDescription());
 //        api.setMarkdown(apiVersion.getMarkdown());
-        api.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        api.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        api.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-        apiMapper.updateById(api);
+//        api.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+//        api.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+//        api.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+//        apiMapper.updateById(api);
 
         return R.success();
     }
@@ -322,38 +293,39 @@ public class ApiServiceImpl implements ApiService {
      */
     @Override
     public R<Object> modifyApiVersion(ApiVersionVo apiVersionVo) {
-        ApiVersion oldApiVersion = apiVersionMapper.selectById(apiVersionVo.getApiVersionId());
-        if (null == oldApiVersion) {
-            return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
-        }
-
-        if (StringUtils.isNotEmpty(apiVersionVo.getUrl())) {
-            oldApiVersion.setUrl(apiVersionVo.getUrl());
-        }
-        if (StringUtils.isNotEmpty(apiVersionVo.getApiName())) {
-            oldApiVersion.setApiName(apiVersionVo.getApiName());
-        }
-        if (StringUtils.isNotEmpty(apiVersionVo.getVersion())) {
-            oldApiVersion.setVersion(apiVersionVo.getVersion());
-        }
-        if (StringUtils.isNotEmpty(apiVersionVo.getDescription())) {
-            oldApiVersion.setDescription(apiVersionVo.getDescription());
-        }
-        if (StringUtils.isNotEmpty(apiVersionVo.getMarkdown())) {
-            oldApiVersion.setMarkdown(apiVersionVo.getMarkdown());
-        }
-        if (StringUtils.isNotEmpty(apiVersionVo.getIsPublished())) {
-            oldApiVersion.setIsPublished(apiVersionVo.getIsPublished());
-        }
-        if (StringUtils.isNotEmpty(apiVersionVo.getRequestMethod())) {
-            oldApiVersion.setRequestMethod(apiVersionVo.getRequestMethod());
-        }
-
-        oldApiVersion.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        oldApiVersion.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        oldApiVersion.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-        apiVersionMapper.updateById(oldApiVersion);
-        return R.success(oldApiVersion);
+//        ApiVersion oldApiVersion = apiVersionMapper.selectById(apiVersionVo.getApiVersionId());
+//        if (null == oldApiVersion) {
+//            return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
+//        }
+//
+//        if (StringUtils.isNotEmpty(apiVersionVo.getUrl())) {
+//            oldApiVersion.setUrl(apiVersionVo.getUrl());
+//        }
+//        if (StringUtils.isNotEmpty(apiVersionVo.getApiName())) {
+//            oldApiVersion.setApiName(apiVersionVo.getApiName());
+//        }
+//        if (StringUtils.isNotEmpty(apiVersionVo.getVersion())) {
+//            oldApiVersion.setVersion(apiVersionVo.getVersion());
+//        }
+//        if (StringUtils.isNotEmpty(apiVersionVo.getDescription())) {
+//            oldApiVersion.setDescription(apiVersionVo.getDescription());
+//        }
+//        if (StringUtils.isNotEmpty(apiVersionVo.getMarkdown())) {
+//            oldApiVersion.setMarkdown(apiVersionVo.getMarkdown());
+//        }
+//        if (StringUtils.isNotEmpty(apiVersionVo.getIsPublished())) {
+//            oldApiVersion.setIsPublished(apiVersionVo.getIsPublished());
+//        }
+//        if (StringUtils.isNotEmpty(apiVersionVo.getRequestMethod())) {
+//            oldApiVersion.setRequestMethod(apiVersionVo.getRequestMethod());
+//        }
+//
+//        oldApiVersion.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+//        oldApiVersion.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+//        oldApiVersion.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+//        apiVersionMapper.updateById(oldApiVersion);
+//        return R.success(oldApiVersion);
+        return R.success();
     }
 
     /**

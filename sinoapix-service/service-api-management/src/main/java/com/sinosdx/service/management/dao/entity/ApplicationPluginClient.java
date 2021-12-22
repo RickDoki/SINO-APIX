@@ -6,20 +6,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * 服务插件
- *
  * @author wendy
- * @date 2021/12/17
+ * @date 2021/12/22
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("application_plugin")
-public class ApplicationPlugin extends Entity<Integer> {
-    private static final long serialVersionUID = -7133398603981531070L;
+@TableName("application_plugin_client")
+public class ApplicationPluginClient extends Entity<Integer> {
+    private static final long serialVersionUID = 8999037431641813357L;
 
-    private Integer appId;
-    private String appCode;
+    private Integer sysClientId;
+    private Integer appPluginId;
     private String pluginType;
-    private Integer enabled;
-
+    private String pluginParams;
 }

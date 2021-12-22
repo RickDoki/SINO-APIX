@@ -58,21 +58,21 @@ public class Api extends Entity<Integer> {
         this.isInternal = apiVo.getIsInternal();
     }
 
-    public Api(ApiVersion apiVersion) {
-        this.id = apiVersion.getApiId();
-        this.name = apiVersion.getApiName();
-        this.description = apiVersion.getDescription();
-        this.markdown = apiVersion.getMarkdown();
-        this.domain = apiVersion.getDomain();
-        this.url = apiVersion.getUrl();
-        this.prefixPath = apiVersion.getPrefixPath();
-        this.requestMethod = apiVersion.getRequestMethod();
-        this.requestParams = apiVersion.getRequestParams();
-        this.requestExample = apiVersion.getRequestExample();
-        this.responseParams = apiVersion.getResponseParams();
-        this.responseExample = apiVersion.getResponseExample();
-        this.version = apiVersion.getVersion();
-        this.isPublished = apiVersion.getIsPublished();
-        this.isInternal = apiVersion.getIsInternal();
-    }
+//    public Api(ApiVersion apiVersion) {
+//        this.id = apiVersion.getApiId();
+//        this.name = apiVersion.getApiName();
+//        this.description = apiVersion.getDescription();
+//        this.markdown = apiVersion.getMarkdown();
+//        this.domain = apiVersion.getDomain();
+//        this.url = apiVersion.getUrl();
+//        this.prefixPath = apiVersion.getPrefixPath();
+//        this.requestMethod = apiVersion.getRequestMethod();
+//        this.requestParams = apiVersion.getRequestParams();
+//        this.requestExample = apiVersion.getRequestExample();
+//        this.responseParams = apiVersion.getResponseParams();
+//        this.responseExample = apiVersion.getResponseExample();
+//        this.version = apiVersion.getVersion();
+//        this.isPublished = apiVersion.getIsPublished();
+//        this.isInternal = apiVersion.getIsInternal();
+//    }
 }

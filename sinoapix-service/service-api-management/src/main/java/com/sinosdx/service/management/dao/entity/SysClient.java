@@ -1,4 +1,4 @@
-package com.sinosdx.service.user.dao.entity;
+package com.sinosdx.service.management.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.sinosdx.common.base.base.entity.Entity;
@@ -13,7 +13,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
-@TableName("sys_client")
 public class SysClient extends Entity<Integer> {
     private static final long serialVersionUID = 5382045453719889915L;
 

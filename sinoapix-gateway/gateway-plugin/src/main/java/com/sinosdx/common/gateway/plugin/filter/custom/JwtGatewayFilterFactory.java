@@ -1,16 +1,15 @@
-package com.sinosdx.gateway.filter.custom;
+package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
 import com.auth0.jwt.interfaces.Claim;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.filter.BaseGatewayFilter;
+import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
+import com.sinosdx.common.gateway.plugin.filter.custom.JwtGatewayFilterFactory.Config;
+import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.properties.AuthConstant;
-import com.sinosdx.common.gateway.utils.HttpUtil;
-import com.sinosdx.common.gateway.utils.JwtUtil;
-import com.sinosdx.common.tools.auth.SignUtil;
-import com.sinosdx.gateway.filter.custom.JwtGatewayFilterFactory.Config;
+import com.sinosdx.common.tools.common.JwtUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
 import java.util.Map;
 
 

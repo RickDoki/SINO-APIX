@@ -209,6 +209,18 @@
         </where>
     </select>
 
+    <select id="queryAppByStatus" resultType="com.sinosdx.service.management.dao.entity.Application">
+        select app.* from application app
+        <where>
+            app.code = #{appCode} and app.del_flag = 0
+            and app.is_published in
+            <foreach collection="statusList" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+        limit 1
+    </select>
+
     <resultMap id="subscribedAppList" type="java.util.Map"/>
     <resultMap id="subscribedAppCount" type="Integer">
         <result column="total"/>

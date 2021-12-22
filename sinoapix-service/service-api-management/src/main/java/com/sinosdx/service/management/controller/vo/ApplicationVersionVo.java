@@ -23,15 +23,15 @@ public class ApplicationVersionVo implements Serializable {
     private Integer appVersionId;
     private String appVersion;
     private String versionDesc;
-    private String apiVersionIds;
-    private List<ApiVersionVo> apiVersionList;
+    private String apiIds;
+    private List<ApiVo> apiList;
 
-    public ApplicationVersionVo(ApplicationVersion applicationVersion, List<ApiVersionVo> apiVersionList) {
+    public ApplicationVersionVo(ApplicationVersion applicationVersion, List<ApiVo> apiVoList) {
         this.appId = applicationVersion.getAppId();
         this.appCode = applicationVersion.getAppCode();
         this.appVersionId = applicationVersion.getId();
         this.appVersion = applicationVersion.getVersion();
         this.versionDesc = applicationVersion.getDescription();
-        this.apiVersionList = apiVersionList;
+        this.apiList = apiVoList;
     }
 }

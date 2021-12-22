@@ -12,6 +12,7 @@ import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.*;
 import com.sinosdx.service.management.dao.entity.*;
 import com.sinosdx.service.management.dao.mapper.*;
+import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApplicationService;
@@ -62,8 +63,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Resource
     private ApiMapper apiMapper;
 
-    @Resource
-    private ApiVersionMapper apiVersionMapper;
+//    @Resource
+//    private ApiVersionMapper apiVersionMapper;
 
     @Autowired
     private OauthClientDetailsServiceFeign oauthClientDetailsService;
@@ -88,6 +89,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Resource
     private ApplicationPluginMapper applicationPluginMapper;
+
+    @Resource
+    private ApplicationSubscribeMapper applicationSubscribeMapper;
+
+    @Resource
+    private ApplicationPluginClientMapper applicationPluginClientMapper;
 
     @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
@@ -217,8 +224,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         // 查询创建者姓名
-                Map<String, Object> appCreationBy = sysUserService.findUserById((Integer) appDetailMap.get("appCreationBy")).getData();
-//        JSONObject appCreationBy = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appCreationBy"), null).getData();
+        Map<String, Object> appCreationBy = sysUserService.findUserById((Integer) appDetailMap.get("appCreationBy")).getData();
+        //        JSONObject appCreationBy = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appCreationBy"), null).getData();
         if (null != appCreationBy) {
             appDetailMap.put("appCreationUser", appCreationBy.get("username"));
         } else {
@@ -226,13 +233,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         // 查询修改者姓名
-                Map<String, Object> appLastUpdate;
-//        JSONObject appLastUpdate;
+        Map<String, Object> appLastUpdate;
+        //        JSONObject appLastUpdate;
         if (appDetailMap.get("appCreationBy").equals(appDetailMap.get("appLastUpdateBy"))) {
             appLastUpdate = appCreationBy;
         } else {
-                        appLastUpdate = sysUserService.findUserById((Integer) appDetailMap.get("appLastUpdateBy")).getData();
-//            appLastUpdate = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appLastUpdateBy"), null).getData();
+            appLastUpdate = sysUserService.findUserById((Integer) appDetailMap.get("appLastUpdateBy")).getData();
+            //            appLastUpdate = ompService.queryOmpUser(null, (Integer) appDetailMap.get("appLastUpdateBy"), null).getData();
         }
         if (null != appLastUpdate) {
             appDetailMap.put("appLastUpdateUser", appLastUpdate.get("username"));
@@ -398,28 +405,28 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.APP_VERSION_IS_EXIST);
         }
 
-        String[] apiVersionIdList = applicationVersionVo.getApiVersionIds().split(",");
-        List<ApiVersion> apiVersionList = new ArrayList<>();
-        for (String apiVersionIdStr : apiVersionIdList) {
-            Integer apiVersionId = Integer.valueOf(apiVersionIdStr);
-            ApiVersion apiVersion = apiVersionMapper.selectById(apiVersionId);
-            if (null == apiVersion) {
+        String[] apiIdList = applicationVersionVo.getApiIds().split(",");
+        List<Api> apiList = new ArrayList<>();
+        for (String apiIdStr : apiIdList) {
+            Integer apiId = Integer.valueOf(apiIdStr);
+            Api api = apiMapper.selectById(apiId);
+            if (null == api) {
                 return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
             }
-            apiVersionList.add(apiVersion);
+            apiList.add(api);
         }
 
         // 验证路由是否发布过
-        for (ApiVersion apiVersion : apiVersionList) {
-            String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
-            ApplicationApiGateway applicationApiGateway = appApiGatewayMapper.selectOne(new QueryWrapper<ApplicationApiGateway>()
-                    .eq("url_code", urlCode)
-                    .eq("domain", apiVersion.getDomain())
-                    .eq("api_url", apiVersion.getUrl()));
-            if (null != applicationApiGateway) {
-                return R.fail("/" + urlCode + apiVersion.getUrl() + "已被发布到网关，请更换api发布");
-            }
-        }
+//        for (Api api : apiList) {
+//            String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
+//            ApplicationApiGateway applicationApiGateway = appApiGatewayMapper.selectOne(new QueryWrapper<ApplicationApiGateway>()
+//                    .eq("url_code", urlCode)
+//                    .eq("domain", api.getDomain())
+//                    .eq("api_url", api.getUrl()));
+//            if (null != applicationApiGateway) {
+//                return R.fail("/" + urlCode + api.getUrl() + "已被发布到网关，请更换api发布");
+//            }
+//        }
 
         ApplicationVersion applicationVersion = new ApplicationVersion();
         applicationVersion.setVersion(applicationVersionVo.getAppVersion());
@@ -428,39 +435,38 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationVersion.setDescription(applicationVersionVo.getVersionDesc());
         applicationVersionMapper.insert(applicationVersion);
 
-        List<ApiVersionVo> apiVersionVoList = new ArrayList<>();
-        for (ApiVersion apiVersion : apiVersionList) {
+        List<ApiVo> apiVoList = new ArrayList<>();
+        for (Api api : apiList) {
             ApplicationApi applicationApi = new ApplicationApi();
             applicationApi.setAppId(application.getId());
             applicationApi.setAppVersionId(applicationVersion.getId());
             applicationApi.setAppCode(application.getCode());
-            applicationApi.setApiId(apiVersion.getApiId());
-            applicationApi.setApiVersionId(apiVersion.getId());
+            applicationApi.setApiId(api.getId());
             applicationApiMapper.insert(applicationApi);
 
-            apiVersionVoList.add(new ApiVersionVo(apiVersion));
+            apiVoList.add(new ApiVo(api));
         }
 
         // 插入网关数据库
-        updateGatewayConfig(application, apiVersionList);
+//        updateGatewayConfig(application, apiList);
 
-        return R.success(new ApplicationVersionVo(applicationVersion, apiVersionVoList));
+        return R.success(new ApplicationVersionVo(applicationVersion, apiVoList));
     }
 
     /**
      * api发布到网关
      *
-     * @param application
-     * @param apiVersionList
+     * @param applicationId
+     * @param apiList
      */
-    private void updateGatewayConfig(Application application, List<ApiVersion> apiVersionList) {
-        String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
+    private void updateGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode) {
+//        String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
 
         // 先将所有新增的路由入库（应用方）
         Set<String> addGatewayIdSet = new HashSet<>();
         Set<String> updateGatewayIdSet = new HashSet<>();
-        for (ApiVersion apiVersion : apiVersionList) {
-            String uri = "/" + urlCode + apiVersion.getUrl();
+        for (Api api : apiList) {
+            String uri = "/" + appClientCode + api.getUrl();
             while (uri.contains("{")) {
                 String bracket = uri.substring(uri.indexOf("{"), uri.indexOf("}") + 1);
                 uri = uri.replace(bracket, "*");
@@ -468,12 +474,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             // 查询网关当前应用服务地址的路由列表
             List<ApplicationApiGateway> gatewayList = appApiGatewayMapper.selectList(new QueryWrapper<ApplicationApiGateway>()
-                    .eq("url_code", urlCode).eq("domain", apiVersion.getDomain())
-                    .eq("is_internal", apiVersion.getIsInternal()).eq("prefix_path", apiVersion.getPrefixPath()));
+                    .eq("url_code", appClientCode).eq("domain", api.getDomain())
+                    .eq("is_internal", api.getIsInternal()).eq("prefix_path", api.getPrefixPath()));
             String gatewayId = "";
             // 区分是新增的路由还是更新的路由
             if (CollectionUtils.isEmpty(gatewayList)) {
-                gatewayId = urlCode + "_" + UUID.randomUUID().toString().split("-")[0];
+                gatewayId = appClientCode + "_" + UUID.randomUUID().toString().split("-")[0];
                 addGatewayIdSet.add(gatewayId);
             } else {
                 gatewayId = gatewayList.get(0).getGatewayId();
@@ -481,19 +487,19 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
             // 查询网关是否有对应路由
             ApplicationApiGateway appApiGateway = appApiGatewayMapper.selectOne(new QueryWrapper<ApplicationApiGateway>()
-                    .eq("url_code", urlCode).eq("domain", apiVersion.getDomain())
-                    .eq("app_id", application.getId()).eq("api_url", apiVersion.getUrl())
-                    .eq("is_internal", apiVersion.getIsInternal()).eq("prefix_path", apiVersion.getPrefixPath()));
+                    .eq("url_code", appClientCode).eq("domain", api.getDomain())
+                    .eq("app_id",applicationId).eq("api_url", api.getUrl())
+                    .eq("is_internal", api.getIsInternal()).eq("prefix_path", api.getPrefixPath()));
             if (null == appApiGateway) {
                 ApplicationApiGateway gateway = ApplicationApiGateway.builder()
-                        .urlCode(urlCode)
-                        .appId(application.getId())
-                        .apiId(apiVersion.getApiId())
-                        .apiUrl(apiVersion.getUrl())
-                        .prefixPath(apiVersion.getPrefixPath())
-                        .domain(apiVersion.getDomain())
+                        .urlCode(appClientCode)
+                        .appId(applicationId)
+                        .apiId(api.getId())
+                        .apiUrl(api.getUrl())
+                        .prefixPath(api.getPrefixPath())
+                        .domain(api.getDomain())
                         .gatewayId(gatewayId)
-                        .isInternal(apiVersion.getIsInternal())
+                        .isInternal(api.getIsInternal())
                         .build();
                 appApiGatewayMapper.insert(gateway);
             }
@@ -636,6 +642,109 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationLeaseMapper.insert(applicationLease);
 
         return R.success(new ApplicationLeaseVo(applicationLease));
+    }
+
+    /**
+     * 订阅服务
+     *
+     * @param appSubscribedCode
+     * @return
+     */
+    @Override
+    public R<Object> appSubscribe(String appSubscribedCode) {
+        Application subscribedApp = applicationMapper.queryAppByStatus(appSubscribedCode,
+                Arrays.asList(Constants.APP_STATUS_IS_PUBLISHED, Constants.APP_STATUS_ERROR, Constants.APP_STATUS_IS_ADDED));
+        if (null == subscribedApp) {
+            return R.fail(ResultCodeEnum.LESSEE_APP_IS_NOT_EXIST);
+        }
+
+        Long appVersionCount = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
+                .eq("app_code", appSubscribedCode).eq("del_flag", 0));
+        if (appVersionCount == 0) {
+            return R.fail(ResultCodeEnum.NONE_APP_VERSION);
+        }
+
+        SysClient sysClient = (SysClient) sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
+        if (null == sysClient) {
+            return R.fail(ResultCodeEnum.RESOURCE_NOT_EXISTED);
+        }
+
+        Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
+                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
+                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
+                .eq(ApplicationSubscribe::getDelFlag, 0));
+        if (count > 0) {
+            return R.fail(ResultCodeEnum.APP_LEASE_IS_EXIST);
+        }
+
+        ApplicationSubscribe applicationSubscribe = new ApplicationSubscribe();
+        applicationSubscribe.setAppSubscribedId(subscribedApp.getId());
+        applicationSubscribe.setAppSubscribedCode(subscribedApp.getCode());
+        applicationSubscribe.setSubscribeClientId(sysClient.getId());
+        applicationSubscribe.setAppClientCode(UUID.randomUUID().toString().split("-")[0]);
+        applicationSubscribe.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        applicationSubscribe.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        applicationSubscribeMapper.insert(applicationSubscribe);
+
+        // 查询服务插件
+        List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
+                .eq(ApplicationPlugin::getEnabled, 1));
+
+
+//        String clientSecret = MD5Util.getMD5(appLessorCode);
+//
+//        // 插入OAuth2认证客户端信息
+//        String clientId = appLesseeCode + "-" + appLessorCode;
+//        log.info("clientId: " + clientId);
+//        OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(clientId).getData();
+//        if (null == oldClient) {
+//            OauthClientDetails oauthClientDetails = new OauthClientDetails();
+//            oauthClientDetails.setClientId(clientId);
+//            oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
+//            oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
+//            oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
+//            oauthClientDetails.setAccessTokenValidity(Constants.ACCESS_TOKEN_VALIDITY);
+//            oauthClientDetails.setRefreshTokenValidity(Constants.REFRESH_TOKEN_VALIDITY);
+//            Map<String, String> map = new HashMap<>();
+//            map.put("lessorCode", appLessorCode);
+//            map.put("lesseeCode", appLesseeCode);
+//            oauthClientDetails.setAdditionalInformation(JSONObject.toJSONString(map));
+//            log.info(oauthClientDetails.toString());
+//            oauthClientDetailsService.createOauthClientDetail(oauthClientDetails);
+//        }
+//
+//        ApplicationLease applicationLease = new ApplicationLease();
+//        applicationLease.setAppLesseeId(lesseeApp.getId());
+//        applicationLease.setAppLesseeCode(appLesseeCode);
+//        applicationLease.setAppLesseeName(lesseeApp.getName());
+//        applicationLease.setAppLessorId(lessorApp.getId());
+//        applicationLease.setAppLessorCode(appLessorCode);
+//        applicationLease.setAppLessorName(lessorApp.getName());
+//        applicationLease.setClientId(clientId);
+//        applicationLease.setClientSecret(clientSecret);
+//        applicationLease.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+//        applicationLease.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+//        applicationLease.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+//        applicationLeaseMapper.insert(applicationLease);
+
+        return R.success(applicationSubscribe);
+    }
+
+    /**
+     * 订阅时处理各服务插件及绑定关系
+     *
+     * @param appPlugins
+     */
+    private void processPlugin(List<ApplicationPlugin> appPlugins) {
+        for (ApplicationPlugin appPlugin : appPlugins) {
+            // jwt插件
+            if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
+
+            }
+
+        }
     }
 
     /**
