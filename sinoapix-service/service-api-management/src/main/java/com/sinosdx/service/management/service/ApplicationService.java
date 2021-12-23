@@ -85,6 +85,14 @@ public interface ApplicationService {
     R<Object> appLease(String appLesseeCode, String appLessorCode);
 
     /**
+     * 订阅服务
+     *
+     * @param appSubscribedCode
+     * @return
+     */
+    R<Object> appSubscribe(String appSubscribedCode);
+
+    /**
      * 添加应用开发者
      *
      * @param appCode

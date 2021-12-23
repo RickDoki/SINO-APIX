@@ -7,7 +7,7 @@ import lombok.Getter;
  * @date 2021/12/20
  */
 @Getter
-public enum ClientResourceEnum {
+public enum SysClientEnum {
 
     /**
      * 资源类型
@@ -17,7 +17,7 @@ public enum ClientResourceEnum {
     private final String name;
     private final String desc;
 
-    ClientResourceEnum(String name, String desc) {
+    SysClientEnum(String name, String desc) {
         this.name = name;
         this.desc = desc;
     }

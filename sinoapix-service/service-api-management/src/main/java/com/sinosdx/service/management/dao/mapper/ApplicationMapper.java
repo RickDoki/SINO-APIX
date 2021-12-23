@@ -44,6 +44,9 @@ public interface ApplicationMapper extends BaseMapper<Application> {
                                        @Param(value = "statusList") List<String> statusList,
                                        @Param("developerId") Integer developerId);
 
+    Application queryAppByStatus(@Param("appCode") String appCode,
+                                       @Param(value = "statusList") List<String> statusList);
+
     List<Object> querySubscribedAppList(@Param("developerId") Integer developerId,
                                         @Param(value = "appName") String appName,
                                         @Param(value = "appCode") String appCode,

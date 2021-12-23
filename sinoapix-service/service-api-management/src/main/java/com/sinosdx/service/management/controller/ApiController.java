@@ -144,11 +144,11 @@ public class ApiController {
      * @param apiVersion
      * @return
      */
-    @AuditLog(type = "创建新版本", name = "API")
-    @PostMapping("/create/version")
-    public R<Object> addNewApiVersion(@RequestBody ApiVersion apiVersion) {
-        return apiService.addNewApiVersion(apiVersion);
-    }
+//    @AuditLog(type = "创建新版本", name = "API")
+//    @PostMapping("/create/version")
+//    public R<Object> addNewApiVersion(@RequestBody ApiVersion apiVersion) {
+//        return apiService.addNewApiVersion(apiVersion);
+//    }
 
     /**
      * 修改API版本
@@ -157,24 +157,24 @@ public class ApiController {
      * @param apiVersionVo
      * @return
      */
-    @ApiOperation("修改API版本")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", name = "apiName", dataType = "String", required = false, value = "api名称"),
-            @ApiImplicitParam(paramType = "body", name = "description", dataType = "String", required = false, value = "api描述"),
-            @ApiImplicitParam(paramType = "body", name = "url", dataType = "String", required = false, value = "api路径"),
-            @ApiImplicitParam(paramType = "body", name = "requestMethod", dataType = "String", required = false, value = "api请求方法"),
-            @ApiImplicitParam(paramType = "body", name = "version", dataType = "String", required = false, value = "api接口版本号"),
-            @ApiImplicitParam(paramType = "body", name = "isPublished", dataType = "String", required = false, value = "api是否发布")
-    })
-    @ApiResponses({
-            @ApiResponse(code = 0, message = "请求成功"),
-    })
-    @AuditLog(type = "修改新版本", name = "API")
-    @PutMapping("/version/{apiVersionId}")
-    public R<Object> updateApiVersion(@PathVariable("apiVersionId") Integer apiVersionId, @RequestBody ApiVersionVo apiVersionVo) {
-        apiVersionVo.setApiVersionId(apiVersionId);
-        return apiService.modifyApiVersion(apiVersionVo);
-    }
+//    @ApiOperation("修改API版本")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(paramType = "body", name = "apiName", dataType = "String", required = false, value = "api名称"),
+//            @ApiImplicitParam(paramType = "body", name = "description", dataType = "String", required = false, value = "api描述"),
+//            @ApiImplicitParam(paramType = "body", name = "url", dataType = "String", required = false, value = "api路径"),
+//            @ApiImplicitParam(paramType = "body", name = "requestMethod", dataType = "String", required = false, value = "api请求方法"),
+//            @ApiImplicitParam(paramType = "body", name = "version", dataType = "String", required = false, value = "api接口版本号"),
+//            @ApiImplicitParam(paramType = "body", name = "isPublished", dataType = "String", required = false, value = "api是否发布")
+//    })
+//    @ApiResponses({
+//            @ApiResponse(code = 0, message = "请求成功"),
+//    })
+//    @AuditLog(type = "修改新版本", name = "API")
+//    @PutMapping("/version/{apiVersionId}")
+//    public R<Object> updateApiVersion(@PathVariable("apiVersionId") Integer apiVersionId, @RequestBody ApiVersionVo apiVersionVo) {
+//        apiVersionVo.setApiVersionId(apiVersionId);
+//        return apiService.modifyApiVersion(apiVersionVo);
+//    }
 
     /**
      * 查询api模板列表

@@ -1,6 +1,5 @@
 package com.sinosdx.service.management.enums;
 
-import lombok.Data;
 import lombok.Getter;
 
 /**
@@ -8,7 +7,7 @@ import lombok.Getter;
  * @date 2021/12/17
  */
 @Getter
-public enum PluginTypeEnum  {
+public enum PluginTypeEnum {
 
     /**
      * 插件类型

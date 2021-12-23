@@ -1,6 +1,7 @@
 package com.sinosdx.service.user.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.nacos.common.utils.MD5Utils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,11 +13,13 @@ import com.sinosdx.service.user.consumer.AuthenticationServiceFeign;
 import com.sinosdx.service.user.dao.entity.*;
 import com.sinosdx.service.user.dao.mapper.*;
 import com.sinosdx.service.user.enums.ResultCodeEnum;
+import com.sinosdx.service.user.enums.SysClientEnum;
 import com.sinosdx.service.user.service.SysRoleOrgService;
 import com.sinosdx.service.user.service.SysRoleService;
 import com.sinosdx.service.user.service.SysUserRoleService;
 import com.sinosdx.service.user.service.SysUserService;
 import com.sinosdx.service.user.service.dto.SysRegisterDTO;
+import com.sinosdx.service.user.utils.MD5Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -67,6 +70,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Autowired
     private SysRoleService sysRoleService;
+
+    @Resource
+    private SysClientMapper sysClientMapper;
 
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -145,6 +151,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                 .eq(SysRoleEntity::getRoleName, SysConstant.ORG_MANAGER_ROLE_NAME).eq(SysRoleEntity::getParentId, 1L));
         sysUserRole.setRoleId(sysRole.getRoleId());
         sysUserRoleDao.insert(sysUserRole);
+
+        // 创建默认sys_client
+        SysClient sysClient = SysClient.builder()
+                .resourceId(sysUser.getId())
+                .resourceType(SysClientEnum.USER.getName())
+                .code(UUID.randomUUID().toString().split("-")[0])
+                .build();
+        sysClientMapper.insert(sysClient);
 
         return R.successDef(sysUser, "注册成功");
     }

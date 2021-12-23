@@ -53,4 +53,13 @@ public interface SysUserServiceFeign {
      */
     @GetMapping("/user/sys/role/userId/list")
     List<Integer> queryAllUserIdListByRole(@RequestParam Integer userId);
+
+    /**
+     * 根据用户id查询client
+     *
+     * @param sysUserId
+     * @return
+     */
+    @GetMapping("/user/sys/client")
+    R<Object> queryClientByUserId(@RequestParam Integer sysUserId);
 }
