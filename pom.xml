@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.sinosdx.cloud</groupId>
-    <artifactId>sinosdx-parent</artifactId>
+    <artifactId>parent</artifactId>
     <version>1.0.2-SNAPSHOT</version>
   </parent>
 
