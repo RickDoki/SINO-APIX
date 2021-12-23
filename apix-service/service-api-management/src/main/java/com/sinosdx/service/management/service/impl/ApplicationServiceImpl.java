@@ -290,20 +290,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         if (StringUtils.isNotEmpty(applicationVo.getIsPublished())) {
             switch (applicationVo.getIsPublished()) {
-                case Constants.APP_STATUS_IS_PUBLISHED:
-                    // 只有未发布和停用状态可以发布
-                    if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_NOT_PUBLISHED)
-                            || oldApp.getIsPublished().equals(Constants.APP_STATUS_OFF)) {
+                case Constants.APP_STATUS_IS_NOT_PUBLISHED:
+                    if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_PUBLISHED)) {
                         oldApp.setIsPublished(applicationVo.getIsPublished());
-                        msg = "启用成功";
+                        msg = "下架成功";
                     } else {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
                     }
                     break;
-                case Constants.APP_STATUS_IS_ADDED:
-                    // 只有已发布状态可以上架
-                    if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_PUBLISHED)) {
-                        // 上架前必须发布过应用版本
+                case Constants.APP_STATUS_IS_PUBLISHED:
+                    if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_NOT_PUBLISHED)) {
                         Long count = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
                                 .eq("app_code", oldApp.getCode()).eq("del_flag", 0));
                         if (count < 1) {
@@ -315,24 +311,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
                     }
                     break;
-                case Constants.APP_STATUS_ERROR:
-                    // 只有已发布和已上架可以改为异常
-                    if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_PUBLISHED)
-                            || oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_ADDED)) {
-                        oldApp.setIsPublished(applicationVo.getIsPublished());
-                    } else {
-                        return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
-                    }
-                    break;
-                case Constants.APP_STATUS_OFF:
-                    // 未发布不能停用
-                    if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_NOT_PUBLISHED)) {
-                        return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
-                    } else {
-                        oldApp.setIsPublished(applicationVo.getIsPublished());
-                        msg = "停用成功";
-                    }
-                    break;
                 default:
             }
         }
@@ -342,7 +320,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationMapper.updateById(oldApp);
 
         // 如果停用应用，需要注销对应客户端token
-        if (null != applicationVo.getIsPublished() && Constants.APP_STATUS_OFF.equals(applicationVo.getIsPublished())) {
+        if (null != applicationVo.getIsPublished() && Constants.APP_STATUS_IS_NOT_PUBLISHED.equals(applicationVo.getIsPublished())) {
             revokeClientToken(oldApp.getCode());
         }
 
