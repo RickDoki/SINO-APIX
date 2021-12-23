@@ -63,8 +63,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Resource
     private ApiMapper apiMapper;
 
-//    @Resource
-//    private ApiVersionMapper apiVersionMapper;
+    //    @Resource
+    //    private ApiVersionMapper apiVersionMapper;
 
     @Autowired
     private OauthClientDetailsServiceFeign oauthClientDetailsService;
@@ -417,16 +417,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         // 验证路由是否发布过
-//        for (Api api : apiList) {
-//            String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
-//            ApplicationApiGateway applicationApiGateway = appApiGatewayMapper.selectOne(new QueryWrapper<ApplicationApiGateway>()
-//                    .eq("url_code", urlCode)
-//                    .eq("domain", api.getDomain())
-//                    .eq("api_url", api.getUrl()));
-//            if (null != applicationApiGateway) {
-//                return R.fail("/" + urlCode + api.getUrl() + "已被发布到网关，请更换api发布");
-//            }
-//        }
+        //        for (Api api : apiList) {
+        //            String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
+        //            ApplicationApiGateway applicationApiGateway = appApiGatewayMapper.selectOne(new QueryWrapper<ApplicationApiGateway>()
+        //                    .eq("url_code", urlCode)
+        //                    .eq("domain", api.getDomain())
+        //                    .eq("api_url", api.getUrl()));
+        //            if (null != applicationApiGateway) {
+        //                return R.fail("/" + urlCode + api.getUrl() + "已被发布到网关，请更换api发布");
+        //            }
+        //        }
 
         ApplicationVersion applicationVersion = new ApplicationVersion();
         applicationVersion.setVersion(applicationVersionVo.getAppVersion());
@@ -437,18 +437,23 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         List<ApiVo> apiVoList = new ArrayList<>();
         for (Api api : apiList) {
-            ApplicationApi applicationApi = new ApplicationApi();
-            applicationApi.setAppId(application.getId());
-            applicationApi.setAppVersionId(applicationVersion.getId());
-            applicationApi.setAppCode(application.getCode());
-            applicationApi.setApiId(api.getId());
-            applicationApiMapper.insert(applicationApi);
+            ApplicationApi applicationApi = applicationApiMapper.selectOne(new LambdaQueryWrapper<ApplicationApi>()
+                    .eq(ApplicationApi::getAppId, application.getId())
+                    .eq(ApplicationApi::getApiId, api.getId())
+                    .eq(ApplicationApi::getDelFlag, 0));
+            if (null == applicationApi) {
+                applicationApi.setAppId(application.getId());
+                applicationApi.setAppVersionId(applicationVersion.getId());
+                applicationApi.setAppCode(application.getCode());
+                applicationApi.setApiId(api.getId());
+                applicationApiMapper.insert(applicationApi);
+            }
 
             apiVoList.add(new ApiVo(api));
         }
 
         // 插入网关数据库
-//        updateGatewayConfig(application, apiList);
+        //        updateGatewayConfig(application, apiList);
 
         return R.success(new ApplicationVersionVo(applicationVersion, apiVoList));
     }
@@ -460,7 +465,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @param apiList
      */
     private void updateGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode) {
-//        String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
+        //        String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
 
         // 先将所有新增的路由入库（应用方）
         Set<String> addGatewayIdSet = new HashSet<>();
@@ -488,7 +493,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             // 查询网关是否有对应路由
             ApplicationApiGateway appApiGateway = appApiGatewayMapper.selectOne(new QueryWrapper<ApplicationApiGateway>()
                     .eq("url_code", appClientCode).eq("domain", api.getDomain())
-                    .eq("app_id",applicationId).eq("api_url", api.getUrl())
+                    .eq("app_id", applicationId).eq("api_url", api.getUrl())
                     .eq("is_internal", api.getIsInternal()).eq("prefix_path", api.getPrefixPath()));
             if (null == appApiGateway) {
                 ApplicationApiGateway gateway = ApplicationApiGateway.builder()
@@ -692,42 +697,47 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
                 .eq(ApplicationPlugin::getEnabled, 1));
 
+        // 生成订阅用户调用信息
+        processPlugin(plugins, sysClient);
 
-//        String clientSecret = MD5Util.getMD5(appLessorCode);
-//
-//        // 插入OAuth2认证客户端信息
-//        String clientId = appLesseeCode + "-" + appLessorCode;
-//        log.info("clientId: " + clientId);
-//        OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(clientId).getData();
-//        if (null == oldClient) {
-//            OauthClientDetails oauthClientDetails = new OauthClientDetails();
-//            oauthClientDetails.setClientId(clientId);
-//            oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
-//            oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
-//            oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
-//            oauthClientDetails.setAccessTokenValidity(Constants.ACCESS_TOKEN_VALIDITY);
-//            oauthClientDetails.setRefreshTokenValidity(Constants.REFRESH_TOKEN_VALIDITY);
-//            Map<String, String> map = new HashMap<>();
-//            map.put("lessorCode", appLessorCode);
-//            map.put("lesseeCode", appLesseeCode);
-//            oauthClientDetails.setAdditionalInformation(JSONObject.toJSONString(map));
-//            log.info(oauthClientDetails.toString());
-//            oauthClientDetailsService.createOauthClientDetail(oauthClientDetails);
-//        }
-//
-//        ApplicationLease applicationLease = new ApplicationLease();
-//        applicationLease.setAppLesseeId(lesseeApp.getId());
-//        applicationLease.setAppLesseeCode(appLesseeCode);
-//        applicationLease.setAppLesseeName(lesseeApp.getName());
-//        applicationLease.setAppLessorId(lessorApp.getId());
-//        applicationLease.setAppLessorCode(appLessorCode);
-//        applicationLease.setAppLessorName(lessorApp.getName());
-//        applicationLease.setClientId(clientId);
-//        applicationLease.setClientSecret(clientSecret);
-//        applicationLease.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-//        applicationLease.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-//        applicationLease.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-//        applicationLeaseMapper.insert(applicationLease);
+        // 发布到网关
+//        updateGatewayConfig(subscribedApp.getId(), );
+
+        //        String clientSecret = MD5Util.getMD5(appLessorCode);
+        //
+        //        // 插入OAuth2认证客户端信息
+        //        String clientId = appLesseeCode + "-" + appLessorCode;
+        //        log.info("clientId: " + clientId);
+        //        OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(clientId).getData();
+        //        if (null == oldClient) {
+        //            OauthClientDetails oauthClientDetails = new OauthClientDetails();
+        //            oauthClientDetails.setClientId(clientId);
+        //            oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
+        //            oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
+        //            oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
+        //            oauthClientDetails.setAccessTokenValidity(Constants.ACCESS_TOKEN_VALIDITY);
+        //            oauthClientDetails.setRefreshTokenValidity(Constants.REFRESH_TOKEN_VALIDITY);
+        //            Map<String, String> map = new HashMap<>();
+        //            map.put("lessorCode", appLessorCode);
+        //            map.put("lesseeCode", appLesseeCode);
+        //            oauthClientDetails.setAdditionalInformation(JSONObject.toJSONString(map));
+        //            log.info(oauthClientDetails.toString());
+        //            oauthClientDetailsService.createOauthClientDetail(oauthClientDetails);
+        //        }
+        //
+        //        ApplicationLease applicationLease = new ApplicationLease();
+        //        applicationLease.setAppLesseeId(lesseeApp.getId());
+        //        applicationLease.setAppLesseeCode(appLesseeCode);
+        //        applicationLease.setAppLesseeName(lesseeApp.getName());
+        //        applicationLease.setAppLessorId(lessorApp.getId());
+        //        applicationLease.setAppLessorCode(appLessorCode);
+        //        applicationLease.setAppLessorName(lessorApp.getName());
+        //        applicationLease.setClientId(clientId);
+        //        applicationLease.setClientSecret(clientSecret);
+        //        applicationLease.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        //        applicationLease.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        //        applicationLease.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+        //        applicationLeaseMapper.insert(applicationLease);
 
         return R.success(applicationSubscribe);
     }
@@ -737,13 +747,50 @@ public class ApplicationServiceImpl implements ApplicationService {
      *
      * @param appPlugins
      */
-    private void processPlugin(List<ApplicationPlugin> appPlugins) {
+    private void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient) {
         for (ApplicationPlugin appPlugin : appPlugins) {
+            JSONObject paramJson = new JSONObject();
+            ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
             // jwt插件
             if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
+                paramJson.put("secretKey", UUID.randomUUID().toString());
+            }
+            // oauth2插件
+            else if (appPlugin.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
+                String clientId = UUID.randomUUID().toString().split("-")[0];
+                String clientSecret = MD5Util.getMD5(clientId);
+                paramJson.put("clientId", clientId);
+                paramJson.put("clientSecret", clientSecret);
 
+                // 插入OAuth2认证客户端信息
+                OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(clientId).getData();
+                if (null == oldClient) {
+                    OauthClientDetails oauthClientDetails = new OauthClientDetails();
+                    oauthClientDetails.setClientId(clientId);
+                    oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
+                    oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
+                    oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
+                    oauthClientDetails.setAccessTokenValidity(Constants.ACCESS_TOKEN_VALIDITY);
+                    oauthClientDetails.setRefreshTokenValidity(Constants.REFRESH_TOKEN_VALIDITY);
+                    oauthClientDetailsService.createOauthClientDetail(oauthClientDetails);
+                }
+            }
+            // base_auth插件
+            else if (appPlugin.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
+                String username = UUID.randomUUID().toString().split("-")[0];
+                paramJson.put("username", username);
+                paramJson.put("password", MD5Util.getMD5(username));
+            } else {
+                continue;
             }
 
+            appPluginClient.setAppPluginId(appPlugin.getId());
+            appPluginClient.setSysClientId(sysClient.getId());
+            appPluginClient.setPluginType(appPlugin.getPluginType());
+            appPluginClient.setPluginParams(paramJson.toJSONString());
+            appPluginClient.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+            appPluginClient.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+            applicationPluginClientMapper.insert(appPluginClient);
         }
     }
 
@@ -1164,6 +1211,10 @@ public class ApplicationServiceImpl implements ApplicationService {
      */
     @Override
     public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
+        if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
+            return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
+        }
+
         Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
         if (null == application) {
             return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
