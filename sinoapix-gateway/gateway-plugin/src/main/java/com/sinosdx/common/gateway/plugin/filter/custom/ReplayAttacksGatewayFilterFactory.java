@@ -22,9 +22,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +41,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class ReplayAttacksGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
-
+    private static final String TIMESTAMP = "timestamp";
+    private static final String NONCE = "nonce";
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
@@ -52,8 +55,8 @@ public class ReplayAttacksGatewayFilterFactory extends BaseGatewayFilter<Config>
         ServerHttpRequest req = exchange.getRequest();
         HttpHeaders headers = req.getHeaders();
         // timestamp 10位  nonce
-        String timestamp = headers.getFirst("timestamp");
-        String nonce = headers.getFirst("nonce");
+        String timestamp = headers.getFirst(TIMESTAMP);
+        String nonce = headers.getFirst(NONCE);
         long seq =  60000L; // 毫秒  同时为nonce 的过期时间
         String key = "key"; //TODO  取值问题？ 暂时init
         ValueOperations<String, String> stringValueOperations = stringRedisTemplate.opsForValue();
