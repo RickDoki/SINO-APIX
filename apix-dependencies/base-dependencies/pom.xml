@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>apix</artifactId>
+    <groupId>com.sinosdx</groupId>
+    <version>${revision}</version>
+    <relativePath>../..</relativePath>
+  </parent>
+
+  <artifactId>base-dependencies</artifactId>
+  <packaging>pom</packaging>
+  <description>
+    项目基本库，负责引入公共开源lib库版本定义，固化项目中所使用的依赖版本号，使在构建项目中很好对某一个依赖进行升级，解决各个依赖之间的版本不兼容困扰。
+  </description>
+
+  <properties>
+    <javax.mail.version>1.6.2</javax.mail.version>
+    <auth0.jwt.version>3.8.1</auth0.jwt.version>
+    <spring-cloud-starter-oauth2.version>2.2.4.RELEASE</spring-cloud-starter-oauth2.version>
+    <com.auth0.jwt.version>3.8.1</com.auth0.jwt.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>dev.galasa</groupId>
+        <artifactId>com.auth0.jwt</artifactId>
+        <version>${auth0.jwt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.mail</groupId>
+        <artifactId>javax.mail-api</artifactId>
+        <version>${javax.mail.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
+        <version>${javax.mail.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-oauth2</artifactId>
+        <version>${spring-cloud-starter-oauth2.version}</version>
+      </dependency>
+      <!--sinosdx-->
+      <dependency>
+        <groupId>com.sinosdx</groupId>
+        <artifactId>common-base</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sinosdx</groupId>
+        <artifactId>common-gateway</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sinosdx</groupId>
+        <artifactId>client-gateway</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sinosdx</groupId>
+        <artifactId>gateway-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

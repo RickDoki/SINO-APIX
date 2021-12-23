@@ -8,7 +8,7 @@
     <version>1.0.2-SNAPSHOT</version>
   </parent>
   <groupId>com.sinosdx</groupId>
-  <artifactId>sinoapix</artifactId>
+  <artifactId>apix</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
@@ -25,14 +25,14 @@
     </license>
   </licenses>
   <modules>
-    <module>sinoapix-core</module>
-    <module>sinoapix-client</module>
-    <module>sinoapix-common</module>
-    <module>sinoapix-spring-boot-starter</module>
-    <module>sinoapix-service</module>
-    <module>sinoapix-gateway</module>
-    <module>sinoapix-dependencies</module>
-    <module>sinoapix-example</module>
+    <module>apix-core</module>
+    <module>apix-client</module>
+    <module>apix-common</module>
+    <module>apix-spring-boot-starter</module>
+    <module>apix-service</module>
+    <module>apix-gateway</module>
+    <module>apix-dependencies</module>
+    <module>apix-example</module>
   </modules>
   <properties>
     <sinosdx.nexus.version>http://47.103.141.217:8081/repository/maven-public/</sinosdx.nexus.version>
