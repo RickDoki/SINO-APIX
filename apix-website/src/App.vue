@@ -9,7 +9,6 @@ export default {
   name: 'App'
 }
 </script>
-
 <style>
   .main .el-table td,
   .main .el-table th.is-leaf,

@@ -19,7 +19,7 @@
         </div>
         <div class="but-right">
           <el-button size="small" @click="resetSearch">重置</el-button>
-          <el-button type="primary" size="small" style="background-color: #2C66FB;" @click="getuserList()">查询</el-button>
+          <el-button type="primary" size="small" style="background-color: #4461D7;" @click="getuserList()">查询</el-button>
         </div>
       </div>
       <el-table :row-style="{height: '48px'}" :data="tableData" stripe :header-cell-style="{background:'#F0F2F5',color:'#333333'}">
@@ -33,7 +33,7 @@
         <el-table-column prop="mobile" label="手机号"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)" style="color: #2C66FB;">配置</el-button>
+            <el-button type="text" @click="edit(scope.row)" style="color: #4461D7;">配置</el-button>
             <!-- <span style="padding: 0 6px; color: #D8D8D8">|</span>
             <el-button type="text" @click="delCert(scope.row)" style="color: #F6323C;">删除</el-button> -->
           </template>
@@ -89,12 +89,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="是否启用" class="is-required">
-            <el-switch v-model="form.enabled" active-color="#2C66FB"></el-switch>
+            <el-switch v-model="form.enabled" active-color="#4461D7"></el-switch>
           </el-form-item>
         </el-form>
         <div class="demo-drawer__footer">
           <el-button size="small" @click="resetForm('form')">取 消</el-button>
-          <el-button type="primary" size="small" style="background-color: #2C66FB; border-color: #2C66FB;" @click="submitForm('form')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+          <el-button type="primary" size="small" style="background-color: #4461D7; border-color: #4461D7;" @click="submitForm('form')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
         </div>
       </div>
     </el-drawer>

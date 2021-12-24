@@ -129,7 +129,7 @@
             <el-divider></el-divider>
           </div>
           <el-form-item label="主动检查：">
-            <el-switch active-color="#2C66FB" v-model="form.delivery"></el-switch>
+            <el-switch active-color="#4461D7" v-model="form.delivery"></el-switch>
           </el-form-item>
           <el-form-item label="类型：">
             <el-select v-model="form.region" placeholder="请选择健康检查类型" class="selectWidth">
@@ -241,14 +241,14 @@
             <el-divider></el-divider>
           </div>
           <el-form-item label="被动检查：">
-            <el-switch active-color="#2C66FB" v-model="form.delivery"></el-switch>
+            <el-switch active-color="#4461D7" v-model="form.delivery"></el-switch>
           </el-form-item> -->
           <el-form-item class="formBut">
             <!-- <el-button @click="step" :disabled="active == 0">上一步</el-button>
             <el-button @click="next" v-if="active == 0">下一步</el-button>
-            <el-button type="primary" @click="onSubmit" style="background-color: #2C66FB;" v-else>提交</el-button> -->
+            <el-button type="primary" @click="onSubmit" style="background-color: #4461D7;" v-else>提交</el-button> -->
             <el-button @click="goBack">取消</el-button>
-            <el-button type="primary" @click="submitForm('form')" style="background-color: #2C66FB; border-color: #2C66FB;">提交</el-button>
+            <el-button type="primary" @click="submitForm('form')" style="background-color: #4461D7; border-color: #4461D7;">提交</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -413,7 +413,7 @@ export default {
     margin-top: 10px;
   }
   .add_span {
-    color: #2C66FB;
+    color: #4461D7;
   }
   .inputWidth {
     width: 618px;
@@ -450,26 +450,26 @@ export default {
 }
 /* 进行中状态：圈线 */
 .theSteps >>> .el-step__head.is-process {
-  color: #2C66FB;
-  border-color: #2C66FB;
+  color: #4461D7;
+  border-color: #4461D7;
 }
 /* 进行中状态：圈内 */
 .theSteps >>> .el-step__head.is-process > .el-step__icon {
-  background: #2C66FB;
+  background: #4461D7;
   color: #fff;
 }
 /* 进行中状态：title（文字） */
 .theSteps >>> .el-step__title.is-process {
-  color: #2C66FB;
+  color: #4461D7;
 }
 /* 完成状态：圈线 */
 .theSteps >>> .el-step__head.is-success {
-  color: #2C66FB;
-  border-color: #2C66FB;
+  color: #4461D7;
+  border-color: #4461D7;
 }
 /* 完成状态：title（文字） */
 .theSteps >>> .el-step__title.is-success {
-  color: #2C66FB;
+  color: #4461D7;
 }
 /* 完成状态：line
  * 描述：第一步完成，第二步进行时，之间的进度条有颜色

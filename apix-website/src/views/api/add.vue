@@ -1,213 +1,406 @@
 <template>
-  <div class="api_list_main">
-    <div class="main_content">
-      <el-form
-        ref="ruleForm"
-        :model="ruleForm"
-        :rules="rules"
-        label-width="150px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="API名称:" prop="apiName">
-          <el-input
-            v-model="ruleForm.apiName"
-            size="large"
-            maxlength="20"
-            style="width: 380px"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="API路径:" prop="apiUrl">
-          <el-input
-            :disabled="isTempalte"
-            v-model="ruleForm.apiUrl"
-            size="large"
-            style="width: 380px"
-            maxlength="500"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="请求方式:" prop="requestMethod">
-          <el-select
-            v-model="ruleForm.requestMethod"
-            :disabled="isTempalte"
-            size="large"
-            style="width: 380px"
-            placeholder=""
-          >
-            <el-option label="GET" value="GET" />
-            <el-option label="POST" value="POST" />
-            <el-option label="PUT" value="PUT" />
-            <el-option label="DELETE" value="DELETE" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="API版本号:" prop="apiVersion">
-          <el-input
-            v-model="ruleForm.apiVersion"
-            size="large"
-            maxlength="20"
-            style="width: 380px"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="API地址:" prop="domain">
-          <el-input
-            v-model="ruleForm.domain"
-            size="large"
-            maxlength="500"
-            style="width: 380px"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="API前置路径:" prop="prefixPath">
-          <el-input
-            v-model="ruleForm.prefixPath"
-            size="large"
-            maxlength="500"
-            style="width: 380px"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="是否为中台接口:">
-          <el-select
-            v-model="ruleForm.isInternal"
-            size="large"
-            style="width: 380px"
-            placeholder=""
-          >
-            <el-option label="是" value="1" />
-            <el-option label="否" value="0" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="API描述:">
-          <el-input
-            v-model="ruleForm.description"
-            type="textarea"
-            style="width: 380px"
-            :autosize="{ minRows: 8, maxRows: 15 }"
-            maxlength="500"
-            show-word-limit
-          />
-        </el-form-item>
-        <el-form-item label="请求参数:">
-          <!-- <el-tooltip class="item" effect="dark" content="可通过右键" placement="top">
-              <el-button>上边</el-button>
-              <svg-icon style="cursor:pointer;color:red" icon-class="wenhao" />
-            </el-tooltip> -->
-          <div @contextmenu="showMenu">
-            <vxe-table
-              ref="xTable"
-              border
-              show-overflow
-              :data="requestParams"
-              :edit-config="{ trigger: 'click', mode: 'cell' }"
-            >
-              <vxe-table-column type="checkbox" width="60" />
-              <vxe-table-column
-                field="parame"
-                title="参数"
-                :edit-render="{ name: 'input' }"
-              />
-              <vxe-table-column
-                field="type"
-                title="类型"
-                :edit-render="{
-                  name: '$select',
-                  options: [
-                    { value: 'Integer', label: 'Num' },
-                    { value: 'String', label: 'String' },
-                    { value: 'Object', label: 'Object' },
-                    { value: 'Float', label: 'Float' },
-                    { value: 'List', label: 'List' },
-                    { value: 'Long', label: 'Long' },
-                    { value: 'Boolean', label: 'Boolean' },
-                    { value: 'Integer', label: 'Integer' },
-                  ],
-                }"
-              />
-              <vxe-table-column
-                field="isHaveto"
-                title="是否必选"
-                :edit-render="{
-                  name: '$select',
-                  options: [
-                    { value: '是', label: '是' },
-                    { value: '否', label: '否' },
-                  ],
-                }"
-              />
-              <vxe-table-column
-                field="describe"
-                title="描述"
-                :edit-render="{ name: 'input' }"
-              />
-              <vxe-table-column
-                field="default"
-                title="默认值"
-                :edit-render="{ name: 'input' }"
-              />
-            </vxe-table>
-            <div class="table-button">
-              <el-button type="primary" size="mini" @click="savedata">
-                新增
-              </el-button>
-              <el-button type="danger" size="mini" @click="newdata">
-                删除
-              </el-button>
-            </div>
-
-            <!-- <vue-context-menu
-              :contextMenuData="contextMenuData"
-              @savedata="savedata"
-              @newdata="newdata"
-            /> -->
-          </div>
-        </el-form-item>
-        <el-form-item label="请求示例:">
-          <prism-editor
-            class="my-editor height-300"
-            v-model="requestExample"
-            :highlight="highlighter"
-            :line-numbers="lineNumbers"
-          />
-        </el-form-item>
-        <el-form-item label="返回示例:">
-          <prism-editor
-            class="my-editor height-300"
-            v-model="responseExample"
-            :highlight="highlighter"
-            :line-numbers="lineNumbers"
-          />
-        </el-form-item>
-        <!-- <el-form-item label="API参数:">
-          <editor-vue></editor-vue>
-          <mavon-editor
-            ref="editor"
-            v-model="ruleForm.markdown"
-            :toolbars="toolbars"
-            :subfield="false"
-          />
-        </el-form-item> -->
-      </el-form>
-      <div class="main_bottom">
-        <el-button
-          v-if="!isChange"
-          type="primary"
-          @click="submitForm('ruleForm')"
-          >发布</el-button
+  <div class="Api_create">
+    <div class="top">
+      <elx-steps-horizontal
+        v-model="active"
+        :abstracts="panelTitles"
+        @change="stepChange">
+      </elx-steps-horizontal>
+    </div>
+    <div class="middle">
+      <div v-if="active === 0" class="formBox">
+        <el-form
+          ref="form"
+          :model="form"
+          :rules="rules"
+          label-width="130px"
+          label-position="top"
+          size="small"
         >
-        <el-button v-if="isChange" @click="backList"> 返回列表 </el-button>
-        <el-button type="primary" v-if="isChange" @click="sureEdit">
-          确认修改
-        </el-button>
+          <el-form-item label="已有模板" prop="name">
+            <el-select
+              v-model="form.name"
+              placeholder="请选择上游服务"
+              class="inputWidth"
+              @change="upstreamChange"
+              clearable
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="服务地址" prop="serverAddress">
+            <el-input
+              class="inputWidth"
+              v-model="form.serverAddress"
+              placeholder="请输入服务地址"
+              @input="addressFlag = false"
+            ></el-input>
+            <br /><span
+              v-show="addressFlag"
+              style="color: #ff4949; font-size: 12px"
+              >请输入合法的ip地址或服务地址！</span
+            >
+          </el-form-item>
+          <el-form-item label="服务端口" prop="port">
+            <el-input
+              class="inputWidth"
+              v-model.number="form.port"
+              placeholder="请输入服务端口"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="路由前置路径" prop="upstreamPrefixPath">
+            <el-input
+              v-model="form.upstreamPrefixPath"
+              placeholder="请输入路由前置路径"
+              class="inputWidth"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="负载均衡算法" prop="loadBalance">
+            <el-select
+              v-model="form.loadBalance"
+              placeholder="请输入上游服务的名称"
+              class="inputWidth"
+            >
+              <el-option label="轮询" value="roundRobin"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="协议" prop="protocol">
+            <el-select
+              v-model="form.protocol"
+              placeholder="请选择上游服务协议"
+              class="inputWidth"
+            >
+              <el-option label="Http" value="http"></el-option>
+              <el-option label="Https" value="https"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <template slot="label">
+              <span style="position: relative">
+                <span>重试次数</span>
+                <el-tooltip class="item" placement="top">
+                  <div slot="content">
+                    <p>
+                      重试机制将请求发到下一个上游<br />节点。值为 0
+                      表示禁用重试机制，<br />留空表示使用可用后端节点的数量。
+                    </p>
+                  </div>
+                  <i class="el-icon-question table-msg" />
+                </el-tooltip>
+              </span>
+            </template>
+            <el-input v-model="tautologyNum" disabled class="selectWidth" readonly>
+              <template slot="append">次</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <template slot="label">
+              <span style="position: relative">
+                <span>连接超时</span>
+                <el-tooltip class="item" placement="top">
+                  <div slot="content">
+                    <p>
+                      连接超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
+                    </p>
+                  </div>
+                  <i class="el-icon-question table-msg" />
+                </el-tooltip>
+              </span>
+            </template>
+            <el-input v-model="connectNum" disabled class="selectWidth" readonly>
+              <template slot="append">s</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <template slot="label">
+              <span style="position: relative">
+                <span>发送超时</span>
+                <el-tooltip class="item" placement="top">
+                  <div slot="content">
+                    <p>
+                      发送超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
+                    </p>
+                  </div>
+                  <i class="el-icon-question table-msg" />
+                </el-tooltip>
+              </span>
+            </template>
+            <el-input v-model="sendNum" disabled class="selectWidth" readonly>
+              <template slot="append">s</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <template slot="label">
+              <span style="position: relative">
+                <span>接收超时</span>
+                <el-tooltip class="item" placement="top">
+                  <div slot="content">
+                    <p>
+                      接收超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
+                    </p>
+                  </div>
+                  <i class="el-icon-question table-msg" />
+                </el-tooltip>
+              </span>
+            </template>
+            <el-input v-model="receiveNum" disabled class="selectWidth" readonly>
+              <template slot="append">s</template>
+            </el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div class="apiMiddle" v-if="active === 1">
+        <el-form
+          ref="ruleForm"
+          :model="ruleForm"
+          :rules="rulesapi"
+          label-width="150px"
+          class="demo-ruleForm"
+        >
+          <el-form-item label="API名称" prop="apiName">
+            <el-input
+              v-model="ruleForm.apiName"
+              size="large"
+              maxlength="20"
+              style="width: 380px"
+              show-word-limit
+            />
+          </el-form-item>
+          <el-form-item label="API路径" prop="apiUrl">
+            <el-input
+              v-model="ruleForm.apiUrl"
+              size="large"
+              style="width: 380px"
+              maxlength="500"
+              show-word-limit
+            />
+          </el-form-item>
+          <el-form-item label="请求方式" prop="requestMethod">
+            <el-select
+              v-model="ruleForm.requestMethod"
+              size="large"
+              style="width: 380px"
+              placeholder=""
+            >
+              <el-option label="GET" value="GET" />
+              <el-option label="POST" value="POST" />
+              <el-option label="PUT" value="PUT" />
+              <el-option label="DELETE" value="DELETE" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="API版本号" prop="apiVersion">
+            <el-input
+              v-model="ruleForm.apiVersion"
+              size="large"
+              maxlength="20"
+              style="width: 380px"
+              show-word-limit
+            />
+          </el-form-item>
+          <el-form-item label="API前置路径" prop="prefixPath">
+            <el-input
+              v-model="ruleForm.prefixPath"
+              size="large"
+              maxlength="500"
+              style="width: 380px"
+              show-word-limit
+            />
+          </el-form-item>
+          <el-form-item label="是否为中台接口">
+            <el-select
+              v-model="ruleForm.isInternal"
+              size="large"
+              style="width: 380px"
+              placeholder=""
+            >
+              <el-option label="是" value="1" />
+              <el-option label="否" value="0" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="API描述">
+            <el-input
+              v-model="ruleForm.description"
+              type="textarea"
+              style="width: 380px"
+              :autosize="{ minRows: 8, maxRows: 15 }"
+              maxlength="500"
+              show-word-limit
+            />
+          </el-form-item>
+          <el-form-item label="请求参数">
+            <div @contextmenu="showMenu">
+              <vxe-table
+                ref="xTable"
+                border
+                show-overflow
+                :data="requestParams"
+                :edit-config="{ trigger: 'click', mode: 'cell' }"
+              >
+                <vxe-table-column type="checkbox" width="60" />
+                <vxe-table-column
+                  field="parame"
+                  title="参数"
+                  :edit-render="{ name: 'input' }"
+                />
+                <vxe-table-column
+                  field="type"
+                  title="类型"
+                  :edit-render="{
+                    name: '$select',
+                    options: [
+                      { value: 'Integer', label: 'Num' },
+                      { value: 'String', label: 'String' },
+                      { value: 'Object', label: 'Object' },
+                      { value: 'Float', label: 'Float' },
+                      { value: 'List', label: 'List' },
+                      { value: 'Long', label: 'Long' },
+                      { value: 'Boolean', label: 'Boolean' },
+                      { value: 'Integer', label: 'Integer' },
+                    ],
+                  }"
+                />
+                <vxe-table-column
+                  field="isHaveto"
+                  title="是否必选"
+                  :edit-render="{
+                    name: '$select',
+                    options: [
+                      { value: '是', label: '是' },
+                      { value: '否', label: '否' },
+                    ],
+                  }"
+                />
+                <vxe-table-column
+                  field="describe"
+                  title="描述"
+                  :edit-render="{ name: 'input' }"
+                />
+                <vxe-table-column
+                  field="default"
+                  title="默认值"
+                  :edit-render="{ name: 'input' }"
+                />
+              </vxe-table>
+              <div class="table-button">
+                <el-button type="primary" size="mini" @click="savedata">
+                  新增
+                </el-button>
+                <el-button type="danger" size="mini" @click="newdata">
+                  删除
+                </el-button>
+              </div>
+            </div>
+          </el-form-item>
+          <el-form-item label="请求示例">
+            <prism-editor
+              class="my-editor height-300"
+              v-model="requestExample"
+              :highlight="highlighter"
+              :line-numbers="lineNumbers"
+            />
+          </el-form-item>
+           <el-form-item label="返回参数">
+            <div @contextmenu="showMenu">
+              <vxe-table
+                ref="xTableres"
+                border
+                show-overflow
+                :data="responseParams"
+                :edit-config="{ trigger: 'click', mode: 'cell' }"
+              >
+                <vxe-table-column type="checkbox" width="60" />
+                <vxe-table-column
+                  field="parame"
+                  title="参数"
+                  :edit-render="{ name: 'input' }"
+                />
+                <vxe-table-column
+                  field="type"
+                  title="类型"
+                  :edit-render="{
+                    name: '$select',
+                    options: [
+                      { value: 'Integer', label: 'Num' },
+                      { value: 'String', label: 'String' },
+                      { value: 'Object', label: 'Object' },
+                      { value: 'Float', label: 'Float' },
+                      { value: 'List', label: 'List' },
+                      { value: 'Long', label: 'Long' },
+                      { value: 'Boolean', label: 'Boolean' },
+                      { value: 'Integer', label: 'Integer' },
+                    ],
+                  }"
+                />
+                <vxe-table-column
+                  field="isHaveto"
+                  title="是否必选"
+                  :edit-render="{
+                    name: '$select',
+                    options: [
+                      { value: '是', label: '是' },
+                      { value: '否', label: '否' },
+                    ],
+                  }"
+                />
+                <vxe-table-column
+                  field="describe"
+                  title="描述"
+                  :edit-render="{ name: 'input' }"
+                />
+                <vxe-table-column
+                  field="default"
+                  title="默认值"
+                  :edit-render="{ name: 'input' }"
+                />
+              </vxe-table>
+              <div class="table-button">
+                <el-button type="primary" size="mini" @click="savedatares">
+                  新增
+                </el-button>
+                <el-button type="danger" size="mini" @click="newdatares">
+                  删除
+                </el-button>
+              </div>
+            </div>
+          </el-form-item>
+          <el-form-item label="返回示例">
+            <prism-editor
+              class="my-editor height-300"
+              v-model="responseExample"
+              :highlight="highlighter"
+              :line-numbers="lineNumbers"
+            />
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+    <div class="bottom">
+      <div class="bottom_button">
+        <div class="user" v-if="active === 0" @click="goNext('form')">
+          下一步
+        </div>
+        <div v-if="active === 1" class="user" @click="goBACK">上一步</div>
+        <div
+          v-if="active === 0 ? false : true"
+          class="newversion"
+          @click="addSure('ruleForm')"
+        >
+          提交
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-// import editorVue from "@/components/mavonEditor";
-import "mavon-editor/dist/css/index.css";
+import ElxStepsHorizontal from '@/components/ElxStepsHorizontal'
+import { getUpstreamList, deleteUpstream } from "@/api/upstream";
 import { create, NewVersion, apidetail } from "@/api/AboutApi";
 import { PrismEditor } from "vue-prism-editor";
 import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
@@ -217,9 +410,9 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
 export default {
-  name: "Release",
   components: {
     PrismEditor,
+    ElxStepsHorizontal
   },
   data() {
     const checkMobile = (rule, value, callback) => {
@@ -227,15 +420,14 @@ export default {
       const regMobile =
         /(ht|f)tp(s?)|(ws)|(wss)|(lb)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#_]*)?/;
       if (regMobile.test(value)) {
-        return callback();
+        return callback()
       }
       callback(new Error("请输入正确的api地址"));
-    };
+    }
     return {
-      requestExample: "",
-      responseExample: "",
-      isTempalte: false,
-      // 可编辑模式
+      // 默认步骤数
+      active: 0,
+      panelTitles: ['设置上游服务', '设置API信息'], // 根据需要传入，可N步
       lineNumbers: true,
       readonly: true,
       contextMenuData: {
@@ -260,43 +452,71 @@ export default {
           },
         ],
       },
-      templateApiName: "",
-      toolbars: {
-        bold: true, // 粗体
-        italic: true, // 斜体
-        header: true, // 标题
-        underline: true, // 下划线
-        strikethrough: true, // 中划线
-        mark: true, // 标记
-        superscript: true, // 上角标
-        subscript: true, // 下角标
-        quote: true, // 引用
-        ol: true, // 有序列表
-        ul: true, // 无序列表
-        link: true, // 链接
-        imagelink: true, // 图片链接
-        code: true, // code
-        table: true, // 表格
-        fullscreen: true, // 全屏编辑
-        readmodel: true, // 沉浸式阅读
-        htmlcode: true, // 展示html源码
-        help: true, // 帮助
-        /* 1.3.5 */
-        undo: true, // 上一步
-        redo: true, // 下一步
-        trash: true, // 清空
-        save: false, // 保存（触发events中的save事件）
-        /* 1.4.2 */
-        navigation: true, // 导航目录
-        /* 2.1.8 */
-        alignleft: true, // 左对齐
-        aligncenter: true, // 居中
-        alignright: true, // 右对齐
-        /* 2.2.1 */
-        subfield: true, // 单双栏模式
-        preview: true, // 预览
+      tautologyNum: 1,
+      connectNum: 30,
+      sendNum: 15,
+      receiveNum: 15,
+      addressFlag: false,
+      upstreamList: [],
+      options: [],
+      requestParams: [],
+      responseParams:[],
+      requestExample: "",
+      responseExample: "",
+      form: {
+        name: "",
+        description: "",
+        protocol: "",
+        serverAddress: "",
+        port: "",
+        upstreamPrefixPath: "",
+        loadBalance: "roundRobin",
+      },
+      ruleForm: {
+        apiName: "",
+        description: "",
+        apiUrl: "",
+        requestMethod: "",
+        apiVersion: "",
+        markdown: "",
+        domain: "",
+        prefixPath: "",
+        requestParams: "",
+        requestExample: "",
+        responseExample: "",
+        isInternal: "0",
       },
       rules: {
+        // name: [
+        //   { required: true, message: "请输入上游服务名称", trigger: "change" },
+        // ],
+        protocol: [
+          { required: true, message: "请选择上游服务协议", trigger: "change" },
+        ],
+        loadBalance: [
+          { required: true, message: "请选择负载均衡算法", trigger: "change" },
+        ],
+        serverAddress: [
+          { required: true, message: "请输入服务地址", trigger: "change" },
+        ],
+        upstreamPrefixPath: [
+          // { pattern: /^\/(\w+\/?)+$/, message: '请输入合法的路径：以"/"开头，允许字母，数字，下划线' }
+          {
+            pattern: /^\/(?!.*?-$)[a-zA-Z0-9-_/]*$/,
+            message:
+              '请输入合法的路径：以"/"开头，允许字母，数字，下划线，短横线',
+          },
+        ],
+        port: [
+          { required: true, message: "请输入服务端口", trigger: "change" },
+          {
+            pattern:
+              /^([0-9]|[1-9]\d|[1-9]\d{2}|[1-9]\d{3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/,
+            message: "请输入正确的端口号：1到65535",
+          },
+        ],
+      },
+      rulesapi: {
         apiName: [
           { required: true, message: "API名称不能为空", trigger: "change" },
           {
@@ -320,99 +540,62 @@ export default {
         ],
         apiVersion: [
           { required: true, message: "版本号不能为空", trigger: "change" },
-        ],
-        domain: [
-          { required: true, message: "api服务地址不能为空", trigger: "change" },
-          {
-            min: 3,
-            max: 500,
-            message: "长度在 3 到 500 个字符",
-            trigger: "change",
-          },
-          { validator: checkMobile, trigger: "change" },
-        ],
-      },
-      ruleForm: {
-        apiName: "",
-        description: "",
-        apiUrl: "",
-        requestMethod: "",
-        apiVersion: "",
-        markdown: "",
-        domain: "",
-        prefixPath: "",
-        requestParams: "",
-        requestExample: "",
-        responseExample: "",
-        isInternal: "",
-      },
-      isChange: false,
-      apiId: "",
-      requestParams: [
-        // { parame: 'name', type: 'String', isHaveto: '必选', describe: '描述', default: '默认值' }
-      ],
-    };
+        ]
+      }
+    }
   },
   created() {
-    // setTimeout(() => {
-    //   const $xTable = this.$refs.xTable;
-    //   // 异步更新下拉选项
-    //   if ($xTable) {
-    //     const column = $xTable.getColumnByField("isHaveto");
-    //     column.editRender.options = [
-    //       { value: "必选", label: "必选" },
-    //       { value: "非必选", label: "非必选" },
-    //     ];
-    //   }
-    // }, 300);
-    // 获取应用归属
-    if (this.$route.query.message) {
-      this.isChange = true;
-      const message = JSON.parse(this.$route.query.message);
-      this.ruleForm = {
-        apiName: message.apiName,
-        description: "",
-        apiUrl: message.apiUrl,
-        requestMethod: message.requestMethod,
-        apiVersion: "",
-        markdown: "",
-        prefixPath: "",
-        domain: "",
-      };
-      this.apiId = message.apiId;
-    }
-    // console.log(this.$route.query.id)
-    if (this.$route.query.id) {
-      this.getDetail(this.$route.query.id);
-    }
+    this.getList()
   },
   methods: {
-    // 获取模板详情
-    getDetail(id) {
-      apidetail(id).then((res) => {
-        // console.log(res)
-        this.isTempalte = true;
-        this.ruleForm = {
-          apiName: "",
-          description: res.data.description,
-          apiUrl: res.data.url,
-          requestMethod: res.data.requestMethod,
-          apiVersion: "",
-          markdown: "",
-          domain: "",
-          prefixPath: "",
-        };
-        this.templateApiName = res.data.name;
-        console.log(res.data);
-        // console.log(JSON.parse(res.data.requestParams))
-        this.requestExample = JSON.parse(res.data.requestExample);
-        this.requestParams = JSON.parse(res.data.requestParams);
-        this.responseExample = JSON.parse(res.data.responseExample);
-        // console.log(this.responseExample)
-        // console.log(this.requestExample)
-        // console.log(this.requestParams)
-        // console.log(this.responseExample)
+    addSure(formName) {
+      console.log(JSON.stringify(this.$refs.xTable.afterFullData))
+      console.log(JSON.stringify(this.$refs.xTableres.afterFullData))
+
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log(this.form)
+          console.log(this.ruleForm)
+          const params = {
+            apiName: this.ruleForm.apiName,
+            description: this.ruleForm.description,
+            domain: this.form.serverAddress,
+            apiUrl: this.ruleForm.apiUrl,
+            requestMethod: this.ruleForm.requestMethod,
+            requestParams: JSON.stringify(this.$refs.xTable.afterFullData),
+            responseParams: JSON.stringify(this.$refs.xTableres.afterFullData),
+            requestExample: JSON.stringify(this.requestExample),
+            responseExample: JSON.stringify(this.responseExample),
+            apiVersion: this.ruleForm.apiVersion,
+            isInternal: this.ruleForm.isInternal,
+            upstreamPrefixPath: this.form.upstreamPrefixPath,
+            prefixPath: this.ruleForm.prefixPath,
+            protocol: this.form.protocol,
+            loadBalance: this.form.loadBalance,
+            port: this.form.port
+          }
+          create(params).then((res) => {
+            // console.log(res)
+            if (res.code === 200) {
+              this.$message({
+                message: res.msg,
+                type: "success",
+              });
+              this.$router.push("/api/list");
+            } else {
+              this.ruleForm = {};
+              this.$message({
+                message: res.msg,
+                type: "error",
+              });
+            }
+          });
+        }
       });
+    },
+    goBACK() {
+      this.active = 0;
+      this.$refs['ruleForm'].resetFields();
     },
     highlighter(code) {
       return highlight(code, languages.js);
@@ -421,6 +604,19 @@ export default {
     async insertEvent() {
       const row = -1;
       const $table = this.$refs.xTable;
+      const record = {
+        parame: "",
+        type: "",
+        isHaveto: "",
+        describe: "",
+        default: "",
+      };
+      const { row: newRow } = await $table.insertAt(record, row);
+      await $table.setActiveCell(newRow, "parame");
+    },
+    async insertEventres() {
+      const row = -1;
+      const $table = this.$refs.xTableres;
       const record = {
         parame: "",
         type: "",
@@ -444,94 +640,186 @@ export default {
       // 新增一列
       this.insertEvent();
     },
+    savedatares() {
+      // 新增一列
+      this.insertEventres();
+    },
     newdata() {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
-    submitForm(formName) {
-      console.log(this.$refs.xTable.afterFullData);
-      this.ruleForm.requestParams = JSON.stringify(
-        this.$refs.xTable.afterFullData
-      );
-      this.ruleForm.requestExample = JSON.stringify(this.requestExample);
-      this.ruleForm.responseExample = JSON.stringify(this.responseExample);
+    newdatares() {
+      // 删除一列
+      this.$refs.xTableres.removeCheckboxRow();
+    },
+    // 校验ip
+    isValidIP(ip) {
+      var reg =
+        /^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/;
+      return reg.test(ip);
+    },
+    // 校验域名
+    isValidWeb(web) {
+      var reg =
+        /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/;
+      return reg.test(web);
+    },
+    getList() {
+      getUpstreamList("").then((res) => {
+        if (res.code === 200) {
+          const array = res.data.upstreamList;
+          this.upstreamList = res.data.upstreamList;
+          array.forEach((items) => {
+            this.options.push({
+              value: items.name,
+              label: items.name,
+            });
+          });
+        }
+      });
+    },
+    upstreamChange() {
+      console.log("change");
+      console.log(this.form.name);
+      if (this.form.name === "") {
+        console.log("ppp");
+        this.form = {
+          name: "",
+          description: "",
+          protocol: "",
+          serverAddress: "",
+          port: "",
+          upstreamPrefixPath: "",
+          loadBalance: "roundRobin",
+        };
+      } else {
+        for (let index = 0; index < this.upstreamList.length; index++) {
+          if ((this.upstreamList[index].name == this.form.name)) {
+            this.form = {
+              name: this.form.name,
+              description: this.upstreamList[index].description,
+              protocol: this.upstreamList[index].protocol,
+              serverAddress: this.upstreamList[index].server_address,
+              port: this.upstreamList[index].port,
+              upstreamPrefixPath: this.upstreamList[index].prefix_path,
+              loadBalance: "roundRobin",
+            };
+          }
+        }
+      }
+    },
+    goNext(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.isTempalte) {
-            this.ruleForm.apiName =
-              this.ruleForm.apiName + "(" + this.templateApiName + ")";
+          const ipTest = this.isValidIP(this.form.serverAddress);
+          const webTest = this.isValidWeb(this.form.serverAddress);
+          if (!ipTest && !webTest) {
+            this.$message("请输入合法的ip地址或服务地址！");
+            this.addressFlag = true;
+            return;
           }
-          create(this.ruleForm).then((res) => {
-            if (res.code === 200) {
-              this.$message({
-                message: res.msg,
-                type: "success",
-              });
-              this.$router.push("/api/list");
-            } else {
-              this.ruleForm = {};
-              this.$message({
-                message: res.msg,
-                type: "error",
-              });
-            }
-          });
+          this.active = 1;
         } else {
-          return false;
+          return;
         }
       });
     },
-    sureEdit() {
-      const query = {
-        apiId: this.apiId,
-        apiName: this.ruleForm.apiName,
-        description: this.ruleForm.description,
-        markdown: this.ruleForm.markdown,
-        url: this.ruleForm.apiUrl,
-        requestMethod: this.ruleForm.requestMethod,
-        version: this.ruleForm.apiVersion,
-      };
-      NewVersion(query).then((res) => {
-        if (res.code === 200) {
-          this.$message({
-            message: res.msg,
-            type: "success",
-          });
-          this.$router.push("/api/list");
-        } else {
-          this.$message({
-            message: res.msg,
-            type: "error",
-          });
-        }
-      });
-    },
-    // 返回列表
-    backList() {
-      this.$router.push("/api/list");
-    },
-    table_add() {},
-    table_delete() {},
   },
 };
 </script>
 
 <style lang='scss' scoped>
-.api_list_main {
-  width: 95%;
-  margin: 0 auto;
-  margin-top: 20px;
-  border-radius: 5px;
+.Api_create {
+  margin: 24px 40px;
+  margin-bottom: 70px;
   background-color: #fff;
-  overflow: hidden;
-  .main_content {
-    padding: 20px;
+  min-height: calc(100vh - 185px);
+  .top {
+    padding: 0px 75px;
   }
-  .main_bottom {
-    float: left;
-    overflow: hidden;
-    margin-bottom: 20px;
-    margin-left: 150px;
+  .formBox {
+    margin-top: 30px;
+    .contentDiv {
+      display: flex;
+      .item-div {
+        margin-left: 20px;
+      }
+    }
+    .item {
+      position: absolute;
+      right: -10px;
+      top: 3px;
+    }
+    .addDiv {
+      margin-top: 10px;
+    }
+    .add_span {
+      color: #2c66fb;
+    }
+    .inputWidth {
+      width: 618px;
+    }
+    .selectWidth {
+      width: 295px;
+    }
+    .formBut {
+      text-align: right;
+    }
+    .numberWdith {
+      width: 180px;
+    }
+    .numberWdith2 {
+      width: 205px;
+    }
+    .divider {
+      display: flex;
+      line-height: 45px;
+      margin: 20px 0px;
+      .dividerTitle {
+        font-size: 16px;
+        font-weight: 500;
+        margin-right: 20px;
+        width: 90px;
+      }
+    }
+  }
+}
+.bottom {
+  position: fixed;
+  width: calc(100% - 210px);
+  height: 50px;
+  background-color: #fff;
+  bottom: 0px;
+  right: 0px;
+  .bottom_button {
+    float: right;
+    margin-right: 50px;
+    margin-top: 10px;
+    div {
+      display: inline-block;
+      padding: 5px 8px;
+      margin-right: 20px;
+      cursor: pointer;
+    }
+    .newversion {
+      background-color: #2c66fb;
+      color: #fff;
+      border-radius: 3px;
+
+      border: 1px solid #2c66fb;
+    }
+    .user {
+      border: 1px solid #2c66fb;
+      color: #2c66fb;
+      border-radius: 3px;
+
+    }
+    .del {
+      border: 1px solid #f5222d;
+      color: #f5222d;
+      border-radius: 3px;
+
+    }
   }
 }
 ::v-deep .vue-contextmenu-listWrapper {
@@ -568,5 +856,8 @@ export default {
 }
 .table-button {
   margin-top: 10px;
+}
+.apiMiddle {
+  padding: 0px 20px 20px 0px;
 }
 </style>

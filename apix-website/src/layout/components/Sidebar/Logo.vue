@@ -2,7 +2,8 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link key="collapse" class="sidebar-logo-link" to="/">
-        <img src="./../../../assets/img/api_logo.png" class="sidebar-logo">
+        <img src="./../../../assets/img/sdx_logo.png" class="sidebar-logo">
+        <p class="sidebar-title">SINO APIX</p>
       </router-link>
     </transition>
   </div>
@@ -39,32 +40,29 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
-  background: #2C66FB;
+  height: 60px;
+  border-bottom: 1px solid #e9e9e9;
+  line-height: 15px;
+  background: #fff;
   text-align: center;
   overflow: hidden;
 
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
-
     & .sidebar-logo {
-      // width: 194px;
-      // height: 34px;
+      width: 42px;
       vertical-align: middle;
-      // margin-right: 12px;
       text-align: center;
     }
 
     & .sidebar-title {
       display: inline-block;
-      margin: 0;
-      color: #fff;
-      font-weight: 600;
-      line-height: 50px;
-      font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
+      margin-left: 8px;
+      font-size: 22px;
+      font-family: Roboto;
+      font-weight: bold;
+      color: #1D1C35;
       vertical-align: middle;
     }
   }

@@ -47,7 +47,7 @@
         </div>
         <div class="but-right">
           <el-button size="small" @click="resetSearch">重置</el-button>
-          <el-button type="primary" size="small" style="background-color: #2C66FB; border-color: #2C66FB;" @click="getLogList()">查询</el-button>
+          <el-button type="primary" size="small" style="background-color: #4461D7; border-color: #4461D7;" @click="getLogList()">查询</el-button>
         </div>
       </div>
       <el-table :row-style="{height: '48px'}" :data="tableData" stripe :header-cell-style="{background:'#F0F2F5',color:'#333333'}">
@@ -57,7 +57,7 @@
         <el-table-column prop="eventTime" label="创建时间"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="detail(scope.row)" style="color: #2C66FB;">详情</el-button>
+            <el-button type="text" @click="detail(scope.row)" style="color: #4461D7;">详情</el-button>
           </template>
         </el-table-column>
       </el-table>

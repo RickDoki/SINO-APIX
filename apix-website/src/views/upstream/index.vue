@@ -3,7 +3,7 @@
     <el-card class="box-card" shadow="never">
       <div class="card-top">
         <div>
-          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #2C66FB;" @click="gotoDetail">创建</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #4461D7;" @click="gotoDetail">创建</el-button>
           <!-- <el-button size="small" @click="editData">数据编辑器</el-button> -->
         </div>
         <div style="margin-left: 20px;" class="input-box">
@@ -21,9 +21,9 @@
         <el-table-column prop="lastUpdateDate" label="更新时间"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)" style="color: #2C66FB;">配置</el-button>
+            <el-button type="text" @click="edit(scope.row)" style="color: #4461D7;">配置</el-button>
             <span style="padding: 0 6px; color: #D8D8D8">|</span>
-            <el-button type="text" @click="view(scope.row)" style="color: #2C66FB;">查看</el-button>
+            <el-button type="text" @click="view(scope.row)" style="color: #4461D7;">查看</el-button>
             <span style="padding: 0 6px; color: #D8D8D8">|</span>
             <el-button type="text" @click="delCert(scope.row)" style="color: #F6323C;">删除</el-button>
           </template>
@@ -58,7 +58,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-button size="small" type="primary" style="background-color: #2C66FB; margin-left: 10px;">复制</el-button>
+            <el-button size="small" type="primary" style="background-color: #4461D7; margin-left: 10px;">复制</el-button>
             <el-button size="small">文档</el-button>
           </div>
         </div>
@@ -72,7 +72,7 @@
         </div>
         <div class="demo-drawer__footer">
           <el-button @click="resetForm('form')">取 消</el-button>
-          <el-button style="background-color: #2C66FB;" type="primary" @click="$refs.drawer.closeDrawer()" :loading="loading">{{ loading ? '提交中 ...' : '提 交' }}</el-button>
+          <el-button style="background-color: #4461D7;" type="primary" @click="$refs.drawer.closeDrawer()" :loading="loading">{{ loading ? '提交中 ...' : '提 交' }}</el-button>
         </div>
       </div>
     </el-drawer>

@@ -39,6 +39,7 @@
 
     &.has-logo {
       .el-scrollbar {
+        margin-top: 12px;
         height: calc(100% - 50px);
       }
     }
@@ -67,26 +68,46 @@
       height: 100%;
       width: 100% !important;
     }
+    .el-menu-item {
+      height: 40px;
+      line-height: 40px;
+      margin: 4px 0px 4px 0px;
+    }
 
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
+      height: 40px;
+      line-height: 40px;
+      margin: 4px 0px 4px 0px;
       &:hover {
-        background-color: $menuHover !important;
+        // background-color: $menuHover !important;
+        background-color: #F3F5FF !important;
+        border-radius: 0px 50px 50px 0px;
       }
     }
-
+    .el-menu-item.is-active {
+      background-color: #F3F5FF !important;
+      border-radius: 0px 50px 50px 0px;
+    }
     .is-active>.el-submenu__title {
       color: $subMenuActiveText !important;
     }
 
-    & .nest-menu .el-submenu>.el-submenu__title,
-    & .el-submenu .el-menu-item {
-      min-width: $sideBarWidth !important;
-      background-color: $subMenuBg !important;
+      & .nest-menu .el-submenu>.el-submenu__title,
+      & .el-submenu .el-menu-item .is-active {
+      // min-width: $sideBarWidth !important;
+      // background-color: $subMenuBg !important;
+        background-color: #F3F5FF !important;
+        border-radius: 0px 50px 50px 0px;
+      }
 
+      & .nest-menu .el-submenu>.el-submenu__title,
+      & .el-submenu .el-menu-item {
       &:hover {
-        background-color: $subMenuHover !important;
+        // background-color: $subMenuHover !important;
+        background-color: #F3F5FF !important;
+        border-radius: 0px 50px 50px 0px;
       }
     }
   }

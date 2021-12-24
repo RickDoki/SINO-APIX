@@ -160,7 +160,7 @@
             @click="goLogin"
             style="
               font-size: 12px;
-              color: #2c66fb;
+              color: #4461D7;
               margin-left: 5px;
               cursor: pointer;
             "
@@ -435,7 +435,7 @@ export default {
         height: 30px;
         div {
           line-height: 30px;
-          background-color: #2c66fb;
+          background-color: #4461D7;
           color: #fff;
           font-size: 14px;
           border-radius: 2px;
@@ -450,7 +450,7 @@ export default {
           line-height: 30px;
           background-color: #f0f2f5;
           border-radius: 2px;
-          color: #2c66fb;
+          color: #4461D7;
           font-size: 14px;
           cursor: pointer;
         }
@@ -474,7 +474,7 @@ export default {
         height: 30px;
         div {
           line-height: 30px;
-          background-color: #2c66fb;
+          background-color: #4461D7;
           color: #fff;
           font-size: 14px;
           border-radius: 2px;

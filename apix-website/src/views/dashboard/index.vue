@@ -21,24 +21,24 @@
           </div>
           <div class="introduction_steps">
             <div>
-              <span style="color: #2c66fb; font-size: 16px">1.</span>
+              <span style="color: #4461D7; font-size: 16px">1.</span>
               <span>创建API</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #2c66fb; font-size: 16px">2.</span>
+              <span style="color: #4461D7; font-size: 16px">2.</span>
               <div class="steps_line_left"></div>
               <span>发布API</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #2c66fb; font-size: 16px">3.</span>
+              <span style="color: #4461D7; font-size: 16px">3.</span>
               <div class="steps_line_left"></div>
               <span>创建应用</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #2c66fb; font-size: 16px">4.</span>
+              <span style="color: #4461D7; font-size: 16px">4.</span>
               <div class="steps_line_left"></div>
               <span>授权应用</span>
             </div>

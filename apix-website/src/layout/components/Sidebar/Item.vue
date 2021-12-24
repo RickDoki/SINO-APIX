@@ -17,11 +17,12 @@ export default {
     const vnodes = []
 
     if (icon) {
-      if (icon.includes('el-icon')) {
-        vnodes.push(<i class={[icon, 'sub-el-icon']} />)
-      } else {
-        vnodes.push(<svg-icon icon-class={icon}/>)
-      }
+      // if (icon.includes('el-icon')) {
+      //   vnodes.push(<i class={[icon, 'sub-el-icon']} />)
+      // } else {
+      //   vnodes.push(<svg-icon icon-class={icon}/>)
+      // }
+      vnodes.push(<img src={require('./../../../assets/menu/' + icon + '.png')} class='sub-el-icon'></img>)
     }
 
     if (title) {

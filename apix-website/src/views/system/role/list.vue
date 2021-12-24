@@ -3,7 +3,7 @@
     <el-card class="box-card" shadow="never">
       <div class="card-top">
         <div>
-          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #2C66FB; border-color: #2C66FB;" @click="add">创建</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #4461D7; border-color: #4461D7;" @click="add">创建</el-button>
         </div>
         <div style="margin-left: 20px;" class="input-box">
           <el-input placeholder="请输入角色姓名" v-model="roleName" size="small" clearable></el-input>
@@ -23,7 +23,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)" style="color: #2C66FB;">配置</el-button>
+            <el-button type="text" @click="edit(scope.row)" style="color: #4461D7;">配置</el-button>
             <span style="padding: 0 6px; color: #D8D8D8">|</span>
             <el-button type="text" @click="delCert(scope.row)" :class="(scope.row.roleId === 1 || scope.row.roleId === 2)?'del-bro':'del-red'" :disabled="scope.row.roleId === 1 || scope.row.roleId === 2">删除</el-button>
           </template>
@@ -68,7 +68,7 @@
         </el-form>
         <div class="demo-drawer__footer">
           <el-button size="small" @click="handleClose">取 消</el-button>
-          <el-button size="small" type="primary" style="background-color: #2C66FB; border-color: #2C66FB;" @click="submitForm('dataForm')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+          <el-button size="small" type="primary" style="background-color: #4461D7; border-color: #4461D7;" @click="submitForm('dataForm')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
         </div>
       </div>
     </el-drawer>
@@ -266,12 +266,12 @@ export default {
 
 <style lang='scss' scoped>
 /deep/.el-checkbox__input.is-checked .el-checkbox__inner {
-  background-color: #2C66FB;
-  border-color: #2C66FB;
+  background-color: #4461D7;
+  border-color: #4461D7;
 }
 /deep/.el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: #2C66FB;
-  border-color: #2C66FB;
+  background-color: #4461D7;
+  border-color: #4461D7;
 }
 .del-red {
   color: #F6323C;

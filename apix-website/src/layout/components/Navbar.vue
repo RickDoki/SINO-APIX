@@ -1,32 +1,14 @@
 <template>
   <div class="navbar_top">
     <div class="navbar">
-      <div class="navbar_search">
-        <el-input
-          style="opacity: 0.5"
-          placeholder="搜索..."
-          size="mini"
-          v-model="searchContent"
-        >
-          <i
-            slot="prefix"
-            style="color: #476fd3"
-            class="el-input__icon el-icon-search"
-          ></i>
-        </el-input>
-      </div>
-      <div class="navber_notification">
-        <el-badge is-dot>
-          <i class="el-icon-bell"></i>
-        </el-badge>
-      </div>
       <div class="navber_userHandle">
-        <img src="./../../assets/img/nav-bar-user.png" alt="" />
+        <img src="./../../assets/img/img_avatar.png" alt=""/>
         <el-dropdown trigger="click" @command="handleCommand">
-          <span style="color: #fff" class="el-dropdown-link">
-            {{phone}}<i class="el-icon-arrow-down el-icon--right"></i>
+          <span style="color: #1D1C35" class="el-dropdown-link">
+            {{phone}}16621797423<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu slot="dropdown" class="drop-div">
+            <el-dropdown-item command="a">个人信息</el-dropdown-item>
             <el-dropdown-item command="b">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -35,12 +17,10 @@
     <div class="breadcrumb">
       <el-breadcrumb
         v-if="routerList[0].path === '/dashboard' ? false : true"
-        style="height: 34px; line-height: 34px; color: #999999"
+        class="brea-div"
         separator="/"
       >
-        <el-breadcrumb-item :to="{ path: '/dashboard/index' }"
-          >控制台</el-breadcrumb-item
-        >
+        <el-breadcrumb-item :to="{ path: '/dashboard/index' }">控制台</el-breadcrumb-item>
         <template v-for="(item, index) in routerList">
           <el-breadcrumb-item
             :key="index"
@@ -110,12 +90,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.drop-div {
+  top: 32px !important;
+}
+.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled) {
+  &:hover {
+    border: none !important;
+    background-color: #fff !important;
+    color: #4461D7;
+  }
+}
+.brea-div {
+  height: 20px;
+  font-size: 14px;
+  font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+  font-weight: 400;
+  color: #727491;
+  line-height: 20px;
+}
 .widthTrue {
-  // width: calc(100% - 210px);
   margin-right: 210px;
 }
 .widthFalse {
-  // width: calc(100% - 54px);
   margin-right: 54px;
 }
 .navbar_top {
@@ -126,26 +122,25 @@ export default {
   width: calc(100% - 210px);
 }
 .breadcrumb {
-  // width: calc(100% - 210px);
-  padding-left: 30px;
+  padding: 24px 0px 0px 40px;
   background-color: #ffffff;
   .dashboard {
-    height: 44px;
-    line-height: 44px;
+    margin-top: 24px;
+    height: 26px;
+    font-size: 20px;
+    font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
+    font-weight: bold;
+    color: #1D1C35;
+    line-height: 26px;
   }
 }
 .navbar {
   overflow: hidden;
-  height: 50px;
-  // width: calc(100% - 210px);
-  background: #2c66fb;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid #e9e9e9;
   display: flex;
   justify-content: flex-end;
-  .navbar_search {
-    height: 50px;
-    margin-top: 11px;
-  }
   .navber_notification {
     margin-left: 50px;
     cursor: pointer;
@@ -154,16 +149,16 @@ export default {
   }
   .navber_userHandle {
     margin: 0px 50px 150px;
-    line-height: 50px;
+    line-height: 55px;
     img {
-      width: 16px;
-      height: 16px;
+      width: 34px;
+      height: 34px;
       vertical-align: middle;
       margin-right: 3px;
     }
     .el-dropdown-link {
       cursor: pointer;
-      color: #409eff;
+      color: #4461D7;
     }
     .el-icon-arrow-down {
       font-size: 12px;
