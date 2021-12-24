@@ -3,6 +3,7 @@ package com.sinosdx.service.management.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sinosdx.common.base.base.entity.Entity;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
@@ -251,6 +252,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             List<Map<String, Object>> usingAppList = applicationMapper.queryUsingAppList(appCode);
             appDetailMap.put("usingAppList", usingAppList);
         }
+        // 加入插件信息
+        List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
+                .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                        .eq(ApplicationPlugin::getAppCode, appCode)
+                        .eq(ApplicationPlugin::getDelFlag,0)
+                );
+        appDetailMap.put("plugins",applicationPlugins);
+
         return R.success(appDetailMap);
     }
 
@@ -337,19 +346,31 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(rollbackFor = Exception.class)
     public R<Object> deleteApplication(String appCode) {
         // 判断应用是否绑定了其他服务
-        Long count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
-                .eq("app_lessee_code", appCode).or().eq("app_lessor_code", appCode).eq("del_flag", 0));
-        if (count > 0) {
-            return R.fail(ResultCodeEnum.APP_BE_USED_OR_USING_OTHER_APP);
-        }
+//        Long count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
+//                .eq("app_lessee_code", appCode).or().eq("app_lessor_code", appCode).eq("del_flag", 0));
+//        if (count > 0) {
+//            return R.fail(ResultCodeEnum.APP_BE_USED_OR_USING_OTHER_APP);
+//        }
         // 删除应用
         applicationMapper.delete(new QueryWrapper<Application>().eq("code", appCode));
         // 删除应用版本
         applicationVersionMapper.delete(new QueryWrapper<ApplicationVersion>().eq("app_code", appCode));
         // 删除版本api关联
         applicationApiMapper.delete(new QueryWrapper<ApplicationApi>().eq("app_code", appCode));
-        // 删除所有开发者
-        applicationDeveloperMapper.delete(new QueryWrapper<ApplicationDeveloper>().eq("app_code", appCode));
+//        // 删除所有开发者
+//        applicationDeveloperMapper.delete(new QueryWrapper<ApplicationDeveloper>().eq("app_code", appCode));
+
+        // 刪除订阅关系 sms
+        applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode,appCode)
+                .eq(ApplicationSubscribe::getDelFlag,0));
+        // 删除关联的插件
+        LambdaQueryWrapper<ApplicationPlugin> wrapper = new LambdaQueryWrapper<ApplicationPlugin>().eq(ApplicationPlugin::getAppCode, appCode);
+        List<Integer> idList = applicationPluginMapper.selectList(wrapper).stream().map(Entity::getId).collect(Collectors.toList());
+        applicationPluginMapper.deleteBatchIds(idList);
+        // 删除 用户和插件关联表
+        applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId,idList));
+
         // 删除对应客户端认证信息
         oauthClientDetailsService.deleteOAuthClientDetail(appCode);
         revokeClientToken(appCode);
