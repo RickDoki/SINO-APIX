@@ -21,6 +21,7 @@ import com.sinosdx.service.management.utils.MD5Util;
 import com.sinosdx.service.management.utils.ThreadContext;
 import com.sinosdx.starter.redis.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1119,7 +1120,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(userId);
-        List<Object> list = applicationMapper.querySubscribedAppList(userId, appName, appCode, appId, limit, offset, userIdList);
+
+        // 根据userId 获取 对应的 clientIds
+        List<Integer> clientIds = userIdList.stream()
+                .map(a -> ((SysClient) sysUserService.queryClientByUserId(a).getData()).getId())
+                .collect(Collectors.toList());
+
+        List<Object> list = applicationMapper.querySubscribedAppList(userId, appName, appCode, appId, limit, offset, clientIds);
         // 数据集合
         List<Object> appList = (List<Object>) list.get(0);
         // 数据总量
@@ -1177,17 +1184,22 @@ public class ApplicationServiceImpl implements ApplicationService {
         ApplicationNumDTO applicationNumDTO = new ApplicationNumDTO();
         Integer developerId = applicationNumVo.getDeveloperId();
         List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        // 根据userId 获取 对应的 clientIds
+        List<Integer> clientIds = userIdList.stream()
+                .map(userId -> ((SysClient) sysUserService.queryClientByUserId(userId).getData()).getId())
+                .collect(Collectors.toList());
         // 订阅应用数
-        List<Object> list = applicationMapper.querySubscribedAppList(developerId, null, null, null, null, null, userIdList);
+        List<Object> list = applicationMapper.querySubscribedAppList(developerId, null, null, null, null, null, clientIds);
         Integer subscribedCount = ((List<Integer>) list.get(1)).get(0);
         // 注册应用数
         Integer appCount = applicationMapper.queryAppVoList(developerId, null, null, null, null, null, null, null, null, null, userIdList).size();
         // api 数量
-        Long apiCount = apiMapper.selectCount(new LambdaQueryWrapper<Api>().eq(Api::getCreationBy, developerId).eq(Api::getDelFlag, 0));
+        Long apiCount = apiMapper.selectCount(new LambdaQueryWrapper<Api>().eq(Objects.nonNull(developerId),Api::getCreationBy, developerId).eq(Api::getDelFlag, 0));
 
         applicationNumDTO.setApplicationNum(appCount).setApiNum(apiCount).setSubscribedNum(subscribedCount);
         return applicationNumDTO;
     }
+
 
     /**
      * 查询订阅当前应用的应用列表

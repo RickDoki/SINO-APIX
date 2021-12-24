@@ -233,16 +233,17 @@
         app.`code` AS appCode
         FROM
         application app
-        JOIN application_lease al ON al.app_lessor_id = app.id
-        JOIN application_developer ad ON al.app_lessee_id = ad.app_id
+        JOIN application_subscribe appSub ON appSub.app_subscribed_id = app.id
+<!--        JOIN application_lease al ON al.app_lessor_id = app.id-->
+<!--        JOIN application_developer ad ON al.app_lessee_id = ad.app_id-->
         <where>
             app.del_flag = 0
             <if test="userIdList.size() > 0">
-                and ad.user_id in
+                and appSub.subscribe_client_id in
                 <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
                     #{item}
                 </foreach>
-                and ad.del_flag = 0
+                and appSub.del_flag = 0
             </if>
             <if test="appCode != null and appCode != '' ">
                 and app.code like concat('%',#{appCode},'%')
