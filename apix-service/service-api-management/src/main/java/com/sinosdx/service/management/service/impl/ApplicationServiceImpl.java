@@ -453,6 +453,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .eq(ApplicationApi::getApiId, api.getId())
                     .eq(ApplicationApi::getDelFlag, 0));
             if (null == applicationApi) {
+                applicationApi = new ApplicationApi();
                 applicationApi.setAppId(application.getId());
                 applicationApi.setAppVersionId(applicationVersion.getId());
                 applicationApi.setAppCode(application.getCode());
@@ -573,9 +574,40 @@ public class ApplicationServiceImpl implements ApplicationService {
                     "        }"));
         }
 
-        filterList.add(JSONObject.parseObject("{\n" +
-                "   \"name\":\"Authorize\"\n" +
-                "}\n"));
+        // 查询服务插件配置
+        List<ApplicationPluginClient> appPluginClients = applicationPluginClientMapper.queryByAppSubscribe(gatewayList.get(0).getUrlCode());
+
+        // 配置过滤器
+        if (!appPluginClients.isEmpty()) {
+            for (ApplicationPluginClient appPluginClient : appPluginClients) {
+                Map<String, Object> gatewayFilter = new HashMap<>();
+                Map<String, Object> filterArgs = new HashMap<>();
+                JSONObject pluginParams = JSONObject.parseObject(appPluginClient.getPluginParams());
+                // jwt插件
+                if (appPluginClient.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
+                    gatewayFilter.put("name", PluginTypeEnum.JWT.getFilterName());
+                    filterArgs.put("_genkey_0", pluginParams.getString("secretKey"));
+                    gatewayFilter.put("args", filterArgs);
+                }
+                // oauth2插件
+                else if (appPluginClient.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
+                    gatewayFilter.put("name", PluginTypeEnum.OAUTH2.getFilterName());
+                    filterArgs.put("_genkey_0", pluginParams.getString("clientId"));
+                    filterArgs.put("_genkey_1", pluginParams.getString("clientSecret"));
+                    gatewayFilter.put("args", filterArgs);
+                }
+                // base_auth插件
+                else if (appPluginClient.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
+                    gatewayFilter.put("name", PluginTypeEnum.BASE_AUTH.getFilterName());
+                    filterArgs.put("_genkey_0", pluginParams.getString("username"));
+                    filterArgs.put("_genkey_1", pluginParams.getString("password"));
+                    gatewayFilter.put("args", filterArgs);
+                } else {
+                    continue;
+                }
+                filterList.add(gatewayFilter);
+            }
+        }
         gatewayConfig.put("filters", filterList);
 
         return gatewayConfig;
@@ -588,6 +620,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @param appLessorCode
      * @return
      */
+    @Deprecated
     @Override
     @Transactional(rollbackFor = Exception.class)
     public R<Object> appLease(String appLesseeCode, String appLessorCode) {
@@ -694,11 +727,12 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.APP_LEASE_IS_EXIST);
         }
 
+        String appClientCode = UUID.randomUUID().toString().split("-")[0];
         ApplicationSubscribe applicationSubscribe = new ApplicationSubscribe();
         applicationSubscribe.setAppSubscribedId(subscribedApp.getId());
         applicationSubscribe.setAppSubscribedCode(subscribedApp.getCode());
         applicationSubscribe.setSubscribeClientId(sysClient.getId());
-        applicationSubscribe.setAppClientCode(UUID.randomUUID().toString().split("-")[0]);
+        applicationSubscribe.setAppClientCode(appClientCode);
         applicationSubscribe.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         applicationSubscribe.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         applicationSubscribeMapper.insert(applicationSubscribe);
@@ -711,8 +745,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 生成订阅用户调用信息
         processPlugin(plugins, sysClient);
 
+        // 查询服务所有关联api
+        List<Api> apiList = apiMapper.queryApiListByAppCode(subscribedApp.getCode());
+
         // 发布到网关
-//        updateGatewayConfig(subscribedApp.getId(), );
+        updateGatewayConfig(subscribedApp.getId(), apiList, appClientCode);
 
         //        String clientSecret = MD5Util.getMD5(appLessorCode);
         //

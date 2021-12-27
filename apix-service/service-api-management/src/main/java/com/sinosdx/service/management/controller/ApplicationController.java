@@ -197,6 +197,7 @@ public class ApplicationController {
      * @param appLessorCode
      * @return
      */
+    @Deprecated
     @AuditLog(type = "订阅应用", name = "应用")
     @ApiOperation("绑定应用服务（使用资源市场应用服务）")
     @ApiImplicitParams({
@@ -210,6 +211,17 @@ public class ApplicationController {
     public R<Object> appLease(@PathVariable("appLesseeCode") String appLesseeCode,
                               @PathVariable("appLessorCode") String appLessorCode) {
         return applicationService.appLease(appLesseeCode, appLessorCode);
+    }
+
+    /**
+     * 订阅应用服务（使用资源市场应用服务）
+     *
+     * @param appSubscribedCode
+     * @return
+     */
+    @PostMapping("/subscribe/{appSubscribedCode}")
+    public R<Object> appSubscribe(@PathVariable("appSubscribedCode") String appSubscribedCode) {
+        return applicationService.appSubscribe(appSubscribedCode);
     }
 
     /**
