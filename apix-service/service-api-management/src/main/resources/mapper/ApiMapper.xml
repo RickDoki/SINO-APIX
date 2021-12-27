@@ -21,7 +21,7 @@
         <result column="apiCreationUser" property="apiCreationUser" javaType="String"/>
         <result column="apiLastUpdateDate" property="apiLastUpdateDate" javaType="String"/>
         <result column="apiLastUpdateUser" property="apiLastUpdateUser" javaType="String"/>
-        <collection property="apiVersions" column="apiId" ofType="java.util.Map" select="queryApiVersions"/>
+<!--        <collection property="apiVersions" column="apiId" ofType="java.util.Map" select="queryApiVersions"/>-->
     </resultMap>
 
     <select id="queryApiList" resultMap="apiList">
