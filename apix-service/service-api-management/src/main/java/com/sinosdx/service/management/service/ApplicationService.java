@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.service;
 
+import com.sinosdx.service.management.controller.dto.ApplicationInnerNumDTO;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.ApplicationNumVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
@@ -7,7 +8,6 @@ import com.sinosdx.service.management.controller.vo.ApplicationVo;
 import com.sinosdx.service.management.dao.entity.Application;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.result.R;
-import io.swagger.models.auth.In;
 
 import java.util.List;
 import java.util.Map;
@@ -242,6 +242,13 @@ public interface ApplicationService {
      * @return
      */
     ApplicationNumDTO queryApplicationNum(ApplicationNumVo applicationNumVo);
+    /**
+     * 查询应用内部请求数、请求失败数、已订阅数
+     *
+     * @param appCode
+     * @return
+     */
+    ApplicationInnerNumDTO applicationInnerNum(String appCode);
 
     /**
      * 查询订阅当前应用的应用列表

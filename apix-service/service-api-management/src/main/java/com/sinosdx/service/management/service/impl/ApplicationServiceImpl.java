@@ -9,6 +9,7 @@ import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
 import com.sinosdx.service.management.consumer.OmpServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.controller.dto.ApplicationInnerNumDTO;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.*;
 import com.sinosdx.service.management.dao.entity.*;
@@ -1242,6 +1243,21 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         applicationNumDTO.setApplicationNum(appCount).setApiNum(apiCount).setSubscribedNum(subscribedCount);
         return applicationNumDTO;
+    }
+
+    @Override
+    public ApplicationInnerNumDTO applicationInnerNum(String appCode) {
+        ApplicationInnerNumDTO applicationInnerNumDTO = new ApplicationInnerNumDTO();
+        LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ApplicationSubscribe::getAppSubscribedCode,appCode).eq(ApplicationSubscribe::getDelFlag,0);
+        Long aLong = applicationSubscribeMapper.selectCount(wrapper);
+        applicationInnerNumDTO.setSubscribedNum(aLong);
+        // 查询请求失败数量
+        applicationInnerNumDTO.setFailNum(0L);
+        // 查询请求数量
+        applicationInnerNumDTO.setRequestNum(0L);
+
+        return applicationInnerNumDTO;
     }
 
 

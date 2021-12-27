@@ -2,16 +2,14 @@ package com.sinosdx.service.management.controller;
 
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.management.consumer.SupportLogServiceFeign;
+import com.sinosdx.service.management.controller.dto.ApplicationInnerNumDTO;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.ApplicationNumVo;
 import com.sinosdx.service.management.controller.vo.StatisticsVo;
 import com.sinosdx.service.management.service.ApplicationService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -53,5 +51,18 @@ public class ApiHomeController {
     public R<Object> queryApplicationNum(@RequestBody ApplicationNumVo applicationNumVo) {
         ApplicationNumDTO applicationNumDTO = applicationService.queryApplicationNum(applicationNumVo);
         return R.success(applicationNumDTO);
+    }
+
+
+    /**
+     * 查询应用内部请求数、请求失败数、已订阅数
+     *
+     * @param appCode
+     * @return
+     */
+    @PostMapping("/{appCode}/innerNum")
+    public R<Object> applicationInnerNum(@PathVariable String appCode) {
+        ApplicationInnerNumDTO applicationinnerNumDTO = applicationService.applicationInnerNum(appCode);
+        return R.success(applicationinnerNumDTO);
     }
 }
