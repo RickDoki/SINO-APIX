@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sinosdx.service.management.dao.mapper.ApplicationPluginClientMapper">
+
+    <select id="queryByAppSubscribe"
+            resultType="com.sinosdx.service.management.dao.entity.ApplicationPluginClient">
+        select apc.* from application_plugin_client apc
+        join application_plugin ap on ap.id = apc.app_plugin_id
+        join application_subscribe as on as.app_subscribed_id = ap.app_id
+        <where>
+            apc.del_flag = 0 and ap.del_flag = 0 and as.del_flag = 0 and as.appClientCode = #{subscribeCode}
+        </where>
+    </select>
+</mapper>

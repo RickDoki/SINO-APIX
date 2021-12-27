@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
  * @author wendy
  * @date 2020/12/7
  */
+@Deprecated
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("application_lease")
