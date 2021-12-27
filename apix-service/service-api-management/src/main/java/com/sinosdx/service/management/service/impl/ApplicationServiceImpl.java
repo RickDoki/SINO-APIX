@@ -249,16 +249,27 @@ public class ApplicationServiceImpl implements ApplicationService {
             appDetailMap.put("appLastUpdateUser", "-");
         }
 
-        if (null != developerId) {
-            List<Map<String, Object>> usingAppList = applicationMapper.queryUsingAppList(appCode);
-            appDetailMap.put("usingAppList", usingAppList);
+//        if (null != developerId) {
+//            List<Map<String, Object>> usingAppList = applicationMapper.queryUsingAppList(appCode);
+//            appDetailMap.put("usingAppList", usingAppList);
+//        }
+        Integer clientId = null;
+        if(null != developerId){
+            clientId = ((SysClient) sysUserService.queryClientByUserId(developerId).getData()).getId();
+            LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Objects.nonNull(clientId),ApplicationSubscribe::getSubscribeClientId,clientId)
+                    .eq(Objects.nonNull(appCode),ApplicationSubscribe::getAppSubscribedCode,appCode)
+                    .eq(ApplicationSubscribe::getDelFlag,0);
+            List<ApplicationSubscribe> applicationSubscribes = applicationSubscribeMapper.selectList(wrapper);
+            appDetailMap.put("usingAppList", applicationSubscribes);
         }
+
+
         // 加入插件信息
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
                 .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                         .eq(ApplicationPlugin::getAppCode, appCode)
-                        .eq(ApplicationPlugin::getDelFlag,0)
-                );
+                        .eq(ApplicationPlugin::getDelFlag,0));
         appDetailMap.put("plugins",applicationPlugins);
 
         return R.success(appDetailMap);
@@ -1122,9 +1133,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(userId);
 
         // 根据userId 获取 对应的 clientIds
-        List<Integer> clientIds = userIdList.stream()
-                .map(a -> ((SysClient) sysUserService.queryClientByUserId(a).getData()).getId())
-                .collect(Collectors.toList());
+        List<Integer> clientIds = this.changeUserIdsToClientIds(userIdList);
 
         List<Object> list = applicationMapper.querySubscribedAppList(userId, appName, appCode, appId, limit, offset, clientIds);
         // 数据集合
@@ -1185,9 +1194,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Integer developerId = applicationNumVo.getDeveloperId();
         List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         // 根据userId 获取 对应的 clientIds
-        List<Integer> clientIds = userIdList.stream()
-                .map(userId -> ((SysClient) sysUserService.queryClientByUserId(userId).getData()).getId())
-                .collect(Collectors.toList());
+        List<Integer> clientIds = this.changeUserIdsToClientIds(userIdList);
         // 订阅应用数
         List<Object> list = applicationMapper.querySubscribedAppList(developerId, null, null, null, null, null, clientIds);
         Integer subscribedCount = ((List<Integer>) list.get(1)).get(0);
@@ -1255,5 +1262,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationPluginMapper.updateById(applicationPlugin);
 
         return R.success();
+    }
+
+    @Override
+    public List<Integer> changeUserIdsToClientIds(List<Integer> userIds) {
+        // 根据userId 获取 对应的 clientIds
+        List<Integer> clientIds = userIds.stream()
+                .map(a -> ((SysClient) sysUserService.queryClientByUserId(a).getData()).getId())
+                .collect(Collectors.toList());
+        return clientIds;
     }
 }

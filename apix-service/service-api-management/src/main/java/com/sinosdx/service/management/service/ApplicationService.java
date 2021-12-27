@@ -7,6 +7,7 @@ import com.sinosdx.service.management.controller.vo.ApplicationVo;
 import com.sinosdx.service.management.dao.entity.Application;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.result.R;
+import io.swagger.models.auth.In;
 
 import java.util.List;
 import java.util.Map;
@@ -266,4 +267,12 @@ public interface ApplicationService {
      * @return
      */
     R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin);
+
+    /**
+     * UserIds 转换为  ClientIds
+     * @param userIds
+     * @return
+     */
+    List<Integer> changeUserIdsToClientIds(List<Integer> userIds);
+
 }

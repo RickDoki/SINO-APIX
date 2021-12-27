@@ -17,7 +17,7 @@
         <result column="appCreationUser" property="appCreationUser" javaType="String"/>
         <result column="appLastUpdateDate" property="appLastUpdateDate" javaType="String"/>
         <result column="appLastUpdateUser" property="appLastUpdateUser" javaType="String"/>
-        <collection property="appVersions" column="appCode" ofType="java.util.Map" select="queryAppVersionDetails"/>
+        <collection property="app" column="appCode" ofType="java.util.Map" select="queryAppVersionDetails"/>
     </resultMap>
     
     <resultMap id="appVersion" type="java.util.Map">
@@ -57,15 +57,15 @@
             date_format(a.last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate,
             a.last_updated_by_username AS lastUpdatedByUsername
         from application a
-        INNER JOIN application_developer ad on a.id = ad.app_id
+<!--        INNER JOIN application_developer ad on a.id = ad.app_id-->
         <where>
             a.del_flag = 0
             <if test="userIdList.size() > 0">
-                and ad.user_id in
+                and a.creation_by in
                 <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
                     #{item}
                 </foreach>
-                and ad.del_flag = 0
+<!--                and ad.del_flag = 0-->
             </if>
 <!--            <if test="developerId != null">-->
 <!--                and ad.user_id = #{developerId} and ad.del_flag = 0-->
@@ -119,21 +119,54 @@
         </where>
     </select>
 
-    <select id="queryAppVersionDetails" resultMap="appVersion">
+<!--    <select id="queryAppVersionDetails" resultMap="appVersion">-->
+<!--        SELECT-->
+<!--        av.version AS appVersion,-->
+<!--        av.description AS appVersionDesc,-->
+<!--        apiv.id AS apiVersionId,-->
+<!--        apiv.api_id AS apiId,-->
+<!--        apiv.api_name AS apiName,-->
+<!--        apiv.description AS apiDescription,-->
+<!--        apiv.markdown AS apiMarkdown,-->
+<!--        apiv.version AS apiVersion,-->
+<!--        apiv.url AS url,-->
+<!--        apiv.request_method AS requestMethod,-->
+<!--        apiv.request_params AS requestParams,-->
+<!--        apiv.request_example AS requestExample,-->
+<!--        apiv.response_example AS responseExample,-->
+<!--        date_format(apiv.creation_date, '%Y-%m-%d %H:%i:%S') AS apiCreationDate,-->
+<!--        apiv.creation_by_username AS apiCreationUser,-->
+<!--        date_format(apiv.last_update_date, '%Y-%m-%d %H:%i:%S') AS apiLastUpdateDate,-->
+<!--        apiv.last_updated_by_username AS apiLastUpdateUser-->
+<!--        FROM-->
+<!--        application_version av-->
+<!--        LEFT JOIN application_api ON application_api.app_version_id = av.id-->
+<!--        LEFT JOIN api_version apiv ON application_api.api_version_id = apiv.id-->
+<!--        <where>-->
+<!--            av.app_code = #{appCode} and av.del_flag = 0 and application_api.del_flag = 0 and apiv.del_flag = 0-->
+<!--        </where>-->
+<!--        order by av.id desc-->
+<!--    </select>-->
+
+    <select id="queryAppVersionDetails" resultType="java.util.Map">
         SELECT
         av.version AS appVersion,
         av.description AS appVersionDesc,
-        apiv.id AS apiVersionId,
+<!--        apiv.id AS apiVersionId,-->
         apiv.api_id AS apiId,
-        apiv.api_name AS apiName,
+        apiv.name AS apiName,
         apiv.description AS apiDescription,
         apiv.markdown AS apiMarkdown,
         apiv.version AS apiVersion,
         apiv.url AS url,
         apiv.request_method AS requestMethod,
+        apiv.is_published AS isPublished,
         apiv.request_params AS requestParams,
         apiv.request_example AS requestExample,
         apiv.response_example AS responseExample,
+        apiv.response_params AS responseParams,
+        apiv.prefix_path AS prefixPath,
+        apiv.is_internal AS isInternal,
         date_format(apiv.creation_date, '%Y-%m-%d %H:%i:%S') AS apiCreationDate,
         apiv.creation_by_username AS apiCreationUser,
         date_format(apiv.last_update_date, '%Y-%m-%d %H:%i:%S') AS apiLastUpdateDate,
@@ -141,7 +174,7 @@
         FROM
         application_version av
         LEFT JOIN application_api ON application_api.app_version_id = av.id
-        LEFT JOIN api_version apiv ON application_api.api_version_id = apiv.id
+        LEFT JOIN api apiv ON application_api.api_id = apiv.id
         <where>
             av.app_code = #{appCode} and av.del_flag = 0 and application_api.del_flag = 0 and apiv.del_flag = 0
         </where>
