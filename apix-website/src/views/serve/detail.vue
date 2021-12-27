@@ -320,7 +320,7 @@ export default {
     mavonEditor,
     PrismEditor,
   },
-  data() {
+  data () {
     return {
       content: "",
       readonly: true,
@@ -443,7 +443,7 @@ export default {
       },
     };
   },
-  created() {
+  created () {
     const developerId = getToken("userId");
     this.developerId = developerId;
     this.appCode = this.$route.query.appCode;
@@ -451,11 +451,11 @@ export default {
     this.getAPIlist(1);
   },
   methods: {
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
     // 新增行
-    async insertEvent() {
+    async insertEvent () {
       const row = -1;
       const $table = this.$refs.xTable;
       const record = {
@@ -468,7 +468,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    showMenu() {
+    showMenu () {
       event.preventDefault();
       var x = event.clientX;
       var y = event.clientY;
@@ -477,16 +477,16 @@ export default {
         y,
       };
     },
-    savedata() {
+    savedata () {
       // 新增一列
       this.insertEvent();
     },
-    newdata() {
+    newdata () {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
     // 获取详情
-    getMessageList(e, i) {
+    getMessageList (e, i) {
       detail(e, i).then((res) => {
         this.appList = res.data;
         this.appMessage.push({
@@ -508,7 +508,7 @@ export default {
         this.content = res.data.appMarkdown;
       });
     },
-    getAPIlist(page) {
+    getAPIlist (page) {
       // 获取api版本列表
       const query = "developerId=" + this.developerId;
       apiList(query).then((res) => {
@@ -520,15 +520,15 @@ export default {
       });
     },
     // 返回列表
-    backList() {
+    backList () {
       this.$router.push("/app/list");
     },
     // 点击编辑
-    handleEdit(e) {
+    handleEdit (e) {
       this.editDialogVisible = true;
     },
     // 查看api详细信息
-    handleEditapi(index, e) {
+    handleEditapi (index, e) {
       console.log(e);
       Apidetail(e.apiId).then((res) => {
         // console.log(res);
@@ -539,7 +539,7 @@ export default {
       this.paramsDialogVisible = true;
     },
     // 编辑确认
-    editSure(formName) {
+    editSure (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           published(this.appCode, this.ruleForm).then((res) => {
@@ -557,11 +557,11 @@ export default {
       });
     },
     // 发布新版本
-    pushNewVersion() {
+    pushNewVersion () {
       this.appVDialogVisible = true;
     },
     // 选择api版本
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       console.log(val);
       const apiIds = [];
       val.forEach((item) => {
@@ -570,12 +570,12 @@ export default {
       this.appVForm.apiVersionIds = apiIds.toString();
     },
     // 分页
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val;
       this.getAPIlist(val);
     },
     // 确认发布新版本
-    newVSure(appVForm) {
+    newVSure (appVForm) {
       const newlist = [];
       for (let index = 0; index < this.radio.length; index++) {
         if (this.radio[index] !== "") {
@@ -608,11 +608,11 @@ export default {
       });
     },
     // 文档编辑
-    MKedit() {
+    MKedit () {
       this.MKDialogVisible = true;
     },
     // MK文档确认
-    MKSure() {
+    MKSure () {
       console.log(this.content);
       const query = {
         markdown: this.content,
@@ -628,19 +628,19 @@ export default {
       });
     },
     // 成员管理
-    UserManage() {
+    UserManage () {
       this.USERDialogVisible = true;
       this.getUserList();
     },
     // 查询现有成员
-    getUserList() {
+    getUserList () {
       userList(this.appCode).then((res) => {
         // console.log(res)
         this.usertable = res.data;
       });
     },
     // 添加成员
-    userAddSure(USERForm) {
+    userAddSure (USERForm) {
       this.$refs[USERForm].validate((valid) => {
         if (valid) {
           addUser(this.appCode, this.USERForm).then((res) => {
@@ -662,7 +662,7 @@ export default {
       });
     },
     // 移除成员
-    deletdUser(e) {
+    deletdUser (e) {
       // console.log(e)
       userDeleted(this.appCode, e.developerId).then((res) => {
         if (res.code === 200) {
@@ -674,7 +674,7 @@ export default {
       });
     },
     // 删除应用
-    appDeleted() {
+    appDeleted () {
       this.$confirm("确认是否删除?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -698,22 +698,22 @@ export default {
         });
     },
     // 关闭弹窗
-    handleClose(done) {
+    handleClose (done) {
       this.$confirm("确认关闭？")
         .then((_) => {
           done();
         })
-        .catch((_) => {});
+        .catch((_) => { });
     },
     // 成功消息
-    messageOK(msg) {
+    messageOK (msg) {
       this.$message({
         message: msg,
         type: "success",
       });
     },
     // 失败消息
-    messageERROR(msg) {
+    messageERROR (msg) {
       this.$message({
         message: msg,
         type: "error",
@@ -769,8 +769,8 @@ export default {
   }
 }
 .my-editor {
-  background: #2d2d2d;
-  color: #ccc;
+  background: #f5f7fa;
+  color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;

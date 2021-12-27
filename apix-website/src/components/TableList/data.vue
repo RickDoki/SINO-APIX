@@ -94,7 +94,7 @@ import jsonView from "@/components/json-view/index.vue";
 export default {
   // props: ['tableList', 'total'],
   filters: {
-    TimeRanges(value) {
+    TimeRanges (value) {
       let date = new Date(value); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
       let Y = date.getFullYear() + "-";
       let M =
@@ -127,7 +127,7 @@ export default {
       default: true,
     },
   },
-  data() {
+  data () {
     return {
       currentPage: 1,
       MKDialogVisible: false,
@@ -138,14 +138,14 @@ export default {
     };
   },
   methods: {
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val;
       this.$emit("pageChange", val);
     },
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
-    handleEdit(index, row) {
+    handleEdit (index, row) {
       //   this.$router.push({ path: "/app/add?message=" + JSON.stringify(row) });
       console.log(row);
       this.MKDialogVisible = true;
@@ -153,7 +153,7 @@ export default {
       this.requestExample = row;
       // this.requestExample = {}
     },
-    handleDelete(index, row) {
+    handleDelete (index, row) {
       //   const id = row.appId;
       //   appDelete(id).then((res) => {
       //     if (res.code === 200) {
@@ -177,8 +177,8 @@ export default {
   }
 }
 .my-editor {
-  background: #2d2d2d;
-  color: #ccc;
+  background: #f5f7fa;
+  color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;

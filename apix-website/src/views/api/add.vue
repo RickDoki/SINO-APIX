@@ -4,9 +4,9 @@
       <elx-steps-horizontal
         v-model="active"
         :abstracts="panelTitles"
-        @change="stepChange">
-      </elx-steps-horizontal>
+      />
     </div>
+        <!-- @change="stepChange" -->
     <div class="middle">
       <div v-if="active === 0" class="formBox">
         <el-form
@@ -22,52 +22,50 @@
               v-model="form.name"
               placeholder="请选择上游服务"
               class="inputWidth"
-              @change="upstreamChange"
               clearable
+              @change="upstreamChange"
             >
               <el-option
                 v-for="item in options"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-              >
-              </el-option>
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="服务地址" prop="serverAddress">
             <el-input
-              class="inputWidth"
               v-model="form.serverAddress"
+              class="inputWidth"
               placeholder="请输入服务地址"
               @input="addressFlag = false"
-            ></el-input>
-            <br /><span
+            />
+            <br><span
               v-show="addressFlag"
               style="color: #ff4949; font-size: 12px"
-              >请输入合法的ip地址或服务地址！</span
-            >
+            >请输入合法的ip地址或服务地址！</span>
           </el-form-item>
           <el-form-item label="服务端口" prop="port">
             <el-input
-              class="inputWidth"
               v-model.number="form.port"
+              class="inputWidth"
               placeholder="请输入服务端口"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="路由前置路径" prop="upstreamPrefixPath">
             <el-input
               v-model="form.upstreamPrefixPath"
               placeholder="请输入路由前置路径"
               class="inputWidth"
-            ></el-input>
+            />
           </el-form-item>
-          <el-form-item label="负载均衡算法" prop="loadBalance">
+          <el-form-item label="负载均衡算法" prop="loadBalance" v-show="false">
             <el-select
               v-model="form.loadBalance"
               placeholder="请输入上游服务的名称"
               class="inputWidth"
             >
-              <el-option label="轮询" value="roundRobin"></el-option>
+              <el-option label="轮询" value="roundRobin" />
             </el-select>
           </el-form-item>
           <el-form-item label="协议" prop="protocol">
@@ -76,107 +74,109 @@
               placeholder="请选择上游服务协议"
               class="inputWidth"
             >
-              <el-option label="Http" value="http"></el-option>
-              <el-option label="Https" value="https"></el-option>
+              <el-option label="Http" value="http" />
+              <el-option label="Https" value="https" />
             </el-select>
+            <span @click="changeShow" class="show-but">展示剩余四项配置 <i class="el-icon-arrow-down" v-if="!showTimeFlag"></i><i class="el-icon-arrow-up" v-else></i></span>
           </el-form-item>
-          <el-form-item>
-            <template slot="label">
-              <span style="position: relative">
-                <span>重试次数</span>
-                <el-tooltip class="item" placement="top">
-                  <div slot="content">
-                    <p>
-                      重试机制将请求发到下一个上游<br />节点。值为 0
-                      表示禁用重试机制，<br />留空表示使用可用后端节点的数量。
-                    </p>
-                  </div>
-                  <i class="el-icon-question table-msg" />
-                </el-tooltip>
-              </span>
-            </template>
-            <el-input v-model="tautologyNum" disabled class="selectWidth" readonly>
-              <template slot="append">次</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item>
-            <template slot="label">
-              <span style="position: relative">
-                <span>连接超时</span>
-                <el-tooltip class="item" placement="top">
-                  <div slot="content">
-                    <p>
-                      连接超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
-                    </p>
-                  </div>
-                  <i class="el-icon-question table-msg" />
-                </el-tooltip>
-              </span>
-            </template>
-            <el-input v-model="connectNum" disabled class="selectWidth" readonly>
-              <template slot="append">s</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item>
-            <template slot="label">
-              <span style="position: relative">
-                <span>发送超时</span>
-                <el-tooltip class="item" placement="top">
-                  <div slot="content">
-                    <p>
-                      发送超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
-                    </p>
-                  </div>
-                  <i class="el-icon-question table-msg" />
-                </el-tooltip>
-              </span>
-            </template>
-            <el-input v-model="sendNum" disabled class="selectWidth" readonly>
-              <template slot="append">s</template>
-            </el-input>
-          </el-form-item>
-          <el-form-item>
-            <template slot="label">
-              <span style="position: relative">
-                <span>接收超时</span>
-                <el-tooltip class="item" placement="top">
-                  <div slot="content">
-                    <p>
-                      接收超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
-                    </p>
-                  </div>
-                  <i class="el-icon-question table-msg" />
-                </el-tooltip>
-              </span>
-            </template>
-            <el-input v-model="receiveNum" disabled class="selectWidth" readonly>
-              <template slot="append">s</template>
-            </el-input>
-          </el-form-item>
+          <div v-show="showTimeFlag">
+            <el-form-item>
+              <template slot="label">
+                <span style="position: relative">
+                  <span>重试次数</span>
+                  <el-tooltip class="item" placement="top">
+                    <div slot="content">
+                      <p>
+                        重试机制将请求发到下一个上游<br>节点。值为 0
+                        表示禁用重试机制，<br>留空表示使用可用后端节点的数量。
+                      </p>
+                    </div>
+                    <i class="el-icon-question table-msg" />
+                  </el-tooltip>
+                </span>
+              </template>
+              <el-input v-model="tautologyNum" class="inputWidth" readonly>
+                <template slot="append">次</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <template slot="label">
+                <span style="position: relative">
+                  <span>连接超时</span>
+                  <el-tooltip class="item" placement="top">
+                    <div slot="content">
+                      <p>
+                        连接超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
+                      </p>
+                    </div>
+                    <i class="el-icon-question table-msg" />
+                  </el-tooltip>
+                </span>
+              </template>
+              <el-input v-model="connectNum" class="inputWidth" readonly>
+                <template slot="append">s</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <template slot="label">
+                <span style="position: relative">
+                  <span>发送超时</span>
+                  <el-tooltip class="item" placement="top">
+                    <div slot="content">
+                      <p>
+                        发送超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
+                      </p>
+                    </div>
+                    <i class="el-icon-question table-msg" />
+                  </el-tooltip>
+                </span>
+              </template>
+              <el-input v-model="sendNum" class="inputWidth" readonly>
+                <template slot="append">s</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <template slot="label">
+                <span style="position: relative">
+                  <span>接收超时</span>
+                  <el-tooltip class="item" placement="top">
+                    <div slot="content">
+                      <p>
+                        接收超时时间为系统预设，暂不支持修改。如有需要请联系管理员！
+                      </p>
+                    </div>
+                    <i class="el-icon-question table-msg" />
+                  </el-tooltip>
+                </span>
+              </template>
+              <el-input v-model="receiveNum" class="inputWidth" readonly>
+                <template slot="append">s</template>
+              </el-input>
+            </el-form-item>
+          </div>
         </el-form>
       </div>
-      <div class="apiMiddle" v-if="active === 1">
+      <div v-if="active === 1" class="formBox">
         <el-form
           ref="ruleForm"
           :model="ruleForm"
           :rules="rulesapi"
           label-width="150px"
-          class="demo-ruleForm"
+          label-position="top"
+          size="small"
         >
           <el-form-item label="API名称" prop="apiName">
             <el-input
               v-model="ruleForm.apiName"
-              size="large"
               maxlength="20"
-              style="width: 380px"
+              class="inputWidth"
               show-word-limit
             />
           </el-form-item>
           <el-form-item label="API路径" prop="apiUrl">
             <el-input
               v-model="ruleForm.apiUrl"
-              size="large"
-              style="width: 380px"
+              class="inputWidth"
               maxlength="500"
               show-word-limit
             />
@@ -184,8 +184,7 @@
           <el-form-item label="请求方式" prop="requestMethod">
             <el-select
               v-model="ruleForm.requestMethod"
-              size="large"
-              style="width: 380px"
+              class="inputWidth"
               placeholder=""
             >
               <el-option label="GET" value="GET" />
@@ -194,29 +193,26 @@
               <el-option label="DELETE" value="DELETE" />
             </el-select>
           </el-form-item>
-          <el-form-item label="API版本号" prop="apiVersion">
+          <!-- <el-form-item label="API版本号" prop="apiVersion">
             <el-input
               v-model="ruleForm.apiVersion"
-              size="large"
               maxlength="20"
-              style="width: 380px"
+              class="inputWidth"
               show-word-limit
             />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="API前置路径" prop="prefixPath">
             <el-input
               v-model="ruleForm.prefixPath"
-              size="large"
               maxlength="500"
-              style="width: 380px"
+              class="inputWidth"
               show-word-limit
             />
           </el-form-item>
           <el-form-item label="是否为中台接口">
             <el-select
               v-model="ruleForm.isInternal"
-              size="large"
-              style="width: 380px"
+              class="inputWidth"
               placeholder=""
             >
               <el-option label="是" value="1" />
@@ -227,20 +223,23 @@
             <el-input
               v-model="ruleForm.description"
               type="textarea"
-              style="width: 380px"
+              class="inputWidth"
               :autosize="{ minRows: 8, maxRows: 15 }"
               maxlength="500"
               show-word-limit
             />
           </el-form-item>
           <el-form-item label="请求参数">
-            <div @contextmenu="showMenu">
+            <div @contextmenu="showMenu" class="content-boder">
               <vxe-table
+                :header-cell-style="{backgroundColor:'#fff',color:'#494E6A'}"
                 ref="xTable"
-                border
+                border="none"
                 show-overflow
+                stripe
+                :row-config="{isCurrent: true, isHover: true}"
                 :data="requestParams"
-                :edit-config="{ trigger: 'click', mode: 'cell' }"
+                :edit-config="{ trigger: 'click', mode: 'cell', showIcon: false }"
               >
                 <vxe-table-column type="checkbox" width="60" />
                 <vxe-table-column
@@ -288,10 +287,10 @@
                 />
               </vxe-table>
               <div class="table-button">
-                <el-button type="primary" size="mini" @click="savedata">
+                <el-button size="mini" @click="savedata" class="add-but">
                   新增
                 </el-button>
-                <el-button type="danger" size="mini" @click="newdata">
+                <el-button size="mini" @click="newdata" class="del-but">
                   删除
                 </el-button>
               </div>
@@ -299,20 +298,23 @@
           </el-form-item>
           <el-form-item label="请求示例">
             <prism-editor
-              class="my-editor height-300"
               v-model="requestExample"
+              class="my-editor height-300"
               :highlight="highlighter"
               :line-numbers="lineNumbers"
             />
           </el-form-item>
-           <el-form-item label="返回参数">
-            <div @contextmenu="showMenu">
+          <el-form-item label="返回参数">
+            <div @contextmenu="showMenu" class="content-boder">
               <vxe-table
+                :header-cell-style="{backgroundColor:'#fff',color:'#494E6A'}"
                 ref="xTableres"
-                border
+                border="none"
                 show-overflow
+                stripe
+                :row-config="{isCurrent: true, isHover: true}"
                 :data="responseParams"
-                :edit-config="{ trigger: 'click', mode: 'cell' }"
+                :edit-config="{ trigger: 'click', mode: 'cell', showIcon: false  }"
               >
                 <vxe-table-column type="checkbox" width="60" />
                 <vxe-table-column
@@ -360,10 +362,10 @@
                 />
               </vxe-table>
               <div class="table-button">
-                <el-button type="primary" size="mini" @click="savedatares">
+                <el-button size="mini" @click="savedatares" class="add-but">
                   新增
                 </el-button>
-                <el-button type="danger" size="mini" @click="newdatares">
+                <el-button size="mini" @click="newdatares" class="del-but">
                   删除
                 </el-button>
               </div>
@@ -371,8 +373,8 @@
           </el-form-item>
           <el-form-item label="返回示例">
             <prism-editor
-              class="my-editor height-300"
               v-model="responseExample"
+              class="my-editor height-300"
               :highlight="highlighter"
               :line-numbers="lineNumbers"
             />
@@ -382,17 +384,12 @@
     </div>
     <div class="bottom">
       <div class="bottom_button">
-        <div class="user" v-if="active === 0" @click="goNext('form')">
-          下一步
-        </div>
-        <div v-if="active === 1" class="user" @click="goBACK">上一步</div>
-        <div
-          v-if="active === 0 ? false : true"
-          class="newversion"
-          @click="addSure('ruleForm')"
-        >
-          提交
-        </div>
+        <el-button v-if="active === 0" @click="backList">取消</el-button>
+        <el-button type="primary" v-if="active === 0" @click="goNext('form')">下一步</el-button>
+      </div>
+      <div class="bottom_button_b">
+        <el-button v-if="active === 1" @click="goBACK">上一步</el-button>
+        <el-button type="primary" v-if="active === 0 ? false : true" @click="addSure('ruleForm')">提交</el-button>
       </div>
     </div>
   </div>
@@ -400,57 +397,55 @@
 
 <script>
 import ElxStepsHorizontal from '@/components/ElxStepsHorizontal'
-import { getUpstreamList, deleteUpstream } from "@/api/upstream";
-import { create, NewVersion, apidetail } from "@/api/AboutApi";
-import { PrismEditor } from "vue-prism-editor";
-import "vue-prism-editor/dist/prismeditor.min.css"; // import the styles somewhere
-// import highlighting library (you can use any library you want just return html string)
-import { highlight, languages } from "prismjs/components/prism-core";
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
+import { getUpstreamList } from '@/api/upstream'
+import { create } from '@/api/AboutApi'
+import { PrismEditor } from 'vue-prism-editor'
+import 'vue-prism-editor/dist/prismeditor.min.css' // import the styles somewhere
+import { highlight, languages } from 'prismjs/components/prism-core'
+import 'prismjs/components/prism-clike'
+import 'prismjs/components/prism-javascript'
+import 'prismjs/themes/prism-tomorrow.css' // import syntax highlighting styles
 export default {
   components: {
     PrismEditor,
     ElxStepsHorizontal
   },
-  data() {
+  data () {
     const checkMobile = (rule, value, callback) => {
       // 验证手机号的正则表达式
       const regMobile =
-        /(ht|f)tp(s?)|(ws)|(wss)|(lb)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#_]*)?/;
+        /(ht|f)tp(s?)|(ws)|(wss)|(lb)\:\/\/[0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*(:(0-9)*)*(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&amp;%\$#_]*)?/
       if (regMobile.test(value)) {
         return callback()
       }
-      callback(new Error("请输入正确的api地址"));
+      callback(new Error('请输入正确的api地址'))
     }
     return {
+      // 展示折叠配置
+      showTimeFlag: false,
       // 默认步骤数
       active: 0,
       panelTitles: ['设置上游服务', '设置API信息'], // 根据需要传入，可N步
       lineNumbers: true,
       readonly: true,
       contextMenuData: {
-        // the contextmenu name(@1.4.1 updated)
-        menuName: "demo",
-        // The coordinates of the display(菜单显示的位置)
+        menuName: 'demo',
         axis: {
           x: null,
-          y: null,
+          y: null
         },
-        // Menu options (菜单选项)
         menulists: [
           {
-            fnHandler: "savedata", // Binding events(绑定事件)
-            icoName: "fa fa-home fa-fw", // icon (icon图标 )
-            btnName: "新增一行", // The name of the menu option (菜单名称)
+            fnHandler: 'savedata', // Binding events(绑定事件)
+            icoName: 'fa fa-home fa-fw', // icon (icon图标 )
+            btnName: '新增一行' // The name of the menu option (菜单名称)
           },
           {
-            fnHandler: "newdata",
-            icoName: "fa fa-home fa-fw",
-            btnName: "删除选中 ",
-          },
-        ],
+            fnHandler: 'newdata',
+            icoName: 'fa fa-home fa-fw',
+            btnName: '删除选中 '
+          }
+        ]
       },
       tautologyNum: 1,
       connectNum: 30,
@@ -460,95 +455,111 @@ export default {
       upstreamList: [],
       options: [],
       requestParams: [],
-      responseParams:[],
-      requestExample: "",
-      responseExample: "",
+      responseParams: [],
+      requestExample: '',
+      responseExample: '',
       form: {
-        name: "",
-        description: "",
-        protocol: "",
-        serverAddress: "",
-        port: "",
-        upstreamPrefixPath: "",
-        loadBalance: "roundRobin",
+        name: '',
+        description: '',
+        protocol: '',
+        serverAddress: '',
+        port: '',
+        upstreamPrefixPath: '',
+        loadBalance: 'roundRobin'
       },
       ruleForm: {
-        apiName: "",
-        description: "",
-        apiUrl: "",
-        requestMethod: "",
-        apiVersion: "",
-        markdown: "",
-        domain: "",
-        prefixPath: "",
-        requestParams: "",
-        requestExample: "",
-        responseExample: "",
-        isInternal: "0",
+        apiName: '',
+        description: '',
+        apiUrl: '',
+        requestMethod: '',
+        apiVersion: '',
+        markdown: '',
+        domain: '',
+        prefixPath: '',
+        requestParams: '',
+        requestExample: '',
+        responseExample: '',
+        isInternal: '0'
       },
       rules: {
         // name: [
         //   { required: true, message: "请输入上游服务名称", trigger: "change" },
         // ],
         protocol: [
-          { required: true, message: "请选择上游服务协议", trigger: "change" },
+          { required: true, message: '请选择上游服务协议', trigger: 'change' }
         ],
         loadBalance: [
-          { required: true, message: "请选择负载均衡算法", trigger: "change" },
+          { required: true, message: '请选择负载均衡算法', trigger: 'change' }
         ],
         serverAddress: [
-          { required: true, message: "请输入服务地址", trigger: "change" },
+          { required: true, message: '请输入服务地址', trigger: 'change' }
         ],
         upstreamPrefixPath: [
           // { pattern: /^\/(\w+\/?)+$/, message: '请输入合法的路径：以"/"开头，允许字母，数字，下划线' }
           {
             pattern: /^\/(?!.*?-$)[a-zA-Z0-9-_/]*$/,
             message:
-              '请输入合法的路径：以"/"开头，允许字母，数字，下划线，短横线',
-          },
+              '请输入合法的路径：以"/"开头，允许字母，数字，下划线，短横线'
+          }
         ],
         port: [
-          { required: true, message: "请输入服务端口", trigger: "change" },
+          { required: true, message: '请输入服务端口', trigger: 'change' },
           {
             pattern:
               /^([0-9]|[1-9]\d|[1-9]\d{2}|[1-9]\d{3}|[1-5]\d{4}|6[0-4]\d{3}|65[0-4]\d{2}|655[0-2]\d|6553[0-5])$/,
-            message: "请输入正确的端口号：1到65535",
-          },
-        ],
+            message: '请输入正确的端口号：1到65535'
+          }
+        ]
       },
       rulesapi: {
         apiName: [
-          { required: true, message: "API名称不能为空", trigger: "change" },
+          { required: true, message: 'API名称不能为空', trigger: 'change' },
           {
             min: 3,
             max: 20,
-            message: "长度在 3 到 20 个字符",
-            trigger: "change",
-          },
+            message: '长度在 3 到 20 个字符',
+            trigger: 'change'
+          }
         ],
         apiUrl: [
-          { required: true, message: "API路径不能为空", trigger: "change" },
+          { required: true, message: 'API路径不能为空', trigger: 'change' },
           {
             min: 3,
             max: 500,
-            message: "长度在 3 到 500 个字符",
-            trigger: "change",
-          },
+            message: '长度在 3 到 500 个字符',
+            trigger: 'change'
+          }
         ],
         requestMethod: [
-          { required: true, message: "请求方式不能为空", trigger: "change" },
+          { required: true, message: '请求方式不能为空', trigger: 'change' }
         ],
         apiVersion: [
-          { required: true, message: "版本号不能为空", trigger: "change" },
+          { required: true, message: '版本号不能为空', trigger: 'change' }
         ]
       }
     }
   },
-  created() {
+  created () {
     this.getList()
   },
   methods: {
-    addSure(formName) {
+    // 点击步骤条切换
+    // stepChange () {
+    //   if (this.active === 1) {
+    //     this.active = 0
+    //   } else {
+    //     this.goNext('form')
+    //   }
+    // },
+    // 展开剩余配置
+    changeShow () {
+      this.showTimeFlag = !this.showTimeFlag
+    },
+    // 返回列表
+    backList () {
+      this.$router.push("/api/list");
+    },
+    addSure (formName) {
       console.log(JSON.stringify(this.$refs.xTable.afterFullData))
       console.log(JSON.stringify(this.$refs.xTableres.afterFullData))
 
@@ -579,119 +590,119 @@ export default {
             if (res.code === 200) {
               this.$message({
                 message: res.msg,
-                type: "success",
-              });
-              this.$router.push("/api/list");
+                type: 'success'
+              })
+              this.$router.push('/api/list')
             } else {
-              this.ruleForm = {};
+              this.ruleForm = {}
               this.$message({
                 message: res.msg,
-                type: "error",
-              });
+                type: 'error'
+              })
             }
-          });
+          })
         }
-      });
+      })
     },
-    goBACK() {
-      this.active = 0;
-      this.$refs['ruleForm'].resetFields();
+    goBACK () {
+      this.active = 0
+      this.$refs['ruleForm'].resetFields()
     },
-    highlighter(code) {
-      return highlight(code, languages.js);
+    highlighter (code) {
+      return highlight(code, languages.js)
     },
     // 新增行
-    async insertEvent() {
-      const row = -1;
-      const $table = this.$refs.xTable;
+    async insertEvent () {
+      const row = -1
+      const $table = this.$refs.xTable
       const record = {
-        parame: "",
-        type: "",
-        isHaveto: "",
-        describe: "",
-        default: "",
-      };
-      const { row: newRow } = await $table.insertAt(record, row);
-      await $table.setActiveCell(newRow, "parame");
+        parame: '',
+        type: '',
+        isHaveto: '',
+        describe: '',
+        default: ''
+      }
+      const { row: newRow } = await $table.insertAt(record, row)
+      await $table.setActiveCell(newRow, 'parame')
     },
-    async insertEventres() {
-      const row = -1;
-      const $table = this.$refs.xTableres;
+    async insertEventres () {
+      const row = -1
+      const $table = this.$refs.xTableres
       const record = {
-        parame: "",
-        type: "",
-        isHaveto: "",
-        describe: "",
-        default: "",
-      };
-      const { row: newRow } = await $table.insertAt(record, row);
-      await $table.setActiveCell(newRow, "parame");
+        parame: '',
+        type: '',
+        isHaveto: '',
+        describe: '',
+        default: ''
+      }
+      const { row: newRow } = await $table.insertAt(record, row)
+      await $table.setActiveCell(newRow, 'parame')
     },
-    showMenu() {
-      event.preventDefault();
-      var x = event.clientX;
-      var y = event.clientY;
+    showMenu () {
+      event.preventDefault()
+      var x = event.clientX
+      var y = event.clientY
       this.contextMenuData.axis = {
         x,
-        y,
-      };
+        y
+      }
     },
-    savedata() {
+    savedata () {
       // 新增一列
-      this.insertEvent();
+      this.insertEvent()
     },
-    savedatares() {
+    savedatares () {
       // 新增一列
-      this.insertEventres();
+      this.insertEventres()
     },
-    newdata() {
+    newdata () {
       // 删除一列
-      this.$refs.xTable.removeCheckboxRow();
+      this.$refs.xTable.removeCheckboxRow()
     },
-    newdatares() {
+    newdatares () {
       // 删除一列
-      this.$refs.xTableres.removeCheckboxRow();
+      this.$refs.xTableres.removeCheckboxRow()
     },
     // 校验ip
-    isValidIP(ip) {
+    isValidIP (ip) {
       var reg =
-        /^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/;
-      return reg.test(ip);
+        /^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/
+      return reg.test(ip)
     },
     // 校验域名
-    isValidWeb(web) {
+    isValidWeb (web) {
       var reg =
-        /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/;
-      return reg.test(web);
+        /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
+      return reg.test(web)
     },
-    getList() {
-      getUpstreamList("").then((res) => {
+    getList () {
+      getUpstreamList('').then((res) => {
         if (res.code === 200) {
-          const array = res.data.upstreamList;
-          this.upstreamList = res.data.upstreamList;
+          const array = res.data.upstreamList
+          this.upstreamList = res.data.upstreamList
           array.forEach((items) => {
             this.options.push({
               value: items.name,
-              label: items.name,
-            });
-          });
+              label: items.name
+            })
+          })
         }
-      });
+      })
     },
-    upstreamChange() {
-      console.log("change");
-      console.log(this.form.name);
-      if (this.form.name === "") {
-        console.log("ppp");
+    upstreamChange () {
+      console.log('change')
+      console.log(this.form.name)
+      if (this.form.name === '') {
+        console.log('ppp')
         this.form = {
-          name: "",
-          description: "",
-          protocol: "",
-          serverAddress: "",
-          port: "",
-          upstreamPrefixPath: "",
-          loadBalance: "roundRobin",
-        };
+          name: '',
+          description: '',
+          protocol: '',
+          serverAddress: '',
+          port: '',
+          upstreamPrefixPath: '',
+          loadBalance: 'roundRobin'
+        }
       } else {
         for (let index = 0; index < this.upstreamList.length; index++) {
           if ((this.upstreamList[index].name == this.form.name)) {
@@ -702,13 +713,13 @@ export default {
               serverAddress: this.upstreamList[index].server_address,
               port: this.upstreamList[index].port,
               upstreamPrefixPath: this.upstreamList[index].prefix_path,
-              loadBalance: "roundRobin",
-            };
+              loadBalance: 'roundRobin'
+            }
           }
         }
       }
     },
-    goNext(formName) {
+    goNext (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const ipTest = this.isValidIP(this.form.serverAddress);
@@ -724,8 +735,8 @@ export default {
         }
       });
     },
-  },
-};
+  }
+}
 </script>
 
 <style lang='scss' scoped>
@@ -747,7 +758,7 @@ export default {
     }
     .item {
       position: absolute;
-      right: -10px;
+      right: -15px;
       top: 3px;
     }
     .addDiv {
@@ -757,10 +768,7 @@ export default {
       color: #2c66fb;
     }
     .inputWidth {
-      width: 618px;
-    }
-    .selectWidth {
-      width: 295px;
+      width: 535px;
     }
     .formBut {
       text-align: right;
@@ -790,10 +798,8 @@ export default {
   height: 50px;
   background-color: #fff;
   bottom: 0px;
-  right: 0px;
   .bottom_button {
-    float: right;
-    margin-right: 50px;
+    margin-left: 185px;
     margin-top: 10px;
     div {
       display: inline-block;
@@ -801,25 +807,10 @@ export default {
       margin-right: 20px;
       cursor: pointer;
     }
-    .newversion {
-      background-color: #2c66fb;
-      color: #fff;
-      border-radius: 3px;
-
-      border: 1px solid #2c66fb;
-    }
-    .user {
-      border: 1px solid #2c66fb;
-      color: #2c66fb;
-      border-radius: 3px;
-
-    }
-    .del {
-      border: 1px solid #f5222d;
-      color: #f5222d;
-      border-radius: 3px;
-
-    }
+  }
+  .bottom_button_b {
+    margin-left: 480px;
+    margin-top: 10px;
   }
 }
 ::v-deep .vue-contextmenu-listWrapper {
@@ -838,8 +829,9 @@ export default {
   }
 }
 .my-editor {
-  background: #2d2d2d;
-  color: #ccc;
+  max-width: 1140px;
+  background: #f5f7fa;
+  color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;
@@ -854,10 +846,35 @@ export default {
 .height-300 {
   height: 150px;
 }
-.table-button {
-  margin-top: 10px;
+.show-but {
+  margin-left: 16px;
+  height: 20px;
+  font-size: 14px;
+  font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+  font-weight: 400;
+  color: #4461d7;
+  line-height: 20px;
 }
-.apiMiddle {
-  padding: 0px 20px 20px 0px;
+.content-boder {
+  .vxe-table {
+    max-width: 1140px;
+  }
+  max-width: 1140px;
+  border-radius: 8px;
+  border: 1px solid #e1e6ee !important;
+  padding: 10px 24px 24px 24px !important;
+}
+.table-button {
+  margin-top: 15px;
+  .add-but {
+    border: 1px solid #4461d7;
+    border-color: #4461d7;
+    color: #4461d7;
+  }
+  .del-but {
+    border: 1px solid #f03063;
+    border-color: #f03063;
+    color: #f03063;
+  }
 }
 </style>

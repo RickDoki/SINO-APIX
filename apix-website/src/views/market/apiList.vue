@@ -144,7 +144,7 @@ export default {
     mavonEditor,
     PrismEditor
   },
-  data() {
+  data () {
     return {
       appCode: "",
       readonly: true,
@@ -157,7 +157,7 @@ export default {
       responseExample: "",
     };
   },
-  created() {
+  created () {
     this.appCode = this.$route.query.appCode;
     detail(this.appCode, "").then((res) => {
       if (res.code === 200) {
@@ -166,25 +166,25 @@ export default {
     });
   },
   methods: {
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
     // 返回
-    GoBack() {
+    GoBack () {
       this.$router.push({ path: "/market/detail?appCode=" + this.appCode });
     },
-    handleEdit(index, row) {
+    handleEdit (index, row) {
       //   console.log(row)
       console.log(row)
       this.MKDialogVisible = true;
       this.webDataString = row.apiMarkdown;
     },
-    handleClose(done) {
+    handleClose (done) {
       this.$confirm("确认关闭？")
         .then((_) => {
           done();
         })
-        .catch((_) => {});
+        .catch((_) => { });
     },
   },
 };
@@ -216,8 +216,8 @@ export default {
   }
 }
 .my-editor {
-  background: #2d2d2d;
-  color: #ccc;
+  background: #f5f7fa;
+  color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;

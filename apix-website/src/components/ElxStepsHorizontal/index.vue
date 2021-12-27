@@ -30,34 +30,22 @@ export default {
       required: true
     },
     abstracts: {
-      // default: [],
       type: Array,
       required: true
     }
   },
-  data() {
+  data () {
     return {}
   },
   computed: {},
-  mounted() {
+  mounted () {
     console.log('abstracts', this.abstracts)
   },
   methods: {
     // 中英文字符长度计算
-    fnGetencnlength(str) {
+    fnGetencnlength (str) {
       let sLen = 0
-      // let strs = str;
       try {
-        // 先将回车换行符做特殊处理
-        // strs = str.replace(/(\r\n+|\s+|+)/g, '龘');
-        // 处理英文字符数字，连续字母、数字、英文符号视为一个单词
-        // strs = str.replace(/[\x00-\xff]/g, 'm');
-        // 合并字符m，连续字母、数字、英文符号视为一个单词
-        // str = str.replace(/m+/g,"*");
-        // 去掉回车换行符
-        // strs = str.replace(/龘+/g, '');
-        // 返回字数
-        // sLen = str.length;
         for (let i = 0; i < str.length; ++i) {
           const charCode = str.charCodeAt(i)
           if (charCode >= 0 && charCode <= 128) {
@@ -72,7 +60,7 @@ export default {
       }
       return sLen
     },
-    btnClick(index) {
+    btnClick (index) {
       this.$emit('change', index)
     }
   },
@@ -82,10 +70,9 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss">
 .elx-steps-horizontal {
-  width: 750px;
-  padding-left: 30px;
+  width: 620px;
+  padding-left: 15px;
   min-width: 400px;
-  // height: 60px;
   position: relative;
   overflow: hidden;
 
@@ -94,12 +81,12 @@ export default {
   justify-content: space-around;
   align-items: center;
   .info {
-    width:100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     .title {
       padding-left: 20px;
-      .info-text{
+      .info-text {
         margin-top: 24px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -110,13 +97,13 @@ export default {
         font-size: 14px;
         font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
         font-weight: 400;
-        color: #1D1C35;
+        color: #1d1c35;
         line-height: 20px;
         margin-top: 16px;
+      }
     }
-    }
-    .info-content{
-      width:100%;
+    .info-content {
+      width: 100%;
       height: 40px;
       padding: 2px;
       display: flex;
@@ -126,11 +113,11 @@ export default {
       position: relative;
       overflow: hidden;
       text-overflow: ellipsis;
-      .square{
+      .square {
         // border: 1px solid $--border-color-base;
         // background-color: $--color-white;
         color: #fff;
-        background: #93A8FF;
+        background: #93a8ff;
         border: 8px solid #fff;
         text-align: center;
         line-height: 18px;
@@ -143,60 +130,58 @@ export default {
         font-size: 12px;
         text-align: center;
         cursor: pointer;
-    }
-    .squareactive {
-      // background-color: $--color-primary;
-      // color: $--color-white;
-      color: #fff;
-      background: #4461D7;
-      border: 8px solid #E5EBFE;
-      text-align: center;
-      line-height: 18px;
-      font-weight: bold;
-      border-radius: 50%;
-    }
-    .squarefinish {
-      color: #fff;
-      background: #4461D7;
-      border: 8px solid #fff;
-      text-align: center;
-      line-height: 18px;
-      font-weight: bold;
-      border-radius: 50%;
-      // background-color: $--color-white;
-      // color: $--color-primary;
-      // border: 1px solid $--color-primary;
-    }
-    .info-text-groups{
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: flex-start;
-      align-items: center;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      .sline {
-        border-top: 1px solid rgba(0,0,0,0.1);
-        width: calc(100%);
-    }
-    .active-line {
-      // border-color: $--color-primary;
-      border-color:#E1E6EE;
-    }
-      .text-active {
-        height: 1px;
       }
-      .info-active{
-        padding-top: 16px;
-        padding-left: 3px;
+      .squareactive {
+        // background-color: $--color-primary;
+        // color: $--color-white;
+        color: #fff;
+        background: #4461d7;
+        border: 8px solid #e5ebfe;
+        text-align: center;
+        line-height: 18px;
+        font-weight: bold;
+        border-radius: 50%;
+      }
+      .squarefinish {
+        color: #fff;
+        background: #4461d7;
+        border: 8px solid #fff;
+        text-align: center;
+        line-height: 18px;
+        font-weight: bold;
+        border-radius: 50%;
+        // background-color: $--color-white;
+        // color: $--color-primary;
+        // border: 1px solid $--color-primary;
+      }
+      .info-text-groups {
         display: flex;
-        flex-direction: column;
+        flex-flow: row nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        .sline {
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+          width: calc(100%);
+        }
+        .active-line {
+          // border-color: $--color-primary;
+          border-color: #e1e6ee;
+        }
+        .text-active {
+          height: 1px;
+        }
+        .info-active {
+          padding-top: 16px;
+          padding-left: 3px;
+          display: flex;
+          flex-direction: column;
+        }
       }
     }
-
-    }
-
   }
 }
 </style>

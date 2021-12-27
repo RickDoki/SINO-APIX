@@ -162,7 +162,7 @@ export default {
       default: 0,
     },
   },
-  data() {
+  data () {
     return {
       readonly: true,
       currentPage: 1,
@@ -207,11 +207,11 @@ export default {
     };
   },
   methods: {
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
     // 新增行
-    async insertEvent() {
+    async insertEvent () {
       const row = -1;
       const $table = this.$refs.xTable;
       const record = {
@@ -224,7 +224,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    showMenu() {
+    showMenu () {
       event.preventDefault();
       var x = event.clientX;
       var y = event.clientY;
@@ -233,19 +233,19 @@ export default {
         y,
       };
     },
-    savedata() {
+    savedata () {
       // 新增一列
       this.insertEvent();
     },
-    newdata() {
+    newdata () {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val;
       this.$emit("pageChange", val);
     },
-    handleEdit(index, row) {
+    handleEdit (index, row) {
       // this.$router.push({ path: '/api/add?message=' + JSON.stringify(row) })
       this.MKDialogVisible = true;
       // setTimeout(() => {
@@ -268,7 +268,7 @@ export default {
       this.requestExample = JSON.parse(row.requestExample);
       this.responseExample = JSON.parse(row.responseExample);
     },
-    handleDelete(index, row) {
+    handleDelete (index, row) {
       this.$confirm("是否确认删除?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -296,10 +296,10 @@ export default {
         })
     },
     // 发布新版本
-    publishNV(index, row) {
+    publishNV (index, row) {
       this.$router.push({ path: "/api/add?message=" + JSON.stringify(row) });
     },
-    MKSure() {
+    MKSure () {
       const query = {
         // markdown: this.content,
       };
@@ -315,22 +315,22 @@ export default {
       });
     },
     // 关闭弹窗
-    handleClose(done) {
+    handleClose (done) {
       this.$confirm("确认关闭？")
         .then((_) => {
           done();
         })
-        .catch((_) => {});
+        .catch((_) => { });
     },
     // 成功消息
-    messageOK(msg) {
+    messageOK (msg) {
       this.$message({
         message: msg,
         type: "success",
       });
     },
     // 失败消息
-    messageERROR(msg) {
+    messageERROR (msg) {
       this.$message({
         message: msg,
         type: "error",
@@ -363,8 +363,8 @@ export default {
   }
 }
 .my-editor {
-  background: #2d2d2d;
-  color: #ccc;
+  background: #f5f7fa;
+  color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;

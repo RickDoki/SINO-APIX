@@ -112,14 +112,14 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css"; // import syntax highlighting styles
 export default {
-    components: {
+  components: {
     PrismEditor,
   },
-  data() {
+  data () {
     return {
       tableData: [],
       readonly: true,
-      tableDataname:'',
+      tableDataname: '',
       requestExample: "",
       responseExample: "",
       requestParams: [
@@ -152,7 +152,7 @@ export default {
       },
     };
   },
-  created() {
+  created () {
     templateList('').then((res) => {
       // console.log(res)
       if (res.code === 200) {
@@ -161,11 +161,11 @@ export default {
     });
   },
   methods: {
-    goCreate(e) {
+    goCreate (e) {
       console.log(e);
       this.$router.push({ path: "/api/add?id=" + e.id });
     },
-    getDetail(e) {
+    getDetail (e) {
       console.log(e)
       this.tableDataname = e.name
       this.MKDialogVisible = true
@@ -173,11 +173,11 @@ export default {
       this.responseExample = JSON.parse(e.responseExample)
       this.requestParams = JSON.parse(e.requestParams)
     },
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
     // 新增行
-    async insertEvent() {
+    async insertEvent () {
       const row = -1;
       const $table = this.$refs.xTable;
       const record = {
@@ -190,7 +190,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    showMenu() {
+    showMenu () {
       event.preventDefault();
       var x = event.clientX;
       var y = event.clientY;
@@ -199,30 +199,30 @@ export default {
         y,
       };
     },
-    savedata() {
+    savedata () {
       // 新增一列
       this.insertEvent();
     },
-    newdata() {
+    newdata () {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
-    handleClose(done) {
+    handleClose (done) {
       this.$confirm("确认关闭？")
         .then((_) => {
           done();
         })
-        .catch((_) => {});
+        .catch((_) => { });
     },
-    search() {
+    search () {
       // console.log(this.APIName)
       const query = '?name=' + this.APIName
       templateList(query).then((res) => {
-      // console.log(res)
-      if (res.code === 200) {
-        this.tableData = res.data.templateList;
-      }
-    });
+        // console.log(res)
+        if (res.code === 200) {
+          this.tableData = res.data.templateList;
+        }
+      });
     }
   },
 };
@@ -249,30 +249,30 @@ export default {
     // height: 32px;
     div {
       .no-child-btn {
-      padding: 0px !important;
-     }
+        padding: 0px !important;
+      }
     }
   }
   .context-menu-list:hover {
-    background:#eee !important;
+    background: #eee !important;
   }
 }
 .my-editor {
- background: #2d2d2d;
- color: #ccc;
- border: 0px;
- font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
- font-size: 14px;
- line-height: 1.5;
- padding: 5px;
+  background: #f5f7fa;
+  color: #373753;
+  border: 0px;
+  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 5px;
 }
 /* optional */
 .prism-editor__textarea:focus {
- outline: none;
+  outline: none;
 }
 /* not required: */
 .height-300 {
- height: 150px;
+  height: 150px;
 }
 ::v-deep .el-dialog__wrapper {
   z-index: 999 !important;

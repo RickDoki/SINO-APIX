@@ -221,7 +221,7 @@ export default {
   components: {
     PrismEditor,
   },
-  data() {
+  data () {
     const checkMobile = (rule, value, callback) => {
       // 验证手机号的正则表达式
       const regMobile =
@@ -353,7 +353,7 @@ export default {
       ],
     };
   },
-  created() {
+  created () {
     // setTimeout(() => {
     //   const $xTable = this.$refs.xTable;
     //   // 异步更新下拉选项
@@ -388,7 +388,7 @@ export default {
   },
   methods: {
     // 获取模板详情
-    getDetail(id) {
+    getDetail (id) {
       apidetail(id).then((res) => {
         // console.log(res)
         this.isTempalte = true;
@@ -414,11 +414,11 @@ export default {
         // console.log(this.responseExample)
       });
     },
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
     // 新增行
-    async insertEvent() {
+    async insertEvent () {
       const row = -1;
       const $table = this.$refs.xTable;
       const record = {
@@ -431,7 +431,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    showMenu() {
+    showMenu () {
       event.preventDefault();
       var x = event.clientX;
       var y = event.clientY;
@@ -440,15 +440,15 @@ export default {
         y,
       };
     },
-    savedata() {
+    savedata () {
       // 新增一列
       this.insertEvent();
     },
-    newdata() {
+    newdata () {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
-    submitForm(formName) {
+    submitForm (formName) {
       console.log(this.$refs.xTable.afterFullData);
       this.ruleForm.requestParams = JSON.stringify(
         this.$refs.xTable.afterFullData
@@ -481,7 +481,7 @@ export default {
         }
       });
     },
-    sureEdit() {
+    sureEdit () {
       const query = {
         apiId: this.apiId,
         apiName: this.ruleForm.apiName,
@@ -507,11 +507,11 @@ export default {
       });
     },
     // 返回列表
-    backList() {
+    backList () {
       this.$router.push("/api/list");
     },
-    table_add() {},
-    table_delete() {},
+    table_add () { },
+    table_delete () { },
   },
 };
 </script>
@@ -550,8 +550,8 @@ export default {
   }
 }
 .my-editor {
-  background: #2d2d2d;
-  color: #ccc;
+  background: #f5f7fa;
+  color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;

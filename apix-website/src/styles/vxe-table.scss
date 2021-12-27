@@ -1,0 +1,8 @@
+@import 'vxe-table/styles/variable.scss';
+
+// 修改样式变量
+$vxe-primary-color: #4461D7;
+$vxe-table-row-striped-background-color: #F3F5FF;
+$vxe-table-row-hover-background-color: red;
+
+@import 'vxe-table/styles/modules.scss';

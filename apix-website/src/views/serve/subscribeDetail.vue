@@ -127,10 +127,10 @@ export default {
   components: {
     PrismEditor,
   },
-  data() {
+  data () {
     return {
       data: [],
-      readonly:true,
+      readonly: true,
       gatewayDomain: "",
       usingAppList: [],
       requestExample: "",
@@ -171,7 +171,7 @@ export default {
       },
     };
   },
-  created() {
+  created () {
     if (this.$route.query.appCode) {
       // this.getDetail(this.$route.query.id)
       // console.log(this.$route.query.appCode)
@@ -189,11 +189,11 @@ export default {
     }
   },
   methods: {
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
     // 新增行
-    async insertEvent() {
+    async insertEvent () {
       const row = -1;
       const $table = this.$refs.xTable;
       const record = {
@@ -206,7 +206,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    showMenu() {
+    showMenu () {
       event.preventDefault();
       var x = event.clientX;
       var y = event.clientY;
@@ -215,15 +215,15 @@ export default {
         y,
       };
     },
-    savedata() {
+    savedata () {
       // 新增一列
       this.insertEvent();
     },
-    newdata() {
+    newdata () {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
-    handleEdit(index, e) {
+    handleEdit (index, e) {
       console.log(e);
       this.MKDialogVisible = true;
       Apidetail(e.apiId).then((res) => {
@@ -233,22 +233,22 @@ export default {
         this.responseExample = JSON.parse(res.data.responseExample);
       });
     },
-    handleClose(done) {
+    handleClose (done) {
       this.$confirm("确认关闭？")
         .then((_) => {
           done();
         })
-        .catch((_) => {});
+        .catch((_) => { });
     },
     // 成功消息
-    messageOK(msg) {
+    messageOK (msg) {
       this.$message({
         message: msg,
         type: "success",
       });
     },
     // 失败消息
-    messageERROR(msg) {
+    messageERROR (msg) {
       this.$message({
         message: msg,
         type: "error",
@@ -304,8 +304,8 @@ export default {
   }
 }
 .my-editor {
-  background: #2d2d2d;
-  color: #ccc;
+  background: #f5f7fa;
+  color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;
