@@ -1252,9 +1252,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         wrapper.eq(ApplicationSubscribe::getAppSubscribedCode,appCode).eq(ApplicationSubscribe::getDelFlag,0);
         Long aLong = applicationSubscribeMapper.selectCount(wrapper);
         applicationInnerNumDTO.setSubscribedNum(aLong);
-        // 查询请求失败数量
+        // TODO 查询请求失败数量
         applicationInnerNumDTO.setFailNum(0L);
-        // 查询请求数量
+        // TODO 查询请求数量
         applicationInnerNumDTO.setRequestNum(0L);
 
         return applicationInnerNumDTO;
