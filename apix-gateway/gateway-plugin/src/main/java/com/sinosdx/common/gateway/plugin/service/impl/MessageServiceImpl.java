@@ -3,10 +3,12 @@ package com.sinosdx.common.gateway.plugin.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.gateway.constants.Constants;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
+import com.sinosdx.common.gateway.plugin.service.LogServiceFeign;
 import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
 import com.sinosdx.common.model.log.event.LogEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -29,6 +31,9 @@ public class MessageServiceImpl implements IMessageService {
     @Autowired
     private StreamBridge streamBridge;
 
+    @Autowired
+    private LogServiceFeign logService;
+
     @Async
     @Override
     public void saveLog(ServerWebExchange exchange, GatewayLogDTO gatewayLog) {
@@ -36,5 +41,16 @@ public class MessageServiceImpl implements IMessageService {
                 LogUtil.buildLog(exchange, gatewayLog, serviceId));
         log.debug("send gatewayLog:{}", JSON.toJSONString(gatewayLogDTO));
         streamBridge.send(Constants.LOG_TOPIC, gatewayLogDTO);
+    }
+
+    @Override
+    public void saveAnalysisLog(GatewayLogDTO gatewayLog) {
+        logService.analysisGatewayLogSave(JSON.toJSONString(gatewayLog));
+    }
+
+    @Override
+    public void saveLog(String logType,GatewayLogDTO gatewayLog) {
+        String s = JSON.toJSONString(gatewayLog);
+        logService.saveLog(logType,s);
     }
 }

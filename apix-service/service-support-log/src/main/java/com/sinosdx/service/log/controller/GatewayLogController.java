@@ -1,18 +1,19 @@
 package com.sinosdx.service.log.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.base.base.controller.SuperController;
 import com.sinosdx.common.base.result.R;
+import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
+import com.sinosdx.service.log.dao.entity.AnalysisGatewayLog;
 import com.sinosdx.service.log.dao.entity.GatewayLog;
 import com.sinosdx.service.log.service.IAnalysisGatewayLogService;
 import com.sinosdx.service.log.service.IGatewayLogService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -71,6 +72,15 @@ public class GatewayLogController extends
                                         @RequestParam(name = "startTime", required = false) Long startTime,
                                         @RequestParam(name = "endTime", required = false) Long endTime){
         return analysisGatewayLogService.queryGatewayLogByStatus(appCode, startTime, endTime);
+    }
+
+    @PostMapping(value = "/analysis",consumes = "text/html;charset=UTF-8")
+    public R<Object> analysisGatewayLogSave(@RequestBody String log){
+        GatewayLogDTO gatewayLogDTO = JSON.parseObject(log).toJavaObject(GatewayLogDTO.class);
+        AnalysisGatewayLog analysisGatewayLog = new AnalysisGatewayLog();
+        BeanUtils.copyProperties(gatewayLogDTO,analysisGatewayLog);
+        boolean save = analysisGatewayLogService.save(analysisGatewayLog);
+        return R.success(save);
     }
 
 

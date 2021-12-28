@@ -50,7 +50,8 @@ import java.util.zip.GZIPInputStream;
  * @date 2021-06-18 00:43
  * @description
  */
-@Component
+@Deprecated
+//@Component
 @Slf4j
 public class RequestLogGlobalFilter implements GlobalFilter, Ordered {
 
