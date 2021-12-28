@@ -60,9 +60,17 @@ public class ApiHomeController {
      * @param appCode
      * @return
      */
-    @PostMapping("/{appCode}/innerNum")
+    @PostMapping("/{appCode}/appNum")
     public R<Object> applicationInnerNum(@PathVariable String appCode) {
-        ApplicationInnerNumDTO applicationinnerNumDTO = applicationService.applicationInnerNum(appCode);
-        return R.success(applicationinnerNumDTO);
+        // 时间范围目前写死为 前3个月 到 当前时间
+        LocalDateTime endLocalDateTime = LocalDateTime.now();
+        LocalDateTime startLocalDateTime = endLocalDateTime.minusMonths(3);
+        Long endTime = endLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long startTime = startLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        Long subscribeNum =  applicationService.applicationSubscribeNum(appCode,startTime,endTime);
+        R<Object> objectR = supportLogService.queryGatewayLogByStatus(appCode, startTime, endTime);
+        ApplicationInnerNumDTO applicationInnerNumDTO = (ApplicationInnerNumDTO)objectR.getData();
+        applicationInnerNumDTO.setSubscribedNum(subscribeNum);
+        return R.success(applicationInnerNumDTO);
     }
 }

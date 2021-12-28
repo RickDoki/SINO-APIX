@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,7 +10,6 @@ import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
 import com.sinosdx.service.management.consumer.OmpServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
-import com.sinosdx.service.management.controller.dto.ApplicationInnerNumDTO;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.*;
 import com.sinosdx.service.management.dao.entity.*;
@@ -22,7 +22,6 @@ import com.sinosdx.service.management.utils.MD5Util;
 import com.sinosdx.service.management.utils.ThreadContext;
 import com.sinosdx.starter.redis.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -255,12 +254,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 //            appDetailMap.put("usingAppList", usingAppList);
 //        }
         Integer clientId = null;
-        if(null != developerId){
+        if (null != developerId) {
             clientId = ((SysClient) sysUserService.queryClientByUserId(developerId).getData()).getId();
             LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Objects.nonNull(clientId),ApplicationSubscribe::getSubscribeClientId,clientId)
-                    .eq(Objects.nonNull(appCode),ApplicationSubscribe::getAppSubscribedCode,appCode)
-                    .eq(ApplicationSubscribe::getDelFlag,0);
+            wrapper.eq(Objects.nonNull(clientId), ApplicationSubscribe::getSubscribeClientId, clientId)
+                    .eq(Objects.nonNull(appCode), ApplicationSubscribe::getAppSubscribedCode, appCode)
+                    .eq(ApplicationSubscribe::getDelFlag, 0);
             List<ApplicationSubscribe> applicationSubscribes = applicationSubscribeMapper.selectList(wrapper);
             appDetailMap.put("usingAppList", applicationSubscribes);
         }
@@ -270,8 +269,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
                 .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                         .eq(ApplicationPlugin::getAppCode, appCode)
-                        .eq(ApplicationPlugin::getDelFlag,0));
-        appDetailMap.put("plugins",applicationPlugins);
+                        .eq(ApplicationPlugin::getDelFlag, 0));
+        appDetailMap.put("plugins", applicationPlugins);
 
         return R.success(appDetailMap);
     }
@@ -375,14 +374,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         // 刪除订阅关系 sms
         applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
-                .eq(ApplicationSubscribe::getAppSubscribedCode,appCode)
-                .eq(ApplicationSubscribe::getDelFlag,0));
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
+                .eq(ApplicationSubscribe::getDelFlag, 0));
         // 删除关联的插件
         LambdaQueryWrapper<ApplicationPlugin> wrapper = new LambdaQueryWrapper<ApplicationPlugin>().eq(ApplicationPlugin::getAppCode, appCode);
         List<Integer> idList = applicationPluginMapper.selectList(wrapper).stream().map(Entity::getId).collect(Collectors.toList());
         applicationPluginMapper.deleteBatchIds(idList);
         // 删除 用户和插件关联表
-        applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId,idList));
+        applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId, idList));
 
         // 删除对应客户端认证信息
         oauthClientDetailsService.deleteOAuthClientDetail(appCode);
@@ -1239,25 +1238,22 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 注册应用数
         Integer appCount = applicationMapper.queryAppVoList(developerId, null, null, null, null, null, null, null, null, null, userIdList).size();
         // api 数量
-        Long apiCount = apiMapper.selectCount(new LambdaQueryWrapper<Api>().eq(Objects.nonNull(developerId),Api::getCreationBy, developerId).eq(Api::getDelFlag, 0));
+        Long apiCount = apiMapper.selectCount(new LambdaQueryWrapper<Api>().eq(Objects.nonNull(developerId), Api::getCreationBy, developerId).eq(Api::getDelFlag, 0));
 
         applicationNumDTO.setApplicationNum(appCount).setApiNum(apiCount).setSubscribedNum(subscribedCount);
         return applicationNumDTO;
     }
 
     @Override
-    public ApplicationInnerNumDTO applicationInnerNum(String appCode) {
-        ApplicationInnerNumDTO applicationInnerNumDTO = new ApplicationInnerNumDTO();
+    public Long applicationSubscribeNum(String appCode, Long startTime, Long endTime) {
+        Date startDate = new Date(startTime / 1000);
+        Date endDate = new Date(endTime / 1000);
         LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ApplicationSubscribe::getAppSubscribedCode,appCode).eq(ApplicationSubscribe::getDelFlag,0);
+        wrapper.eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
+                .between(ApplicationSubscribe::getCreationDate, DateUtil.format(startDate,"yyyy-MM-dd HH:mm:ss"), DateUtil.format(endDate,"yyyy-MM-dd HH:mm:ss"))
+                .eq(ApplicationSubscribe::getDelFlag, 0);
         Long aLong = applicationSubscribeMapper.selectCount(wrapper);
-        applicationInnerNumDTO.setSubscribedNum(aLong);
-        // TODO 查询请求失败数量
-        applicationInnerNumDTO.setFailNum(0L);
-        // TODO 查询请求数量
-        applicationInnerNumDTO.setRequestNum(0L);
-
-        return applicationInnerNumDTO;
+        return aLong;
     }
 
 

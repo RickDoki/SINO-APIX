@@ -248,7 +248,7 @@ public interface ApplicationService {
      * @param appCode
      * @return
      */
-    ApplicationInnerNumDTO applicationInnerNum(String appCode);
+    Long applicationSubscribeNum(String appCode, Long startTime,Long endTime);
 
     /**
      * 查询订阅当前应用的应用列表

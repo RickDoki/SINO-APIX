@@ -3,6 +3,7 @@ package com.sinosdx.service.log.controller;
 import com.sinosdx.common.base.base.controller.SuperController;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.log.dao.entity.GatewayLog;
+import com.sinosdx.service.log.service.IAnalysisGatewayLogService;
 import com.sinosdx.service.log.service.IGatewayLogService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class GatewayLogController extends
     @Autowired
     private IGatewayLogService gatewayLogService;
 
+    @Autowired
+    private IAnalysisGatewayLogService analysisGatewayLogService;
+
     /**
      * 查询网关日志
      *
@@ -58,7 +62,15 @@ public class GatewayLogController extends
     public R<Object> queryListByAppCode(@RequestParam(name = "appCodes", required = false) List<String> appCodes,
                                          @RequestParam(name = "startTime", required = false) Long startTime,
                                          @RequestParam(name = "endTime", required = false) Long endTime){
-        return gatewayLogService.queryGatewayByAppCode(appCodes, startTime, endTime);
+        return analysisGatewayLogService.queryGatewayByAppCode(appCodes, startTime, endTime);
+    }
+
+
+    @GetMapping("/queryGatewayLogByStatus")
+    public R<Object> queryGatewayLogByStatus(@RequestParam(name = "appCode", required = true) String appCode,
+                                        @RequestParam(name = "startTime", required = false) Long startTime,
+                                        @RequestParam(name = "endTime", required = false) Long endTime){
+        return analysisGatewayLogService.queryGatewayLogByStatus(appCode, startTime, endTime);
     }
 
 
