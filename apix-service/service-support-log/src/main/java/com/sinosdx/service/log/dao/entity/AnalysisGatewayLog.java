@@ -25,7 +25,6 @@ public class AnalysisGatewayLog {
     protected Integer id;
     private String appCode;
     private String serviceId;
-    private Integer success;
     private Long consumingTime;
     protected String requestPath;
     private Integer userId;

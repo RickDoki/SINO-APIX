@@ -1229,7 +1229,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public ApplicationNumDTO queryApplicationNum(ApplicationNumVo applicationNumVo) {
         ApplicationNumDTO applicationNumDTO = new ApplicationNumDTO();
         Integer developerId = applicationNumVo.getDeveloperId();
-        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(developerId);
         // 根据userId 获取 对应的 clientIds
         List<Integer> clientIds = this.changeUserIdsToClientIds(userIdList);
         // 订阅应用数
@@ -1317,8 +1317,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<Integer> changeUserIdsToClientIds(List<Integer> userIds) {
         // 根据userId 获取 对应的 clientIds
         List<Integer> clientIds = userIds.stream()
-                .map(a -> ((SysClient) sysUserService.queryClientByUserId(a).getData()).getId())
+//                .map(a -> ((SysClient) sysUserService.queryClientByUserId(a).getData()).getId())
+                .map(a -> {
+                    Map sysClient = (Map) sysUserService.queryClientByUserId(a).getData();
+
+                    if(Objects.nonNull(sysClient)){
+                        return Integer.valueOf(sysClient.get("id")+"");
+                    }
+                    return 0;
+                })
                 .collect(Collectors.toList());
         return clientIds;
     }
+//    SysClient sysClient = (SysClient)sysUserService.queryClientByUserId(a).getData();
 }
