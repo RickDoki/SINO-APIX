@@ -38,7 +38,7 @@ public class AnalysisGatewayLogServiceImpl extends SuperServiceImpl<AnalysisGate
         IAnalysisGatewayLogService {
 
     @Resource
-    private AnalysisGatewayLogMapper gatewayLogMapper;
+    private AnalysisGatewayLogMapper analysisGatewayLogMapper;
 //
 //    /**
 //     * 查询网关日志
