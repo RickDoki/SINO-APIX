@@ -11,8 +11,8 @@ import com.sinosdx.common.gateway.plugin.filter.custom.AuthorizeGatewayFilterFac
 import com.sinosdx.common.gateway.plugin.service.AuthenticationServiceFeign;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.properties.AuthConstant;
-import com.sinosdx.common.tools.auth.SignUtil;
-import com.sinosdx.common.tools.common.JwtUtil;
+import com.sinosdx.common.toolkit.auth.JwtUtil;
+import com.sinosdx.common.toolkit.auth.SignUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;

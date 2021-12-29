@@ -1,8 +1,8 @@
 package com.sinosdx.common.gateway.plugin.service.impl;
 
 
-import com.sinosdx.common.tools.common.WeightRandomUtils;
-import com.sinosdx.common.tools.entity.WeightMeta;
+import com.sinosdx.common.toolkit.common.WeightRandomUtils;
+import com.sinosdx.common.toolkit.entity.WeightMeta;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;

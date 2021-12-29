@@ -9,7 +9,7 @@ import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.JwtGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.properties.AuthConstant;
-import com.sinosdx.common.tools.common.JwtUtil;
+import com.sinosdx.common.toolkit.auth.JwtUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

@@ -4,7 +4,7 @@ package com.sinosdx.common.gateway.plugin.filter;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.tools.common.StringUtil;
+import com.sinosdx.common.toolkit.common.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
