@@ -1229,7 +1229,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public ApplicationNumDTO queryApplicationNum(ApplicationNumVo applicationNumVo) {
         ApplicationNumDTO applicationNumDTO = new ApplicationNumDTO();
         Integer developerId = applicationNumVo.getDeveloperId();
-        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(developerId);
+        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         // 根据userId 获取 对应的 clientIds
         List<Integer> clientIds = this.changeUserIdsToClientIds(userIdList);
         // 订阅应用数
