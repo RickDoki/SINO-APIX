@@ -1246,8 +1246,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Long applicationSubscribeNum(String appCode, Long startTime, Long endTime) {
-        Date startDate = new Date(startTime / 1000);
-        Date endDate = new Date(endTime / 1000);
+        Date startDate = new Date(startTime);
+        Date endDate = new Date(endTime);
         LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
                 .between(ApplicationSubscribe::getCreationDate, DateUtil.format(startDate,"yyyy-MM-dd HH:mm:ss"), DateUtil.format(endDate,"yyyy-MM-dd HH:mm:ss"))

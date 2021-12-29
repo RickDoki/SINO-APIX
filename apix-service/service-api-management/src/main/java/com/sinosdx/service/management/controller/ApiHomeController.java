@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Map;
 
 @Api(tags = "API模块")
 @RestController
@@ -69,8 +70,8 @@ public class ApiHomeController {
         Long startTime = startLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
         Long subscribeNum =  applicationService.applicationSubscribeNum(appCode,startTime,endTime);
         R<Object> objectR = supportLogService.queryGatewayLogByStatus(appCode, startTime, endTime);
-        ApplicationInnerNumDTO applicationInnerNumDTO = (ApplicationInnerNumDTO)objectR.getData();
-        applicationInnerNumDTO.setSubscribedNum(subscribeNum);
+        Map applicationInnerNumDTO = (Map)objectR.getData();
+        applicationInnerNumDTO.put("subscribedNum",subscribeNum);
         return R.success(applicationInnerNumDTO);
     }
 }
