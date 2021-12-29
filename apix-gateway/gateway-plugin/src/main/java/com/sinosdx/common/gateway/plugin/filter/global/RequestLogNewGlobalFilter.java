@@ -1,26 +1,20 @@
-package com.sinosdx.common.gateway.plugin.filter.custom;
-
+package com.sinosdx.common.gateway.plugin.filter.global;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
-import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.constants.Constants;
-import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
-import com.sinosdx.common.gateway.plugin.service.LogServiceFeign;
 import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -50,37 +44,32 @@ import java.util.List;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
+
 /**
- * 防重放攻击
- *
  * @author pengjiahu
  * @date 2021-06-18 00:43
  * @description
  */
-@Slf4j
 @Component
-public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGatewayFilterFactory.Config> {
+@Slf4j
+public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
+
     private static final String GZIP = "gzip";
     private static final String WEBSOCKET = "websocket";
     private static final List<String> STRING_LIST = Arrays.asList("http", "https");
 
-    /**
-     * gateway
-     */
-    String GATEWAY = "gateway";
-
     @Autowired
     private IMessageService messageService;
 
-
-    public ErrorLogGatewayFilterFactory() {
-        super(Config.class);
+    @Override
+    public int getOrder() {
+        return -97;
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
-            if (log.isDebugEnabled()) {
+            if(log.isDebugEnabled()) {
                 log.debug("Enter RequestLogGlobalFilter");
             }
             ServerHttpRequest request = exchange.getRequest();
@@ -96,31 +85,22 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
             GatewayLogDTO gatewayLog = new GatewayLogDTO();
             gatewayLog.setParams(getRequestParams(exchange, request));
             return chain.filter(exchange.mutate()
-                            .response(getResponseDecorator(exchange, gatewayLog)).build())
+                    .response(getResponseDecorator(exchange, gatewayLog)).build())
                     .onErrorResume(e -> {
                         String result = ExceptionUtil.getMessage(e);
-                        if (log.isDebugEnabled()) {
+                        if(log.isDebugEnabled()) {
                             log.debug("onErrorResume result:{}", result);
                         }
                         gatewayLog.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
                         gatewayLog.setResult(result);
                         gatewayLog.setConsumingTime(getConsumingTime(exchange));
-                        messageService.saveLog(GATEWAY, gatewayLog);
+                        messageService.saveAnalysisLog(gatewayLog);
                         return Mono.error(e);
                     });
         } catch (Exception e) {
             log.error("请求响应日志打印出现异常", e);
             return chain.filter(exchange);
         }
-    }
-
-    @Data
-    @EqualsAndHashCode(callSuper = true)
-    @ToString(callSuper = true)
-    public static class Config extends BaseConfig {
-
-        private String ip;
-
     }
 
     /**
@@ -147,7 +127,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
      * @return
      */
     private ServerHttpResponseDecorator getResponseDecorator(ServerWebExchange exchange,
-                                                             GatewayLogDTO gatewayLog) {
+            GatewayLogDTO gatewayLog) {
         ServerHttpResponse originalResponse = exchange.getResponse();
         DataBufferFactory bufferFactory = originalResponse.bufferFactory();
         return new ServerHttpResponseDecorator(originalResponse) {
@@ -162,7 +142,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
 //                            .contains(originalResponseContentType)) {
                 //如果加这个判断，会导致经过这定义过滤器返回Monojust无法判断
                 //if (body instanceof Flux) {
-                if (log.isDebugEnabled()) {
+                if(log.isDebugEnabled()) {
                     log.debug("body instanceof {}", body);
                 }
                 Flux<? extends DataBuffer> fluxBody;
@@ -174,7 +154,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
                     return super.writeWith(body);
                 }
                 return super.writeWith(fluxBody.buffer().map(dataBuffers -> {
-                    if (log.isDebugEnabled()) {
+                    if(log.isDebugEnabled()) {
                         log.debug("super writeWith request response data");
                     }
                     DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
@@ -210,9 +190,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
                         gatewayLog.setResult(
                                 "RequestLogGlobalFilter ResponseDecorator writeWith error");
                     } finally {
-                        if(gatewayLog.getStatusCode() != 200){
-                            handleResponse(gatewayLog, exchange);
-                        }
+                        handleResponse(gatewayLog, exchange);
                     }
                     return bufferFactory.wrap(content);
                 }));
@@ -253,7 +231,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
         }
         gatewayLog.setRedirectUrl(redirectUrl);
         gatewayLog.setConsumingTime(getConsumingTime(exchange));
-        messageService.saveLog(GATEWAY, gatewayLog);
+        messageService.saveAnalysisLog(gatewayLog);
         exchange.getAttributes().remove(Constants.CACHED_REQUEST_BODY_STR);
     }
 
@@ -288,5 +266,4 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
 //        }
         return requestParams;
     }
-
 }

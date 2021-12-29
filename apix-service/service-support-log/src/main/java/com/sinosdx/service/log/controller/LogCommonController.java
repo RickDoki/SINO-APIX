@@ -2,6 +2,7 @@ package com.sinosdx.service.log.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.sinosdx.service.log.constants.Constants;
 import com.sinosdx.service.log.dao.entity.*;
 import com.sinosdx.service.log.service.*;
 import io.swagger.annotations.Api;
@@ -37,30 +38,37 @@ public class LogCommonController {
     @Autowired
     private ILoginLogService loginLogService;
 
+    @Autowired
+    private IAuditLogService auditLogService;
+
     @PostMapping(path = "{logType}", consumes = "text/html;charset=UTF-8")
     public void saveLog(@PathVariable String logType, @RequestBody String string) {
         JSONObject jsonObject = JSONObject.parseObject(string);
         log.debug("API,接收到[{}]日志信息：{}", logType, JSON.toJSONString(jsonObject));
         switch (logType) {
-            case "ApiLogDTO":
+            case Constants.API:
                 ApiLog apiLog = jsonObject.toJavaObject(ApiLog.class);
                 apiLogService.save(apiLog);
                 break;
-            case "ErrorLogDTO":
+            case Constants.ERROR:
                 ErrorLog errorLog = jsonObject.toJavaObject(ErrorLog.class);
                 errorLogService.save(errorLog);
                 break;
-            case "LoginLogDTO":
+            case Constants.LOGIN:
                 LoginLog loginLog = jsonObject.toJavaObject(LoginLog.class);
                 loginLogService.save(loginLog);
                 break;
-            case "BizLogDTO":
+            case Constants.BIZ:
                 BizLog bizLog = jsonObject.toJavaObject(BizLog.class);
                 bizLogService.save(bizLog);
                 break;
-            case "GatewayLogDTO":
+            case Constants.GATEWAY:
                 GatewayLog gatewayLog = jsonObject.toJavaObject(GatewayLog.class);
                 gatewayLogService.save(gatewayLog);
+                break;
+            case Constants.AUDIT:
+                AuditLog auditLog = jsonObject.toJavaObject(AuditLog.class);
+                auditLogService.save(auditLog);
                 break;
             default:
                 log.error("未匹配到类型");

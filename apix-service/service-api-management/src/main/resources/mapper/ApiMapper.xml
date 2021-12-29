@@ -21,7 +21,7 @@
         <result column="apiCreationUser" property="apiCreationUser" javaType="String"/>
         <result column="apiLastUpdateDate" property="apiLastUpdateDate" javaType="String"/>
         <result column="apiLastUpdateUser" property="apiLastUpdateUser" javaType="String"/>
-        <collection property="apiVersions" column="apiId" ofType="java.util.Map" select="queryApiVersions"/>
+<!--        <collection property="apiVersions" column="apiId" ofType="java.util.Map" select="queryApiVersions"/>-->
     </resultMap>
 
     <select id="queryApiList" resultMap="apiList">
@@ -99,5 +99,13 @@
             av.del_flag = 0 and av.api_id = #{apiId}
         </where>
         order by av.id desc
+    </select>
+
+    <select id="queryApiListByAppCode" resultType="com.sinosdx.service.management.dao.entity.Api">
+        select api.* from api api
+        join application_api aa on aa.api_id = api.id
+        <where>
+            api.del_flag = 0 and aa.del_flag = 0 and aa.app_code = #{appCode}
+        </where>
     </select>
 </mapper>

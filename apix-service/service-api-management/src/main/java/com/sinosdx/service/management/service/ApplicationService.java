@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.service;
 
+import com.sinosdx.service.management.controller.dto.ApplicationInnerNumDTO;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.ApplicationNumVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
@@ -241,6 +242,13 @@ public interface ApplicationService {
      * @return
      */
     ApplicationNumDTO queryApplicationNum(ApplicationNumVo applicationNumVo);
+    /**
+     * 查询应用内部请求数、请求失败数、已订阅数
+     *
+     * @param appCode
+     * @return
+     */
+    Long applicationSubscribeNum(String appCode, Long startTime,Long endTime);
 
     /**
      * 查询订阅当前应用的应用列表
@@ -266,4 +274,12 @@ public interface ApplicationService {
      * @return
      */
     R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin);
+
+    /**
+     * UserIds 转换为  ClientIds
+     * @param userIds
+     * @return
+     */
+    List<Integer> changeUserIdsToClientIds(List<Integer> userIds);
+
 }
