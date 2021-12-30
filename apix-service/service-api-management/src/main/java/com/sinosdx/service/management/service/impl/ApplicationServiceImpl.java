@@ -1209,6 +1209,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.APP_DEVELOPER_IS_NOT_EXIST);
         }
 
+        // 加入插件信息
+        List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
+                .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                        .eq(ApplicationPlugin::getAppCode, appCode)
+                        .eq(ApplicationPlugin::getDelFlag, 0));
+        appDetailMap.put("plugins", applicationPlugins);
+
         String urlCode = StringUtils.isEmpty(appDetailMap.get("productId").toString()) ? appDetailMap.get("appCode").toString() : appDetailMap.get("productId").toString();
         appDetailMap.put("gatewayDomain", gatewayDomain + "/" + urlCode);
         appDetailMap.put("clientId", oAuthInfo.get("clientId"));
