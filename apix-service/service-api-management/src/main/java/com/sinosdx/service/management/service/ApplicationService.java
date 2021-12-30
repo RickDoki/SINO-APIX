@@ -282,4 +282,24 @@ public interface ApplicationService {
      */
     List<Integer> changeUserIdsToClientIds(List<Integer> userIds);
 
+    /**
+     * 更新appVersion
+     * @param applicationVersionVo
+     * @return
+     */
+    R<Object> updateAppVersion(Integer appVersionId,ApplicationVersionVo applicationVersionVo);
+
+    /**
+     * 删除appVersion
+     * @param appVersionId
+     * @return
+     */
+    R<Object> deleteAppVersion(Integer appVersionId);
+
+    /**
+     * 查询appVersion详情
+     * @param appVersionId
+     * @return
+     */
+    R<Object> queryAppVersion(Integer appVersionId);
 }

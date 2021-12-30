@@ -447,4 +447,27 @@ public class ApplicationController {
     public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
         return applicationService.addAppPlugin(applicationPlugin);
     }
+    /**
+     * 更新AppVersion
+     */
+    @PostMapping("/appVersion/{appVersionId}")
+    public R<Object> updateAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId,
+            @RequestBody ApplicationVersionVo applicationVersionVo) {
+        return applicationService.updateAppVersion(appVersionId,applicationVersionVo);
+    }
+
+    /**
+     * 删除 AppVersion
+     */
+    @DeleteMapping("/appVersion/{appVersionId}")
+    public R<Object> deleteAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId) {
+        return applicationService.deleteAppVersion(appVersionId);
+    }
+    /**
+     * 获取 AppVersion 详情
+     */
+    @GetMapping("/appVersion/{appVersionId}")
+    public R<Object> queryAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId) {
+        return applicationService.queryAppVersion(appVersionId);
+    }
 }

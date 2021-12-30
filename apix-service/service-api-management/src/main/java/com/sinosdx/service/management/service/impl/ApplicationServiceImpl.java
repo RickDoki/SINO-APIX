@@ -11,6 +11,7 @@ import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
 import com.sinosdx.service.management.consumer.OmpServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
+import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
 import com.sinosdx.service.management.controller.vo.*;
 import com.sinosdx.service.management.dao.entity.*;
 import com.sinosdx.service.management.dao.mapper.*;
@@ -21,6 +22,7 @@ import com.sinosdx.service.management.service.ApplicationService;
 import com.sinosdx.service.management.utils.MD5Util;
 import com.sinosdx.service.management.utils.ThreadContext;
 import com.sinosdx.starter.redis.service.RedisService;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -1329,5 +1331,64 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .collect(Collectors.toList());
         return clientIds;
     }
-//    SysClient sysClient = (SysClient)sysUserService.queryClientByUserId(a).getData();
+
+    @Override
+    @Transactional
+    public R<Object> updateAppVersion(Integer appVersionId,ApplicationVersionVo applicationVersionVo) {
+        ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
+        if(Objects.isNull(applicationVersion)){
+            return R.fail(ResultCodeEnum.APP_VERSION_IS_EXIST);
+        }
+        if(null != applicationVersionVo.getApiIds()){
+            // 删除之前的关联，重新添加
+            LambdaQueryWrapper<ApplicationApi> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(ApplicationApi::getDelFlag,0);
+            wrapper.eq(ApplicationApi::getAppVersionId,applicationVersion.getId());
+            wrapper.eq(ApplicationApi::getAppCode,applicationVersion.getAppCode());
+            wrapper.eq(ApplicationApi::getAppId,applicationVersion.getAppId());
+            applicationApiMapper.delete(wrapper);
+            String[] apiIdList = applicationVersionVo.getApiIds().split(",");
+            Arrays.stream(apiIdList).forEach(a->{
+                ApplicationApi applicationApi = new ApplicationApi();
+                applicationApi.setApiId(Integer.valueOf(a));
+                applicationApi.setAppVersionId(appVersionId);
+                applicationApi.setAppId(applicationVersion.getAppId());
+                applicationApi.setAppCode(applicationVersion.getAppCode());
+                applicationApiMapper.insert(applicationApi);
+            });
+        }
+        if(StringUtils.isNotEmpty(applicationVersionVo.getVersionDesc())){
+            applicationVersion.setDescription(applicationVersionVo.getVersionDesc());
+        }
+        if(StringUtils.isNotEmpty(applicationVersionVo.getAppVersion())){
+            applicationVersion.setVersion(applicationVersionVo.getAppVersion());
+        }
+        applicationVersionMapper.updateById(applicationVersion);
+        return R.success();
+    }
+
+    @Override
+    public R<Object> deleteAppVersion(Integer appVersionId) {
+        int i = applicationVersionMapper.deleteById(appVersionId);
+        // TODO 是否需要删除路由？
+        return R.success();
+    }
+
+    @Override
+    public R<Object> queryAppVersion(Integer appVersionId) {
+        ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
+        if(Objects.isNull(applicationVersion)){
+            return R.fail(ResultCodeEnum.APP_VERSION_IS_EXIST);
+        }
+        // 详情包含 1.关联的所有api  2.关联api 的个数
+        List<Integer> apiIds = applicationApiMapper.selectList(new LambdaQueryWrapper<ApplicationApi>()
+                        .eq(ApplicationApi::getDelFlag, 0)
+                        .eq(ApplicationApi::getAppVersionId, appVersionId)).stream()
+                .map(ApplicationApi::getApiId).distinct().collect(Collectors.toList());
+        List<Api> apis = apiMapper.selectList(new LambdaQueryWrapper<Api>()
+                .eq(Api::getDelFlag, 0)
+                .in(Api::getId, apiIds));
+        ApplicationVersionDto applicationVersionDto = new ApplicationVersionDto().setApplicationVersion(applicationVersion).setApiList(apis);
+        return R.success(applicationVersionDto);
+    }
 }
