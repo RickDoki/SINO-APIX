@@ -2,6 +2,7 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.SignGatewayFilterFactory.Config;
 import lombok.Data;
@@ -30,9 +31,10 @@ public class SignGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
-            ServerHttpRequest req = exchange.getRequest();
-            return chain.filter(exchange);
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
+            RequestInfo requestInfo) {
+        ServerHttpRequest req = exchange.getRequest();
+        return chain.filter(exchange);
     }
 
     @Data

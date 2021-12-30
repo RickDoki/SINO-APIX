@@ -5,6 +5,7 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.utils.LogUtil;
@@ -56,7 +57,9 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGatewayFilterFactory.Config> {
+public class ErrorLogGatewayFilterFactory extends
+        BaseGatewayFilter<ErrorLogGatewayFilterFactory.Config> {
+
     private static final String GZIP = "gzip";
     private static final String WEBSOCKET = "websocket";
     private static final List<String> STRING_LIST = Arrays.asList("http", "https");
@@ -75,7 +78,8 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
+            RequestInfo requestInfo) {
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Enter RequestLogGlobalFilter");
@@ -93,7 +97,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
             GatewayLogDTO gatewayLog = new GatewayLogDTO();
             gatewayLog.setParams(getRequestParams(exchange, request));
             return chain.filter(exchange.mutate()
-                            .response(getResponseDecorator(exchange, gatewayLog)).build())
+                    .response(getResponseDecorator(exchange, gatewayLog)).build())
                     .onErrorResume(e -> {
                         String result = ExceptionUtil.getMessage(e);
                         if (log.isDebugEnabled()) {
@@ -144,7 +148,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
      * @return
      */
     private ServerHttpResponseDecorator getResponseDecorator(ServerWebExchange exchange,
-                                                             GatewayLogDTO gatewayLog) {
+            GatewayLogDTO gatewayLog) {
         ServerHttpResponse originalResponse = exchange.getResponse();
         DataBufferFactory bufferFactory = originalResponse.bufferFactory();
         return new ServerHttpResponseDecorator(originalResponse) {
@@ -207,7 +211,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
                         gatewayLog.setResult(
                                 "RequestLogGlobalFilter ResponseDecorator writeWith error");
                     } finally {
-                        if(gatewayLog.getStatusCode() != 200){
+                        if (gatewayLog.getStatusCode() != 200) {
                             handleResponse(gatewayLog, exchange);
                         }
                     }
@@ -278,7 +282,8 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
         if (null != contentType && HttpMethod.POST.name().equalsIgnoreCase(method)
                 && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
             //if (BaseConstants.POST.equalsIgnoreCase(request.getMethodValue())) {
-            requestParams = exchange.getAttributeOrDefault(GatewayConstants.CACHED_REQUEST_BODY_STR, "");
+            requestParams = exchange
+                    .getAttributeOrDefault(GatewayConstants.CACHED_REQUEST_BODY_STR, "");
         } else {
             requestParams = request.getQueryParams().toString();
         }

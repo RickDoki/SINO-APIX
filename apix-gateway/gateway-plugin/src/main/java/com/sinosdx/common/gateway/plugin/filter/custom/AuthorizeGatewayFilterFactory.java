@@ -6,6 +6,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.AuthorizeGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.service.AuthenticationServiceFeign;
@@ -58,14 +59,16 @@ public class AuthorizeGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
+            RequestInfo requestInfo) {
         ServerHttpRequest req = exchange.getRequest();
         final String requestUri = req.getURI().getPath();
         String token = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);
         String sign = req.getHeaders().getFirst(AuthConstant.AUTH_SIGN);
         String jwt = req.getHeaders().getFirst(AuthConstant.AUTH_JWT);
         if (StringUtils.isAllEmpty(token, sign, jwt)
-                || (StringUtils.isNotEmpty(token) && !token.startsWith(AuthConstant.AUTH_HEADER_PREFIX))) {
+                || (StringUtils.isNotEmpty(token) && !token
+                .startsWith(AuthConstant.AUTH_HEADER_PREFIX))) {
             return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
                     R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
         }
@@ -79,7 +82,8 @@ public class AuthorizeGatewayFilterFactory extends BaseGatewayFilter<Config> {
             paramMap.put("accessToken", realToken);
             paramMap.put("uri", requestUri);
             //TODO 有问题，会导致该过滤器无效
-            Future<R<Object>> future = executorService.submit(() -> authenticationService.tokenVerify(paramMap));
+            Future<R<Object>> future = executorService
+                    .submit(() -> authenticationService.tokenVerify(paramMap));
             try {
                 result = future.get();
                 log.info("result:{}", result);
@@ -112,15 +116,18 @@ public class AuthorizeGatewayFilterFactory extends BaseGatewayFilter<Config> {
                             String bodyString = new String(bytes, StandardCharsets.UTF_8);
                             //TODO 得到Post请求的请求参数后，做你想做的事
                             log.info("bodyString====={}", bodyString);
-                            HashMap<String, String> hashMap = JSON.parseObject(bodyString, HashMap.class);
+                            HashMap<String, String> hashMap = JSON
+                                    .parseObject(bodyString, HashMap.class);
                             if (!verifySign(hashMap, sign)) {
-                                return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(ResultCodeEnum.SIGN_ERROR));
+                                return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
+                                        R.fail(ResultCodeEnum.SIGN_ERROR));
                             }
                             exchange.getAttributes().put("POST_BODY", bodyString);
                             DataBufferUtils.release(dataBuffer);
 
                             Flux<DataBuffer> cachedFlux = Flux.defer(() -> {
-                                DataBuffer buffer = (DataBuffer) exchange.getResponse().bufferFactory()
+                                DataBuffer buffer = (DataBuffer) exchange.getResponse()
+                                        .bufferFactory()
                                         .wrap(bytes);
                                 return Mono.just(buffer);
                             });
@@ -143,7 +150,8 @@ public class AuthorizeGatewayFilterFactory extends BaseGatewayFilter<Config> {
                     hashMap.put(o.toString(), requestQueryParams.get(o).get(0));
                 }
                 if (!verifySign(hashMap, sign)) {
-                    return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(ResultCodeEnum.SIGN_ERROR));
+                    return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
+                            R.fail(ResultCodeEnum.SIGN_ERROR));
                 }
                 return chain.filter(exchange);
             }

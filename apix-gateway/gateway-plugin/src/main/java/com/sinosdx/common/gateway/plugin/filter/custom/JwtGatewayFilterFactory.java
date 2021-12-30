@@ -5,6 +5,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.JwtGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
@@ -38,7 +39,8 @@ public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
+            RequestInfo requestInfo) {
         ServerHttpRequest req = exchange.getRequest();
         String jwt = req.getHeaders().getFirst(AuthConstant.AUTH_JWT);
         if (StringUtils.isEmpty(jwt)) {

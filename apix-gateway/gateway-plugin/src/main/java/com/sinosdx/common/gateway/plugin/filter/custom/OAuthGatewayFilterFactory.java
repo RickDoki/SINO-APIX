@@ -4,11 +4,17 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.OAuthGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.service.AuthenticationServiceFeign;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.properties.AuthConstant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,12 +27,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 
 /**
@@ -49,12 +49,14 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
+            RequestInfo requestInfo) {
         ServerHttpRequest req = exchange.getRequest();
         final String requestUri = req.getURI().getPath();
         String token = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);
         if (StringUtils.isEmpty(token)
-                || (StringUtils.isNotEmpty(token) && !token.startsWith(AuthConstant.AUTH_HEADER_PREFIX))) {
+                || (StringUtils.isNotEmpty(token) && !token
+                .startsWith(AuthConstant.AUTH_HEADER_PREFIX))) {
             return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
                     R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
         }
@@ -67,7 +69,8 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
             Map<String, String> paramMap = new HashMap<>();
             paramMap.put("accessToken", realToken);
             paramMap.put("uri", requestUri);
-            Future<R<Object>> future = executorService.submit(() -> authenticationService.tokenVerify(paramMap));
+            Future<R<Object>> future = executorService
+                    .submit(() -> authenticationService.tokenVerify(paramMap));
             try {
                 result = future.get();
                 log.info("result:{}", result);

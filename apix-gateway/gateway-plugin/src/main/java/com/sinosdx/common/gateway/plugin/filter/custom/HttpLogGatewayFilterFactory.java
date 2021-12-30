@@ -5,6 +5,7 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.utils.LogUtil;
@@ -56,7 +57,8 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewayFilterFactory.Config> {
+public class HttpLogGatewayFilterFactory extends
+        BaseGatewayFilter<HttpLogGatewayFilterFactory.Config> {
 
     private static final String GZIP = "gzip";
     private static final String WEBSOCKET = "websocket";
@@ -75,7 +77,9 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, HttpLogGatewayFilterFactory.Config c) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain,
+            HttpLogGatewayFilterFactory.Config c,
+            RequestInfo requestInfo) {
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Enter RequestLogGlobalFilter");
@@ -93,7 +97,7 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
             GatewayLogDTO gatewayLog = new GatewayLogDTO();
             gatewayLog.setParams(getRequestParams(exchange, request));
             return chain.filter(exchange.mutate()
-                            .response(getResponseDecorator(exchange, gatewayLog)).build())
+                    .response(getResponseDecorator(exchange, gatewayLog)).build())
                     .onErrorResume(e -> {
                         String result = ExceptionUtil.getMessage(e);
                         if (log.isDebugEnabled()) {
@@ -144,7 +148,7 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
      * @return
      */
     private ServerHttpResponseDecorator getResponseDecorator(ServerWebExchange exchange,
-                                                             GatewayLogDTO gatewayLog) {
+            GatewayLogDTO gatewayLog) {
         ServerHttpResponse originalResponse = exchange.getResponse();
         DataBufferFactory bufferFactory = originalResponse.bufferFactory();
         return new ServerHttpResponseDecorator(originalResponse) {
@@ -208,7 +212,7 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
                                 "RequestLogGlobalFilter ResponseDecorator writeWith error");
                     } finally {
 //                        if(gatewayLog.getStatusCode() != 200){
-                            handleResponse(gatewayLog, exchange);
+                        handleResponse(gatewayLog, exchange);
 //                        }
                     }
                     return bufferFactory.wrap(content);
@@ -278,7 +282,8 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
         if (null != contentType && HttpMethod.POST.name().equalsIgnoreCase(method)
                 && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
             //if (BaseConstants.POST.equalsIgnoreCase(request.getMethodValue())) {
-            requestParams = exchange.getAttributeOrDefault(GatewayConstants.CACHED_REQUEST_BODY_STR, "");
+            requestParams = exchange
+                    .getAttributeOrDefault(GatewayConstants.CACHED_REQUEST_BODY_STR, "");
         } else {
             requestParams = request.getQueryParams().toString();
         }

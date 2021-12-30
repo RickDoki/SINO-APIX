@@ -98,6 +98,18 @@ public class HttpUtil {
         return response(exchange, HttpStatus.OK, str);
     }
 
+
+    /**
+     * 自定义返回信息
+     *
+     * @param exchange
+     * @param o
+     * @return
+     */
+    public static Mono<Void> response(ServerWebExchange exchange, Object o) {
+        return response(exchange, null, o);
+    }
+
     /**
      * 自定义返回信息
      *

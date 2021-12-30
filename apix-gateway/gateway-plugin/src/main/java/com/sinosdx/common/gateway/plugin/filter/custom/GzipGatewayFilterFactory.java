@@ -2,9 +2,17 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.GzipGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.utils.GzipUtil;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -26,14 +34,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
-
 /**
  * Gzip 压缩
  *
@@ -52,14 +52,16 @@ public class GzipGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
+            RequestInfo requestInfo) {
         ServerHttpRequest req = exchange.getRequest();
         HttpHeaders headers = req.getHeaders();
         List<String> encoding = headers.get(HttpHeaders.CONTENT_ENCODING);
         if (!CollectionUtils.isEmpty(encoding) && encoding.contains(GZIP)) {
             ServerHttpResponse originalResponse = exchange.getResponse();
             DataBufferFactory bufferFactory = originalResponse.bufferFactory();
-            ServerHttpResponseDecorator gzipResponse = new ServerHttpResponseDecorator(originalResponse);
+            ServerHttpResponseDecorator gzipResponse = new ServerHttpResponseDecorator(
+                    originalResponse);
             gzipResponse.writeWith(body -> {
                 if (body instanceof Flux) {
                     Flux<? extends DataBuffer> fluxBody = (Flux<? extends DataBuffer>) body;
@@ -73,7 +75,8 @@ public class GzipGatewayFilterFactory extends BaseGatewayFilter<Config> {
                         // 正常返回的数据
                         String rootData = new String(content, Charset.defaultCharset());
                         //压缩后数据返回给客户端
-                        byte[] gzipData = GzipUtil.compress(rootData, Charset.defaultCharset().toString());
+                        byte[] gzipData = GzipUtil
+                                .compress(rootData, Charset.defaultCharset().toString());
                         return bufferFactory.wrap(gzipData);
                     });
                 }
@@ -96,6 +99,7 @@ public class GzipGatewayFilterFactory extends BaseGatewayFilter<Config> {
     /**
      * 获取返回结果
      * 上面不好使时替换使用之前方法
+     *
      * @param exchange
      * @return
      */
