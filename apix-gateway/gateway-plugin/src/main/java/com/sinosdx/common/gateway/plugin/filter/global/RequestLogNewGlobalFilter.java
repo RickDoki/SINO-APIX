@@ -2,10 +2,21 @@ package com.sinosdx.common.gateway.plugin.filter.global;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
-import com.sinosdx.common.gateway.constants.Constants;
+import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.zip.GZIPInputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,18 +42,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.zip.GZIPInputStream;
 
 
 /**
@@ -232,7 +231,7 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
         gatewayLog.setRedirectUrl(redirectUrl);
         gatewayLog.setConsumingTime(getConsumingTime(exchange));
         messageService.saveAnalysisLog(gatewayLog);
-        exchange.getAttributes().remove(Constants.CACHED_REQUEST_BODY_STR);
+        exchange.getAttributes().remove(GatewayConstants.CACHED_REQUEST_BODY_STR);
     }
 
     /**
@@ -258,8 +257,8 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
 //            }
         if (null != contentType && HttpMethod.POST.name().equalsIgnoreCase(method)
                 && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
-            //if (Constants.POST.equalsIgnoreCase(request.getMethodValue())) {
-            requestParams = exchange.getAttributeOrDefault(Constants.CACHED_REQUEST_BODY_STR, "");
+            //if (BaseConstants.POST.equalsIgnoreCase(request.getMethodValue())) {
+            requestParams = exchange.getAttributeOrDefault(GatewayConstants.CACHED_REQUEST_BODY_STR, "");
         } else {
             requestParams = request.getQueryParams().toString();
         }

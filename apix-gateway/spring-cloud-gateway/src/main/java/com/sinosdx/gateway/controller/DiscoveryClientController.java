@@ -1,7 +1,7 @@
 package com.sinosdx.gateway.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.sinosdx.common.gateway.constants.Constants;
+import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,7 @@ public class DiscoveryClientController {
     public GatewayLogDTO customGatewayLog(@RequestBody GatewayLogDTO gatewayLog) {
         GatewayLogDTO gatewayLogDTO = new GatewayLogDTO();
         BeanUtil.copyProperties(gatewayLog, gatewayLogDTO);
-        streamBridge.send(Constants.LOG_TOPIC, gatewayLogDTO);
+        streamBridge.send(GatewayConstants.LOG_TOPIC, gatewayLogDTO);
         return gatewayLogDTO;
     }
 

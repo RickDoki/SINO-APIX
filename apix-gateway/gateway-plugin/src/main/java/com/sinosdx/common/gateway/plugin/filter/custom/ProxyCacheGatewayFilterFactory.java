@@ -1,6 +1,8 @@
 package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
+import com.sinosdx.common.base.constants.BaseConstants;
+import com.sinosdx.common.gateway.constants.CacheConstant;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.ProxyCacheGatewayFilterFactory.Config;
@@ -24,6 +26,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
+
+    private static final String CACHE_STATUS_HEAD_NAME = BaseConstants.PRODUCT_NAME + "-Cache-status";
+
+    private static final String CACHE_KEY = CacheConstant.PROXY_CACHE_DATA_KEY +"proxyCache";
 
     public ProxyCacheGatewayFilterFactory() {
         super(Config.class);

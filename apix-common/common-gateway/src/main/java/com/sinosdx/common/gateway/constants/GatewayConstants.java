@@ -5,7 +5,7 @@ package com.sinosdx.common.gateway.constants;
  * @date 2021-06-09 21:42
  * @description
  */
-public interface Constants {
+public interface GatewayConstants {
 
     String CLIENT_IP = "clientIp";
 

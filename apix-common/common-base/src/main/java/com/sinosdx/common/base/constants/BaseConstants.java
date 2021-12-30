@@ -4,7 +4,7 @@ package com.sinosdx.common.base.constants;
  * @author wendy
  * @date 2021/2/26
  */
-public class Constants {
+public class BaseConstants {
 
     public static final String REDIS_PREFIX_ACCESS_TOKEN = "iam_access_token";
     public static final String REDIS_PREFIX_REFRESH_TOKEN = "iam_refresh_token";
@@ -51,5 +51,7 @@ public class Constants {
     public static final String PV_TYPE_ZABBIX_C2B = "c2b";
     public static final String PV_TYPE_ZABBIX_TOC = "toc";
     public static final String PV_TYPE_SLB = "slb";
+
+    public static final String PRODUCT_NAME = "APIX";
 
 }

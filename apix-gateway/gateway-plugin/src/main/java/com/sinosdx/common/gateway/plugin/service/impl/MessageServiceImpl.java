@@ -1,14 +1,13 @@
 package com.sinosdx.common.gateway.plugin.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.sinosdx.common.gateway.constants.Constants;
+import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.plugin.service.LogServiceFeign;
 import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
 import com.sinosdx.common.model.log.event.LogEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -40,7 +39,7 @@ public class MessageServiceImpl implements IMessageService {
         LogEvent gatewayLogDTO = new LogEvent("gatewayLog",
                 LogUtil.buildLog(exchange, gatewayLog, serviceId));
         log.debug("send gatewayLog:{}", JSON.toJSONString(gatewayLogDTO));
-        streamBridge.send(Constants.LOG_TOPIC, gatewayLogDTO);
+        streamBridge.send(GatewayConstants.LOG_TOPIC, gatewayLogDTO);
     }
 
     @Override

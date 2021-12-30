@@ -2,20 +2,23 @@ package com.sinosdx.common.gateway.plugin.utils;
 
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.BaseEnum;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.reactive.resource.ResourceUrlProvider;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * http工具类
@@ -26,6 +29,7 @@ import java.util.List;
  */
 public class HttpUtil {
 
+    private static final String GET = "GET";
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
     private static final ResourceUrlProvider RESOURCE_URL_PROVIDER = new ResourceUrlProvider();
 
@@ -152,5 +156,37 @@ public class HttpUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * 读取请求体内容
+     *
+     * @param request ServerHttpRequest
+     * @return 请求体
+     */
+    public static String readRequestBody(ServerHttpRequest request) {
+        HttpHeaders headers = request.getHeaders();
+        MediaType mediaType = headers.getContentType();
+        String method = request.getMethodValue().toUpperCase();
+        if (Objects.nonNull(mediaType) && mediaType.equals(MediaType.MULTIPART_FORM_DATA)) {
+            return "上传文件";
+        } else {
+            if (GET.equals(method)) {
+                if (!request.getQueryParams().isEmpty()) {
+                    return request.getQueryParams().toString();
+                }
+                return null;
+            } else {
+                AtomicReference<String> bodyString = new AtomicReference<>();
+                request.getBody().subscribe(buffer -> {
+                    byte[] bytes = new byte[buffer.readableByteCount()];
+                    buffer.read(bytes);
+                    DataBufferUtils.release(buffer);
+                    bodyString.set(new String(bytes, com.sinosdx.common.toolkit.http.HttpUtil
+                            .getMediaTypeCharset(mediaType)));
+                });
+                return bodyString.get();
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.sinosdx.common.gateway.plugin.filter.global;
 
-import com.sinosdx.common.gateway.constants.Constants;
+import com.sinosdx.common.gateway.constants.GatewayConstants;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -56,7 +56,7 @@ public class CachePostBodyGlobalFilter implements GlobalFilter, Ordered {
                     HandlerStrategies.withDefaults().messageReaders());
             Mono<String> bodyToMono = serverRequest.bodyToMono(String.class);
             return bodyToMono.flatMap(body -> {
-                exchange.getAttributes().put(Constants.CACHED_REQUEST_BODY_STR, body);
+                exchange.getAttributes().put(GatewayConstants.CACHED_REQUEST_BODY_STR, body);
                 ServerHttpRequest newRequest = new ServerHttpRequestDecorator(serverHttpRequest) {
                     @Override
                     public HttpHeaders getHeaders() {
