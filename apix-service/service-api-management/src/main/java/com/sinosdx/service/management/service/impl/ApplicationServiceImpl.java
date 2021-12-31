@@ -26,6 +26,7 @@ import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -1329,6 +1330,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @return
      */
     @Override
+    @Transactional
     public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
         if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
@@ -1363,6 +1365,28 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationPluginMapper.updateById(applicationPlugin);
 
         return R.success();
+    }
+
+    /**
+     * 获取服务插件
+     *
+     * @param pluginId
+     * @param appCode
+     * @return
+     */
+    @Override
+    public R<Object> getAppPlugin(String pluginId, String appCode) {
+        Application application = applicationMapper.queryAppByCode(appCode);
+        if (null == application) {
+            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
+        }
+        ApplicationPlugin applicationPlugin = applicationPluginMapper.selectOne(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getId, pluginId)
+                .eq(ApplicationPlugin::getAppCode, appCode)
+                .eq(ApplicationPlugin::getDelFlag, 0)
+                .last("LIMIT 1")
+        );
+        return R.success(applicationPlugin);
     }
 
     @Override

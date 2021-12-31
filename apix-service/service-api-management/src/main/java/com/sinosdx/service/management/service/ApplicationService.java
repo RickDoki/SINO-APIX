@@ -284,6 +284,15 @@ public interface ApplicationService {
     R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin);
 
     /**
+     * 获取服务插件
+     *
+     * @param pluginId
+     * @param appCode
+     * @return
+     */
+    R<Object> getAppPlugin(String pluginId, String appCode);
+
+    /**
      * UserIds 转换为  ClientIds
      * @param userIds
      * @return

@@ -1,11 +1,10 @@
 package com.sinosdx.service.management.controller;
 
 
-import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApplicationService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +27,7 @@ public class AppPluginController {
      * @return
      */
     @PostMapping("/create")
-    public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
+    public R<Object> addAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
         return applicationService.addAppPlugin(applicationPlugin);
     }
 
@@ -39,7 +38,7 @@ public class AppPluginController {
      * @return
      */
     @PostMapping("/update")
-    public R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin) {
+    public R<Object> updateAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
         return applicationService.updateAppPlugin(applicationPlugin);
     }
 
@@ -51,8 +50,7 @@ public class AppPluginController {
      * @return
      */
     @GetMapping("/{pluginId}/{appCode}")
-    public R<Object> getAppPlugin(@PathVariable(value = "pluginId") String pluginId,@PathVariable(value = "appCode") String appCode) {
-
-        return null;
+    public R<Object> getAppPlugin(@PathVariable(value = "pluginId") String pluginId, @PathVariable(value = "appCode") String appCode) {
+        return applicationService.getAppPlugin(pluginId,appCode);
     }
 }
