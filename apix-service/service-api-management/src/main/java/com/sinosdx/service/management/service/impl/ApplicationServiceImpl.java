@@ -588,7 +588,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 // jwt插件
                 if (appPluginClient.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.JWT.getFilterName());
-                    filterArgs.put("_genkey_0", pluginParams.getString("secretKey"));
+                    filterArgs.put("_genkey_0", pluginParams.getString("keyName"));
+                    filterArgs.put("_genkey_1", pluginParams.getString("secretKey"));
+                    filterArgs.put("_genkey_2", pluginParams.getLong("expirationTime"));
                     gatewayFilter.put("args", filterArgs);
                 }
                 // oauth2插件
@@ -800,6 +802,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     private void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient) {
         for (ApplicationPlugin appPlugin : appPlugins) {
             JSONObject paramJson = new JSONObject();
+            // 服务发布方设置的配置项
+            if (StringUtils.isNotEmpty(appPlugin.getPluginParams())) {
+                paramJson = JSONObject.parseObject(appPlugin.getPluginParams());
+            }
             ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
             // jwt插件
             if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {

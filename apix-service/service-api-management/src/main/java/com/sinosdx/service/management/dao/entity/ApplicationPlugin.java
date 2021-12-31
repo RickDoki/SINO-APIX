@@ -20,6 +20,10 @@ public class ApplicationPlugin extends Entity<Integer> {
     private Integer appId;
     private String appCode;
     private String pluginType;
+    /**
+    * 服务发布方的配置
+    */
+    private String pluginParams;
     private Integer enabled;
 
 }
