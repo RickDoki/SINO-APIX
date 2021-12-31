@@ -3,6 +3,7 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
+import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
@@ -28,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reactivestreams.Publisher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -68,10 +68,6 @@ public class HttpLogGatewayFilterFactory extends
      */
     String GATEWAY = "gateway";
 
-    @Autowired
-    private IMessageService messageService;
-
-
     public HttpLogGatewayFilterFactory() {
         super(Config.class);
     }
@@ -106,7 +102,7 @@ public class HttpLogGatewayFilterFactory extends
                         gatewayLog.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
                         gatewayLog.setResult(result);
                         gatewayLog.setConsumingTime(getConsumingTime(exchange));
-                        messageService.saveLog(GATEWAY, gatewayLog);
+                        SpringContextHolder.getBean(IMessageService.class).saveLog(GATEWAY, gatewayLog);
                         return Mono.error(e);
                     });
         } catch (Exception e) {
@@ -254,7 +250,7 @@ public class HttpLogGatewayFilterFactory extends
         }
         gatewayLog.setRedirectUrl(redirectUrl);
         gatewayLog.setConsumingTime(getConsumingTime(exchange));
-        messageService.saveLog(GATEWAY, gatewayLog);
+        SpringContextHolder.getBean(IMessageService.class).saveLog(GATEWAY, gatewayLog);
         exchange.getAttributes().remove(GatewayConstants.CACHED_REQUEST_BODY_STR);
     }
 
