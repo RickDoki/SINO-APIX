@@ -3,7 +3,6 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.enums.ResultEnum;
-import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.WhitelistIpGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
@@ -34,8 +33,7 @@ public class WhitelistIpGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
-            RequestInfo requestInfo) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         final String requestIp = ReactiveAddrUtil.getRemoteAddr(req);
         boolean exist = Stream.of(c.getIp()).anyMatch(s -> Pattern.matches(s, requestIp));

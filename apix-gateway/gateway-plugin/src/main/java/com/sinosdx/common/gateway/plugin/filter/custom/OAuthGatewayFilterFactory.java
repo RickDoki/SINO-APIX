@@ -4,7 +4,6 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.OAuthGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.service.AuthenticationServiceFeign;
@@ -49,8 +48,7 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
-            RequestInfo requestInfo) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         final String requestUri = req.getURI().getPath();
         String token = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);

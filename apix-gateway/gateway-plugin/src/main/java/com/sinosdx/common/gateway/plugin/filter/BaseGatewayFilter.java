@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
+import com.sinosdx.common.toolkit.common.LogUtil;
 import com.sinosdx.common.toolkit.common.StringUtil;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -27,7 +28,14 @@ import reactor.core.publisher.Mono;
  *
  * @author pengjiahu
  * @date 2021-06-18 00:43
- * @description
+ * @description 注意：自定义过滤器顺序是按照各服务配置的插件顺序，如
+ * filters:
+ * - StripPrefix=1
+ * - RealIp=
+ * - Cors=
+ * - Sign=
+ * - ProxyCache=120
+ * 以上会按照从上至下顺序，所以需在发布服务时排序。
  */
 @Slf4j
 @Setter
@@ -56,29 +64,34 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
         return ((exchange, chain) -> {
             String path = exchange.getRequest().getURI().toString().toLowerCase();
             if (!checkAuthVerifyExclude(config, path)) {
-                ServerHttpRequest request = exchange.getRequest();
-                HttpHeaders headers = request.getHeaders();
-                String urlPath = request.getURI().getPath();
-                String requestNo = headers.getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
-                RequestInfo requestInfo = RequestInfo.builder()
-                        .requestNo(requestNo)
-                        .ip(headers.getFirst(HeaderConstant.IP))
-                        .appCode(StringUtil.splitToList(urlPath).get(0))
-                        .requestPath(urlPath)
-                        .build();
-                if (log.isDebugEnabled()) {
-                    log.debug("BaseGatewayFilter config:{}", JSON.toJSONString(config));
-                    log.debug("BaseGatewayFilter requestInfo:{}", requestInfo.toString());
-                }
-                Mono<Void> next = customApply(exchange, chain, config, requestInfo);
-                if (log.isDebugEnabled()) {
-                    log.debug("The request id [{}] is processed by [{}] custom filter", requestNo,
-                            this.getClass().getSimpleName());
-                }
+                String requestNo = exchange.getRequest().getHeaders().getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
+                LogUtil.debug(log, "BaseGatewayFilter config:{}", JSON.toJSONString(config));
+                Mono<Void> next = customApply(exchange, chain, config);
+                LogUtil.debug(log, "request id [{}] is processed by [{}] custom filter",
+                        requestNo, this.getClass().getSimpleName());
                 return next;
             }
             return chain.filter(exchange);
         });
+    }
+
+    /**
+     * 获取请求聚合信息
+     *
+     * @param exchange
+     * @return
+     */
+    public RequestInfo getRequestInfo(ServerWebExchange exchange) {
+        ServerHttpRequest req = exchange.getRequest();
+        HttpHeaders headers = req.getHeaders();
+        String requestNo = headers.getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
+        String urlPath = req.getURI().getPath();
+        return RequestInfo.builder()
+                .requestNo(requestNo)
+                .ip(headers.getFirst(HeaderConstant.IP))
+                .appCode(StringUtil.splitToList(urlPath).get(0))
+                .requestPath(urlPath)
+                .build();
     }
 
     /**
@@ -89,8 +102,7 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
      * @param config
      * @return
      */
-    public abstract Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain,
-            C config, RequestInfo requestInfo);
+    public abstract Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, C config);
 
     /**
      * 自定义过滤排除列表的校验
@@ -101,7 +113,7 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
      */
     public boolean checkAuthVerifyExclude(C config, String path) {
         String authExcludeUri = config.getAuthExcludeUri();
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("path:{},authExcludeUri:{}", path, authExcludeUri);
         }
         if (StringUtil.isBlank(authExcludeUri)) {

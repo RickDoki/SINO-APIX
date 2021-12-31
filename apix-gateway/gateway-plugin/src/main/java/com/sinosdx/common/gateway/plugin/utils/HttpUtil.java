@@ -57,6 +57,17 @@ public class HttpUtil {
      *
      * @param exchange
      * @param baseEnum
+     * @return
+     */
+    public static Mono<Void> error401(ServerWebExchange exchange, BaseEnum baseEnum) {
+        return response(exchange, HttpStatus.UNAUTHORIZED, R.fail(baseEnum));
+    }
+
+    /**
+     * 构建错误的返回信息
+     *
+     * @param exchange
+     * @param baseEnum
      * @param params
      * @return
      */

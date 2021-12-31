@@ -1,11 +1,12 @@
 package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
+import cn.hutool.core.util.ObjectUtil;
 import com.sinosdx.common.base.constants.BaseConstants;
 import com.sinosdx.common.gateway.constants.CacheConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
+import com.sinosdx.common.gateway.plugin.entity.ResponseData;
 import com.sinosdx.common.gateway.plugin.enums.HitStatusEnum;
 import com.sinosdx.common.gateway.plugin.event.ResponseDataEvent;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
@@ -48,8 +49,7 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
-            RequestInfo requestInfo) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         String cacheKey = CACHE_KEY + req.getHeaders().getFirst(GatewayConstants.PATH);
         if (redisUtil.hasKey(cacheKey)) {
@@ -63,8 +63,12 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
     @EventListener
     public void listenerLogMessage(ResponseDataEvent responseDataEvent) {
-        ServerWebExchange exchange=responseDataEvent.getResponseData().getExchange();
+        ResponseData responseData=responseDataEvent.getResponseData();
+        ServerWebExchange exchange=responseData.getExchange();
         //TODO 动态从缓存中获取配置
+        if(ObjectUtil.isEmpty(responseData.getO()) ){
+            return;
+        }
         int expire = Math.min(43200, MAX_EXPIRE);
         ServerHttpRequest req = exchange.getRequest();
         String cacheKey = CACHE_KEY + req.getHeaders().getFirst(GatewayConstants.PATH);

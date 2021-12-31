@@ -41,4 +41,6 @@ public interface GatewayConstants {
 
     String PATH = "x-path";
 
+    String REAL_IP = "real-ip";
+
 }

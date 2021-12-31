@@ -2,7 +2,6 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.SignAuthGatewayFilterFactory.Config;
 import lombok.Data;
@@ -31,8 +30,7 @@ public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
-            RequestInfo requestInfo) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
 
         //返回response带标识，是否命中， sinosdx-Cache-Status: HIT    MISS

@@ -6,7 +6,6 @@ import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.utils.LogUtil;
@@ -57,8 +56,7 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-public class ErrorLogGatewayFilterFactory extends
-        BaseGatewayFilter<ErrorLogGatewayFilterFactory.Config> {
+public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGatewayFilterFactory.Config> {
 
     private static final String GZIP = "gzip";
     private static final String WEBSOCKET = "websocket";
@@ -74,8 +72,7 @@ public class ErrorLogGatewayFilterFactory extends
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
-            RequestInfo requestInfo) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Enter RequestLogGlobalFilter");

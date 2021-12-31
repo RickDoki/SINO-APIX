@@ -37,15 +37,15 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
         if (log.isDebugEnabled()) {
             log.debug("Enter BaseGlobalFilter");
         }
-        ServerHttpRequest request = exchange.getRequest();
-        String uri = request.getURI().getHost();
+        ServerHttpRequest req = exchange.getRequest();
+        String uri = req.getURI().getHost();
         final String traceId = UUID.randomUUID().toString();
-        final String requestIp = ReactiveAddrUtil.getRemoteAddr(request);
+        final String requestIp = ReactiveAddrUtil.getRemoteAddr(req);
         String startTime = String
                 .valueOf(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
         String env = uri.contains("sandbox") ? AppConstant.SAND_BOX : AppConstant.PRO_CODE;
-        String path = request.getURI().getPath();
-        request.mutate()
+        String path = req.getURI().getPath();
+        req.mutate()
                 .header(HeaderConstant.REQUEST_NO_HEADER_NAME, traceId)
                 .header(HeaderConstant.IP, requestIp)
                 .header(HeaderConstant.START_TIME_KEY, startTime)
@@ -56,8 +56,8 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
                 .build();
         if (log.isDebugEnabled()) {
             log.debug("BaseGlobalFilter request.mutate:{}",
-                    JSON.toJSONString(request.getHeaders()));
+                    JSON.toJSONString(req.getHeaders()));
         }
-        return chain.filter(exchange.mutate().request(request).build());
+        return chain.filter(exchange.mutate().request(req).build());
     }
 }

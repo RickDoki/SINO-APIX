@@ -4,7 +4,6 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 import cn.hutool.core.date.DateTime;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.enums.FilterResultCodeEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.ReplayAttacksGatewayFilterFactory.Config;
@@ -48,8 +47,7 @@ public class ReplayAttacksGatewayFilterFactory extends BaseGatewayFilter<Config>
     }
 
     @Override
-    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
-            RequestInfo requestInfo) {
+    public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         HttpHeaders headers = req.getHeaders();
         // timestamp 10位  nonce
