@@ -3,21 +3,22 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 import com.sinosdx.common.base.constants.BaseConstants;
 import com.sinosdx.common.gateway.constants.CacheConstant;
+import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.entity.CacheSupplier;
 import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.gateway.plugin.enums.HitStatusEnum;
+import com.sinosdx.common.gateway.plugin.event.ResponseDataEvent;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.ProxyCacheGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.plugin.utils.RedisUtil;
-import java.util.concurrent.TimeUnit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -50,14 +51,26 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c,
             RequestInfo requestInfo) {
         ServerHttpRequest req = exchange.getRequest();
-        String cacheKey = CACHE_KEY + req.getURI().getPath();
-        int expire = Math.min(c.getExpire(), MAX_EXPIRE);
-        Object data = redisUtil.get(cacheKey,
-                new CacheSupplier<>(expire, TimeUnit.SECONDS, () -> "valueB"));
-        ServerHttpResponse response = exchange.getResponse();
-        response.getHeaders().add(CACHE_STATUS_HEAD, HitStatusEnum.HIT.name());
-        exchange.mutate().response(response).build();
-        return HttpUtil.response(exchange, data);
+        String cacheKey = CACHE_KEY + req.getHeaders().getFirst(GatewayConstants.PATH);
+        if (redisUtil.hasKey(cacheKey)) {
+            ServerHttpResponse response = exchange.getResponse();
+            response.getHeaders().add(CACHE_STATUS_HEAD, HitStatusEnum.HIT.name());
+            exchange.mutate().response(response).build();
+            return HttpUtil.response(exchange, redisUtil.get(cacheKey));
+        }
+        return chain.filter(exchange);
+    }
+
+    @EventListener
+    public void listenerLogMessage(ResponseDataEvent responseDataEvent) {
+        ServerWebExchange exchange=responseDataEvent.getResponseData().getExchange();
+        //TODO 动态从缓存中获取配置
+        int expire = Math.min(43200, MAX_EXPIRE);
+        ServerHttpRequest req = exchange.getRequest();
+        String cacheKey = CACHE_KEY + req.getHeaders().getFirst(GatewayConstants.PATH);
+        if (!redisUtil.hasKey(cacheKey)) {
+            redisUtil.set(cacheKey,responseDataEvent.getResponseData().getO(), (long) expire);
+        }
     }
 
     @Data

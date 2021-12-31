@@ -3,6 +3,8 @@ package com.sinosdx.common.gateway.plugin.filter.global;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
+import com.sinosdx.common.gateway.plugin.component.ThreadResponseData;
+import com.sinosdx.common.gateway.plugin.entity.ResponseData;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.utils.LogUtil;
@@ -17,6 +19,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 import java.util.zip.GZIPInputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -60,6 +63,9 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
 
     @Autowired
     private IMessageService messageService;
+
+    @Autowired
+    private ExecutorService executorService;
 
     @Override
     public int getOrder() {
@@ -185,6 +191,8 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
                         // originalResponse.getHeaders().setContentLength(content.length);
                         //}
                         //originalResponse.getHeaders().set("encrypt", "true");
+                        executorService.execute(new ThreadResponseData(
+                                ResponseData.builder().exchange(exchange).o(responseData).build()));
                     } catch (Exception e) {
                         log.error("RequestLogGlobalFilter ResponseDecorator writeWith error!", e);
                         gatewayLog.setResult(

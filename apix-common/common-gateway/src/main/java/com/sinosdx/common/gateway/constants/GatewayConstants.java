@@ -39,4 +39,6 @@ public interface GatewayConstants {
 
     String CACHED_REQUEST_BODY_STR = "cachedRequestBodyStr";
 
+    String PATH = "x-path";
+
 }
