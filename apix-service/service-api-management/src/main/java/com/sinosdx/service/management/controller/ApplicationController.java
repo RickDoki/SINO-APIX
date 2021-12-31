@@ -225,6 +225,17 @@ public class ApplicationController {
     }
 
     /**
+     * 解绑应用服务
+     *
+     * @param appCode
+     * @return
+     */
+    @PostMapping("/unSubscribe/{appSubscribedCode}")
+    public R<Object> unSubscribe(@PathVariable("appSubscribedCode") String appCode) {
+        return applicationService.unSubscribe(appCode);
+    }
+
+    /**
      * 添加应用开发者
      *
      * @param appCode
@@ -437,16 +448,6 @@ public class ApplicationController {
         return applicationService.querySubscribedAppList(appCode, developerId);
     }
 
-    /**
-     * 服务添加插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    @PostMapping("/plugin")
-    public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
-        return applicationService.addAppPlugin(applicationPlugin);
-    }
     /**
      * 更新AppVersion
      */

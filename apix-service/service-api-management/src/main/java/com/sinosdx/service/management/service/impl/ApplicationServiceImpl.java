@@ -26,6 +26,7 @@ import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -588,7 +589,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 // jwt插件
                 if (appPluginClient.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.JWT.getFilterName());
-                    filterArgs.put("_genkey_0", pluginParams.getString("secretKey"));
+                    filterArgs.put("_genkey_0", pluginParams.getString("keyName"));
+                    filterArgs.put("_genkey_1", pluginParams.getString("secretKey"));
+                    filterArgs.put("_genkey_2", pluginParams.getLong("expirationTime"));
                     gatewayFilter.put("args", filterArgs);
                 }
                 // oauth2插件
@@ -792,6 +795,43 @@ public class ApplicationServiceImpl implements ApplicationService {
         return R.success(applicationSubscribe);
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public R<Object> unSubscribe(String appSubscribedCode) {
+        Application subscribedApp = applicationMapper.queryAppByStatus(appSubscribedCode,
+                Arrays.asList(Constants.APP_STATUS_IS_PUBLISHED, Constants.APP_STATUS_ERROR, Constants.APP_STATUS_IS_ADDED));
+        if (null == subscribedApp) {
+            return R.fail(ResultCodeEnum.LESSEE_APP_IS_NOT_EXIST);
+        }
+
+        Long appVersionCount = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
+                .eq("app_code", appSubscribedCode).eq("del_flag", 0));
+        if (appVersionCount == 0) {
+            return R.fail(ResultCodeEnum.NONE_APP_VERSION);
+        }
+
+        SysClient sysClient = (SysClient) sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
+        if (null == sysClient) {
+            return R.fail(ResultCodeEnum.RESOURCE_NOT_EXISTED);
+        }
+        // 进行解绑
+        // 1.删除 applicationSubscribe
+        applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
+                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
+                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
+                .eq(ApplicationSubscribe::getDelFlag, 0));
+        // 2.删除plugin相关数据
+        applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>()
+                .eq(ApplicationPluginClient::getSysClientId,sysClient.getId())
+                .eq(ApplicationPluginClient::getDelFlag,0)
+        );
+        // 3.删除对应路由 TODO
+
+        return R.success();
+    }
+
+
     /**
      * 订阅时处理各服务插件及绑定关系
      *
@@ -800,6 +840,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     private void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient) {
         for (ApplicationPlugin appPlugin : appPlugins) {
             JSONObject paramJson = new JSONObject();
+            // 服务发布方设置的配置项
+            if (StringUtils.isNotEmpty(appPlugin.getPluginParams())) {
+                paramJson = JSONObject.parseObject(appPlugin.getPluginParams());
+            }
             ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
             // jwt插件
             if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
@@ -1209,6 +1253,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.APP_DEVELOPER_IS_NOT_EXIST);
         }
 
+        // 加入插件信息
+        List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
+                .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                        .eq(ApplicationPlugin::getAppCode, appCode)
+                        .eq(ApplicationPlugin::getDelFlag, 0));
+        appDetailMap.put("plugins", applicationPlugins);
+
         String urlCode = StringUtils.isEmpty(appDetailMap.get("productId").toString()) ? appDetailMap.get("appCode").toString() : appDetailMap.get("productId").toString();
         appDetailMap.put("gatewayDomain", gatewayDomain + "/" + urlCode);
         appDetailMap.put("clientId", oAuthInfo.get("clientId"));
@@ -1279,6 +1330,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @return
      */
     @Override
+    @Transactional
     public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
         if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
@@ -1313,6 +1365,28 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationPluginMapper.updateById(applicationPlugin);
 
         return R.success();
+    }
+
+    /**
+     * 获取服务插件
+     *
+     * @param pluginId
+     * @param appCode
+     * @return
+     */
+    @Override
+    public R<Object> getAppPlugin(String pluginId, String appCode) {
+        Application application = applicationMapper.queryAppByCode(appCode);
+        if (null == application) {
+            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
+        }
+        ApplicationPlugin applicationPlugin = applicationPluginMapper.selectOne(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getId, pluginId)
+                .eq(ApplicationPlugin::getAppCode, appCode)
+                .eq(ApplicationPlugin::getDelFlag, 0)
+                .last("LIMIT 1")
+        );
+        return R.success(applicationPlugin);
     }
 
     @Override

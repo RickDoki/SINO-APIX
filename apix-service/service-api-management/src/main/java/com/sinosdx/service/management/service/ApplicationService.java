@@ -94,6 +94,14 @@ public interface ApplicationService {
     R<Object> appSubscribe(String appSubscribedCode);
 
     /**
+     * 解除订阅服务
+     *
+     * @param appSubscribedCode
+     * @return
+     */
+    R<Object> unSubscribe(String appSubscribedCode);
+
+    /**
      * 添加应用开发者
      *
      * @param appCode
@@ -274,6 +282,15 @@ public interface ApplicationService {
      * @return
      */
     R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin);
+
+    /**
+     * 获取服务插件
+     *
+     * @param pluginId
+     * @param appCode
+     * @return
+     */
+    R<Object> getAppPlugin(String pluginId, String appCode);
 
     /**
      * UserIds 转换为  ClientIds

@@ -18,5 +18,8 @@ public class ApplicationPluginClient extends Entity<Integer> {
     private Integer sysClientId;
     private Integer appPluginId;
     private String pluginType;
+    /**
+     * 发布到网关的配置（包括服务发布方和订阅方）
+     */
     private String pluginParams;
 }

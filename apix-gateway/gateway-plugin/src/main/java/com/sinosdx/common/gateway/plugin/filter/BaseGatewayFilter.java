@@ -3,24 +3,21 @@ package com.sinosdx.common.gateway.plugin.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
-import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
-import com.sinosdx.common.toolkit.common.StringUtil;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.sinosdx.common.tools.common.StringUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 抽象自定义过滤器
@@ -56,20 +53,11 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
         return ((exchange, chain) -> {
             String path = exchange.getRequest().getURI().toString().toLowerCase();
             if (!checkAuthVerifyExclude(config, path)) {
-                ServerHttpRequest request = exchange.getRequest();
-                HttpHeaders headers = request.getHeaders();
-                String urlPath = request.getURI().getPath();
-                RequestInfo requestInfo = RequestInfo.builder()
-                        .requestNo(headers.getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME))
-                        .ip(headers.getFirst(HeaderConstant.IP))
-                        .appCode(StringUtil.splitToList(urlPath).get(0))
-                        .requestPath(urlPath)
-                        .build();
-                if (log.isDebugEnabled()) {
-                    log.debug("BaseGatewayFilter config:{}", JSON.toJSONString(config));
-                    log.debug("BaseGatewayFilter requestInfo:{}", requestInfo.toString());
+                if(log.isDebugEnabled()) {
+                    log.debug("config:{}", JSON.toJSONString(config));
                 }
-                return customApply(exchange, chain, config, requestInfo);
+                //TODO 判断请求对应的服务是否配置了相应插件
+                return customApply(exchange, chain, config);
             }
             return chain.filter(exchange);
         });
@@ -81,11 +69,10 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
      * @param exchange
      * @param chain
      * @param config
-     * @param requestInfo
      * @return
      */
     public abstract Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain,
-            C config, RequestInfo requestInfo);
+            C config);
 
     /**
      * 自定义过滤排除列表的校验
@@ -96,7 +83,7 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
      */
     public boolean checkAuthVerifyExclude(C config, String path) {
         String authExcludeUri = config.getAuthExcludeUri();
-        if (log.isDebugEnabled()) {
+        if(log.isDebugEnabled()) {
             log.debug("path:{},authExcludeUri:{}", path, authExcludeUri);
         }
         if (StringUtil.isBlank(authExcludeUri)) {
