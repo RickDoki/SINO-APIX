@@ -794,6 +794,43 @@ public class ApplicationServiceImpl implements ApplicationService {
         return R.success(applicationSubscribe);
     }
 
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public R<Object> unSubscribe(String appSubscribedCode) {
+        Application subscribedApp = applicationMapper.queryAppByStatus(appSubscribedCode,
+                Arrays.asList(Constants.APP_STATUS_IS_PUBLISHED, Constants.APP_STATUS_ERROR, Constants.APP_STATUS_IS_ADDED));
+        if (null == subscribedApp) {
+            return R.fail(ResultCodeEnum.LESSEE_APP_IS_NOT_EXIST);
+        }
+
+        Long appVersionCount = applicationVersionMapper.selectCount(new QueryWrapper<ApplicationVersion>()
+                .eq("app_code", appSubscribedCode).eq("del_flag", 0));
+        if (appVersionCount == 0) {
+            return R.fail(ResultCodeEnum.NONE_APP_VERSION);
+        }
+
+        SysClient sysClient = (SysClient) sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
+        if (null == sysClient) {
+            return R.fail(ResultCodeEnum.RESOURCE_NOT_EXISTED);
+        }
+        // 进行解绑
+        // 1.删除 applicationSubscribe
+        applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
+                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
+                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
+                .eq(ApplicationSubscribe::getDelFlag, 0));
+        // 2.删除plugin相关数据
+        applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>()
+                .eq(ApplicationPluginClient::getSysClientId,sysClient.getId())
+                .eq(ApplicationPluginClient::getDelFlag,0)
+        );
+        // 3.删除对应路由 TODO
+
+        return R.success();
+    }
+
+
     /**
      * 订阅时处理各服务插件及绑定关系
      *

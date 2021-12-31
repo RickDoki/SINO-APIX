@@ -225,6 +225,17 @@ public class ApplicationController {
     }
 
     /**
+     * 解绑应用服务
+     *
+     * @param appCode
+     * @return
+     */
+    @PostMapping("/unSubscribe/{appCode}")
+    public R<Object> unSubscribe(@PathVariable("appCode") String appCode) {
+        return applicationService.unSubscribe(appCode);
+    }
+
+    /**
      * 添加应用开发者
      *
      * @param appCode

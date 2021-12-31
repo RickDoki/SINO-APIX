@@ -94,6 +94,14 @@ public interface ApplicationService {
     R<Object> appSubscribe(String appSubscribedCode);
 
     /**
+     * 解除订阅服务
+     *
+     * @param appSubscribedCode
+     * @return
+     */
+    R<Object> unSubscribe(String appSubscribedCode);
+
+    /**
      * 添加应用开发者
      *
      * @param appCode
