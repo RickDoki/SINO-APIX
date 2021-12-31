@@ -1,6 +1,7 @@
 package com.sinosdx.common.gateway.plugin.filter.global;
 
 import com.sinosdx.common.gateway.constants.GatewayConstants;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -34,23 +35,24 @@ public class CachePostBodyGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -98;
+        return FilterOrderEnum.CACHE_POST_BODY.getOrder();
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("Enter CachePostBodyGlobalFilter");
         }
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
         MediaType mediaType = exchange.getRequest().getHeaders().getContentType();
-        if(log.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             log.debug("Headers:{}", exchange.getRequest().getHeaders().toString());
         }
         if (null == mediaType) {
             return chain.filter(exchange);
         }
-        if (HttpMethod.POST.name().equalsIgnoreCase(serverHttpRequest.getMethodValue()) && !mediaType
+        if (HttpMethod.POST.name().equalsIgnoreCase(serverHttpRequest.getMethodValue())
+                && !mediaType
                 .includes(MediaType.MULTIPART_FORM_DATA)) {
             ServerRequest serverRequest = ServerRequest.create(exchange,
                     HandlerStrategies.withDefaults().messageReaders());

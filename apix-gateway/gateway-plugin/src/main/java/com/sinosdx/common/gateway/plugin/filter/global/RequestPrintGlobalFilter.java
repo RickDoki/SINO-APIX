@@ -1,5 +1,6 @@
 package com.sinosdx.common.gateway.plugin.filter.global;
 
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.utils.ReactiveAddrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -22,7 +23,7 @@ public class RequestPrintGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -99;
+        return FilterOrderEnum.REQUEST_PRINT.getOrder();
     }
 
     @Override

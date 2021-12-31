@@ -3,6 +3,7 @@ package com.sinosdx.common.gateway.plugin.filter.global;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
@@ -62,7 +63,7 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -97;
+        return FilterOrderEnum.REQUEST_LOG.getOrder();
     }
 
     @Override

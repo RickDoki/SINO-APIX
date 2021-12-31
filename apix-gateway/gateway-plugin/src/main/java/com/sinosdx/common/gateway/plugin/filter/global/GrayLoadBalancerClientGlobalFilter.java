@@ -1,5 +1,6 @@
 package com.sinosdx.common.gateway.plugin.filter.global;
 
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.service.impl.GrayLoadBalancer;
 import java.net.URI;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,7 @@ public class GrayLoadBalancerClientGlobalFilter implements GlobalFilter, Ordered
     @Override
     public int getOrder() {
         //顺序不能低于以下值，否则会获取不到url值
-        return 10250;
+        return FilterOrderEnum.GRAY_LOAD_BALANCER.getOrder();
     }
 
     @Override

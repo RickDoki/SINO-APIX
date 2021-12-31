@@ -3,6 +3,7 @@ package com.sinosdx.common.gateway.plugin.filter.global;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.gateway.enums.ResultEnum;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.properties.GatewayConfig;
 import com.sinosdx.common.model.log.constants.LogConstant;
@@ -63,6 +64,6 @@ public class SafeControlGlobalFilter implements GlobalFilter, Ordered {
      */
     @Override
     public int getOrder() {
-        return -99;
+        return FilterOrderEnum.SAFE_CONTROL.getOrder();
     }
 }
