@@ -146,14 +146,6 @@
       </timeBasedFileNamingAndTriggeringPolicy>
     </rollingPolicy>
   </appender>
-  <!--输出到logstash的appender-->
-  <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-    <destination>${logstashServerAddr}</destination>
-    <queueSize>1048576</queueSize>
-    <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
-      <customFields>{"env":"${active}"}</customFields>
-    </encoder>
-  </appender>
 
   <appender name="DEBUG_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
     <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
@@ -195,14 +187,6 @@
     <includeCallerData>true</includeCallerData>
     <appender-ref ref="TRACE"/>
   </appender>
-  <appender name="LOGSTASH_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-    <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
-    <discardingThreshold>0</discardingThreshold>
-    <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
-    <queueSize>2048</queueSize>
-    <includeCallerData>true</includeCallerData>
-    <appender-ref ref="LOGSTASH"/>
-  </appender>
 
 　<root level="DEBUG">
 　　　<appender-ref ref="STDOUT" />
@@ -213,7 +197,6 @@
     <logger name="java.sql.PreparedStatement" level="debug"/>
     <root level="${rootLevel}">
       <appender-ref ref="STDOUT"/>
-      <appender-ref ref="LOGSTASH_ASYNC"/>
     </root>
   </springProfile>
   <springProfile name="test">
@@ -226,7 +209,6 @@
       <appender-ref ref="WARN_ASYNC"/>
       <appender-ref ref="INFO_ASYNC"/>
       <appender-ref ref="TRACE_ASYNC"/>
-      <appender-ref ref="LOGSTASH_ASYNC"/>
     </root>
   </springProfile>
   <springProfile name="uat">
@@ -236,7 +218,6 @@
       <appender-ref ref="WARN_ASYNC"/>
       <appender-ref ref="INFO_ASYNC"/>
       <appender-ref ref="TRACE_ASYNC"/>
-      <appender-ref ref="LOGSTASH_ASYNC"/>
     </root>
   </springProfile>
   <springProfile name="release">
@@ -245,7 +226,6 @@
       <appender-ref ref="WARN_ASYNC"/>
       <appender-ref ref="INFO_ASYNC"/>
       <appender-ref ref="TRACE_ASYNC"/>
-      <appender-ref ref="LOGSTASH_ASYNC"/>
     </root>
   </springProfile>
   <springProfile name="pro">
@@ -254,7 +234,6 @@
       <appender-ref ref="WARN_ASYNC"/>
       <appender-ref ref="INFO_ASYNC"/>
       <appender-ref ref="TRACE_ASYNC"/>
-      <appender-ref ref="LOGSTASH_ASYNC"/>
     </root>
   </springProfile>
 </configuration>
