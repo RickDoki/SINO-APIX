@@ -103,10 +103,10 @@ public class HttpLogGatewayFilterFactory extends
                         if (log.isDebugEnabled()) {
                             log.debug("onErrorResume result:{}", result);
                         }
-                        gatewayLog.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                        gatewayLog.setResult(result);
-                        gatewayLog.setConsumingTime(getConsumingTime(exchange));
-                        messageService.saveLog(GATEWAY, gatewayLog);
+//                        gatewayLog.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+//                        gatewayLog.setResult(result);
+//                        gatewayLog.setConsumingTime(getConsumingTime(exchange));
+//                        messageService.saveLog(GATEWAY, gatewayLog);
                         return Mono.error(e);
                     });
         } catch (Exception e) {
@@ -171,7 +171,7 @@ public class HttpLogGatewayFilterFactory extends
                     fluxBody = Flux.from(DataBufferUtils.join(body));
                 } catch (Exception e) {
                     log.error("RequestLogGlobalFilter ResponseDecorator Flux.from error!", e);
-                    handleResponse(gatewayLog, exchange);
+//                    handleResponse(gatewayLog, exchange);
                     return super.writeWith(body);
                 }
                 return super.writeWith(fluxBody.buffer().map(dataBuffers -> {
@@ -211,9 +211,9 @@ public class HttpLogGatewayFilterFactory extends
                         gatewayLog.setResult(
                                 "RequestLogGlobalFilter ResponseDecorator writeWith error");
                     } finally {
-//                        if(gatewayLog.getStatusCode() != 200){
+                        if(gatewayLog.getStatusCode() == 200){
                         handleResponse(gatewayLog, exchange);
-//                        }
+                        }
                     }
                     return bufferFactory.wrap(content);
                 }));
