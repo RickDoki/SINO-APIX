@@ -17,7 +17,7 @@
         />
       </el-col>
       <el-col :offset="4" :span="6">
-        <el-button plain size="mini" @click="reset">重置</el-button>
+        <el-button size="mini" @click="reset">重置</el-button>
         <el-button type="primary" size="mini" @click="search">查询</el-button>
       </el-col>
     </el-row>
@@ -52,42 +52,42 @@ export default {
   components: {
     tableList,
   },
-  data() {
+  data () {
     return {
       APIName: "",
       value1: [],
       tableList: [],
       total: 0,
       developerId: "",
-      page:1,
-      size:10
+      page: 1,
+      size: 10
     };
   },
-  created() {
+  created () {
     this.developerId = getToken("userId_api");
-    const query = "limit="+this.size+"&offset="+this.page+"&developerId=" + this.developerId;
+    const query = "limit=" + this.size + "&offset=" + this.page + "&developerId=" + this.developerId;
     this.getList(query);
   },
   methods: {
-    sizeChange(val) {
+    sizeChange (val) {
       this.size = val
       const query =
         "?limit=" + this.size + "&offset=" + this.page + "&developerId=" + this.developerId;
       this.getList(query);
     },
-    search() {
+    search () {
       this.page = 1
       if (this.value1) {
         if (this.value1.length === 0) {
           const query =
-            "limit="+this.size+"&offset=" +this.page +"&apiName=" +
+            "limit=" + this.size + "&offset=" + this.page + "&apiName=" +
             this.APIName +
             "&developerId=" +
             this.developerId;
           this.getList(query);
         } else {
           const query =
-            "limit="+this.size+"&offset="+this.page+"&apiName=" +
+            "limit=" + this.size + "&offset=" + this.page + "&apiName=" +
             this.APIName +
             "&startTime=" +
             this.value1[0] +
@@ -99,14 +99,14 @@ export default {
         }
       } else {
         const query =
-          "limit="+this.size+"&offset="+this.page+"&apiName=" +
+          "limit=" + this.size + "&offset=" + this.page + "&apiName=" +
           this.APIName +
           "&developerId=" +
           this.developerId;
         this.getList(query);
       }
     },
-    getList(query) {
+    getList (query) {
       // 获取api列表
       list(query).then((res) => {
         if (res.code === 200) {
@@ -116,22 +116,22 @@ export default {
         }
       });
     },
-    refresh() {
-      const query = "limit="+ this.size+"&offset= " +this.page+ "&developerId=" + this.developerId;
+    refresh () {
+      const query = "limit=" + this.size + "&offset= " + this.page + "&developerId=" + this.developerId;
       this.getList(query);
     },
-    reset() {
+    reset () {
       this.value1 = [];
       this.APIName = "";
       this.search();
     },
-    pageChange(val) {
+    pageChange (val) {
       this.page = val
       const query =
         "limit=" + this.size + "&offset=" + this.page + "&developerId=" + this.developerId;
       this.getList(query);
     },
-    goApicreate() {
+    goApicreate () {
       this.$router.push('/api/add')
     }
   },

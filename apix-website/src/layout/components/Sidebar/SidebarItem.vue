@@ -61,7 +61,7 @@ export default {
     chooseIcon (item, route) {
       var n = 0 // 用于判断当前一级菜单下的二级菜单是否被点击
       for (var i = 0; i < item.children.length; i++) {
-        if ((route).indexOf(item.children[i].path) != -1) {
+        if (item.children[i].path === route) {
           n = 1
         }
       }
@@ -73,7 +73,7 @@ export default {
     },
     chooseIconB (item, route) {
       var b = 0
-      if ((route).indexOf(item.path) != -1) {
+      if (item.path === route) {
         b = 1
       }
       if (b == 1) { // 被点击了，返回高亮图标

@@ -1,5 +1,5 @@
 <template>
-  <div class="Api_create">
+  <div class="main">
     <div class="top">
       <elx-steps-horizontal
         v-model="active"
@@ -288,10 +288,10 @@
                 />
               </vxe-table>
               <div class="table-button">
-                <el-button size="mini" @click="savedata" class="add-but">
+                <el-button plain type="primary" size="mini" @click="savedata" class="add-but">
                   新增
                 </el-button>
-                <el-button size="mini" @click="newdata" class="del-but">
+                <el-button plain type="danger" size="mini" @click="newdata" class="del-but">
                   删除
                 </el-button>
               </div>
@@ -364,10 +364,10 @@
                 />
               </vxe-table>
               <div class="table-button">
-                <el-button size="mini" @click="savedatares" class="add-but">
+                <el-button plain type="primary" size="mini" @click="savedatares" class="add-but">
                   新增
                 </el-button>
-                <el-button size="mini" @click="newdatares" class="del-but">
+                <el-button plain type="danger" size="mini" @click="newdatares" class="del-but">
                   删除
                 </el-button>
               </div>
@@ -742,79 +742,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.Api_create {
-  margin: 24px 40px;
-  margin-bottom: 70px;
-  background-color: #fff;
-  min-height: calc(100vh - 185px);
-  .top {
-    padding: 0px 75px;
-  }
-  .formBox {
-    margin-top: 30px;
-    .contentDiv {
-      display: flex;
-      .item-div {
-        margin-left: 20px;
-      }
-    }
-    .item {
-      position: absolute;
-      right: -15px;
-      top: 3px;
-    }
-    .addDiv {
-      margin-top: 10px;
-    }
-    .add_span {
-      color: #2c66fb;
-    }
-    .inputWidth {
-      width: 48%;
-    }
-    .formBut {
-      text-align: right;
-    }
-    .numberWdith {
-      width: 180px;
-    }
-    .numberWdith2 {
-      width: 205px;
-    }
-    .divider {
-      display: flex;
-      line-height: 45px;
-      margin: 20px 0px;
-      .dividerTitle {
-        font-size: 16px;
-        font-weight: 500;
-        margin-right: 20px;
-        width: 90px;
-      }
-    }
-  }
-}
-.bottom {
-  position: fixed;
-  width: calc(100% - 210px);
-  height: 50px;
-  background-color: #fff;
-  bottom: 0px;
-  .bottom_button {
-    margin-left: 185px;
-    margin-top: 10px;
-    div {
-      display: inline-block;
-      padding: 5px 8px;
-      margin-right: 20px;
-      cursor: pointer;
-    }
-  }
-  .bottom_button_b {
-    margin-left: 480px;
-    margin-top: 10px;
-  }
-}
 ::v-deep .vue-contextmenu-listWrapper {
   padding: 0px;
   .context-menu-list {
@@ -832,7 +759,7 @@ export default {
 }
 .my-editor {
   max-width: 1140px;
-  background: #f5f7fa;
+  background: #f4f6ff;
   color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
@@ -848,15 +775,6 @@ export default {
 .height-300 {
   height: 150px;
 }
-.show-but {
-  margin-left: 16px;
-  height: 20px;
-  font-size: 14px;
-  font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
-  font-weight: 400;
-  color: #2650ff;
-  line-height: 20px;
-}
 .content-boder {
   .vxe-table {
     max-width: 1140px;
@@ -868,18 +786,5 @@ export default {
 }
 .table-button {
   margin-top: 15px;
-  .add-but {
-    border: 1px solid #2650ff;
-    border-color: #2650ff;
-    color: #2650ff;
-  }
-  .del-but {
-    border: 1px solid #f03063;
-    border-color: #f03063;
-    color: #f03063;
-  }
-  .del-but:hover {
-    background-color: #fef0f0;
-  }
 }
 </style>

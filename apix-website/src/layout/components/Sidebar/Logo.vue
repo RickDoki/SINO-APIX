@@ -3,7 +3,7 @@
     <transition name="sidebarLogoFade">
       <router-link key="collapse" class="sidebar-logo-link" to="/">
         <img src="./../../../assets/img/sdx_logo.png" class="sidebar-logo">
-        <p class="sidebar-title">SINO APIX</p>
+        <!-- <p class="sidebar-title">SINO APIX</p> -->
       </router-link>
     </transition>
   </div>
@@ -18,7 +18,7 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
       title: 'API管理平台',
       logo: './../../../assets/img/logo.png'
@@ -51,7 +51,7 @@ export default {
     height: 100%;
     width: 100%;
     & .sidebar-logo {
-      width: 42px;
+      margin-top: 15px;
       vertical-align: middle;
       text-align: center;
     }
@@ -62,7 +62,7 @@ export default {
       font-size: 22px;
       font-family: Roboto;
       font-weight: bold;
-      color: #1D1C35;
+      color: #1d1c35;
       vertical-align: middle;
     }
   }

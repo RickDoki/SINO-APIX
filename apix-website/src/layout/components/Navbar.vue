@@ -16,11 +16,12 @@
     </div>
     <div class="breadcrumb">
       <el-breadcrumb
-        v-if="routerList[0].path === '/dashboard' ? false : true"
         class="brea-div"
-        separator="/"
+        separator=">"
       >
-        <el-breadcrumb-item :to="{ path: '/dashboard/index' }">控制台</el-breadcrumb-item>
+        <!-- <el-breadcrumb-item 
+          v-if="routerList[0].path === '/dashboard' ? false : true"
+          :to="{ path: '/dashboard/index' }">控制台</el-breadcrumb-item> -->
         <template v-for="(item, index) in routerList">
           <el-breadcrumb-item
             :key="index"

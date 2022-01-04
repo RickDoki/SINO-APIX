@@ -22,7 +22,7 @@
           <el-button type="primary" size="small" style="background-color: #2650FF;" @click="getuserList()">查询</el-button>
         </div>
       </div>
-      <el-table :row-style="{height: '48px'}" :data="tableData" stripe :header-cell-style="{background:'#F0F2F5',color:'#333333'}">
+      <el-table :row-style="{height: '48px'}" :data="tableData" stripe :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
         <el-table-column prop="username" label="用户名" width="150" show-overflow-tooltip></el-table-column>
         <el-table-column prop="roleName" label="角色">
           <template slot-scope="scope">
