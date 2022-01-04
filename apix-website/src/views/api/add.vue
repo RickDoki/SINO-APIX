@@ -1,5 +1,5 @@
 <template>
-  <div class="Api_create">
+  <div class="main">
     <div class="top">
       <elx-steps-horizontal
         v-model="active"
@@ -426,7 +426,7 @@ export default {
       // 展示折叠配置
       showTimeFlag: false,
       // 默认步骤数
-      active: 1,
+      active: 0,
       panelTitles: ['设置上游服务', '设置API信息'], // 根据需要传入，可N步
       lineNumbers: true,
       readonly: true,
@@ -742,79 +742,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.Api_create {
-  margin: 24px 40px;
-  margin-bottom: 70px;
-  background-color: #fff;
-  min-height: calc(100vh - 185px);
-  .top {
-    padding: 0px 75px;
-  }
-  .formBox {
-    margin-top: 30px;
-    .contentDiv {
-      display: flex;
-      .item-div {
-        margin-left: 20px;
-      }
-    }
-    .item {
-      position: absolute;
-      right: -15px;
-      top: 3px;
-    }
-    .addDiv {
-      margin-top: 10px;
-    }
-    .add_span {
-      color: #2c66fb;
-    }
-    .inputWidth {
-      width: 48%;
-    }
-    .formBut {
-      text-align: right;
-    }
-    .numberWdith {
-      width: 180px;
-    }
-    .numberWdith2 {
-      width: 205px;
-    }
-    .divider {
-      display: flex;
-      line-height: 45px;
-      margin: 20px 0px;
-      .dividerTitle {
-        font-size: 16px;
-        font-weight: 500;
-        margin-right: 20px;
-        width: 90px;
-      }
-    }
-  }
-}
-.bottom {
-  position: fixed;
-  width: calc(100% - 210px);
-  height: 50px;
-  background-color: #fff;
-  bottom: 0px;
-  .bottom_button {
-    margin-left: 185px;
-    margin-top: 10px;
-    div {
-      display: inline-block;
-      padding: 5px 8px;
-      margin-right: 20px;
-      cursor: pointer;
-    }
-  }
-  .bottom_button_b {
-    margin-left: 480px;
-    margin-top: 10px;
-  }
-}
 ::v-deep .vue-contextmenu-listWrapper {
   padding: 0px;
   .context-menu-list {
@@ -847,15 +774,6 @@ export default {
 /* not required: */
 .height-300 {
   height: 150px;
-}
-.show-but {
-  margin-left: 16px;
-  height: 20px;
-  font-size: 14px;
-  font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
-  font-weight: 400;
-  color: #2650ff;
-  line-height: 20px;
 }
 .content-boder {
   .vxe-table {
