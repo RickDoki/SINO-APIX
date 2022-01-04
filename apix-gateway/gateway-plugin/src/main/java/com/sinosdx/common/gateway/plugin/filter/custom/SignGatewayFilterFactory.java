@@ -58,6 +58,9 @@ public class SignGatewayFilterFactory extends BaseGatewayFilter<Config> {
         if (StringUtils.isBlank(sign)) {
             return HttpUtil.errorResponse(exchange, FilterResultCodeEnum.SIGN_EMPTY);
         }
+        if (StringUtils.isBlank(c.appKey)) {
+            return HttpUtil.errorResponse(exchange, FilterResultCodeEnum.SIGN_KEY_EMPTY);
+        }
         String method = req.getMethodValue();
         String contentType = req.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE);
         //判断是否为POST请求

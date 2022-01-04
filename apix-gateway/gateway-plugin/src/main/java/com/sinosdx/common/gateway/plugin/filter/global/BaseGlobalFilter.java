@@ -9,9 +9,12 @@ import com.sinosdx.common.gateway.utils.ReactiveAddrUtil;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -38,13 +41,17 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
             log.debug("Enter BaseGlobalFilter");
         }
         ServerHttpRequest req = exchange.getRequest();
+        if (req.getMethod() == HttpMethod.OPTIONS) {
+            exchange.getResponse().setStatusCode(HttpStatus.OK);
+            return Mono.empty();
+        }
         String uri = req.getURI().getHost();
         final String traceId = UUID.randomUUID().toString();
         final String requestIp = ReactiveAddrUtil.getRemoteAddr(req);
-        String startTime = String
-                .valueOf(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
-        String env = uri.contains("sandbox") ? AppConstant.SAND_BOX : AppConstant.PRO_CODE;
+        String startTime = String.valueOf(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
+        String env = uri.contains(AppConstant.SAND_BOX) ? AppConstant.SAND_BOX : AppConstant.PRO_CODE;
         String path = req.getURI().getPath();
+        MDC.put(HeaderConstant.REQUEST_NO_HEADER_NAME, traceId);
         req.mutate()
                 .header(HeaderConstant.REQUEST_NO_HEADER_NAME, traceId)
                 .header(HeaderConstant.IP, requestIp)
@@ -55,8 +62,7 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
                 .header(GatewayConstants.PATH, path)
                 .build();
         if (log.isDebugEnabled()) {
-            log.debug("BaseGlobalFilter request.mutate:{}",
-                    JSON.toJSONString(req.getHeaders()));
+            log.debug("BaseGlobalFilter headers:{}", JSON.toJSONString(req.getHeaders()));
         }
         return chain.filter(exchange.mutate().request(req).build());
     }
