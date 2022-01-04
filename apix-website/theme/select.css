@@ -901,7 +901,7 @@
   .el-select-dropdown.is-multiple .el-select-dropdown__item {
     padding-right: 40px; }
   .el-select-dropdown.is-multiple .el-select-dropdown__item.selected {
-    color: #4461D7;
+    color: #2650FF;
     background-color: #FFFFFF; }
     .el-select-dropdown.is-multiple .el-select-dropdown__item.selected.hover {
       background-color: #F5F7FA; }
@@ -1240,7 +1240,7 @@
       border-color: #C0C4CC; }
     .el-textarea__inner:focus {
       outline: none;
-      border-color: #4461D7; }
+      border-color: #2650FF; }
   .el-textarea .el-input__count {
     color: #909399;
     background: #FFFFFF;
@@ -1346,7 +1346,7 @@
       border-color: #C0C4CC; }
     .el-input__inner:focus {
       outline: none;
-      border-color: #4461D7; }
+      border-color: #2650FF; }
   .el-input__suffix {
     position: absolute;
     height: 100%;
@@ -1385,7 +1385,7 @@
     pointer-events: none; }
   .el-input.is-active .el-input__inner {
     outline: none;
-    border-color: #4461D7; }
+    border-color: #2650FF; }
   .el-input.is-disabled .el-input__inner {
     background-color: #F5F7FA;
     border-color: #E4E7ED;
@@ -1770,15 +1770,15 @@
 /* Break-point
 --------------------------*/
 .el-tag {
-  background-color: #eceffb;
-  border-color: #dadff7;
-  color: #4461d7;
+  background-color: #e9eeff;
+  border-color: #d4dcff;
+  color: #2650ff;
   display: inline-block;
   height: 32px;
   padding: 0 10px;
   line-height: 30px;
   font-size: 12px;
-  color: #4461D7;
+  color: #2650FF;
   border-width: 1px;
   border-style: solid;
   border-radius: 4px;
@@ -1786,12 +1786,12 @@
   box-sizing: border-box;
   white-space: nowrap; }
   .el-tag.is-hit {
-    border-color: #4461D7; }
+    border-color: #2650FF; }
   .el-tag .el-tag__close {
-    color: #4461d7; }
+    color: #2650ff; }
     .el-tag .el-tag__close:hover {
       color: #FFFFFF;
-      background-color: #4461d7; }
+      background-color: #2650ff; }
   .el-tag.el-tag--info {
     background-color: #f4f4f5;
     border-color: #e9e9eb;
@@ -1851,16 +1851,16 @@
     .el-tag .el-icon-close::before {
       display: block; }
   .el-tag--dark {
-    background-color: #4461d7;
-    border-color: #4461d7;
+    background-color: #2650ff;
+    border-color: #2650ff;
     color: white; }
     .el-tag--dark.is-hit {
-      border-color: #4461D7; }
+      border-color: #2650FF; }
     .el-tag--dark .el-tag__close {
       color: white; }
       .el-tag--dark .el-tag__close:hover {
         color: #FFFFFF;
-        background-color: #6981df; }
+        background-color: #5173ff; }
     .el-tag--dark.el-tag--info {
       background-color: #909399;
       border-color: #909399;
@@ -1907,15 +1907,15 @@
           background-color: #f78989; }
   .el-tag--plain {
     background-color: white;
-    border-color: #b4c0ef;
-    color: #4461d7; }
+    border-color: #a8b9ff;
+    color: #2650ff; }
     .el-tag--plain.is-hit {
-      border-color: #4461D7; }
+      border-color: #2650FF; }
     .el-tag--plain .el-tag__close {
-      color: #4461d7; }
+      color: #2650ff; }
       .el-tag--plain .el-tag__close:hover {
         color: #FFFFFF;
-        background-color: #4461d7; }
+        background-color: #2650ff; }
     .el-tag--plain.el-tag--info {
       background-color: white;
       border-color: #d3d4d6;
@@ -2273,7 +2273,7 @@
   .el-select-dropdown__item.hover, .el-select-dropdown__item:hover {
     background-color: #F5F7FA; }
   .el-select-dropdown__item.selected {
-    color: #4461D7;
+    color: #2650FF;
     font-weight: bold; }
 
 /* BEM support Func
@@ -2902,7 +2902,7 @@
     cursor: pointer;
     padding-right: 35px; }
     .el-select .el-input__inner:focus {
-      border-color: #4461D7; }
+      border-color: #2650FF; }
   .el-select .el-input .el-select__caret {
     color: #C0C4CC;
     font-size: 14px;
@@ -2932,7 +2932,7 @@
     .el-select .el-input.is-disabled .el-input__inner:hover {
       border-color: #E4E7ED; }
   .el-select .el-input.is-focus .el-input__inner {
-    border-color: #4461D7; }
+    border-color: #2650FF; }
   .el-select > .el-input {
     display: block; }
   .el-select__input {

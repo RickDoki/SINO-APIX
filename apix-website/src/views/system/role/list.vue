@@ -3,7 +3,7 @@
     <el-card class="box-card" shadow="never">
       <div class="card-top">
         <div>
-          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #4461D7; border-color: #4461D7;" @click="add">创建</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #2650FF; border-color: #2650FF;" @click="add">创建</el-button>
         </div>
         <div style="margin-left: 20px;" class="input-box">
           <el-input placeholder="请输入角色姓名" v-model="roleName" size="small" clearable></el-input>
@@ -23,7 +23,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)" style="color: #4461D7;">配置</el-button>
+            <el-button type="text" @click="edit(scope.row)" style="color: #2650FF;">配置</el-button>
             <span style="padding: 0 6px; color: #D8D8D8">|</span>
             <el-button type="text" @click="delCert(scope.row)" :class="(scope.row.roleId === 1 || scope.row.roleId === 2)?'del-bro':'del-red'" :disabled="scope.row.roleId === 1 || scope.row.roleId === 2">删除</el-button>
           </template>
@@ -68,7 +68,7 @@
         </el-form>
         <div class="demo-drawer__footer">
           <el-button size="small" @click="handleClose">取 消</el-button>
-          <el-button size="small" type="primary" style="background-color: #4461D7; border-color: #4461D7;" @click="submitForm('dataForm')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+          <el-button size="small" type="primary" style="background-color: #2650FF; border-color: #2650FF;" @click="submitForm('dataForm')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
         </div>
       </div>
     </el-drawer>
@@ -84,11 +84,11 @@ export default {
   components: {
   },
   filters: {
-    formateDate(date) {
+    formateDate (date) {
       return moment(date).format('YYYY-MM-DD HH:mm:ss')
     }
   },
-  data() {
+  data () {
     return {
       menuList: [],
       menuListTreeProps: {
@@ -117,13 +117,13 @@ export default {
       tableData: []
     }
   },
-  created() {
+  created () {
     this.getRoleList()
     this.userId = getToken('userId')
   },
   methods: {
     // 获取列表
-    getRoleList() {
+    getRoleList () {
       let params = `?userId=${this.userId}&page=${this.page}&limit=${this.limit}`
       if (this.roleName) {
         params += `&roleName=${this.roleName}`
@@ -136,7 +136,7 @@ export default {
       })
     },
     // 获取权限列表
-    getRoutes(roleId) {
+    getRoutes (roleId) {
       getRoutes().then(res => {
         if (res.code === 200) {
           this.menuList = treeDataTranslate(res.data, 'menuId')
@@ -147,13 +147,13 @@ export default {
       })
     },
     // 创建角色
-    add() {
+    add () {
       // 打开抽屉
       this.drawer = true
       this.drawerTitle = '创建角色'
       this.getRoutes()
     },
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (!this.$refs.menuListTree.getCheckedKeys().length) {
@@ -197,11 +197,11 @@ export default {
         }
       })
     },
-    resetForm(formName) {
+    resetForm (formName) {
       this.$refs[formName].resetFields()
     },
     // 修改角色信息
-    edit(row) {
+    edit (row) {
       // 打开抽屉
       this.drawer = true
       this.drawerTitle = '配置角色'
@@ -209,7 +209,7 @@ export default {
       this.getRoutes()
     },
     // 获取角色信息
-    getRoleInfo(roleId) {
+    getRoleInfo (roleId) {
       getRoleInfo(roleId).then(res => {
         if (res.code === 200) {
           const data = res.data
@@ -224,13 +224,13 @@ export default {
       })
     },
     // 关闭抽屉
-    handleClose() {
+    handleClose () {
       this.drawer = false
       this.resetForm('dataForm')
       this.$refs.menuListTree.setCheckedKeys([])
     },
     // 删除角色信息
-    delCert(row) {
+    delCert (row) {
       const params = {
         roleIds: [row.roleId]
       }
@@ -250,12 +250,12 @@ export default {
       }).catch(() => {
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
       this.limit = val
       this.getRoleList()
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
       this.page = val
       this.getRoleList()
@@ -266,21 +266,21 @@ export default {
 
 <style lang='scss' scoped>
 /deep/.el-checkbox__input.is-checked .el-checkbox__inner {
-  background-color: #4461D7;
-  border-color: #4461D7;
+  background-color: #2650ff;
+  border-color: #2650ff;
 }
 /deep/.el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: #4461D7;
-  border-color: #4461D7;
+  background-color: #2650ff;
+  border-color: #2650ff;
 }
 .del-red {
-  color: #F6323C;
+  color: #f6323c;
 }
 .del-bro {
-  color: #D8D8D8;
+  color: #d8d8d8;
 }
 .qx-item {
- margin-top: 20px;
+  margin-top: 20px;
 }
 .el-form-item {
   margin-bottom: 5px;

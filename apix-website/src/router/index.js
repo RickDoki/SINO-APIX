@@ -41,10 +41,10 @@ export const asyncRoutes = [
     redirect: '/dashboard/index',
     children: [
       {
-        path: 'index',
+        path: '/dashboard/index',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: '控制台', icon: 'dashboard', affix: true }
+        meta: { title: '控制台', icon: 'dashboard', Aicon: 'dashboard_Aicon', affix: true }
       }
     ]
   },
@@ -52,10 +52,10 @@ export const asyncRoutes = [
     path: '/serve',
     component: Layout,
     alwaysShow: true,
-    meta: { title: '服务管理', icon: 'serve' },
+    meta: { title: '服务管理', icon: 'serve', Aicon: 'serve_Aicon' },
     children: [
       {
-        path: 'list',
+        path: '/serve/list',
         component: () => import('@/views/serve/list'),
         name: 'Serve',
         meta: { title: '我的服务' }
@@ -93,10 +93,10 @@ export const asyncRoutes = [
     path: '/api',
     component: Layout,
     alwaysShow: true,
-    meta: { title: 'API管理', icon: 'api' },
+    meta: { title: 'API管理', icon: 'api', Aicon: 'api_Aicon' },
     children: [
       {
-        path: 'list',
+        path: '/api/list',
         component: () => import('@/views/api/list'),
         name: 'App',
         meta: { title: 'API列表' }
@@ -135,10 +135,10 @@ export const asyncRoutes = [
     component: Layout,
     children: [
       {
-        path: 'index',
+        path: '/openServe/index',
         component: () => import('@/views/openServe/index'),
         name: 'openServe',
-        meta: { title: '开放服务', icon: 'openServe', affix: true }
+        meta: { title: '开放服务', icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
       },
       {
         path: 'detail',
@@ -183,7 +183,7 @@ export const asyncRoutes = [
         path: 'log',
         component: () => import('@/views/system/log/list'),
         name: 'Log',
-        meta: { title: '审计日志', icon: 'log', affix: true }
+        meta: { title: '审计日志', icon: 'log', Aicon: 'log_Aicon', affix: true }
       }
     ]
   },
@@ -191,7 +191,7 @@ export const asyncRoutes = [
     path: '/system',
     component: Layout,
     alwaysShow: true,
-    meta: { title: '系统设置', icon: 'system' },
+    meta: { title: '系统设置', icon: 'system', Aicon: 'system_Aicon' },
     children: [
       {
         path: 'user',
@@ -206,7 +206,7 @@ export const asyncRoutes = [
         meta: { title: '角色管理', affix: true }
       },
       {
-        path: 'index',
+        path: '/system/index',
         component: () => import('@/views/user/index'),
         name: 'user',
         meta: { title: '个人信息', affix: true }
@@ -292,7 +292,7 @@ const createRouter = () => new Router({
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter() {
+export function resetRouter () {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }

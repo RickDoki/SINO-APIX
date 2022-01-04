@@ -53,15 +53,15 @@ export default {
     // SizeSelect,
     // Search
   },
-  data() {
+  data () {
     return {
       logoMenu: ["right-menu", "widthTrue"],
       searchContent: "",
       routerList: [],
-      phone:''
+      phone: ''
     };
   },
-  created() {
+  created () {
     // console.log(this.$route)
     this.routerList = this.$route.matched;
     console.log(this.routerList[0].meta.title);
@@ -81,9 +81,9 @@ export default {
     ...mapGetters(["sidebar", "avatar", "device"]),
   },
   methods: {
-    handleCommand(command) {
+    handleCommand (command) {
       // this.$message("click on item " + command);
-      this.$router.push({path:'/login'})
+      this.$router.push({ path: '/login' })
     },
   },
 };
@@ -93,11 +93,12 @@ export default {
 .drop-div {
   top: 32px !important;
 }
-.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled) {
+.el-dropdown-menu__item:focus,
+.el-dropdown-menu__item:not(.is-disabled) {
   &:hover {
     border: none !important;
     background-color: #fff !important;
-    color: #4461D7;
+    color: #2650ff;
   }
 }
 .brea-div {
@@ -130,7 +131,7 @@ export default {
     font-size: 20px;
     font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
     font-weight: bold;
-    color: #1D1C35;
+    color: #1d1c35;
     line-height: 26px;
   }
 }
@@ -158,7 +159,7 @@ export default {
     }
     .el-dropdown-link {
       cursor: pointer;
-      color: #4461D7;
+      color: #2650ff;
     }
     .el-icon-arrow-down {
       font-size: 12px;

@@ -551,7 +551,7 @@
       -webkit-transform: rotate(90deg);
       transform: rotate(90deg); }
   .el-collapse-item__header.focusing:focus:not(:hover) {
-    color: #4461D7; }
+    color: #2650FF; }
   .el-collapse-item__header.is-active {
     border-bottom-color: transparent; }
 

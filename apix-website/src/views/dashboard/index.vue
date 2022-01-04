@@ -21,24 +21,24 @@
           </div>
           <div class="introduction_steps">
             <div>
-              <span style="color: #4461D7; font-size: 16px">1.</span>
+              <span style="color: #2650FF; font-size: 16px">1.</span>
               <span>创建API</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #4461D7; font-size: 16px">2.</span>
+              <span style="color: #2650FF; font-size: 16px">2.</span>
               <div class="steps_line_left"></div>
               <span>发布API</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #4461D7; font-size: 16px">3.</span>
+              <span style="color: #2650FF; font-size: 16px">3.</span>
               <div class="steps_line_left"></div>
               <span>创建应用</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #4461D7; font-size: 16px">4.</span>
+              <span style="color: #2650FF; font-size: 16px">4.</span>
               <div class="steps_line_left"></div>
               <span>授权应用</span>
             </div>
@@ -168,7 +168,7 @@ export default {
   components: {
     charts,
   },
-  data() {
+  data () {
     return {
       myAppNum: "",
       subscribeNum: "",
@@ -305,7 +305,7 @@ export default {
       },
     };
   },
-  created() {
+  created () {
     this.developerId = getToken("userId");
     const query = "?developerId=" + this.developerId;
     this.getapplist(query);
@@ -313,7 +313,7 @@ export default {
     this.getApiNums(query);
   },
   methods: {
-    getapplist(query) {
+    getapplist (query) {
       list(query).then((res) => {
         if (res.code === 200) {
           this.optionsMy = res.data.appList;
@@ -329,7 +329,7 @@ export default {
         }
       });
     },
-    getChartsOptions(query, optionsId) {
+    getChartsOptions (query, optionsId) {
       getStatistics(query).then((res) => {
         if (optionsId === "optionsMy") {
           console.log(111);
@@ -463,19 +463,19 @@ export default {
         }
       });
     },
-    changeMy() {
+    changeMy () {
       const query = {
         appCodes: [this.subscribe],
       };
       this.getChartsOptions(query, "optionsMy");
     },
-    subscribeChange() {
+    subscribeChange () {
       const query = {
         appCodes: [this.subscribe],
       };
       this.getChartsOptions(query, "noOptions");
     },
-    getlistSubscribe(query) {
+    getlistSubscribe (query) {
       listSubscribe(query).then((res) => {
         this.optionsSubscribe = res.data.appList;
         this.subscribeNum = res.data.total;
@@ -489,22 +489,22 @@ export default {
       });
     },
     // 获取Api数量
-    getApiNums(query) {
+    getApiNums (query) {
       Apilistnums(query).then((res) => {
         this.apiNum = res.data.total;
       });
     },
-    go_api_add() {
+    go_api_add () {
       this.$router.push({ path: "/api/add" });
     },
-    go_app_add() {
+    go_app_add () {
       this.$router.push({ path: "/app/add" });
     },
-    go_data_Statistics() {
+    go_data_Statistics () {
       this.$router.push({ path: "/data/Statistics" });
     },
-    go_upstream_detail() {
-      this.$router.push({path:"/upstream/detail"})
+    go_upstream_detail () {
+      this.$router.push({ path: "/upstream/detail" })
     }
   },
 };

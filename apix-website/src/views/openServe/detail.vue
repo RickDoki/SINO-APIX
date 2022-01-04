@@ -113,7 +113,7 @@ export default {
     apiTest,
     help,
   },
-  data() {
+  data () {
     return {
       activeName: "first",
       appMessage: "",
@@ -123,15 +123,15 @@ export default {
     };
   },
   methods: {
-    handleClick(tab, event) {
+    handleClick (tab, event) {
       console.log(tab, event);
     },
-    getappMessage() {
+    getappMessage () {
       detail(this.appMessage.appCode, "").then((res) => {
         console.log(res);
       });
     },
-    getUserapp() {
+    getUserapp () {
       const developerId = getToken("userId");
       const query = "?developerId=" + developerId;
       this.options = [];
@@ -149,7 +149,7 @@ export default {
         }
       });
     },
-    leaseSure() {
+    leaseSure () {
       if (this.value === "") {
         this.messageERROR("请先选择应用");
         return false;
@@ -164,21 +164,21 @@ export default {
       }
     },
     // 成功消息
-    messageOK(msg) {
+    messageOK (msg) {
       this.$message({
         message: msg,
         type: "success",
       });
     },
     // 失败消息
-    messageERROR(msg) {
+    messageERROR (msg) {
       this.$message({
         message: msg,
         type: "error",
       });
     },
   },
-  created() {
+  created () {
     this.appMessage = JSON.parse(this.$route.query.message);
     this.getUserapp();
     console.log(this.appMessage);
@@ -225,7 +225,7 @@ export default {
             display: inline-block;
             padding: 3px;
             margin-right: 5px;
-            color: #4461D7;
+            color: #2650ff;
             background: rgba(44, 102, 251, 0.1);
           }
         }
@@ -300,7 +300,7 @@ export default {
         line-height: 30px;
         height: 30px;
         vertical-align: middle;
-        background-color: #4461D7;
+        background-color: #2650ff;
         color: #fff;
         margin-left: 30px;
       }

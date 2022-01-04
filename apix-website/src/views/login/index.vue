@@ -160,7 +160,7 @@
             @click="goLogin"
             style="
               font-size: 12px;
-              color: #4461D7;
+              color: #2650FF;
               margin-left: 5px;
               cursor: pointer;
             "
@@ -182,7 +182,7 @@ import "@/assets/icons/eyes/iconfont.css";
 import "@/assets/icons/register/iconfont.css";
 
 export default {
-  data() {
+  data () {
     return {
       ruleForm: {
         username: "",
@@ -235,21 +235,21 @@ export default {
     };
   },
   computed: {
-    type() {
+    type () {
       return this.flag ? "text" : "password";
     },
-    iconClass() {
+    iconClass () {
       return this.flag ? "el-icon-view" : "iconfont icon-eye-close";
     },
-    re_type() {
+    re_type () {
       return this.re_flag ? "text" : "password";
     },
-    re_iconClass() {
+    re_iconClass () {
       return this.re_flag ? "el-icon-view" : "iconfont icon-eye-close";
     },
   },
   watch: {
-    time(i, j) {
+    time (i, j) {
       // ...
       if (i === 0) {
         clearInterval(this._inter);
@@ -259,30 +259,30 @@ export default {
   },
   methods: {
     // 切换密码可见
-    isShow() {
+    isShow () {
       this.flag = !this.flag;
     },
-    isShow_re() {
+    isShow_re () {
       this.re_flag = !this.re_flag;
     },
     // 去注册
-    goRegister() {
+    goRegister () {
       this.isLogin = false;
     },
     // 注册
-    register(formName) {
+    register (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(this.re_ruleForm);
           Apiregister(this.re_ruleForm).then((res) => {
             console.log(res);
-            if(res.code === 200) {
+            if (res.code === 200) {
               this.isLogin = true
               this.$message({
                 message: res.msg,
                 type: "success",
               });
-            }else {
+            } else {
               this.$message({
                 message: res.msg,
                 type: "error",
@@ -295,7 +295,7 @@ export default {
       });
     },
     // 登录
-    login(formName) {
+    login (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // alert("submit!");
@@ -312,7 +312,7 @@ export default {
             if (res.code === 200) {
               setToken("FSH_AUTH_api", res.data.token);
               setToken("userId", res.data.userId);
-              setToken('apiPhone',res.data.mobile)
+              setToken('apiPhone', res.data.mobile)
               this.$router.push("/dashboard/index");
             } else {
               this.errorShow = true;
@@ -326,24 +326,24 @@ export default {
       });
     },
     // 已有账号去登录
-    goLogin() {
+    goLogin () {
       this.isLogin = true;
     },
     //
-    timing() {
+    timing () {
       this.time = 60;
       this._inter = setInterval(() => {
         this.time--;
       }, 1000);
     },
     // 获取验证码
-    getAuthCode() {
+    getAuthCode () {
       this.timeBegin = true;
       this.timing();
     },
-    CSPLogin() {},
+    CSPLogin () { },
   },
-  created() {
+  created () {
     removeToken("FSH_AUTH_api");
     const ischecked = getToken("ischecked");
     console.log(ischecked);
@@ -435,7 +435,7 @@ export default {
         height: 30px;
         div {
           line-height: 30px;
-          background-color: #4461D7;
+          background-color: #2650ff;
           color: #fff;
           font-size: 14px;
           border-radius: 2px;
@@ -450,7 +450,7 @@ export default {
           line-height: 30px;
           background-color: #f0f2f5;
           border-radius: 2px;
-          color: #4461D7;
+          color: #2650ff;
           font-size: 14px;
           cursor: pointer;
         }
@@ -474,7 +474,7 @@ export default {
         height: 30px;
         div {
           line-height: 30px;
-          background-color: #4461D7;
+          background-color: #2650ff;
           color: #fff;
           font-size: 14px;
           border-radius: 2px;

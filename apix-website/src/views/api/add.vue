@@ -4,9 +4,9 @@
       <elx-steps-horizontal
         v-model="active"
         :abstracts="panelTitles"
+        @change="stepChange"
       />
     </div>
-        <!-- @change="stepChange" -->
     <div class="middle">
       <div v-if="active === 0" class="formBox">
         <el-form
@@ -235,6 +235,7 @@
                 :header-cell-style="{backgroundColor:'#fff',color:'#494E6A'}"
                 ref="xTable"
                 border="none"
+                max-height="280"
                 show-overflow
                 stripe
                 :row-config="{isCurrent: true, isHover: true}"
@@ -310,6 +311,7 @@
                 :header-cell-style="{backgroundColor:'#fff',color:'#494E6A'}"
                 ref="xTableres"
                 border="none"
+                max-height="280"
                 show-overflow
                 stripe
                 :row-config="{isCurrent: true, isHover: true}"
@@ -384,12 +386,12 @@
     </div>
     <div class="bottom">
       <div class="bottom_button">
-        <el-button v-if="active === 0" @click="backList">取消</el-button>
-        <el-button type="primary" v-if="active === 0" @click="goNext('form')">下一步</el-button>
+        <el-button size="small" v-if="active === 0" @click="backList">取消</el-button>
+        <el-button size="small" type="primary" v-if="active === 0" @click="goNext('form')">下一步</el-button>
       </div>
       <div class="bottom_button_b">
-        <el-button v-if="active === 1" @click="goBACK">上一步</el-button>
-        <el-button type="primary" v-if="active === 0 ? false : true" @click="addSure('ruleForm')">提交</el-button>
+        <el-button size="small" v-if="active === 1" @click="goBACK">上一步</el-button>
+        <el-button size="small" type="primary" v-if="active === 0 ? false : true" @click="addSure('ruleForm')">提交</el-button>
       </div>
     </div>
   </div>
@@ -544,13 +546,13 @@ export default {
   },
   methods: {
     // 点击步骤条切换
-    // stepChange () {
-    //   if (this.active === 1) {
-    //     this.active = 0
-    //   } else {
-    //     this.goNext('form')
-    //   }
-    // },
+    stepChange () {
+      if (this.active === 1) {
+        this.active = 0
+      } else {
+        this.goNext('form')
+      }
+    },
     // 展开剩余配置
     changeShow () {
       this.showTimeFlag = !this.showTimeFlag
@@ -768,7 +770,7 @@ export default {
       color: #2c66fb;
     }
     .inputWidth {
-      width: 535px;
+      width: 48%;
     }
     .formBut {
       text-align: right;
@@ -852,7 +854,7 @@ export default {
   font-size: 14px;
   font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
   font-weight: 400;
-  color: #4461d7;
+  color: #2650ff;
   line-height: 20px;
 }
 .content-boder {
@@ -867,14 +869,17 @@ export default {
 .table-button {
   margin-top: 15px;
   .add-but {
-    border: 1px solid #4461d7;
-    border-color: #4461d7;
-    color: #4461d7;
+    border: 1px solid #2650ff;
+    border-color: #2650ff;
+    color: #2650ff;
   }
   .del-but {
     border: 1px solid #f03063;
     border-color: #f03063;
     color: #f03063;
+  }
+  .del-but:hover {
+    background-color: #fef0f0;
   }
 }
 </style>

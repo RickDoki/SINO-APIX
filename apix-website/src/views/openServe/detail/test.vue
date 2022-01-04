@@ -43,11 +43,11 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       value: "",
       options: [],
-      input1:''
+      input1: ''
     };
   },
 };
@@ -57,7 +57,7 @@ export default {
 .test_api {
   padding: 24px;
   .URL {
-    color: #4461D7;
+    color: #2650ff;
     padding-left: 20px;
   }
   .SIZE {

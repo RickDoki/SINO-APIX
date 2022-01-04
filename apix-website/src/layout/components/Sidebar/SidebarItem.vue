@@ -3,14 +3,14 @@
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
+          <item :icon="chooseIconB(onlyOneChild, $route.path)" :title="onlyOneChild.meta.title" />
         </el-menu-item>
       </app-link>
     </template>
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
+        <item v-if="item.meta" :icon="chooseIcon(item, $route.path)" :title="item.meta.title" />
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -50,14 +50,39 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
     // TODO: refactor with render function
     this.onlyOneChild = null
     return {}
   },
   methods: {
-    hasOneShowingChild(children = [], parent) {
+    // 一级菜单图标是否高亮
+    chooseIcon (item, route) {
+      var n = 0 // 用于判断当前一级菜单下的二级菜单是否被点击
+      for (var i = 0; i < item.children.length; i++) {
+        if ((route).indexOf(item.children[i].path) != -1) {
+          n = 1
+        }
+      }
+      if (n == 1) { // 被点击了，返回高亮图标
+        return item.meta.Aicon
+      } else { // 未被点击，返回未高亮图标
+        return item.meta.icon
+      }
+    },
+    chooseIconB (item, route) {
+      var b = 0
+      if ((route).indexOf(item.path) != -1) {
+        b = 1
+      }
+      if (b == 1) { // 被点击了，返回高亮图标
+        return item.meta.Aicon
+      } else { // 未被点击，返回未高亮图标
+        return item.meta.icon
+      }
+    },
+    hasOneShowingChild (children = [], parent) {
       const showingChildren = children.filter(item => {
         if (item.hidden) {
           return false
@@ -75,13 +100,13 @@ export default {
 
       // Show parent if there are no child router to display
       if (showingChildren.length === 0) {
-        this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
+        this.onlyOneChild = { ...parent, path: '', noShowingChildren: true }
         return true
       }
 
       return false
     },
-    resolvePath(routePath) {
+    resolvePath (routePath) {
       if (isExternal(routePath)) {
         return routePath
       }

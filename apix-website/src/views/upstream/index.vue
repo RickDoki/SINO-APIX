@@ -3,7 +3,7 @@
     <el-card class="box-card" shadow="never">
       <div class="card-top">
         <div>
-          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #4461D7;" @click="gotoDetail">创建</el-button>
+          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #2650FF;" @click="gotoDetail">创建</el-button>
           <!-- <el-button size="small" @click="editData">数据编辑器</el-button> -->
         </div>
         <div style="margin-left: 20px;" class="input-box">
@@ -21,9 +21,9 @@
         <el-table-column prop="lastUpdateDate" label="更新时间"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)" style="color: #4461D7;">配置</el-button>
+            <el-button type="text" @click="edit(scope.row)" style="color: #2650FF;">配置</el-button>
             <span style="padding: 0 6px; color: #D8D8D8">|</span>
-            <el-button type="text" @click="view(scope.row)" style="color: #4461D7;">查看</el-button>
+            <el-button type="text" @click="view(scope.row)" style="color: #2650FF;">查看</el-button>
             <span style="padding: 0 6px; color: #D8D8D8">|</span>
             <el-button type="text" @click="delCert(scope.row)" style="color: #F6323C;">删除</el-button>
           </template>
@@ -58,7 +58,7 @@
                 :value="item.value">
               </el-option>
             </el-select>
-            <el-button size="small" type="primary" style="background-color: #4461D7; margin-left: 10px;">复制</el-button>
+            <el-button size="small" type="primary" style="background-color: #2650FF; margin-left: 10px;">复制</el-button>
             <el-button size="small">文档</el-button>
           </div>
         </div>
@@ -72,7 +72,7 @@
         </div>
         <div class="demo-drawer__footer">
           <el-button @click="resetForm('form')">取 消</el-button>
-          <el-button style="background-color: #4461D7;" type="primary" @click="$refs.drawer.closeDrawer()" :loading="loading">{{ loading ? '提交中 ...' : '提 交' }}</el-button>
+          <el-button style="background-color: #2650FF;" type="primary" @click="$refs.drawer.closeDrawer()" :loading="loading">{{ loading ? '提交中 ...' : '提 交' }}</el-button>
         </div>
       </div>
     </el-drawer>
@@ -110,7 +110,7 @@ export default {
   components: {
     PrismEditor
   },
-  data() {
+  data () {
     return {
       codeType: 'json',
       requestExample: '{}',
@@ -142,16 +142,16 @@ export default {
       tableData: []
     }
   },
-  created() {
+  created () {
     this.getUpstreamList()
   },
   methods: {
     // 跳转创建上游管理信息页面
-    gotoDetail() {
+    gotoDetail () {
       this.$router.push({ path: '/upstream/create' })
     },
     // 获取上游服务列表
-    getUpstreamList() {
+    getUpstreamList () {
       let params = `?offset=${this.offset}&limit=${this.limit}`
       if (this.search.name) {
         params += `&name=${this.search.name}`
@@ -164,25 +164,25 @@ export default {
       })
     },
     // 查看上游服务详情
-    view(row) {
+    view (row) {
       this.drawerInfo = true
       this.upstreamInfo = row
     },
     // 修改上游数据信息
-    edit(row) {
+    edit (row) {
       this.$router.push({ path: '/upstream/edit/' + row.id })
     },
     // 打开数据编辑器抽屉
-    editData() {
+    editData () {
       this.drawer = true
     },
     // 关闭抽屉
-    handleClose(done) {
+    handleClose (done) {
       this.drawer = false
       this.drawerInfo = false
     },
     // 删除上游数据信息
-    delCert(row) {
+    delCert (row) {
       this.$confirm('确认删除上游服务：' + row.name + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -199,17 +199,17 @@ export default {
       }).catch(() => {
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
       this.limit = val
       this.getuserList()
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
       this.offset = val
       this.getuserList()
     },
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js)
     }
   }
@@ -219,23 +219,23 @@ export default {
 <style lang='scss' scoped>
 /* required class */
 .default-prism-editor {
-    /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
-    /*background: #2d2d2d;*/
-    color: #80118c;
+  /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
+  /*background: #2d2d2d;*/
+  color: #80118c;
 
-    /* you must provide font-family font-size line-height. Example: */
-    font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-    font-size: 16px;
-    margin: 24px 0px;
-    padding: 15px 0px;
-    min-height: 520px;
-    border: 1px solid #DCDFE6;
-    border-radius: 4px;
+  /* you must provide font-family font-size line-height. Example: */
+  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+  font-size: 16px;
+  margin: 24px 0px;
+  padding: 15px 0px;
+  min-height: 520px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
 }
 
 /* optional class for removing the outline */
 .prism-editor__textarea:focus {
-    outline: none;
+  outline: none;
 }
 // .code-box {
 //   margin: 24px 0px;

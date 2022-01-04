@@ -47,7 +47,7 @@
         </div>
         <div class="but-right">
           <el-button size="small" @click="resetSearch">重置</el-button>
-          <el-button type="primary" size="small" style="background-color: #4461D7; border-color: #4461D7;" @click="getLogList()">查询</el-button>
+          <el-button type="primary" size="small" style="background-color: #2650FF; border-color: #2650FF;" @click="getLogList()">查询</el-button>
         </div>
       </div>
       <el-table :row-style="{height: '48px'}" :data="tableData" stripe :header-cell-style="{background:'#F0F2F5',color:'#333333'}">
@@ -57,7 +57,7 @@
         <el-table-column prop="eventTime" label="创建时间"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="detail(scope.row)" style="color: #4461D7;">详情</el-button>
+            <el-button type="text" @click="detail(scope.row)" style="color: #2650FF;">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -99,7 +99,7 @@ import { getLogList } from '@/api/data'
 export default {
   components: {
   },
-  data() {
+  data () {
     return {
       startTime: {
         disabledDate: time => {
@@ -135,12 +135,12 @@ export default {
       tableData: []
     }
   },
-  created() {
+  created () {
     this.getLogList()
   },
   methods: {
     // 获取列表
-    getLogList() {
+    getLogList () {
       let params = `?offset=${this.offset}&limit=${this.limit}`
       if (this.search.username) {
         params += `&username=${this.search.username}`
@@ -168,17 +168,17 @@ export default {
       })
     },
     // 查看详情
-    detail(row) {
+    detail (row) {
       // 打开抽屉
       this.drawer = true
       this.infoObj = row
     },
     // 关闭抽屉
-    handleClose(done) {
+    handleClose (done) {
       this.drawer = false
     },
     // 重置搜索条件
-    resetSearch() {
+    resetSearch () {
       this.search = {
         username: '',
         userId: '',
@@ -189,10 +189,10 @@ export default {
       }
       this.getLogList()
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
     }
   }

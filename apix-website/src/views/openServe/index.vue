@@ -64,14 +64,14 @@
 import { list } from "@/api/AboutApp";
 
 export default {
-  data() {
+  data () {
     return {
       searchKey: "",
       items: [],
       isshow: true,
     };
   },
-  created() {
+  created () {
     const query = "?market=true";
     list(query).then((res) => {
       console.log(res);
@@ -84,13 +84,13 @@ export default {
     });
   },
   methods: {
-    itemsClick(i) {
+    itemsClick (i) {
       console.log(i);
       this.$router.push({
         path: "/apiDoor/detail?message=" + JSON.stringify(i),
       });
     },
-    search() {
+    search () {
       // console.log('搜索')
       const query = "?market=true&appName=" + this.searchKey;
       list(query).then((res) => {
@@ -125,7 +125,7 @@ export default {
   .apiMain_search {
     padding: 15px 30%;
     ::v-deep .el-input-group__append {
-      background-color: #4461D7;
+      background-color: #2650ff;
       color: #fff;
     }
   }
@@ -164,7 +164,7 @@ export default {
             display: inline-block;
             padding: 3px;
             margin-right: 5px;
-            color: #4461D7;
+            color: #2650ff;
             background: rgba(44, 102, 251, 0.1);
           }
         }

@@ -129,7 +129,7 @@
             <el-divider></el-divider>
           </div>
           <el-form-item label="主动检查：">
-            <el-switch active-color="#4461D7" v-model="form.delivery"></el-switch>
+            <el-switch active-color="#2650FF" v-model="form.delivery"></el-switch>
           </el-form-item>
           <el-form-item label="类型：">
             <el-select v-model="form.region" placeholder="请选择健康检查类型" class="selectWidth">
@@ -241,14 +241,14 @@
             <el-divider></el-divider>
           </div>
           <el-form-item label="被动检查：">
-            <el-switch active-color="#4461D7" v-model="form.delivery"></el-switch>
+            <el-switch active-color="#2650FF" v-model="form.delivery"></el-switch>
           </el-form-item> -->
           <el-form-item class="formBut">
             <!-- <el-button @click="step" :disabled="active == 0">上一步</el-button>
             <el-button @click="next" v-if="active == 0">下一步</el-button>
-            <el-button type="primary" @click="onSubmit" style="background-color: #4461D7;" v-else>提交</el-button> -->
+            <el-button type="primary" @click="onSubmit" style="background-color: #2650FF;" v-else>提交</el-button> -->
             <el-button @click="goBack">取消</el-button>
-            <el-button type="primary" @click="submitForm('form')" style="background-color: #4461D7; border-color: #4461D7;">提交</el-button>
+            <el-button type="primary" @click="submitForm('form')" style="background-color: #2650FF; border-color: #2650FF;">提交</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -261,7 +261,7 @@ import { addUpstream, updateUpstream, getUpstreamInfo } from '@/api/upstream'
 export default {
   components: {
   },
-  data() {
+  data () {
     return {
       active: 0,
       tautologyNum: 1,
@@ -304,7 +304,7 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     if (this.$route.params.id) {
       this.upstreamId = this.$route.params.id
       this.editFlag = true
@@ -313,28 +313,28 @@ export default {
   },
   methods: {
     // 校验ip
-    isValidIP(ip) {
+    isValidIP (ip) {
       var reg = /^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/
       return reg.test(ip)
     },
     // 校验域名
-    isValidWeb(web) {
+    isValidWeb (web) {
       var reg = /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
       return reg.test(web)
     },
-    goBack() {
+    goBack () {
       this.$router.push({ path: '/upstream' })
     },
-    step() {
+    step () {
       console.log(this.active)
       if (this.active !== 0 && this.active-- > 1) this.active = 0
     },
-    next() {
+    next () {
       console.log(this.active)
       if (this.active !== 2 && this.active++ > 2) this.active = 0
     },
     // 获取上游服务信息
-    getUpstreamInfo(upstreamId) {
+    getUpstreamInfo (upstreamId) {
       getUpstreamInfo(upstreamId).then(res => {
         if (res.code === 200) {
           const data = res.data
@@ -351,7 +351,7 @@ export default {
       })
     },
     // 提交数据
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const ipTest = this.isValidIP(this.form.serverAddress)
@@ -391,7 +391,7 @@ export default {
   width: 95px !important;
 }
 /deep/ .contentDiv .el-form-item__content {
-  margin-left: 95px !important
+  margin-left: 95px !important;
 }
 .box-card {
   margin: 24px;
@@ -405,7 +405,7 @@ export default {
     }
   }
   .item {
-    position:absolute;
+    position: absolute;
     right: -10px;
     top: 3px;
   }
@@ -413,7 +413,7 @@ export default {
     margin-top: 10px;
   }
   .add_span {
-    color: #4461D7;
+    color: #2650ff;
   }
   .inputWidth {
     width: 618px;
@@ -450,26 +450,26 @@ export default {
 }
 /* 进行中状态：圈线 */
 .theSteps >>> .el-step__head.is-process {
-  color: #4461D7;
-  border-color: #4461D7;
+  color: #2650ff;
+  border-color: #2650ff;
 }
 /* 进行中状态：圈内 */
 .theSteps >>> .el-step__head.is-process > .el-step__icon {
-  background: #4461D7;
+  background: #2650ff;
   color: #fff;
 }
 /* 进行中状态：title（文字） */
 .theSteps >>> .el-step__title.is-process {
-  color: #4461D7;
+  color: #2650ff;
 }
 /* 完成状态：圈线 */
 .theSteps >>> .el-step__head.is-success {
-  color: #4461D7;
-  border-color: #4461D7;
+  color: #2650ff;
+  border-color: #2650ff;
 }
 /* 完成状态：title（文字） */
 .theSteps >>> .el-step__title.is-success {
-  color: #4461D7;
+  color: #2650ff;
 }
 /* 完成状态：line
  * 描述：第一步完成，第二步进行时，之间的进度条有颜色

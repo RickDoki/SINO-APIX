@@ -19,7 +19,7 @@
         </div>
         <div class="but-right">
           <el-button size="small" @click="resetSearch">重置</el-button>
-          <el-button type="primary" size="small" style="background-color: #4461D7;" @click="getuserList()">查询</el-button>
+          <el-button type="primary" size="small" style="background-color: #2650FF;" @click="getuserList()">查询</el-button>
         </div>
       </div>
       <el-table :row-style="{height: '48px'}" :data="tableData" stripe :header-cell-style="{background:'#F0F2F5',color:'#333333'}">
@@ -33,7 +33,7 @@
         <el-table-column prop="mobile" label="手机号"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)" style="color: #4461D7;">配置</el-button>
+            <el-button type="text" @click="edit(scope.row)" style="color: #2650FF;">配置</el-button>
             <!-- <span style="padding: 0 6px; color: #D8D8D8">|</span>
             <el-button type="text" @click="delCert(scope.row)" style="color: #F6323C;">删除</el-button> -->
           </template>
@@ -89,12 +89,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="是否启用" class="is-required">
-            <el-switch v-model="form.enabled" active-color="#4461D7"></el-switch>
+            <el-switch v-model="form.enabled" active-color="#2650FF"></el-switch>
           </el-form-item>
         </el-form>
         <div class="demo-drawer__footer">
           <el-button size="small" @click="resetForm('form')">取 消</el-button>
-          <el-button type="primary" size="small" style="background-color: #4461D7; border-color: #4461D7;" @click="submitForm('form')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+          <el-button type="primary" size="small" style="background-color: #2650FF; border-color: #2650FF;" @click="submitForm('form')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
         </div>
       </div>
     </el-drawer>
@@ -108,7 +108,7 @@ import { getToken } from '@/utils/auth'
 export default {
   components: {
   },
-  data() {
+  data () {
     return {
       userId: 0,
       drawer: false,
@@ -146,14 +146,14 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     this.userId = getToken('userId')
     this.getuserList()
     this.getRoles()
   },
   methods: {
     // 获取列表
-    getuserList() {
+    getuserList () {
       let params = `?offset=${this.offset}&limit=${this.limit}`
       if (this.search.name) {
         params += `&username=${this.search.name}`
@@ -169,7 +169,7 @@ export default {
       })
     },
     // 获取角色列表
-    getRoles() {
+    getRoles () {
       getRoles(this.userId).then(res => {
         if (res.code === 200) {
           this.roleList = res.data
@@ -177,17 +177,17 @@ export default {
       })
     },
     // 重置搜索条件
-    resetSearch() {
+    resetSearch () {
       this.search.name = ''
       this.search.role = ''
       this.getuserList()
     },
     // 重置表单
-    resetForm(formName) {
+    resetForm (formName) {
       this.$refs[formName].resetFields()
     },
     // 修改用户信息
-    edit(row) {
+    edit (row) {
       // 打开抽屉
       this.drawer = true
       this.form = {
@@ -203,7 +203,7 @@ export default {
       }
     },
     // 提交数据
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 修改用户
@@ -221,12 +221,12 @@ export default {
       })
     },
     // 关闭抽屉
-    handleClose(done) {
+    handleClose (done) {
       this.drawer = false
       this.resetForm('form')
     },
     // 删除用户信息
-    delCert(row) {
+    delCert (row) {
       this.$confirm('确认删除用户：' + row.username + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -239,12 +239,12 @@ export default {
       }).catch(() => {
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
       this.limit = val
       this.getuserList()
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
       this.offset = val
       this.getuserList()

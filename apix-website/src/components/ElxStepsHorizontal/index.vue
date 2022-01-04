@@ -135,7 +135,7 @@ export default {
         // background-color: $--color-primary;
         // color: $--color-white;
         color: #fff;
-        background: #4461d7;
+        background: #2650ff;
         border: 8px solid #e5ebfe;
         text-align: center;
         line-height: 18px;
@@ -144,7 +144,7 @@ export default {
       }
       .squarefinish {
         color: #fff;
-        background: #4461d7;
+        background: #2650ff;
         border: 8px solid #fff;
         text-align: center;
         line-height: 18px;

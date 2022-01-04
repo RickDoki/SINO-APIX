@@ -73,7 +73,6 @@
       line-height: 40px;
       margin: 4px 0px 4px 0px;
     }
-
     // menu hover
     .submenu-title-noDropdown,
     .el-submenu__title {
@@ -81,8 +80,7 @@
       line-height: 40px;
       margin: 4px 0px 4px 0px;
       &:hover {
-        // background-color: $menuHover !important;
-        background-color: #F3F5FF !important;
+        background-color: $menuHover !important;
         border-radius: 0px 50px 50px 0px;
       }
     }
@@ -96,17 +94,15 @@
 
       & .nest-menu .el-submenu>.el-submenu__title,
       & .el-submenu .el-menu-item .is-active {
-      // min-width: $sideBarWidth !important;
-      // background-color: $subMenuBg !important;
-        background-color: #F3F5FF !important;
+        min-width: $sideBarWidth !important;
+        background-color: $subMenuBg !important;
         border-radius: 0px 50px 50px 0px;
       }
 
       & .nest-menu .el-submenu>.el-submenu__title,
       & .el-submenu .el-menu-item {
       &:hover {
-        // background-color: $subMenuHover !important;
-        background-color: #F3F5FF !important;
+        background-color: $subMenuHover !important;
         border-radius: 0px 50px 50px 0px;
       }
     }
