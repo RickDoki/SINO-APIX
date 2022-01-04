@@ -45,17 +45,13 @@ public class CachePostBodyGlobalFilter implements GlobalFilter, Ordered {
         }
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
         MediaType mediaType = exchange.getRequest().getHeaders().getContentType();
-        if (log.isDebugEnabled()) {
-            log.debug("Headers:{}", exchange.getRequest().getHeaders().toString());
-        }
         if (null == mediaType) {
             return chain.filter(exchange);
         }
         if (HttpMethod.POST.name().equalsIgnoreCase(serverHttpRequest.getMethodValue())
-                && !mediaType
-                .includes(MediaType.MULTIPART_FORM_DATA)) {
-            ServerRequest serverRequest = ServerRequest.create(exchange,
-                    HandlerStrategies.withDefaults().messageReaders());
+                && !mediaType.includes(MediaType.MULTIPART_FORM_DATA)) {
+            ServerRequest serverRequest = ServerRequest
+                    .create(exchange, HandlerStrategies.withDefaults().messageReaders());
             Mono<String> bodyToMono = serverRequest.bodyToMono(String.class);
             return bodyToMono.flatMap(body -> {
                 exchange.getAttributes().put(GatewayConstants.CACHED_REQUEST_BODY_STR, body);

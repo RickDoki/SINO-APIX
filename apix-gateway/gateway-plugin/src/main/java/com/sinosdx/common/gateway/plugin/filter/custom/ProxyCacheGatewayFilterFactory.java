@@ -13,6 +13,7 @@ import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.ProxyCacheGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.plugin.utils.RedisUtil;
+import com.sinosdx.common.toolkit.common.LogUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -53,6 +54,7 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
         ServerHttpRequest req = exchange.getRequest();
         String cacheKey = CACHE_KEY + req.getHeaders().getFirst(GatewayConstants.PATH);
         if (redisUtil.hasKey(cacheKey)) {
+            LogUtil.debug(log, "cacheKey:{} hit cache",cacheKey);
             ServerHttpResponse response = exchange.getResponse();
             response.getHeaders().add(CACHE_STATUS_HEAD, HitStatusEnum.HIT.name());
             exchange.mutate().response(response).build();
@@ -73,7 +75,7 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
         ServerHttpRequest req = exchange.getRequest();
         String cacheKey = CACHE_KEY + req.getHeaders().getFirst(GatewayConstants.PATH);
         if (!redisUtil.hasKey(cacheKey)) {
-            redisUtil.set(cacheKey,responseDataEvent.getResponseData().getO(), (long) expire);
+            redisUtil.set(cacheKey,responseData.getO(), (long) expire);
         }
     }
 

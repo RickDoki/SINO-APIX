@@ -65,11 +65,9 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
             String path = exchange.getRequest().getURI().toString().toLowerCase();
             if (!checkAuthVerifyExclude(config, path)) {
                 String requestNo = exchange.getRequest().getHeaders().getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
-                LogUtil.debug(log, "BaseGatewayFilter config:{}", JSON.toJSONString(config));
-                Mono<Void> next = customApply(exchange, chain, config);
-                LogUtil.debug(log, "request id [{}] is processed by [{}] custom filter",
-                        requestNo, this.getClass().getSimpleName());
-                return next;
+                LogUtil.debug(log, "requestId【{}】processed by【{}】custom filter,config:{}",
+                        requestNo, this.getClass().getSimpleName(), JSON.toJSONString(config));
+                return customApply(exchange, chain, config);
             }
             return chain.filter(exchange);
         });
@@ -113,9 +111,6 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
      */
     public boolean checkAuthVerifyExclude(C config, String path) {
         String authExcludeUri = config.getAuthExcludeUri();
-        if (log.isDebugEnabled()) {
-            log.debug("path:{},authExcludeUri:{}", path, authExcludeUri);
-        }
         if (StringUtil.isBlank(authExcludeUri)) {
             return false;
         }
