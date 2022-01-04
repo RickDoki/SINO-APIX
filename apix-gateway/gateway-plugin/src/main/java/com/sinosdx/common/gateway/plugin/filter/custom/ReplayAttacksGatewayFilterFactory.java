@@ -55,7 +55,7 @@ public class ReplayAttacksGatewayFilterFactory extends BaseGatewayFilter<Config>
         // timestamp 10位  nonce
         String timestamp = headers.getFirst(TIMESTAMP);
         String nonce = headers.getFirst(NONCE);
-        long seq = 60000L; // 毫秒  同时为nonce 的过期时间
+        long seq = 5000L; // 毫秒  同时为nonce 的过期时间
         URI uri = req.getURI();
         String key = uri.getHost()+"-"+uri.getPort()+"-"+uri.getPath(); //TODO  取值问题？ 暂时init
         ValueOperations<String, String> stringValueOperations = stringRedisTemplate.opsForValue();
@@ -66,10 +66,11 @@ public class ReplayAttacksGatewayFilterFactory extends BaseGatewayFilter<Config>
                 return HttpUtil.response(exchange, HttpStatus.TOO_MANY_REQUESTS,
                         R.fail(FilterResultCodeEnum.INTERFACE_LIMITED));
             }
-        } else {
-            return HttpUtil.response(exchange, HttpStatus.TOO_MANY_REQUESTS,
-                    R.fail(FilterResultCodeEnum.TIMESTAMP_EMPTY));
         }
+//        else {
+//            return HttpUtil.response(exchange, HttpStatus.TOO_MANY_REQUESTS,
+//                    R.fail(FilterResultCodeEnum.TIMESTAMP_EMPTY));
+//        }
         // 随机数
         if (Objects.nonNull(nonce)) {
             String nonc = stringValueOperations.get(key);
@@ -78,10 +79,11 @@ public class ReplayAttacksGatewayFilterFactory extends BaseGatewayFilter<Config>
                         R.fail(FilterResultCodeEnum.INTERFACE_LIMITED));
             }
             stringValueOperations.set(key, nonce, seq, TimeUnit.MILLISECONDS);
-        } else {
-            return HttpUtil.response(exchange, HttpStatus.TOO_MANY_REQUESTS,
-                    R.fail(FilterResultCodeEnum.NONCE_EMPTY));
         }
+//        else {
+//            return HttpUtil.response(exchange, HttpStatus.TOO_MANY_REQUESTS,
+//                    R.fail(FilterResultCodeEnum.NONCE_EMPTY));
+//        }
         return chain.filter(exchange);
     }
 
