@@ -21,6 +21,7 @@ public interface SupportLogServiceFeign {
 
     @GetMapping("gateway/log/queryGatewayLogByStatus")
     R<Object> queryGatewayLogByStatus(@RequestParam(name = "appCode", required = false) String appCode,
+                                      @RequestParam(name = "requestUri", required = false) String requestUri,
                                              @RequestParam(name = "startTime", required = false) Long startTime,
                                              @RequestParam(name = "endTime", required = false) Long endTime);
 }

@@ -54,9 +54,10 @@ public class GatewayLogController extends
                                          @RequestParam(name = "requestPath", required = false) String requestPath,
                                          @RequestParam(name = "startTime", required = false) Long startTime,
                                          @RequestParam(name = "endTime", required = false) Long endTime,
+                                         @RequestParam(name = "appCode", required = false) String appCode,
                                          @RequestParam(name = "limit", required = false) Integer limit,
                                          @RequestParam(name = "offset", required = false)Integer offset) {
-        return gatewayLogService.queryGatewayLogList(httpMethod, domain, requestPath, startTime, endTime, limit, offset);
+        return gatewayLogService.queryGatewayLogList(httpMethod, domain, requestPath, startTime, endTime,appCode, limit, offset);
     }
 
     @GetMapping("/queryListByAppCode")
@@ -68,10 +69,11 @@ public class GatewayLogController extends
 
 
     @GetMapping("/queryGatewayLogByStatus")
-    public R<Object> queryGatewayLogByStatus(@RequestParam(name = "appCode", required = true) String appCode,
+    public R<Object> queryGatewayLogByStatus(@RequestParam(name = "appCode", required = false) String appCode,
+                                             @RequestParam(name = "requestUri", required = false) String requestUri,
                                         @RequestParam(name = "startTime", required = false) Long startTime,
                                         @RequestParam(name = "endTime", required = false) Long endTime){
-        return analysisGatewayLogService.queryGatewayLogByStatus(appCode, startTime, endTime);
+        return analysisGatewayLogService.queryGatewayLogByStatus(appCode,requestUri,startTime, endTime);
     }
 
     @PostMapping(value = "/analysis",consumes = "text/html;charset=UTF-8")

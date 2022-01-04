@@ -20,6 +20,7 @@ public interface GatewayLogMapper extends SuperMapper<GatewayLog> {
                                      @Param("requestPath") String requestPath,
                                      @Param("startTime") Long startTime,
                                      @Param("endTime") Long endTime,
+                                     @Param("appCode") String appCode,
                                      @Param("limit") Integer limit,
                                       @Param("offset") Integer offset);
 

@@ -96,4 +96,5 @@ public interface ApiService {
      * @return
      */
     R<Object> queryApiDetail(Integer apiId);
+
 }

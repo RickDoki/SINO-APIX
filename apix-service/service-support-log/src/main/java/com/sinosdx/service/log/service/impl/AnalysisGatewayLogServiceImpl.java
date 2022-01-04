@@ -118,10 +118,11 @@ public class AnalysisGatewayLogServiceImpl extends SuperServiceImpl<AnalysisGate
     }
 
     @Override
-    public R<Object> queryGatewayLogByStatus(String appCode, Long startDate, Long endDate) {
+    public R<Object> queryGatewayLogByStatus(String appCode,String requestUri, Long startDate, Long endDate) {
         LambdaQueryWrapper<AnalysisGatewayLog> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(AnalysisGatewayLog::getAppCode, appCode);
-        queryWrapper.between(AnalysisGatewayLog::getEventTime, startDate, endDate);
+        queryWrapper.eq(Objects.nonNull(appCode),AnalysisGatewayLog::getAppCode, appCode);
+        queryWrapper.eq(Objects.nonNull(requestUri),AnalysisGatewayLog::getRequestUri,requestUri);
+        queryWrapper.between(Objects.nonNull(startDate) && Objects.isNull(endDate), AnalysisGatewayLog::getEventTime, startDate, endDate);
         Long totalNum = this.baseMapper.selectCount(queryWrapper);
         queryWrapper.eq(AnalysisGatewayLog::getStatusCode,200);
         Long okNum = this.baseMapper.selectCount(queryWrapper);

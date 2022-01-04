@@ -48,7 +48,7 @@ public class GatewayLogServiceImpl extends SuperServiceImpl<GatewayLogMapper, Ga
      * @return
      */
     @Override
-    public R<Object> queryGatewayLogList(String httpMethod, String domain, String requestPath, Long startTime, Long endTime, Integer limit, Integer offset) {
+    public R<Object> queryGatewayLogList(String httpMethod, String domain, String requestPath, Long startTime, Long endTime, String appCode, Integer limit, Integer offset) {
         if ((null != limit && limit < 0) || (null != offset && offset < 1)) {
             limit = null;
             offset = null;
@@ -59,7 +59,7 @@ public class GatewayLogServiceImpl extends SuperServiceImpl<GatewayLogMapper, Ga
         if (null == endTime) {
             endTime = System.currentTimeMillis();
         }
-        List<Object> list = gatewayLogMapper.queryGatewayLogList(httpMethod, domain, requestPath, startTime, endTime, limit, offset);
+        List<Object> list = gatewayLogMapper.queryGatewayLogList(httpMethod, domain, requestPath, startTime, endTime, appCode,limit, offset);
         // 数据集合
         List<GatewayLog> logList = (List<GatewayLog>) list.get(0);
         // 数据总量

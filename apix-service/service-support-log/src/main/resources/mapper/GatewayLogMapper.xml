@@ -11,6 +11,9 @@
         select SQL_CALC_FOUND_ROWS * from gateway_log
         where
               1 = 1
+        <if test="appCode != null and appCode != '' ">
+            and app_code = #{appCode}
+        </if>
         <if test="domain != null and domain != '' ">
             and domain like concat('%', #{domain}, '%')
         </if>

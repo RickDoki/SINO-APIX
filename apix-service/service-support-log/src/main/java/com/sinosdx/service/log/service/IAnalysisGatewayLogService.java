@@ -32,6 +32,6 @@ public interface IAnalysisGatewayLogService extends SuperService<AnalysisGateway
 
 
     R<Object> queryGatewayByAppCode(List<String> appCodes, Long startDate, Long endDate);
-    R<Object> queryGatewayLogByStatus(String appCode, Long startDate, Long endDate);
+    R<Object> queryGatewayLogByStatus(String appCode,String requestUri, Long startDate, Long endDate);
 
 }
