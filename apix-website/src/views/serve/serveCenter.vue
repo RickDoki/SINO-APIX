@@ -1,23 +1,32 @@
 <template>
   <div class="app_list_main">
     <div class="app_list_top">
-      <div class="app_list_title titleFont">我的订阅</div>
+      <div class="app_list_title">
+        <div class="titleFont">服务中心</div>
+        <div style="margin-top: 10px" class="secondTitle">
+          创建服务来管理和代理现有API或发布到门户。
+        </div>
+      </div>
       <div class="app_list_search">
         <el-input
           size="mini"
           placeholder="搜索"
           suffix-icon="el-icon-search"
           v-model="name"
+          style="display: inline-block"
         >
         </el-input>
+      </div>
+      <div class="addServe">
+        <el-button type="primary" size="mini" icon="el-icon-plus">添加新服务</el-button>
       </div>
     </div>
     <div class="table_box">
       <el-table :data="table" empty-text="暂无数据" stripe style="width: 100%">
         <el-table-column prop="appName" label="应用名称" />
-        <el-table-column prop="appCode" label="APPCode" />
-        <el-table-column prop="appCode" label="启用状态" />
-        <el-table-column prop="appCode" label="描述" />
+        <el-table-column prop="appCode" label="code" />
+        <el-table-column prop="appCode" label="门户状态" />
+        <el-table-column prop="appCode" label="版本" />
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
             <div class="handle">
@@ -45,11 +54,7 @@ import "./../mainCss/index.scss";
 export default {
   data() {
     return {
-      table: [
-        {
-          appName: "测试数据",
-        },
-      ],
+      table: [],
       total: 100,
       currentPage: 1,
       name: "",
@@ -59,10 +64,6 @@ export default {
   methods: {
     handleCurrentChange() {
       console.log("页面跳转");
-    },
-    // 跳转api详情
-    getMessage() {
-      this.$router.push({ path: "/serve/subscribeDetail" });
     },
   },
 };
@@ -81,9 +82,12 @@ export default {
     margin-bottom: 20px;
     justify-content: space-between;
     .app_list_title {
-      width: 100px;
+      width: calc(100% - 330px)
     }
     .app_list_search {
+      .addServe {
+        display: inline-block;
+      }
     }
   }
   .table_box {
@@ -101,10 +105,8 @@ export default {
     }
     .handle {
       display: flex;
-      span {
-          cursor: pointer;
-        }
       .handle_middle {
+        // width: 15px;
         margin: 0px 5px;
       }
     }

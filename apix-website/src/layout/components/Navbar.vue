@@ -29,7 +29,6 @@
           >
         </template>
       </el-breadcrumb>
-      <div class="dashboard">{{ routerList[1].meta.title }}</div>
     </div>
   </div>
 </template>

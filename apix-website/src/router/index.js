@@ -55,10 +55,10 @@ export const asyncRoutes = [
     meta: { title: '服务管理', icon: 'serve', Aicon: 'serve_Aicon' },
     children: [
       {
-        path: '/serve/list',
-        component: () => import('@/views/serve/list'),
-        name: 'Serve',
-        meta: { title: '我的服务' }
+        path: '/serve/center',
+        component: () => import('@/views/serve/serveCenter'),
+        name: 'center',
+        meta: { title: '服务中心' }
       },
       {
         path: 'subscribe',
@@ -71,7 +71,7 @@ export const asyncRoutes = [
         component: () => import('@/views/serve/subscribeDetail'),
         name: 'subscribeDetail',
         hidden: true,
-        meta: { title: '服务详情' }
+        meta: { title: 'API详情' }
       },
       {
         path: 'add',
