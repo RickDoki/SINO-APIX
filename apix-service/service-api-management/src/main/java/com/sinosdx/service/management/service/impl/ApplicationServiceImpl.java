@@ -1252,19 +1252,28 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (null == oAuthInfo) {
             return R.fail(ResultCodeEnum.APP_DEVELOPER_IS_NOT_EXIST);
         }
-
+        Map data = (Map) sysUserService.queryClientByUserId(userId).getData();
         // 加入插件信息
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
                 .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                         .eq(ApplicationPlugin::getAppCode, appCode)
                         .eq(ApplicationPlugin::getDelFlag, 0));
+        // 遍历查询Client 相关信息
+        applicationPlugins.forEach(a->{
+                    ApplicationPluginClient applicationPluginClient = applicationPluginClientMapper.selectOne(new LambdaQueryWrapper<ApplicationPluginClient>()
+                            .eq(ApplicationPluginClient::getDelFlag, 0)
+                            .eq(ApplicationPluginClient::getAppPluginId, a.getId())
+                            .eq(data.containsKey("id"),ApplicationPluginClient::getSysClientId,data.get("id"))
+                            .last("LIMIT 1")
+                    );
+                    a.setApplicationPluginClient(applicationPluginClient);
+                });
         appDetailMap.put("plugins", applicationPlugins);
 
         String urlCode = StringUtils.isEmpty(appDetailMap.get("productId").toString()) ? appDetailMap.get("appCode").toString() : appDetailMap.get("productId").toString();
         appDetailMap.put("gatewayDomain", gatewayDomain + "/" + urlCode);
-        appDetailMap.put("clientId", oAuthInfo.get("clientId"));
-        appDetailMap.put("clientSecret", oAuthInfo.get("clientSecret"));
-
+//        appDetailMap.put("clientId", oAuthInfo.get("clientId"));
+//        appDetailMap.put("clientSecret", oAuthInfo.get("clientSecret"));
         return R.success(appDetailMap);
     }
 

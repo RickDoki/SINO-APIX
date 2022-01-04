@@ -8,6 +8,8 @@ import com.sinosdx.common.gateway.plugin.enums.FilterResultCodeEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.ReplayAttacksGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
+
+import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.Data;
@@ -54,7 +56,8 @@ public class ReplayAttacksGatewayFilterFactory extends BaseGatewayFilter<Config>
         String timestamp = headers.getFirst(TIMESTAMP);
         String nonce = headers.getFirst(NONCE);
         long seq = 60000L; // 毫秒  同时为nonce 的过期时间
-        String key = "key"; //TODO  取值问题？ 暂时init
+        URI uri = req.getURI();
+        String key = uri.getHost()+"-"+uri.getPort()+"-"+uri.getPath(); //TODO  取值问题？ 暂时init
         ValueOperations<String, String> stringValueOperations = stringRedisTemplate.opsForValue();
         // 时间戳
         if (Objects.nonNull(timestamp)) {
