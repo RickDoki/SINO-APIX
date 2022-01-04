@@ -1,9 +1,12 @@
 package com.sinosdx.service.management.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.sinosdx.common.base.base.entity.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 /**
  * 服务插件
@@ -25,5 +28,7 @@ public class ApplicationPlugin extends Entity<Integer> {
     */
     private String pluginParams;
     private Integer enabled;
+    @TableField(exist = false)
+    private ApplicationPluginClient applicationPluginClient;
 
 }
