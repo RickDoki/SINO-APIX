@@ -323,7 +323,7 @@ export default {
       return reg.test(web)
     },
     goBack () {
-      this.$router.push({ path: '/upstream' })
+      this.$router.push({ path: '/api/upstream' })
     },
     step () {
       console.log(this.active)

@@ -148,7 +148,7 @@ export default {
   methods: {
     // 跳转创建上游管理信息页面
     gotoDetail () {
-      this.$router.push({ path: '/upstream/create' })
+      this.$router.push({ path: '/api/upstream/create' })
     },
     // 获取上游服务列表
     getUpstreamList () {
@@ -170,7 +170,7 @@ export default {
     },
     // 修改上游数据信息
     edit (row) {
-      this.$router.push({ path: '/upstream/edit/' + row.id })
+      this.$router.push({ path: '/api/upstream/edit/' + row.id })
     },
     // 打开数据编辑器抽屉
     editData () {

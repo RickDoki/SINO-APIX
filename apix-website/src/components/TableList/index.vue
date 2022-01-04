@@ -363,7 +363,7 @@ export default {
   }
 }
 .my-editor {
-  background: #f5f7fa;
+  background: #f4f6ff;
   color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;

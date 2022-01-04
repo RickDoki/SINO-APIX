@@ -61,27 +61,27 @@ export const asyncRoutes = [
         meta: { title: '我的服务' }
       },
       {
-        path: 'subscribe',
+        path: '/serve/subscribe',
         component: () => import('@/views/serve/subscribe'),
         name: 'subscribe',
         meta: { title: '我的订阅' }
       },
       {
-        path: 'subscribeDetail',
+        path: '/serve/subscribeDetail',
         component: () => import('@/views/serve/subscribeDetail'),
         name: 'subscribeDetail',
         hidden: true,
         meta: { title: '服务详情' }
       },
       {
-        path: 'add',
+        path: '/serve/add',
         component: () => import('@/views/serve/add'),
         hidden: true,
         name: 'add',
         meta: { title: '创建服务' }
       },
       {
-        path: 'detail',
+        path: '/serve/detail',
         component: () => import('@/views/serve/detail'),
         name: 'detail',
         hidden: true,
@@ -102,27 +102,27 @@ export const asyncRoutes = [
         meta: { title: 'API列表' }
       },
       {
-        path: 'add',
+        path: '/api/add',
         component: () => import('@/views/api/add'),
         name: 'release',
         hidden: true,
         meta: { title: '创建API' }
       },
       {
-        path: 'upstream',
+        path: '/api/upstream',
         component: () => import('@/views/upstream/index'),
         name: 'Upstream',
         meta: { title: '上游管理', affix: true }
       },
       {
-        path: 'upstream/create',
+        path: '/api/upstream/create',
         component: () => import('@/views/upstream/detail'),
         hidden: true,
         name: 'UpstreamCreate',
         meta: { title: '创建上游服务', affix: true }
       },
       {
-        path: 'upstream/edit/:id',
+        path: '/api/upstream/edit/:id',
         component: () => import('@/views/upstream/detail'),
         hidden: true,
         name: 'UpstreamEdit',
@@ -141,7 +141,7 @@ export const asyncRoutes = [
         meta: { title: '开放服务', icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
       },
       {
-        path: 'detail',
+        path: '/openServe/detail',
         component: () => import('@/views/openServe/detail'),
         name: 'openServeDetail',
         hidden: true,
@@ -149,38 +149,12 @@ export const asyncRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/openServe',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'dashboard',
-  //       component: () => import('@/views/openServe/index'),
-  //       name: 'Dashboard',
-  //       meta: { title: '开放服务', icon: 'openServe', affix: true }
-  //     },
-  //     {
-  //       path: 'detail',
-  //       component: () => import('@/views/openServe/detail'),
-  //       hidden: true,
-  //       name: 'Dashboard',
-  //       meta: { title: '服务详情', affix: true }
-  //     },
-  //     {
-  //       path: 'apiList',
-  //       component: () => import('@/views/openServe/apiList'),
-  //       hidden: true,
-  //       name: 'Dashboard',
-  //       meta: { title: '服务api列表', affix: true }
-  //     }
-  //   ]
-  // },
   {
     path: '/log',
     component: Layout,
     children: [
       {
-        path: 'log',
+        path: '/log/index',
         component: () => import('@/views/system/log/list'),
         name: 'Log',
         meta: { title: '审计日志', icon: 'log', Aicon: 'log_Aicon', affix: true }
@@ -194,13 +168,13 @@ export const asyncRoutes = [
     meta: { title: '系统设置', icon: 'system', Aicon: 'system_Aicon' },
     children: [
       {
-        path: 'user',
+        path: '/system/user',
         component: () => import('@/views/system/user/list'),
         name: 'User',
         meta: { title: '用户管理', affix: true }
       },
       {
-        path: 'role',
+        path: '/system/role',
         component: () => import('@/views/system/role/list'),
         name: 'Role',
         meta: { title: '角色管理', affix: true }
@@ -213,20 +187,6 @@ export const asyncRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/data',
-  //   component: Layout,
-  //   alwaysShow: true,
-  //   meta: { title: '数据管理' },
-  //   children: [
-  //     {
-  //       path: 'Statistics',
-  //       component: () => import('@/views/router/list'),
-  //       name: 'App',
-  //       meta: { title: '数据统计' }
-  //     }
-  //   ]
-  // },
   /** when your routing map is too long, you can split it into small modules **/
 
   // 404 page must be placed at the end !!!

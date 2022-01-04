@@ -97,3 +97,29 @@
   font-size: 14px;
   border-radius: 4px;
 }
+
+// .add-but {
+//   border: 1px solid rgba(38, 80, 255, 0.3);
+//   color: #2650ff;
+// }
+// .del-but {
+//   border: 1px solid rgba(240, 48, 99, 0.3);
+//   color: #f03063;
+// }
+// .del-but:hover {
+//   background-color: #fef0f0;
+// }
+.el-button--default{
+  border: 1px solid rgba(38, 80, 255, 0.3);
+  color: #2650ff;
+&:hover {
+  color: rgb(240, 248, 255);
+  background-color: rgb(148, 197, 238);
+  border-color: rgb(148, 197, 238);
+}
+&:active {
+  color: rgb(240, 248, 255);
+  background-color: rgb(148, 197, 238);
+  border-color: rgb(148, 197, 238);
+}
+}

@@ -288,10 +288,10 @@
                 />
               </vxe-table>
               <div class="table-button">
-                <el-button size="mini" @click="savedata" class="add-but">
+                <el-button plain type="primary" size="mini" @click="savedata" class="add-but">
                   新增
                 </el-button>
-                <el-button size="mini" @click="newdata" class="del-but">
+                <el-button plain type="danger" size="mini" @click="newdata" class="del-but">
                   删除
                 </el-button>
               </div>
@@ -364,10 +364,10 @@
                 />
               </vxe-table>
               <div class="table-button">
-                <el-button size="mini" @click="savedatares" class="add-but">
+                <el-button plain type="primary" size="mini" @click="savedatares" class="add-but">
                   新增
                 </el-button>
-                <el-button size="mini" @click="newdatares" class="del-but">
+                <el-button plain type="danger" size="mini" @click="newdatares" class="del-but">
                   删除
                 </el-button>
               </div>
@@ -426,7 +426,7 @@ export default {
       // 展示折叠配置
       showTimeFlag: false,
       // 默认步骤数
-      active: 0,
+      active: 1,
       panelTitles: ['设置上游服务', '设置API信息'], // 根据需要传入，可N步
       lineNumbers: true,
       readonly: true,
@@ -832,7 +832,7 @@ export default {
 }
 .my-editor {
   max-width: 1140px;
-  background: #f5f7fa;
+  background: #f4f6ff;
   color: #373753;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
@@ -868,18 +868,5 @@ export default {
 }
 .table-button {
   margin-top: 15px;
-  .add-but {
-    border: 1px solid #2650ff;
-    border-color: #2650ff;
-    color: #2650ff;
-  }
-  .del-but {
-    border: 1px solid #f03063;
-    border-color: #f03063;
-    color: #f03063;
-  }
-  .del-but:hover {
-    background-color: #fef0f0;
-  }
 }
 </style>
