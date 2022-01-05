@@ -1,19 +1,20 @@
 <template>
   <div class="main">
-    <el-card class="box-card" shadow="never">
-      <div class="card-top">
-        <div>
-          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #2650FF; border-color: #2650FF;" @click="add">创建</el-button>
-        </div>
-        <div style="margin-left: 20px;" class="input-box">
-          <el-input placeholder="请输入角色姓名" v-model="roleName" size="small" clearable></el-input>
-          <el-button style="border-left: none;" size="small" icon="el-icon-search" @click="getRoleList('?limit=10&offset=1')"></el-button>
-        </div>
-        <div class="but-right">
-          <el-button size="small" icon="el-icon-refresh-right" @click="getRoleList('?limit=10&offset=1')"></el-button>
-        </div>
+    <div class="list_top list_top_bom">
+      <div class="list_title titleFont">角色管理</div>
+      <div class="list_search">
+        <el-input
+          suffix-icon="el-icon-search"
+          class="list_searchInput"
+          size="small"
+          v-model="roleName"
+          placeholder="输入角色名查询"
+          @change="getRoleList('?limit=10&offset=1')" />
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="add">添加新角色</el-button>
       </div>
-      <el-table :row-style="{height:'48px'}" :data="tableData" stripe :header-cell-style="{background:'#F0F2F5',color:'#333333'}">
+    </div>
+    <div class="table_box">
+      <el-table  :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
         <el-table-column prop="roleName" label="名称" show-overflow-tooltip></el-table-column>
         <el-table-column prop="remark" label="描述" show-overflow-tooltip></el-table-column>
         <el-table-column prop="updateTime" label="更新时间">
@@ -30,16 +31,14 @@
         </el-table-column>
       </el-table>
       <el-pagination
-        style="margin: 24px 0px; float: right;"
-        @size-change="handleSizeChange"
+        background
+        class="list-pagination"
+        :current-page.sync="page"
+        layout="prev, pager, next"
+        :total="total"
         @current-change="handleCurrentChange"
-        :current-page="page"
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size="limit"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
-    </el-card>
+      />
+    </div>
     <el-drawer
       :title="drawerTitle"
       :before-close="handleClose"
