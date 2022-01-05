@@ -314,4 +314,18 @@
         </where>
     </select>
 
+    <select id="queryApiByAppId" resultMap="java.util.List">
+      select a.app_code as code,CONCAT(b.prefix_path,b.url) as path
+      from application_api a
+      left join api b
+      on a.api_id = b.id
+      where a.app_id=#{appId}
+    </select>
+
+    <select id="querySubscribeCodeByAppId" resultMap="java.util.List">
+      select a.app_subscribed_code
+      from application_subscribe a
+      where a.app_subscribed_id=#{appId}
+    </select>
+
 </mapper>
