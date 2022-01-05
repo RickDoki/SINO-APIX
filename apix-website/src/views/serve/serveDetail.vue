@@ -1,14 +1,12 @@
 <template>
   <div class="main">
     <div v-if="!routerView">
-      <div class="serve_top">
-        <div class="titleFont">
-          <div>服务名称</div>
-        </div>
-        <div class="serve_right">
-          <div>
+      <div class="list_top">
+        <div class="list_title">服务名称</div>
+        <div class="list_search">
+          <div class="but-left">
             <el-dropdown>
-              <el-button type="primary">
+              <el-button type="primary" size="small">
                 操作<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
@@ -20,18 +18,18 @@
               </el-dropdown-menu>
             </el-dropdown>
           </div>
-          <div>
-            <el-button type="primary">编辑文档</el-button>
-          </div>
+          <el-button type="primary" size="small">编辑文档</el-button>
         </div>
       </div>
-      <p class="secondTitle" style="margin: 0px 0px 10px 0px">这是一段描述</p>
+      <div class="secondTitle">
+        创建服务来管理和代理现有API或发布到门户。
+      </div>
       <div class="status">
-        <div class="use">
+        <div class="left-span">
           <span>使用状态:</span>
           <span>停用</span>
         </div>
-        <div class="door">
+        <div class="left-span">
           <span>门户状态:</span>
           <span>已发布</span>
         </div>
@@ -46,31 +44,30 @@
           </div>
         </div>
       </div>
-      <div class="numbers">
+      <div class="numbers mode-margin">
         <div class="requestAll">
           <div class="font">请求计数</div>
-          <div>123</div>
+          <div class="num">123</div>
         </div>
         <div class="requestError">
           <div class="font">失败的请求</div>
-          <div>123</div>
+          <div class="num">123</div>
         </div>
         <div class="edition">
           <div class="font">版本计数</div>
-          <div>123</div>
+          <div class="num">123</div>
         </div>
       </div>
-      <div class="table_box">
+      <div class="table_box mode-margin">
         <!-- <p>版本</p> -->
         <div class="serve-table">
           <div class="table-tile">版本</div>
-          <div @click="gonewEdition" class="he-button">添加新版本</div>
+          <el-button plain type="primary" size="small" @click="gonewEdition" class="add-but">添加版本 </el-button>
         </div>
         <el-table
           :data="table"
           empty-text="暂无数据"
-          stripe
-          style="width: 100%"
+          :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, color:'#494E6A'}"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -89,16 +86,15 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="table_box" style="margin-top: 10px">
+      <div class="table_box mode-margin">
         <div class="serve-table">
           <div class="table-tile">插件</div>
-          <div class="he-button">添加插件</div>
+          <el-button plain type="primary" size="small" class="add-but">添加插件 </el-button>
         </div>
         <el-table
           :data="table"
           empty-text="暂无数据"
-          stripe
-          style="width: 100%"
+          :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, color:'#494E6A'}"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -117,16 +113,40 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="table_box" style="margin-top: 10px">
+      <div class="table_box mode-margin">
         <div class="serve-table">
-          <div class="table-tilelong">数据统计-http日志/log日志</div>
-          <!-- <div class="he-button">添加新版本</div> -->
+          <div class="table-tilelong">请求日志</div>
         </div>
         <el-table
           :data="table"
           empty-text="暂无数据"
-          stripe
-          style="width: 100%"
+          :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, color:'#494E6A'}"
+        >
+          <el-table-column prop="appName" label="应用名称" />
+          <el-table-column prop="appCode" label="APPCode" />
+          <el-table-column prop="appCode" label="启用状态" />
+          <el-table-column prop="appCode" label="描述" />
+          <el-table-column label="操作" width="180px">
+            <template slot-scope="scope">
+              <div class="handle">
+                <span @click="getMessage(scope.row)" class="linkcolor"
+                  >查看</span
+                >
+                <span class="handle_middle">|</span>
+                <span class="linkcolor">退订</span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="table_box mode-margin">
+        <div class="serve-table">
+          <div class="table-tilelong">错误日志</div>
+        </div>
+        <el-table
+          :data="table"
+          empty-text="暂无数据"
+          :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, color:'#494E6A'}"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -153,13 +173,13 @@
 <script>
 import "./../mainCss/index.scss";
 export default {
-  data() {
+  data () {
     return {
       routerView: false,
       table: [],
     };
   },
-  created() {
+  created () {
     // console.log(this.$route);
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
@@ -168,49 +188,25 @@ export default {
     }
   },
   methods: {
-    gonewEdition() {
-      this.$router.push({path:'/serve/newEdition'})
+    gonewEdition () {
+      this.$router.push({ path: '/serve/newEdition' })
     },
   },
 };
 </script>
 
 <style lang='scss' scoped>
-.serve_top {
-  display: flex;
-  justify-content: space-between;
-  .serve_right {
-    display: flex;
-    justify-content: space-between;
-    width: 220px;
-  }
-}
-.status {
-  display: flex;
-  // width: 300px;
-  justify-content: space-between;
-  .use {
-    width: 200px;
-    font-size: 12px;
-  }
-  .door {
-    font-size: 12px;
-    width: 200px;
-  }
-  .time {
-    width: calc(100% - 400px);
-    text-align: right;
-  }
+.mode-margin {
+  margin-top: 24px;
 }
 .numbers {
-  height: 100px;
+  height: 116px;
   border: 1px solid #e1e6ee;
-  margin: 10px 0px;
   border-radius: 10px;
   div {
     display: inline-block;
     width: 33.33%;
-    height: 100px;
+    height: 115px;
     vertical-align: middle;
     div {
       display: block;
@@ -219,7 +215,12 @@ export default {
       text-align: center;
     }
     .font {
-      line-height: 50px;
+      line-height: 58px;
+    }
+    .num {
+      line-height: 40px;
+      font-weight: bold;
+      font-size: 26px;
     }
   }
   .requestError {
@@ -230,5 +231,8 @@ export default {
 .serve-table {
   display: flex;
   justify-content: space-between;
+  .table-tilelong {
+    line-height: 30px;
+  }
 }
 </style>
