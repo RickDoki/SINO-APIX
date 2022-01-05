@@ -1,51 +1,36 @@
 package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
+import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.zip.GZIPInputStream;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
-import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * 防重放攻击
@@ -58,7 +43,6 @@ import reactor.core.publisher.Mono;
 @Component
 public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewayFilterFactory.Config> {
 
-    private static final String GZIP = "gzip";
     private static final String WEBSOCKET = "websocket";
     private static final List<String> STRING_LIST = Arrays.asList("http", "https");
     /**
@@ -72,40 +56,34 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
 
     @Override
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain,
-            HttpLogGatewayFilterFactory.Config c) {
-        try {
-            if (log.isDebugEnabled()) {
-                log.debug("Enter RequestLogGlobalFilter");
-            }
-            ServerHttpRequest request = exchange.getRequest();
-            URI originalRequestUrl = request.getURI();
-            String scheme = originalRequestUrl.getScheme();
-            if (!STRING_LIST.contains(scheme)) {
-                return chain.filter(exchange);
-            }
-            String upgrade = request.getHeaders().getUpgrade();
-            if (WEBSOCKET.equalsIgnoreCase(upgrade)) {
-                return chain.filter(exchange);
-            }
-            GatewayLogDTO gatewayLog = new GatewayLogDTO();
-            gatewayLog.setParams(getRequestParams(exchange, request));
-            return chain.filter(exchange.mutate()
-                    .response(getResponseDecorator(exchange, gatewayLog)).build())
-                    .onErrorResume(e -> {
-                        String result = ExceptionUtil.getMessage(e);
-                        if (log.isDebugEnabled()) {
-                            log.debug("onErrorResume result:{}", result);
-                        }
-                        gatewayLog.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                        gatewayLog.setResult(result);
-                        gatewayLog.setConsumingTime(getConsumingTime(exchange));
-                        SpringContextHolder.getBean(IMessageService.class).saveLog(GATEWAY, gatewayLog);
-                        return Mono.error(e);
-                    });
-        } catch (Exception e) {
-            log.error("请求响应日志打印出现异常", e);
+                                  HttpLogGatewayFilterFactory.Config c) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter RequestLogGlobalFilter");
+        }
+        ServerHttpRequest request = exchange.getRequest();
+        URI originalRequestUrl = request.getURI();
+        String scheme = originalRequestUrl.getScheme();
+        if (!STRING_LIST.contains(scheme)) {
             return chain.filter(exchange);
         }
+        String upgrade = request.getHeaders().getUpgrade();
+        if (WEBSOCKET.equalsIgnoreCase(upgrade)) {
+            return chain.filter(exchange);
+        }
+        int statusCode = exchange.getResponse().getRawStatusCode() == null ? 0 : exchange.getResponse().getRawStatusCode();
+        if (200 == statusCode) {
+            Consumer<String> consumer = x -> {
+                HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
+                GatewayLogDTO gatewayLog = new GatewayLogDTO();
+                gatewayLog.setParams(getRequestParams(exchange, request));
+                gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
+                gatewayLog.setStatusCode(statusCode);
+                gatewayLog.setResult(x);
+                handleResponse(gatewayLog, exchange);
+            };
+            return chain.filter(exchange.mutate().response(HttpUtil.getResponseDecorator(exchange, consumer)).build());
+        }
+        return chain.filter(exchange);
     }
 
     @Data
@@ -133,100 +111,6 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
         return -1L;
     }
 
-    /**
-     * 获取返回结果
-     *
-     * @param exchange
-     * @param gatewayLog
-     * @return
-     */
-    private ServerHttpResponseDecorator getResponseDecorator(ServerWebExchange exchange,
-            GatewayLogDTO gatewayLog) {
-        ServerHttpResponse originalResponse = exchange.getResponse();
-        DataBufferFactory bufferFactory = originalResponse.bufferFactory();
-        return new ServerHttpResponseDecorator(originalResponse) {
-            @Override
-            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-//                if (Objects.requireNonNull(getStatusCode()).equals(HttpStatus.OK)
-//                        && body instanceof Flux) {
-                // 获取ContentType，判断是否返回JSON格式数据
-//                    String originalResponseContentType = exchange
-//                            .getAttribute(ORIGINAL_RESPONSE_CONTENT_TYPE_ATTR);
-//                    if (StringUtils.isNotBlank(originalResponseContentType) && CAN_HANDLE
-//                            .contains(originalResponseContentType)) {
-                //如果加这个判断，会导致经过这定义过滤器返回Monojust无法判断
-                //if (body instanceof Flux) {
-                if (log.isDebugEnabled()) {
-                    log.debug("body instanceof {}", body);
-                }
-                Flux<? extends DataBuffer> fluxBody;
-                try {
-                    fluxBody = Flux.from(DataBufferUtils.join(body));
-                } catch (Exception e) {
-                    log.error("RequestLogGlobalFilter ResponseDecorator Flux.from error!", e);
-                    handleResponse(gatewayLog, exchange);
-                    return super.writeWith(body);
-                }
-                return super.writeWith(fluxBody.buffer().map(dataBuffers -> {
-                    if (log.isDebugEnabled()) {
-                        log.debug("super writeWith request response data");
-                    }
-                    DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
-                    DataBuffer join = dataBufferFactory.join(dataBuffers);
-                    byte[] content = new byte[join.readableByteCount()];
-                    join.read(content);
-                    DataBufferUtils.release(join);
-                    try {
-                        HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
-                        int statusCode = Objects.requireNonNull(getStatusCode()).value();
-                        //处理gzip请求（方式一）
-                        //String responseData = new String(GzipUtil.unCompress(content),StandardCharsets.UTF_8);
-                        //byte[] uppedContent = GzipUtil.compress(responseData, StandardCharsets.UTF_8.name());
-                        //处理gzip请求（方式二）
-                        String responseData = new String(content, StandardCharsets.UTF_8);
-                        List<String> strings = httpHeaders.get(HttpHeaders.CONTENT_ENCODING);
-                        if (!CollectionUtils.isEmpty(strings) && strings.contains(GZIP)) {
-                            responseData = getGZIPContent(content, responseData);
-                        } else {
-                            responseData = new String(content, StandardCharsets.UTF_8);
-                        }
-                        log.debug("getResponseDecorator result:{}", responseData);
-                        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
-                        gatewayLog.setStatusCode(statusCode);
-                        gatewayLog.setResult(responseData);
-                        //自定义返回结果处理后的长度赋值
-                        //if (content != null) {
-                        // originalResponse.getHeaders().setContentLength(content.length);
-                        //}
-                        //originalResponse.getHeaders().set("encrypt", "true");
-                    } catch (Exception e) {
-                        log.error("RequestLogGlobalFilter ResponseDecorator writeWith error!", e);
-                        gatewayLog.setResult(
-                                "RequestLogGlobalFilter ResponseDecorator writeWith error");
-                    } finally {
-//                        if(gatewayLog.getStatusCode() != 200){
-                        handleResponse(gatewayLog, exchange);
-//                        }
-                    }
-                    return bufferFactory.wrap(content);
-                }));
-            }
-
-            private String getGZIPContent(byte[] content, String responseData) {
-                try (
-                        GZIPInputStream gzipInputStream = new GZIPInputStream(
-                                new ByteArrayInputStream(content), content.length);
-                ) {
-                    StringWriter writer = new StringWriter();
-                    IOUtils.copy(gzipInputStream, writer, StandardCharsets.UTF_8);
-                    responseData = writer.toString();
-                } catch (IOException e) {
-                    log.error("request log response filter gzip IO error", e);
-                }
-                return responseData;
-            }
-        };
-    }
 
     /**
      * 处理返回结果
