@@ -26,20 +26,20 @@
       </div>
       <div class="status">
         <div class="left-span">
-          <span>使用状态:</span>
+          <span>使用状态: </span>
           <span>停用</span>
         </div>
         <div class="left-span">
-          <span>门户状态:</span>
+          <span>门户状态: </span>
           <span>已发布</span>
         </div>
         <div class="time">
           <div>
-            <span>创建时间:</span>
+            <span>创建时间 : </span>
             <span>2021-08-05 10:05:00:00</span>
           </div>
           <div>
-            <span>更新时间:</span>
+            <span>更新时间 : </span>
             <span>2021-08-05 10:05:00:00</span>
           </div>
         </div>

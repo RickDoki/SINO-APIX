@@ -56342,6 +56342,7 @@
       background-color: transparent; }
     .el-button--text:active {
       color: #2248e6;
+      outline: none;
       border-color: transparent;
       background-color: transparent; }
     .el-button--text.is-disabled, .el-button--text.is-disabled:hover, .el-button--text.is-disabled:focus {
