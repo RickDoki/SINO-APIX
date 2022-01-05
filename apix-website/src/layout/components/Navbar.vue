@@ -5,7 +5,7 @@
         <img src="./../../assets/img/img_avatar.png" alt=""/>
         <el-dropdown trigger="click" @command="handleCommand">
           <span style="color: #1D1C35" class="el-dropdown-link">
-            {{phone}}16621797423<i class="el-icon-arrow-down el-icon--right"></i>
+            {{phone}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown" class="drop-div">
             <el-dropdown-item command="a">个人信息</el-dropdown-item>

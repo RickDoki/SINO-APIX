@@ -7,14 +7,14 @@
           suffix-icon="el-icon-search"
           class="list_searchInput"
           size="small"
+          clearable
           v-model="roleName"
           placeholder="输入角色名查询"
           @change="getRoleList('?limit=10&offset=1')" />
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="add">添加新角色</el-button>
       </div>
     </div>
     <div class="table_box">
-      <el-table  :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
+      <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
         <el-table-column prop="roleName" label="名称" show-overflow-tooltip></el-table-column>
         <el-table-column prop="remark" label="描述" show-overflow-tooltip></el-table-column>
         <el-table-column prop="updateTime" label="更新时间">
@@ -24,16 +24,16 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)" style="color: #2650FF;">配置</el-button>
-            <span style="padding: 0 6px; color: #D8D8D8">|</span>
-            <el-button type="text" @click="delCert(scope.row)" :class="(scope.row.roleId === 1 || scope.row.roleId === 2)?'del-bro':'del-red'" :disabled="scope.row.roleId === 1 || scope.row.roleId === 2">删除</el-button>
+            <el-button v-if="ispeizhiShow" type="text" @click="edit(scope.row)">配置</el-button>
+            <span class="handle">|</span>
+            <el-button v-if="isshanchuShow" type="text" @click="delCert(scope.row)" :class="(scope.row.roleId === 1 || scope.row.roleId === 2)?'del-bro':'del-red'" :disabled="scope.row.roleId === 1 || scope.row.roleId === 2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         background
         class="list-pagination"
-        :current-page.sync="offset"
+        :current-page.sync="page"
         layout="prev, pager, next"
         :total="total"
         @current-change="handleCurrentChange"
@@ -46,182 +46,227 @@
       direction="rtl"
       size="35%"
     >
-      <div class="demo-drawer__content">
-        <el-form :model="dataForm" ref="dataForm" :rules="rules" label-position="top">
-          <el-form-item label="角色名" prop="roleName">
-            <el-input maxlength="50" show-word-limit v-model="dataForm.roleName" autocomplete="off" placeholder="请输入角色名"></el-input>
-          </el-form-item>
-          <el-form-item label="描述" prop="remark">
-            <el-input maxlength="100" show-word-limit type="textarea" v-model="dataForm.remark"></el-input>
-          </el-form-item>
-          <el-form-item label="权限" class="qx-item">
-            <el-tree
-              :data="menuList"
-              :props="menuListTreeProps"
-              node-key="menuId"
-              ref="menuListTree"
-              :default-expand-all="true"
-              show-checkbox>
-            </el-tree>
-          </el-form-item>
-        </el-form>
-        <div class="demo-drawer__footer">
-          <el-button size="small" @click="handleClose">取 消</el-button>
-          <el-button size="small" type="primary" style="background-color: #2650FF; border-color: #2650FF;" @click="submitForm('dataForm')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
-        </div>
+    <div class="demo-drawer__content">
+      <el-form :model="dataForm" ref="dataForm" :rules="rules" label-position="top">
+        <el-form-item label="角色名" prop="roleName">
+          <el-input maxlength="25" show-word-limit v-model="dataForm.roleName" autocomplete="off" placeholder="请输入角色名"></el-input>
+        </el-form-item>
+        <el-form-item label="描述" prop="remark">
+          <el-input maxlength="100" show-word-limit type="textarea" v-model="dataForm.remark"></el-input>
+        </el-form-item>
+        <el-form-item label="权限" class="qx-item">
+          <el-tree
+            :data="menuList"
+            :props="menuListTreeProps"
+            node-key="menuId"
+            ref="menuListTree"
+            check-strictly
+            :default-expand-all="true"
+            show-checkbox>
+          </el-tree>
+        </el-form-item>
+      </el-form>
+      <div class="demo-drawer__footer">
+        <el-button size="small" @click="handleClose">取 消</el-button>
+        <el-button size="small" type="primary" style="background-color: #2C66FB; border-color: #2C66FB;" @click="submitForm('dataForm')" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
       </div>
+    </div>
     </el-drawer>
   </div>
 </template>
 
 <script>
-import { getList, updateUser } from '@/api/user'
-import { getRoles } from '@/api/role'
+import { getRoleList, getRoutes, getroleNav, addRole, updateRole, deleteRole, getRoleInfo } from '@/api/role'
+// import { getroleNav } from '@/api/user'
+import { treeDataTranslate } from '@/utils'
 import { getToken } from '@/utils/auth'
+import moment from 'moment'
 export default {
   components: {
   },
+  filters: {
+    formateDate (date) {
+      return moment(date).format('YYYY-MM-DD HH:mm:ss')
+    }
+  },
   data () {
     return {
-      userId: 0,
+      menuList: [],
+      menuListTreeProps: {
+        label: 'name',
+        children: 'children'
+      },
+      tempKey: -666666, // 临时key, 用于解决tree半选中状态项不能传给后台接口问题. # 待优化
       drawer: false,
       loading: false,
-      isbuttonShow: false,
-      search: {
-        name: '',
-        role: ''
+      drawerTitle: '',
+      userId: 0, // 缓存中取
+      roleName: '',
+      dataForm: {
+        roleId: 0,
+        roleName: '',
+        remark: ''
       },
-      form: {
-        id: '',
-        username: '',
-        mobile: '',
-        email: '',
-        roleId: '',
-        enabled: true
+      rules: {
+        roleName: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
+        ]
       },
-      roleList: [],
-      offset: 1,
+      page: 1,
       limit: 10,
       total: 0,
       tableData: [],
-      rules: {
-        username: [
-          { required: true, message: '请输入用户名称', trigger: 'blur' }
-        ],
-        email: [
-          { pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, message: '请输入正确的邮箱地址' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
-        ],
-        roleId: [
-          { required: true, message: '请选用户角色', trigger: 'change' }
-        ]
-      }
+      ispeizhiShow: false,
+      isshanchuShow: false
     }
   },
   created () {
     this.userId = parseInt(getToken('userId_api'))
-    this.getuserList()
-    this.getRoles()
-    // console.log(this.$router.currentRoute.meta.title)
+    this.getRoleList()
     const name = this.$router.currentRoute.meta.title
     const buttonList = JSON.parse(sessionStorage.getItem('buttonList'))
+    console.log(buttonList)
     for (let index = 0; index < buttonList.length; index++) {
       if (buttonList[index].name === name) {
         // console.log(buttonList[index].list)
-        if (buttonList[index].list.length === 1) {
-          this.isbuttonShow = true
-        } else {
-          this.isbuttonShow = false
+        for (let index1 = 0; index1 < buttonList[index].list.length; index1++) {
+
+          if (buttonList[index].list[index1].name === '配置') {
+            this.ispeizhiShow = true
+          }
+          if (buttonList[index].list[index1].name === '删除') {
+            this.isshanchuShow = true
+          }
         }
       }
     }
   },
   methods: {
     // 获取列表
-    getuserList () {
-      let params = `?offset=${this.offset}&limit=${this.limit}`
-      if (this.search.name) {
-        params += `&username=${this.search.name}`
+    getRoleList () {
+      let params = `?page=${this.page}&limit=${this.limit}&userId=${this.userId}`
+      if (this.roleName) {
+        params += `&roleName=${this.roleName}`
       }
-      if (this.search.role) {
-        params += `&roleId=${this.search.role}`
-      }
-      getList(params).then(res => {
+      getRoleList(params).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data.userList
-          this.total = res.data.total
+          this.tableData = res.data.list
+          this.total = res.data.totalCount
         }
       })
     },
-    // 获取角色列表
-    getRoles () {
-      getRoles().then(res => {
+    // 获取权限列表
+    getRoutes (roleId) {
+      const id = getToken('userId_api')
+      getroleNav(id).then(res => {
         if (res.code === 200) {
-          this.roleList = res.data
+          this.menuList = treeDataTranslate(res.data, 'menuId')
+          if (this.dataForm.roleId) {
+            this.getRoleInfo(this.dataForm.roleId)
+          }
         }
       })
     },
-    // 重置搜索条件
-    resetSearch () {
-      this.search.name = ''
-      this.search.role = ''
-      this.getuserList()
-    },
-    // 重置表单
-    resetForm (formName) {
-      this.$refs[formName].resetFields()
-    },
-    // 修改用户信息
-    edit (row) {
+    // 创建角色
+    add () {
       // 打开抽屉
       this.drawer = true
-      this.form = {
-        id: row.id,
-        username: row.username,
-        mobile: row.mobile,
-        email: row.email,
-        roleId: row.roleId,
-        enabled: row.enabled
-      }
-      if (row.roleId === 0) {
-        this.form.roleId = ''
-      }
+      this.drawerTitle = '创建角色'
+      this.getRoutes()
     },
-    // 提交数据
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // 修改用户
-          updateUser(this.form.id, this.form).then(res => {
-            if (res.code === 200) {
-              // 重置表单
-              this.resetForm('form')
-              this.drawer = false
-              // 查询列表
-              this.page = 1
-              this.getuserList()
-            }
-          })
+          if (!this.$refs.menuListTree.getCheckedKeys().length) {
+            this.$message('请选择要分配的权限！')
+            return
+          }
+          const params = {
+            roleName: this.dataForm.roleName,
+            remark: this.dataForm.remark,
+            createUserId: this.userId,
+            menuIdList: [].concat(this.$refs.menuListTree.getCheckedKeys(), [this.tempKey], this.$refs.menuListTree.getHalfCheckedKeys())
+          }
+          if (this.dataForm.roleId === 0) {
+            // 添加角色
+            addRole(params).then(res => {
+              if (res.code === 200) {
+                // 重置表单
+                this.resetForm('dataForm')
+                this.drawer = false
+                this.$refs.menuListTree.setCheckedKeys([])
+                // 查询列表
+                this.page = 1
+                this.getRoleList()
+              }
+            })
+          } else {
+            // 编辑角色
+            params.roleId = this.dataForm.roleId
+            updateRole(params).then(res => {
+              if (res.code === 200) {
+                // 重置表单
+                this.resetForm('dataForm')
+                this.drawer = false
+                this.$refs.menuListTree.setCheckedKeys([])
+                // 查询列表
+                this.page = 1
+                this.getRoleList()
+              }
+            })
+          }
+        }
+      })
+    },
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    },
+    // 修改角色信息
+    edit (row) {
+      // 打开抽屉
+      this.drawer = true
+      this.drawerTitle = '配置角色'
+      this.dataForm.roleId = row.roleId
+      this.getRoutes()
+    },
+    // 获取角色信息
+    getRoleInfo (roleId) {
+      getRoleInfo(roleId).then(res => {
+        if (res.code === 200) {
+          const data = res.data
+          this.dataForm.roleName = data.roleName
+          this.dataForm.remark = data.remark
+          var idx = data.menuIdList.indexOf(this.tempKey)
+          if (idx !== -1) {
+            data.menuIdList.splice(idx, data.menuIdList.length - idx)
+          }
+          this.$refs.menuListTree.setCheckedKeys(data.menuIdList)
         }
       })
     },
     // 关闭抽屉
-    handleClose (done) {
+    handleClose () {
       this.drawer = false
-      this.resetForm('form')
+      this.resetForm('dataForm')
+      this.$refs.menuListTree.setCheckedKeys([])
     },
-    // 删除用户信息
+    // 删除角色信息
     delCert (row) {
-      this.$confirm('确认删除用户：' + row.username + ', 是否继续?', '提示', {
+      const params = {
+        roleIds: [row.roleId]
+      }
+      this.$confirm('确认删除角色：' + row.roleName + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
+        deleteRole(params).then(res => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.page = 1
+          this.getRoleList()
         })
       }).catch(() => {
       })
@@ -229,26 +274,18 @@ export default {
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
       this.limit = val
-      this.getuserList()
+      this.getRoleList()
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
-      this.offset = val
-      this.getuserList()
+      this.page = val
+      this.getRoleList()
     }
   }
 }
 </script>
 
 <style lang='scss' scoped>
-/deep/.el-checkbox__input.is-checked .el-checkbox__inner {
-  background-color: #2650ff;
-  border-color: #2650ff;
-}
-/deep/.el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: #2650ff;
-  border-color: #2650ff;
-}
 .del-red {
   color: #f6323c;
 }
@@ -267,21 +304,6 @@ export default {
 .demo-drawer__footer {
   text-align: right;
   margin-top: 40px;
-}
-.box-card {
-  margin: 24px;
-  .card-top {
-    width: 100%;
-    display: flex;
-    margin-bottom: 24px;
-    .input-box {
-      display: flex;
-      width: 240px;
-    }
-    .but-right {
-      margin-left: auto;
-    }
-  }
 }
 </style>
 

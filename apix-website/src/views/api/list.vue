@@ -27,11 +27,11 @@
     </div>
     <div class="table_box">
       <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="name" label="API名称" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="code" label="协议" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="status" label="域名"></el-table-column>
-        <el-table-column prop="version" label="路径"></el-table-column>
-        <el-table-column prop="version2" label="API描述"></el-table-column>
+        <el-table-column prop="apiName" label="API名称" show-overflow-tooltip min-width="150"></el-table-column>
+        <el-table-column prop="code" label="协议" width="100"></el-table-column>
+        <el-table-column prop="status" label="域名" show-overflow-tooltip min-width="200"></el-table-column>
+        <el-table-column prop="apiUrl" label="路径" show-overflow-tooltip min-width="250"></el-table-column>
+        <el-table-column prop="description" label="API描述" show-overflow-tooltip min-width="200"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click="delAPI(scope.row)" class="textBut-danger">删除</el-button>

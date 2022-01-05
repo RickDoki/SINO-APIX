@@ -17,10 +17,10 @@
     </div>
     <div class="table_box">
       <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="name" label="服务名称" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="code" label="code" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="status" label="门户状态"></el-table-column>
-        <el-table-column prop="version" label="版本"></el-table-column>
+        <el-table-column prop="name" label="上游名称" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="protocol" label="协议" width="100"></el-table-column>
+        <el-table-column prop="server_address" label="服务地址" show-overflow-tooltip width="320"></el-table-column>
+        <el-table-column prop="description" label="描述" show-overflow-tooltip width="300"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click="edit(scope.row)">配置</el-button>
