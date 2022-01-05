@@ -48,12 +48,102 @@
       </div>
       <div class="numbers">
         <div class="requestAll">
-          <div>
-            请求计数
-          </div>
+          <div class="font">请求计数</div>
+          <div>123</div>
         </div>
-        <div class="requestError"></div>
-        <div class="edition"></div>
+        <div class="requestError">
+          <div class="font">失败的请求</div>
+          <div>123</div>
+        </div>
+        <div class="edition">
+          <div class="font">版本计数</div>
+          <div>123</div>
+        </div>
+      </div>
+      <div class="table_box">
+        <!-- <p>版本</p> -->
+        <div class="serve-table">
+          <div class="table-tile">版本</div>
+          <div @click="gonewEdition" class="he-button">添加新版本</div>
+        </div>
+        <el-table
+          :data="table"
+          empty-text="暂无数据"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column prop="appName" label="应用名称" />
+          <el-table-column prop="appCode" label="APPCode" />
+          <el-table-column prop="appCode" label="启用状态" />
+          <el-table-column prop="appCode" label="描述" />
+          <el-table-column label="操作" width="180px">
+            <template slot-scope="scope">
+              <div class="handle">
+                <span @click="getMessage(scope.row)" class="linkcolor"
+                  >查看</span
+                >
+                <span class="handle_middle">|</span>
+                <span class="linkcolor">退订</span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="table_box" style="margin-top: 10px">
+        <div class="serve-table">
+          <div class="table-tile">插件</div>
+          <div class="he-button">添加插件</div>
+        </div>
+        <el-table
+          :data="table"
+          empty-text="暂无数据"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column prop="appName" label="应用名称" />
+          <el-table-column prop="appCode" label="APPCode" />
+          <el-table-column prop="appCode" label="启用状态" />
+          <el-table-column prop="appCode" label="描述" />
+          <el-table-column label="操作" width="180px">
+            <template slot-scope="scope">
+              <div class="handle">
+                <span @click="getMessage(scope.row)" class="linkcolor"
+                  >查看</span
+                >
+                <span class="handle_middle">|</span>
+                <span class="linkcolor">退订</span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="table_box" style="margin-top: 10px">
+        <div class="serve-table">
+          <div class="table-tilelong">数据统计-http日志/log日志</div>
+          <!-- <div class="he-button">添加新版本</div> -->
+        </div>
+        <el-table
+          :data="table"
+          empty-text="暂无数据"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column prop="appName" label="应用名称" />
+          <el-table-column prop="appCode" label="APPCode" />
+          <el-table-column prop="appCode" label="启用状态" />
+          <el-table-column prop="appCode" label="描述" />
+          <el-table-column label="操作" width="180px">
+            <template slot-scope="scope">
+              <div class="handle">
+                <span @click="getMessage(scope.row)" class="linkcolor"
+                  >查看</span
+                >
+                <span class="handle_middle">|</span>
+                <span class="linkcolor">退订</span>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
     <router-view v-if="routerView"></router-view>
@@ -66,15 +156,21 @@ export default {
   data() {
     return {
       routerView: false,
+      table: [],
     };
   },
   created() {
-    console.log(this.$route);
+    // console.log(this.$route);
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
     } else {
       this.routerView = true;
     }
+  },
+  methods: {
+    gonewEdition() {
+      this.$router.push({path:'/serve/newEdition'})
+    },
   },
 };
 </script>
@@ -115,8 +211,14 @@ export default {
     display: inline-block;
     width: 33.33%;
     height: 100px;
+    vertical-align: middle;
     div {
+      display: block;
       height: 50px;
+      width: 100%;
+      text-align: center;
+    }
+    .font {
       line-height: 50px;
     }
   }
@@ -124,5 +226,9 @@ export default {
     border-left: 1px solid #e1e6ee;
     border-right: 1px solid #e1e6ee;
   }
+}
+.serve-table {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

@@ -90,18 +90,11 @@ export const asyncRoutes = [
         ]
       },
       {
-        path: '/serve/add',
-        component: () => import('@/views/serve/add'),
+        path: '/serve/newEdition',
+        component: () => import('@/views/serve/newEdition'),
         hidden: true,
-        name: 'add',
-        meta: { title: '创建服务' }
-      },
-      {
-        path: '/serve/detail',
-        component: () => import('@/views/serve/detail'),
-        name: 'detail',
-        hidden: true,
-        meta: { title: '服务详情' }
+        name: 'newEdition',
+        meta: { title: '添加新版本' }
       }
     ]
   },
