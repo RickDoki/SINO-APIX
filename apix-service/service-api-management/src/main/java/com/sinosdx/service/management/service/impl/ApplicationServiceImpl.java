@@ -22,11 +22,9 @@ import com.sinosdx.service.management.service.ApplicationService;
 import com.sinosdx.service.management.utils.MD5Util;
 import com.sinosdx.service.management.utils.ThreadContext;
 import com.sinosdx.starter.redis.service.RedisService;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -823,8 +821,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .eq(ApplicationSubscribe::getDelFlag, 0));
         // 2.删除plugin相关数据
         applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>()
-                .eq(ApplicationPluginClient::getSysClientId,sysClient.getId())
-                .eq(ApplicationPluginClient::getDelFlag,0)
+                .eq(ApplicationPluginClient::getSysClientId, sysClient.getId())
+                .eq(ApplicationPluginClient::getDelFlag, 0)
         );
         // 3.删除对应路由 TODO
 
@@ -1259,15 +1257,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .eq(ApplicationPlugin::getAppCode, appCode)
                         .eq(ApplicationPlugin::getDelFlag, 0));
         // 遍历查询Client 相关信息
-        applicationPlugins.forEach(a->{
-                    ApplicationPluginClient applicationPluginClient = applicationPluginClientMapper.selectOne(new LambdaQueryWrapper<ApplicationPluginClient>()
-                            .eq(ApplicationPluginClient::getDelFlag, 0)
-                            .eq(ApplicationPluginClient::getAppPluginId, a.getId())
-                            .eq(data.containsKey("id"),ApplicationPluginClient::getSysClientId,data.get("id"))
-                            .last("LIMIT 1")
-                    );
-                    a.setApplicationPluginClient(applicationPluginClient);
-                });
+        applicationPlugins.forEach(a -> {
+            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.queryByAppSubscribe(appCode);
+            if (!CollectionUtils.isEmpty(applicationPluginClients)) {
+                a.setApplicationPluginClients(applicationPluginClients);
+            }
+        });
         appDetailMap.put("plugins", applicationPlugins);
 
         String urlCode = StringUtils.isEmpty(appDetailMap.get("productId").toString()) ? appDetailMap.get("appCode").toString() : appDetailMap.get("productId").toString();
@@ -1312,7 +1307,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Date endDate = new Date(endTime);
         LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
-                .between(ApplicationSubscribe::getCreationDate, DateUtil.format(startDate,"yyyy-MM-dd HH:mm:ss"), DateUtil.format(endDate,"yyyy-MM-dd HH:mm:ss"))
+                .between(ApplicationSubscribe::getCreationDate, DateUtil.format(startDate, "yyyy-MM-dd HH:mm:ss"), DateUtil.format(endDate, "yyyy-MM-dd HH:mm:ss"))
                 .eq(ApplicationSubscribe::getDelFlag, 0);
         Long aLong = applicationSubscribeMapper.selectCount(wrapper);
         return aLong;
@@ -1395,6 +1390,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .eq(ApplicationPlugin::getDelFlag, 0)
                 .last("LIMIT 1")
         );
+        if (Objects.nonNull(applicationPlugin)) {
+            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.queryByAppSubscribe(appCode);
+            if (!CollectionUtils.isEmpty(applicationPluginClients)) {
+                applicationPlugin.setApplicationPluginClients(applicationPluginClients);
+            }
+        }
         return R.success(applicationPlugin);
     }
 
@@ -1406,8 +1407,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .map(a -> {
                     Map sysClient = (Map) sysUserService.queryClientByUserId(a).getData();
 
-                    if(Objects.nonNull(sysClient)){
-                        return Integer.valueOf(sysClient.get("id")+"");
+                    if (Objects.nonNull(sysClient)) {
+                        return Integer.valueOf(sysClient.get("id") + "");
                     }
                     return 0;
                 })
@@ -1417,21 +1418,21 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     @Transactional
-    public R<Object> updateAppVersion(Integer appVersionId,ApplicationVersionVo applicationVersionVo) {
+    public R<Object> updateAppVersion(Integer appVersionId, ApplicationVersionVo applicationVersionVo) {
         ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
-        if(Objects.isNull(applicationVersion)){
+        if (Objects.isNull(applicationVersion)) {
             return R.fail(ResultCodeEnum.APP_VERSION_IS_EXIST);
         }
-        if(null != applicationVersionVo.getApiIds()){
+        if (null != applicationVersionVo.getApiIds()) {
             // 删除之前的关联，重新添加
             LambdaQueryWrapper<ApplicationApi> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(ApplicationApi::getDelFlag,0);
-            wrapper.eq(ApplicationApi::getAppVersionId,applicationVersion.getId());
-            wrapper.eq(ApplicationApi::getAppCode,applicationVersion.getAppCode());
-            wrapper.eq(ApplicationApi::getAppId,applicationVersion.getAppId());
+            wrapper.eq(ApplicationApi::getDelFlag, 0);
+            wrapper.eq(ApplicationApi::getAppVersionId, applicationVersion.getId());
+            wrapper.eq(ApplicationApi::getAppCode, applicationVersion.getAppCode());
+            wrapper.eq(ApplicationApi::getAppId, applicationVersion.getAppId());
             applicationApiMapper.delete(wrapper);
             String[] apiIdList = applicationVersionVo.getApiIds().split(",");
-            Arrays.stream(apiIdList).forEach(a->{
+            Arrays.stream(apiIdList).forEach(a -> {
                 ApplicationApi applicationApi = new ApplicationApi();
                 applicationApi.setApiId(Integer.valueOf(a));
                 applicationApi.setAppVersionId(appVersionId);
@@ -1440,10 +1441,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 applicationApiMapper.insert(applicationApi);
             });
         }
-        if(StringUtils.isNotEmpty(applicationVersionVo.getVersionDesc())){
+        if (StringUtils.isNotEmpty(applicationVersionVo.getVersionDesc())) {
             applicationVersion.setDescription(applicationVersionVo.getVersionDesc());
         }
-        if(StringUtils.isNotEmpty(applicationVersionVo.getAppVersion())){
+        if (StringUtils.isNotEmpty(applicationVersionVo.getAppVersion())) {
             applicationVersion.setVersion(applicationVersionVo.getAppVersion());
         }
         applicationVersionMapper.updateById(applicationVersion);
@@ -1460,7 +1461,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public R<Object> queryAppVersion(Integer appVersionId) {
         ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
-        if(Objects.isNull(applicationVersion)){
+        if (Objects.isNull(applicationVersion)) {
             return R.fail(ResultCodeEnum.APP_VERSION_IS_EXIST);
         }
         // 详情包含 1.关联的所有api  2.关联api 的个数

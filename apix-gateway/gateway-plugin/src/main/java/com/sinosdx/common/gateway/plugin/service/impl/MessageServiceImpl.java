@@ -1,6 +1,7 @@
 package com.sinosdx.common.gateway.plugin.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.plugin.service.LogServiceFeign;
 import com.sinosdx.common.gateway.utils.LogUtil;
@@ -42,12 +43,14 @@ public class MessageServiceImpl implements IMessageService {
 
     @Override
     public void saveAnalysisLog(GatewayLogDTO gatewayLog) {
-        //logService.analysisGatewayLogSave(JSON.toJSONString(gatewayLog));
+//        SpringContextHolder.getBean(LogServiceFeign.class).analysisGatewayLogSave(JSON.toJSONString(gatewayLog));
+        logService.analysisGatewayLogSave(JSON.toJSONString(gatewayLog));
     }
 
     @Override
     public void saveLog(String logType,GatewayLogDTO gatewayLog) {
         String s = JSON.toJSONString(gatewayLog);
         logService.saveLog(logType,s);
+//        SpringContextHolder.getBean(LogServiceFeign.class).saveLog(logType,s);
     }
 }
