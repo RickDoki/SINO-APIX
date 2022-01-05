@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.ServerWebExchange;
@@ -40,8 +41,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Setter
 @Getter
-public abstract class BaseGatewayFilter<C extends BaseConfig> extends
-        AbstractGatewayFilterFactory<C> {
+public abstract class BaseGatewayFilter<C extends BaseConfig> extends AbstractGatewayFilterFactory<C> {
 
     private Class<C> configClass;
 
@@ -59,9 +59,35 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
         return a.stream().sequential().collect(Collectors.toCollection(() -> b));
     }
 
+    /**
+     * 自定义顺序，可覆盖
+     *
+     * @return
+     */
+    public int setOrder() {
+        return -2;
+    }
+
     @Override
     public GatewayFilter apply(C config) {
-        return ((exchange, chain) -> {
+        return new CustomFilter(config, setOrder());
+    }
+
+    /**
+     * 自定义实现过滤器，支持排序
+     */
+    private class CustomFilter implements GatewayFilter, Ordered {
+
+        private C config;
+        private int order;
+
+        public CustomFilter(C config, int order) {
+            this.config = config;
+            this.order = order;
+        }
+
+        @Override
+        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             String path = exchange.getRequest().getURI().toString().toLowerCase();
             if (!checkAuthVerifyExclude(config, path)) {
                 String requestNo = exchange.getRequest().getHeaders().getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
@@ -70,8 +96,14 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends
                 return customApply(exchange, chain, config);
             }
             return chain.filter(exchange);
-        });
+        }
+
+        @Override
+        public int getOrder() {
+            return order;
+        }
     }
+
 
     /**
      * 获取请求聚合信息
