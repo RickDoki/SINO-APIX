@@ -75,13 +75,9 @@
           <el-table-column prop="appCode" label="描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <div class="handle">
-                <span @click="getMessage(scope.row)" class="linkcolor"
-                  >查看</span
-                >
-                <span class="handle_middle">|</span>
-                <span class="linkcolor">退订</span>
-              </div>
+              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <span class="handle">|</span>
+              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -102,13 +98,9 @@
           <el-table-column prop="appCode" label="描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <div class="handle">
-                <span @click="getMessage(scope.row)" class="linkcolor"
-                  >查看</span
-                >
-                <span class="handle_middle">|</span>
-                <span class="linkcolor">退订</span>
-              </div>
+              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <span class="handle">|</span>
+              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -128,13 +120,9 @@
           <el-table-column prop="appCode" label="描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <div class="handle">
-                <span @click="getMessage(scope.row)" class="linkcolor"
-                  >查看</span
-                >
-                <span class="handle_middle">|</span>
-                <span class="linkcolor">退订</span>
-              </div>
+              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <span class="handle">|</span>
+              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -154,13 +142,9 @@
           <el-table-column prop="appCode" label="描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <div class="handle">
-                <span @click="getMessage(scope.row)" class="linkcolor"
-                  >查看</span
-                >
-                <span class="handle_middle">|</span>
-                <span class="linkcolor">退订</span>
-              </div>
+              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <span class="handle">|</span>
+              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
             </template>
           </el-table-column>
         </el-table>
