@@ -23,12 +23,38 @@
         </div>
       </div>
     </div>
+    <div class="tabsMessage">
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="API详情" name="first">
+          <api-detail></api-detail>
+        </el-tab-pane>
+        <el-tab-pane label="插件详情" name="second">
+          <plug-in></plug-in>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 </template>
 
 <script>
-import './../mainCss/index.scss'
-export default {};
+import "./../mainCss/index.scss";
+import apiDetail from "./component/apiDetail.vue";
+import plugIn from './component/plug-in.vue'
+export default {
+  data() {
+    return {
+      activeName: "first",
+    };
+  },
+  components: {
+    apiDetail,
+    plugIn
+  },
+  methods: {
+    // 切换tab
+    handleClick() {},
+  },
+};
 </script>
 
 <style scoped lang='scss'>
@@ -42,6 +68,14 @@ export default {};
   .app_list_top {
     display: flex;
     justify-content: space-between;
+  }
+  .tabsMessage {
+    margin-top: 20px;
+    ::v-deep {
+      .el-tabs__header {
+        margin: 0px;
+      }
+    }
   }
 }
 </style>

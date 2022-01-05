@@ -19,7 +19,11 @@
     </div>
     <div class="table_box">
       <el-table :data="table" empty-text="暂无数据" :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="appName" label="应用名称" />
+        <el-table-column prop="appName" label="应用名称">
+          <template slot-scope="scope">
+            <span @click="goserveDteail" class="linkcolor">{{scope.row.appName}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="appCode" label="code" />
         <el-table-column prop="appCode" label="门户状态" />
         <el-table-column prop="appCode" label="版本" />
@@ -48,7 +52,9 @@ import "./../mainCss/index.scss";
 export default {
   data () {
     return {
-      table: [],
+      table: [{
+        appName: '我的服务'
+      }],
       total: 100,
       currentPage: 1,
       name: "",
@@ -59,6 +65,9 @@ export default {
     handleCurrentChange () {
       console.log("页面跳转");
     },
+    goserveDteail() {
+      this.$router.push({path:'/serve/serveDetail'})
+    }
   },
 };
 </script>

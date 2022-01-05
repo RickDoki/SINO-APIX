@@ -58,7 +58,7 @@ export const asyncRoutes = [
         path: '/serve/center',
         component: () => import('@/views/serve/serveCenter'),
         name: 'center',
-        meta: { title: '服务中心' }
+        meta: { title: '我的服务' }
       },
       {
         path: '/serve/subscribe',
@@ -72,6 +72,22 @@ export const asyncRoutes = [
         name: 'subscribeDetail',
         hidden: true,
         meta: { title: 'API详情' }
+      },
+      {
+        path: '/serve/serveDetail',
+        component: () => import('@/views/serve/serveDetail'),
+        name: 'serveDteail',
+        hidden: true,
+        meta: { title: '服务详情' },
+        children: [
+          {
+            path: '/serve/serveDetail/plug-in',
+            component: () => import('@/views/serve/plug-in'),
+            name: 'plug-in',
+            hidden: true,
+            meta: { title: '插件中心' }
+          },
+        ]
       },
       {
         path: '/serve/add',
@@ -252,7 +268,7 @@ const createRouter = () => new Router({
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter () {
+export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
