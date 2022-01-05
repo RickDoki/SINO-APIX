@@ -2,6 +2,7 @@ package com.sinosdx.common.gateway.plugin.utils;
 
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.BaseEnum;
+import com.sinosdx.common.gateway.plugin.entity.ResponseInfo;
 import com.sinosdx.common.gateway.utils.GzipUtil;
 import com.sinosdx.common.toolkit.common.LogUtil;
 import java.nio.charset.StandardCharsets;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -24,6 +26,7 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.reactive.resource.ResourceUrlProvider;
 import org.springframework.web.server.ServerWebExchange;
@@ -140,8 +143,12 @@ public class HttpUtil {
      * @param o
      * @return
      */
+    @SneakyThrows
     public static Mono<Void> response(ServerWebExchange exchange, HttpStatus status, Object o) {
         ServerHttpResponse response = exchange.getResponse();
+        if (ObjectUtils.isEmpty(o)) {
+            o = R.fail("warn,response body is null!");
+        }
         byte[] bits = o.toString().getBytes(StandardCharsets.UTF_8);
         DataBuffer buffer = response.bufferFactory().wrap(bits);
         if (status != null) {
@@ -231,10 +238,10 @@ public class HttpUtil {
      * @param consumer 自定义消费
      * @return
      */
-    public static ServerHttpResponseDecorator getResponseDecorator(ServerWebExchange exchange, Consumer<String> consumer) {
+    public static ServerHttpResponseDecorator getResponse(ServerWebExchange exchange, Consumer<ResponseInfo> consumer) {
         ServerHttpResponse originalResponse = exchange.getResponse();
         DataBufferFactory bufferFactory = originalResponse.bufferFactory();
-        ServerHttpResponseDecorator serverHttpResponseDecorator = new ServerHttpResponseDecorator(originalResponse) {
+        return new ServerHttpResponseDecorator(originalResponse) {
             @Override
             public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
                 Flux<? extends DataBuffer> fluxBody;
@@ -242,6 +249,7 @@ public class HttpUtil {
                     fluxBody = Flux.from(DataBufferUtils.join(body));
                 } catch (Exception e) {
                     log.error("ServerHttpResponseDecorator Flux.from error!", e);
+                    consumer.accept(ResponseInfo.builder().exchange(exchange).build());
                     return super.writeWith(body);
                 }
                 return super.writeWith(fluxBody.buffer().map(dataBuffers -> {
@@ -250,24 +258,33 @@ public class HttpUtil {
                     byte[] content = new byte[join.readableByteCount()];
                     join.read(content);
                     DataBufferUtils.release(join);
+                    int statusCode = 0;
+                    String responseData = "";
+                    HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
                     try {
-                        HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
-                        String responseData = new String(content, StandardCharsets.UTF_8);
+                        responseData = new String(content, StandardCharsets.UTF_8);
+                        statusCode = Objects.requireNonNull(getStatusCode()).value();
                         List<String> strings = httpHeaders.get(HttpHeaders.CONTENT_ENCODING);
                         if (!CollectionUtils.isEmpty(strings) && strings.contains(GzipUtil.GZIP)) {
                             responseData = GzipUtil.getGzipContent(content, responseData);
                         } else {
                             responseData = new String(content, StandardCharsets.UTF_8);
                         }
-                        LogUtil.debug(log, "getResponseDecorator result:{}", responseData);
-                        consumer.accept(responseData);
                     } catch (Exception e) {
                         log.error("ServerHttpResponseDecorator writeWith error!", e);
+                    } finally {
+                        ResponseInfo responseInfo = ResponseInfo.builder()
+                                .headers(com.sinosdx.common.gateway.utils.LogUtil.getHttpHeaders(httpHeaders))
+                                .statusCode(statusCode)
+                                .result(responseData)
+                                .exchange(exchange)
+                                .build();
+                        LogUtil.debug(log, "ResponseDecorator result:{}", responseInfo);
+                        consumer.accept(responseInfo);
                     }
                     return bufferFactory.wrap(content);
                 }));
             }
         };
-        return serverHttpResponseDecorator;
     }
 }
