@@ -65,7 +65,7 @@
           <el-descriptions-item label="创建时间">{{ infoObj.eventTime }}</el-descriptions-item>
         </el-descriptions>
         <div style="margin-top: 20px">
-          <json-view :data="infoObj" theme="vs-code" :deep="2" :fontSize="12" />
+          <json-view :data="infoObj" theme="vs-code" :deep="2" :fontSize="12"/>
         </div>
       </div>
     </el-drawer>
@@ -73,14 +73,15 @@
 </template>
 
 <script>
-import { getLogList } from '@/api/data'
+import {getLogList} from '@/api/data'
 import jsonView from "@/components/json-view/index.vue";
+import "../../mainCss/index.scss";
 
 export default {
   components: {
     jsonView
   },
-  data () {
+  data() {
     return {
       startTime: {
         disabledDate: time => {
@@ -121,12 +122,12 @@ export default {
       }]
     }
   },
-  created () {
+  created() {
     // this.getLogList()
   },
   methods: {
     // 获取列表
-    getLogList () {
+    getLogList() {
       let params = `?offset=${this.offset}&limit=${this.limit}`
       if (this.search.username) {
         params += `&username=${this.search.username}`
@@ -154,17 +155,17 @@ export default {
       })
     },
     // 查看详情
-    detail (row) {
+    detail(row) {
       // 打开抽屉
       this.drawer = true
       this.infoObj = row
     },
     // 关闭抽屉
-    handleClose (done) {
+    handleClose(done) {
       this.drawer = false
     },
     // 重置搜索条件
-    resetSearch () {
+    resetSearch() {
       this.search = {
         username: '',
         userId: '',
@@ -175,10 +176,10 @@ export default {
       }
       this.getLogList()
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
     }
   }

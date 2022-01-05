@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="list_top list_top_bom">
-      <div class="list_title titleFont">上游列表</div>
+      <div class="list_title">上游列表</div>
       <div class="list_search">
         <el-input
           size="small"

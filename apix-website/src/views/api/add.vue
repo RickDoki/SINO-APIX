@@ -401,6 +401,7 @@
 import { getUpstreamList } from '@/api/upstream'
 import { create } from '@/api/AboutApi'
 import { PrismEditor } from 'vue-prism-editor'
+import ElxStepsHorizontal from '@/components/ElxStepsHorizontal'
 import 'vue-prism-editor/dist/prismeditor.min.css' // import the styles somewhere
 import { highlight, languages } from 'prismjs/components/prism-core'
 import 'prismjs/components/prism-clike'
@@ -408,7 +409,8 @@ import 'prismjs/components/prism-javascript'
 import 'prismjs/themes/prism-tomorrow.css' // import syntax highlighting styles
 export default {
   components: {
-    PrismEditor
+    PrismEditor,
+    ElxStepsHorizontal
   },
   data () {
     const checkMobile = (rule, value, callback) => {

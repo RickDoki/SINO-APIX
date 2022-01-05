@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="list_top list_top_bom">
-      <div class="list_title titleFont">用户管理</div>
+      <div class="list_title">用户管理</div>
       <div class="list_search">
         <el-input
           suffix-icon="el-icon-search"

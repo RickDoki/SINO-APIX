@@ -71,7 +71,7 @@ export const asyncRoutes = [
         component: () => import('@/views/serve/subscribeDetail'),
         name: 'subscribeDetail',
         hidden: true,
-        meta: { title: 'API详情' }
+        meta: { title: '订阅服务详情' }
       },
       {
         path: '/serve/serveDetail',
@@ -116,6 +116,13 @@ export const asyncRoutes = [
         name: 'release',
         hidden: true,
         meta: { title: '创建API' }
+      },
+      {
+        path: '/api/detail',
+        component: () => import('@/views/api/detail'),
+        name: 'detail',
+        hidden: true,
+        meta: { title: 'API详情' }
       },
       {
         path: '/api/upstream',
@@ -261,7 +268,7 @@ const createRouter = () => new Router({
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter() {
+export function resetRouter () {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }

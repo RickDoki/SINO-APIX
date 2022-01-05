@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="list_top list_top_bom">
-      <div class="list_title titleFont">API列表</div>
+      <div class="list_title">API列表</div>
       <div class="list_search">
         <el-input
           suffix-icon="el-icon-search"
@@ -27,7 +27,11 @@
     </div>
     <div class="table_box">
       <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="apiName" label="API名称" show-overflow-tooltip min-width="150"></el-table-column>
+        <el-table-column prop="apiName" label="API名称" show-overflow-tooltip min-width="150">
+          <template slot-scope="scope">
+            <span @click="gotoDteail" class="text_detail">{{scope.row.apiName}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="code" label="协议" width="100"></el-table-column>
         <el-table-column prop="status" label="域名" show-overflow-tooltip min-width="200"></el-table-column>
         <el-table-column prop="apiUrl" label="路径" show-overflow-tooltip min-width="250"></el-table-column>
@@ -74,6 +78,9 @@ export default {
     this.getList(query);
   },
   methods: {
+    gotoDteail () {
+      this.$router.push({ path: '/api/detail' })
+    },
     // 删除API数据信息
     delAPI (row) {
       this.$confirm('确认删除API：' + row.name + ', 是否继续?', '提示', {
