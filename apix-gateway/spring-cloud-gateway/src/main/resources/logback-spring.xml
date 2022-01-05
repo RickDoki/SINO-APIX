@@ -6,8 +6,7 @@
 <configuration debug="false" scan="true" scanPeriod="30 second">
   <!--<contextName>${appName}</contextName>-->
   <!-- logback.xml加载早于application.yml,使用spring提供的标签来对此参数进行配置-->
-  <springProperty scope="context" name="logDir" source="sinosdx.logging.dir" defaultValue="/data/sinosdx/logs/"/>
-  <springProperty scope="context" name="logstashServerAddr" source="logstash.server.addr" defaultValue="49.234.211.224:4560"/>
+  <springProperty scope="context" name="logDir" source="sinosdx.logging.dir" defaultValue="/data/apix/logs/"/>
   <!-- 不能删除，用于ELK区分不同服务日志-->
   <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="unknown_app"/>
   <springProperty scope="context" name="spring.application.name" source="spring.application.name" defaultValue="unknown_app"/>

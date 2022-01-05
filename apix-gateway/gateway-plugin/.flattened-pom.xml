@@ -44,10 +44,6 @@
       <artifactId>spring-cloud-starter-gateway</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.sinosdx.cloud</groupId>
       <artifactId>sinosdx-feign-spring-boot-starter</artifactId>
     </dependency>
