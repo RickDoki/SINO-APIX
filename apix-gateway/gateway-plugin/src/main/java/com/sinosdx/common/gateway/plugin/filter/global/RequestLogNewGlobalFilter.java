@@ -2,6 +2,7 @@ package com.sinosdx.common.gateway.plugin.filter.global;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
+import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.plugin.component.ThreadResponseData;
 import com.sinosdx.common.gateway.plugin.entity.ResponseData;
@@ -61,8 +62,8 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
     private static final String WEBSOCKET = "websocket";
     private static final List<String> STRING_LIST = Arrays.asList("http", "https");
 
-    @Autowired
-    private IMessageService messageService;
+//    @Autowired
+//    private IMessageService messageService;
 
     @Autowired
     private ExecutorService executorService;
@@ -100,7 +101,8 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
                         gatewayLog.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
                         gatewayLog.setResult(result);
                         gatewayLog.setConsumingTime(getConsumingTime(exchange));
-                        messageService.saveAnalysisLog(gatewayLog);
+//                        messageService.saveAnalysisLog(gatewayLog);
+                        SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(gatewayLog);
                         return Mono.error(e);
                     });
         } catch (Exception e) {
@@ -239,7 +241,8 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
         }
         gatewayLog.setRedirectUrl(redirectUrl);
         gatewayLog.setConsumingTime(getConsumingTime(exchange));
-        messageService.saveAnalysisLog(gatewayLog);
+//        messageService.saveAnalysisLog(gatewayLog);
+        SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(gatewayLog);
         exchange.getAttributes().remove(GatewayConstants.CACHED_REQUEST_BODY_STR);
     }
 
