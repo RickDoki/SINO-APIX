@@ -29,6 +29,6 @@ public class ApplicationPlugin extends Entity<Integer> {
     private String pluginParams;
     private Integer enabled;
     @TableField(exist = false)
-    private ApplicationPluginClient applicationPluginClient;
+    private List<ApplicationPluginClient> applicationPluginClients;
 
 }
