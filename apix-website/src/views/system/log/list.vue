@@ -1,51 +1,31 @@
 <template>
-  <div class="main box-card">
-    <div class="titleFont" style="margin-bottom: 20px">审计日志</div>
-    <div class="card-top">
-      <div class="input-box">
-        <span>用户名称：</span>
-        <el-input size="small" v-model="search.username" style="width: 70%" placeholder="请输入用户名称查询"></el-input>
-      </div>
-      <div class="input-box input-left">
-        <span>资源名称：</span>
-        <el-input size="small" v-model="search.resourceName" style="width: 70%" placeholder="请输入资源名称"></el-input>
-      </div>
-      <div class="input-box input-left">
-        <span>开始时间：</span>
+  <div class="main">
+    <div class="list_top list_top_bom">
+      <div class="list_title titleFont">审计日志</div>
+      <div class="list_search">
+        <el-input size="small" v-model="search.username" suffix-icon="el-icon-search"
+                  class="list_searchInput" placeholder="请输入用户名称查询"
+                  @change="getLogList"></el-input>
+        <el-input size="small" v-model="search.resourceName" suffix-icon="el-icon-search"
+                  class="list_searchInput" placeholder="请输入资源名称"
+                  @change="getLogList"></el-input>
         <el-date-picker
-          :picker-options="startTime"
-          value-format="timestamp"
-          size="small"
-          style="width: 70%"
           v-model="search.startTime"
-          type="datetime"
-          placeholder="选择日期时间">
-        </el-date-picker>
-      </div>
-    </div>
-    <div class="card-top">
-      <div class="input-box">
-        <span>结束时间：</span>
-        <el-date-picker
-          :picker-options="endTime"
-          value-format="timestamp"
+          type="datetimerange"
+          class="list_searchInput_date"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           size="small"
-          style="width: 70%"
-          v-model="search.endTime"
-          type="datetime"
-          placeholder="选择日期时间"
-          default-time="23:59:59">
-        </el-date-picker>
-      </div>
-      <div class="input-left">
-        <el-button size="small" @click="resetSearch">重置</el-button>
-        <el-button type="primary" size="small" style="background-color: #2650FF; border-color: #2650FF;"
-                   @click="getLogList()">查询
-        </el-button>
+          @change="getLogList()"
+          value-format="timestamp"
+          :default-time="['00:00:00', '23:59:59']"
+        />
       </div>
     </div>
     <div class="table_box">
-      <el-table :data="tableData" empty-text="暂无数据" stripe style="width: 100%">
+      <el-table :data="tableData" :row-style="{height: '50px'}" highlight-current-row
+                :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
         <el-table-column prop="appName" label="用户"/>
         <el-table-column prop="appCode" label="事件类型"/>
         <el-table-column prop="appCode" label="资源名称"/>
@@ -60,11 +40,9 @@
       </el-table>
       <el-pagination
         background
-        style="margin-top: 20px; text-align: center"
+        class="list-pagination"
         @current-change="handleCurrentChange"
         :current-page="offset"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
         layout=" prev, pager, next"
         :total="total">
       </el-pagination>
@@ -218,49 +196,5 @@ export default {
   margin-top: 40px;
 }
 
-.box-card {
-  margin: 24px;
-
-  .card-top {
-    width: 100%;
-    display: flex;
-    margin-bottom: 24px;
-
-    .input-box {
-      width: 290px;
-    }
-
-    .input-left {
-      margin-left: 10%;
-    }
-  }
-
-  .table_box {
-    padding: 30px;
-    border: 1px solid #e1e6ee;
-    border-radius: 10px;
-
-    ::v-deep {
-      .el-table,
-      .el-table th.el-table__cell.is-leaf,
-      .el-table td.el-table__cell {
-        border: none;
-      }
-
-      .el-table::before {
-        height: 0px;
-      }
-    }
-
-    .handle {
-      display: flex;
-
-      .handle_middle {
-        // width: 15px;
-        margin: 0px 5px;
-      }
-    }
-  }
-}
 </style>
 
