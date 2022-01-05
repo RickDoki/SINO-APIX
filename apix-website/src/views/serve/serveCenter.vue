@@ -1,45 +1,39 @@
 <template>
-  <div class="app_list_main">
-    <div class="app_list_top">
-      <div class="app_list_title">
-        <div class="titleFont">服务中心</div>
-        <div style="margin-top: 10px" class="secondTitle">
-          创建服务来管理和代理现有API或发布到门户。
-        </div>
-      </div>
-      <div class="app_list_search">
+  <div class="main">
+    <div class="list_top">
+      <div class="list_title titleFont">服务中心</div>
+      <div class="list_search">
         <el-input
-          size="mini"
+          size="small"
           placeholder="搜索"
           suffix-icon="el-icon-search"
           v-model="name"
-          style="display: inline-block"
+          class="list_searchInput"
         >
         </el-input>
-      </div>
-      <div class="addServe">
-        <el-button type="primary" size="mini" icon="el-icon-plus">添加新服务</el-button>
+        <el-button type="primary" size="small" icon="el-icon-plus">添加新服务</el-button>
       </div>
     </div>
+    <div class="secondTitle list_top_bom">
+      创建服务来管理和代理现有API或发布到门户。
+    </div>
     <div class="table_box">
-      <el-table :data="table" empty-text="暂无数据" stripe style="width: 100%">
+      <el-table :data="table" empty-text="暂无数据" :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
         <el-table-column prop="appName" label="应用名称" />
         <el-table-column prop="appCode" label="code" />
         <el-table-column prop="appCode" label="门户状态" />
         <el-table-column prop="appCode" label="版本" />
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <div class="handle">
-              <span @click="getMessage(scope.row)" class="linkcolor">查看</span>
-              <span class="handle_middle">|</span>
-              <span class="linkcolor">退订</span>
-            </div>
+            <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+            <span class="handle">|</span>
+            <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         background
-        style="margin-top: 20px; text-align: center"
+        class="list-pagination"
         :current-page.sync="currentPage"
         layout="prev, pager, next"
         :total="total"
@@ -52,7 +46,7 @@
 <script>
 import "./../mainCss/index.scss";
 export default {
-  data() {
+  data () {
     return {
       table: [],
       total: 100,
@@ -60,9 +54,9 @@ export default {
       name: "",
     };
   },
-  created() {},
+  created () { },
   methods: {
-    handleCurrentChange() {
+    handleCurrentChange () {
       console.log("页面跳转");
     },
   },
@@ -70,46 +64,4 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.app_list_main {
-  width: 95%;
-  margin: 0 auto;
-  margin-top: 20px;
-  border-radius: 5px;
-  background-color: #fff;
-  overflow: hidden;
-  .app_list_top {
-    display: flex;
-    margin-bottom: 20px;
-    justify-content: space-between;
-    .app_list_title {
-      width: calc(100% - 330px)
-    }
-    .app_list_search {
-      .addServe {
-        display: inline-block;
-      }
-    }
-  }
-  .table_box {
-    padding: 30px;
-    border: 1px solid #e1e6ee;
-    border-radius: 10px;
-    ::v-deep {
-      .el-table th.el-table__cell.is-leaf,
-      .el-table td.el-table__cell {
-        border: none;
-      }
-      .el-table::before {
-        height: 0px;
-      }
-    }
-    .handle {
-      display: flex;
-      .handle_middle {
-        // width: 15px;
-        margin: 0px 5px;
-      }
-    }
-  }
-}
 </style>

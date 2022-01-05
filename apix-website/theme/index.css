@@ -18997,7 +18997,7 @@
   .el-table__body tr.hover-row > td.el-table__cell, .el-table__body tr.hover-row.current-row > td.el-table__cell, .el-table__body tr.hover-row.el-table__row--striped > td.el-table__cell, .el-table__body tr.hover-row.el-table__row--striped.current-row > td.el-table__cell {
     background-color: #F5F7FA; }
   .el-table__body tr.current-row > td.el-table__cell {
-    background-color: #e9eeff; }
+    background-color: #F3F5FF; }
   .el-table__column-resize-proxy {
     position: absolute;
     left: 200px;
@@ -19019,7 +19019,8 @@
     -webkit-transition: background-color .25s ease;
     transition: background-color .25s ease; }
   .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell {
-    background-color: #F5F7FA; }
+    background-color: #f3f5ff; }
+    /* background-color: #e9eeff; */
   .el-table--fluid-height .el-table__fixed,
   .el-table--fluid-height .el-table__fixed-right {
     bottom: 0;

@@ -7,7 +7,7 @@
         :collapse="isCollapse"
         :background-color="variables.menuBg"
         :text-color="variables.menuText"
-        :unique-opened="false"
+        :unique-opened="true"
         :active-text-color="variables.menuActiveText"
         :collapse-transition="false"
         mode="vertical"
@@ -26,7 +26,7 @@ import variables from '@/styles/variables.scss'
 import { asyncRoutes } from '@/router'
 export default {
   components: { SidebarItem, Logo },
-  data() {
+  data () {
     return {
       items: ''
     }
@@ -36,7 +36,7 @@ export default {
       'permission_routes',
       'sidebar'
     ]),
-    activeMenu() {
+    activeMenu () {
       const route = this.$route
       const { meta, path } = route
       // if set path, the sidebar will highlight the path you set
@@ -45,17 +45,17 @@ export default {
       }
       return path
     },
-    showLogo() {
+    showLogo () {
       return this.$store.state.settings.sidebarLogo
     },
-    variables() {
+    variables () {
       return variables
     },
-    isCollapse() {
+    isCollapse () {
       return false
     }
   },
-  created() {
+  created () {
     // console.log(asyncRoutes)
     this.items = asyncRoutes
     // console.log(this.items)

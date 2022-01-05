@@ -21,9 +21,6 @@ export default {
 .main .el-table::before {
   height: 0;
 }
-.main .el-table {
-  border: 1px solid #ebeef5;
-}
 .mian .el-table__header tr,
 .el-table__header th {
   height: 54px;
@@ -33,9 +30,65 @@ export default {
 }
 .main {
   margin: 24px 40px;
-  margin-bottom: 70px;
+  margin-bottom: 60px;
   background-color: #fff;
   min-height: calc(100vh - 185px);
+  // 列表页面样式
+  .list_top {
+    display: flex;
+    justify-content: space-between;
+    .list_title {
+      width: calc(100% - 330px);
+      line-height: 32px;
+      .titleFont {
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+    .list_search {
+      display: flex;
+      .list_searchInput {
+        width: 200px;
+        margin-right: 16px;
+      }
+      .list_searchInput_date {
+        width: 370px;
+        margin-right: 16px;
+      }
+    }
+  }
+  .list_top_bom {
+    margin-bottom: 24px;
+  }
+  .secondTitle {
+    margin-top: 6px;
+  }
+  .table_box {
+    padding: 15px 30px 30px 30px;
+    border: 1px solid #e1e6ee;
+    border-radius: 10px;
+    ::v-deep {
+      .el-table th.el-table__cell.is-leaf,
+      .el-table td.el-table__cell {
+        border: none;
+      }
+      .el-table::before {
+        height: 0px;
+      }
+    }
+    .handle {
+      padding: 0 6px;
+      color: #d8d8d8;
+    }
+    .textBut-danger {
+      color: #f03063;
+    }
+    .list-pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+  }
+  // 表单样式
   .bottom {
     position: fixed;
     width: calc(100% - 210px);

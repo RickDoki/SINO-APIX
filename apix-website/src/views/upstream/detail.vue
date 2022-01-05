@@ -1,10 +1,15 @@
 <template>
   <div class="main">
-    <div class="theSteps">
-      <!-- <el-steps :active="active" finish-status="success">
+    <!-- <div class="theSteps">
+      <el-steps :active="active" finish-status="success">
         <el-step title="基本信息"></el-step>
         <el-step title="预览"></el-step>
-      </el-steps> -->
+      </el-steps>
+    </div> -->
+    <div class="list_top">
+      <div class="list_title">
+        <div class="titleFont">创建上游服务</div>
+      </div>
     </div>
     <div class="formBox">
         <el-form ref="form" :model="form" :rules="rules" label-width="130px" label-position="top" size="small">

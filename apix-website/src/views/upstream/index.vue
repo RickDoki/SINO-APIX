@@ -1,45 +1,45 @@
 <template>
   <div class="main">
-    <el-card class="box-card" shadow="never">
-      <div class="card-top">
-        <div>
-          <el-button size="small" type="primary" icon="el-icon-plus" style="background-color: #2650FF;" @click="gotoDetail">创建</el-button>
-          <!-- <el-button size="small" @click="editData">数据编辑器</el-button> -->
-        </div>
-        <div style="margin-left: 20px;" class="input-box">
-          <el-input placeholder="请输入内容" v-model="search.name" size="small" clearable></el-input>
-          <el-button style="border-left: none;" size="small" icon="el-icon-search" @click="getUpstreamList()"></el-button>
-        </div>
-        <div class="but-right">
-          <el-button size="small" icon="el-icon-refresh-right" @click="getUpstreamList()"></el-button>
-        </div>
+    <div class="list_top list_top_bom">
+      <div class="list_title titleFont">上游列表</div>
+      <div class="list_search">
+        <el-input
+          size="small"
+          placeholder="搜索"
+          suffix-icon="el-icon-search"
+          v-model="search.name"
+          class="list_searchInput"
+          @change="getUpstreamList()"
+        >
+        </el-input>
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="gotoDetail">添加新上游</el-button>
       </div>
-      <el-table :row-style="{height: '48px'}" :data="tableData" stripe :header-cell-style="{background:'#F0F2F5',color:'#333333'}">
+    </div>
+    <div class="table_box">
+      <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
         <el-table-column prop="name" label="服务名称" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="server_address" label="服务地址" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="protocol" label="协议类型"></el-table-column>
-        <el-table-column prop="lastUpdateDate" label="更新时间"></el-table-column>
+        <el-table-column prop="code" label="code" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="status" label="门户状态"></el-table-column>
+        <el-table-column prop="version" label="版本"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)" style="color: #2650FF;">配置</el-button>
-            <span style="padding: 0 6px; color: #D8D8D8">|</span>
-            <el-button type="text" @click="view(scope.row)" style="color: #2650FF;">查看</el-button>
-            <span style="padding: 0 6px; color: #D8D8D8">|</span>
-            <el-button type="text" @click="delCert(scope.row)" style="color: #F6323C;">删除</el-button>
+            <el-button type="text" @click="edit(scope.row)">配置</el-button>
+            <span class="handle">|</span>
+            <el-button type="text" @click="view(scope.row)">查看</el-button>
+            <span class="handle">|</span>
+            <el-button type="text" @click="delCert(scope.row)" class="textBut-danger">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
-        style="margin: 24px 0px; float: right;"
-        @size-change="handleSizeChange"
+        background
+        class="list-pagination"
+        :current-page.sync="page"
+        layout="prev, pager, next"
+        :total="total"
         @current-change="handleCurrentChange"
-        :current-page="offset"
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size="limit"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
-      </el-pagination>
-    </el-card>
+      />
+    </div>
     <el-drawer
       title="数据编辑器"
       :before-close="handleClose"
@@ -136,10 +136,10 @@ export default {
         value: 'yaml',
         label: 'YAML'
       }],
-      offset: 1,
+      page: 1,
       limit: 10,
       total: 0,
-      tableData: []
+      tableData: [{ name: '', code: '', status: '', version: '' }, { name: '', code: '', status: '', version: '' }]
     }
   },
   created () {
@@ -152,7 +152,7 @@ export default {
     },
     // 获取上游服务列表
     getUpstreamList () {
-      let params = `?offset=${this.offset}&limit=${this.limit}`
+      let params = `?page=${this.page}&limit=${this.limit}`
       if (this.search.name) {
         params += `&name=${this.search.name}`
       }
@@ -193,7 +193,7 @@ export default {
             type: 'success',
             message: '删除成功!'
           })
-          this.offset = 1
+          this.page = 1
           this.getUpstreamList()
         })
       }).catch(() => {
@@ -206,7 +206,7 @@ export default {
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
-      this.offset = val
+      this.page = val
       this.getuserList()
     },
     highlighter (code) {

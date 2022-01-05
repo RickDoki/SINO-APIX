@@ -1,36 +1,36 @@
 <template>
-  <div class="app_list_main">
-    <div class="app_list_top">
-      <div class="app_list_title titleFont">我的订阅</div>
-      <div class="app_list_search">
+  <div class="main">
+    <div class="list_top list_top_bom">
+      <div class="list_title titleFont">我的订阅</div>
+      <div class="list_search">
         <el-input
-          size="mini"
+          size="small"
           placeholder="搜索"
           suffix-icon="el-icon-search"
           v-model="name"
+          class="list_searchInput"
+          @change="search()"
         >
         </el-input>
       </div>
     </div>
     <div class="table_box">
-      <el-table :data="table" empty-text="暂无数据" stripe style="width: 100%">
+      <el-table :data="table" empty-text="暂无数据" :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
         <el-table-column prop="appName" label="应用名称" />
         <el-table-column prop="appCode" label="APPCode" />
         <el-table-column prop="appCode" label="启用状态" />
         <el-table-column prop="appCode" label="描述" />
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <div class="handle">
-              <span @click="getMessage(scope.row)" class="linkcolor">查看</span>
-              <span class="handle_middle">|</span>
-              <span class="linkcolor">退订</span>
-            </div>
+            <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+            <span class="handle">|</span>
+            <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
         background
-        style="margin-top: 20px; text-align: center"
+        class="list-pagination"
         :current-page.sync="currentPage"
         layout="prev, pager, next"
         :total="total"
@@ -43,7 +43,7 @@
 <script>
 import "./../mainCss/index.scss";
 export default {
-  data() {
+  data () {
     return {
       table: [
         {
@@ -55,13 +55,16 @@ export default {
       name: "",
     };
   },
-  created() {},
+  created () { },
   methods: {
-    handleCurrentChange() {
+    search () {
+
+    },
+    handleCurrentChange () {
       console.log("页面跳转");
     },
     // 跳转api详情
-    getMessage() {
+    getMessage () {
       this.$router.push({ path: "/serve/subscribeDetail" });
     },
   },
@@ -69,45 +72,4 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.app_list_main {
-  width: 95%;
-  margin: 0 auto;
-  margin-top: 20px;
-  border-radius: 5px;
-  background-color: #fff;
-  overflow: hidden;
-  .app_list_top {
-    display: flex;
-    margin-bottom: 20px;
-    justify-content: space-between;
-    .app_list_title {
-      width: 100px;
-    }
-    .app_list_search {
-    }
-  }
-  .table_box {
-    padding: 30px;
-    border: 1px solid #e1e6ee;
-    border-radius: 10px;
-    ::v-deep {
-      .el-table th.el-table__cell.is-leaf,
-      .el-table td.el-table__cell {
-        border: none;
-      }
-      .el-table::before {
-        height: 0px;
-      }
-    }
-    .handle {
-      display: flex;
-      span {
-          cursor: pointer;
-        }
-      .handle_middle {
-        margin: 0px 5px;
-      }
-    }
-  }
-}
 </style>
