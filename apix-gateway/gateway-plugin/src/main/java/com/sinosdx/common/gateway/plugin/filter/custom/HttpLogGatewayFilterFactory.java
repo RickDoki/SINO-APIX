@@ -5,10 +5,10 @@ import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.entity.ResponseInfo;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
-import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -70,20 +70,17 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
         if (WEBSOCKET.equalsIgnoreCase(upgrade)) {
             return chain.filter(exchange);
         }
-        int statusCode = exchange.getResponse().getRawStatusCode() == null ? 0 : exchange.getResponse().getRawStatusCode();
-        if (200 == statusCode) {
-            Consumer<String> consumer = x -> {
-                HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
+        Consumer<ResponseInfo> consumer = x -> {
+            if (200 == x.getStatusCode()) {
                 GatewayLogDTO gatewayLog = new GatewayLogDTO();
                 gatewayLog.setParams(getRequestParams(exchange, request));
-                gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
-                gatewayLog.setStatusCode(statusCode);
-                gatewayLog.setResult(x);
+                gatewayLog.setResponseHeaders(x.getHeaders());
+                gatewayLog.setStatusCode(x.getStatusCode());
+                gatewayLog.setResult(x.getResult());
                 handleResponse(gatewayLog, exchange);
-            };
-            return chain.filter(exchange.mutate().response(HttpUtil.getResponseDecorator(exchange, consumer)).build());
-        }
-        return chain.filter(exchange);
+            }
+        };
+        return chain.filter(exchange.mutate().response(HttpUtil.getResponse(exchange, consumer)).build());
     }
 
     @Data
