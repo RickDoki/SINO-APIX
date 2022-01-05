@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="list_top">
-      <div class="list_title titleFont">服务中心</div>
+      <div class="list_title">服务中心</div>
       <div class="list_search">
         <el-input
           size="small"
@@ -65,8 +65,8 @@ export default {
     handleCurrentChange () {
       console.log("页面跳转");
     },
-    goserveDteail() {
-      this.$router.push({path:'/serve/serveDetail'})
+    goserveDteail () {
+      this.$router.push({ path: '/serve/serveDetail' })
     }
   },
 };

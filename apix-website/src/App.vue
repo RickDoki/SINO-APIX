@@ -40,10 +40,8 @@ export default {
     .list_title {
       width: calc(100% - 330px);
       line-height: 32px;
-      .titleFont {
-        font-size: 20px;
-        font-weight: bold;
-      }
+      font-size: 20px;
+      font-weight: bold;
     }
     .list_search {
       display: flex;
@@ -55,6 +53,23 @@ export default {
         width: 370px;
         margin-right: 16px;
       }
+      .but-left {
+        margin-right: 27px;
+      }
+    }
+  }
+  .status {
+    display: flex;
+    justify-content: space-between;
+    .left-span {
+      width: 200px;
+      font-size: 12px;
+      margin-top: 24px;
+    }
+    .time {
+      width: calc(100% - 400px);
+      text-align: right;
+      line-height: 20px;
     }
   }
   .list_top_bom {
@@ -79,6 +94,9 @@ export default {
     .handle {
       padding: 0 6px;
       color: #d8d8d8;
+    }
+    .text_detail {
+      color: #264ffb;
     }
     .textBut-danger {
       color: #f03063;
@@ -130,7 +148,7 @@ export default {
       margin-top: 10px;
     }
     .add_span {
-      color: #2c66fb;
+      color: #264ffb;
     }
     .inputWidth {
       width: 48%;

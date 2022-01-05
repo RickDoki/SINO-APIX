@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="list_top list_top_bom">
-      <div class="list_title titleFont">角色管理</div>
+      <div class="list_title">角色管理</div>
       <div class="list_search">
         <el-input
           suffix-icon="el-icon-search"
@@ -24,9 +24,9 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button v-if="ispeizhiShow" type="text" @click="edit(scope.row)">配置</el-button>
+            <el-button type="text" @click="edit(scope.row)">配置</el-button>
             <span class="handle">|</span>
-            <el-button v-if="isshanchuShow" type="text" @click="delCert(scope.row)" :class="(scope.row.roleId === 1 || scope.row.roleId === 2)?'del-bro':'del-red'" :disabled="scope.row.roleId === 1 || scope.row.roleId === 2">删除</el-button>
+            <el-button type="text" @click="delCert(scope.row)" :class="(scope.row.roleId === 1 || scope.row.roleId === 2)?'del-bro':'del-red'" :disabled="scope.row.roleId === 1 || scope.row.roleId === 2">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -115,31 +115,13 @@ export default {
       page: 1,
       limit: 10,
       total: 0,
-      tableData: [],
-      ispeizhiShow: false,
-      isshanchuShow: false
+      tableData: []
     }
   },
   created () {
     this.userId = parseInt(getToken('userId_api'))
     this.getRoleList()
     const name = this.$router.currentRoute.meta.title
-    const buttonList = JSON.parse(sessionStorage.getItem('buttonList'))
-    console.log(buttonList)
-    for (let index = 0; index < buttonList.length; index++) {
-      if (buttonList[index].name === name) {
-        // console.log(buttonList[index].list)
-        for (let index1 = 0; index1 < buttonList[index].list.length; index1++) {
-
-          if (buttonList[index].list[index1].name === '配置') {
-            this.ispeizhiShow = true
-          }
-          if (buttonList[index].list[index1].name === '删除') {
-            this.isshanchuShow = true
-          }
-        }
-      }
-    }
   },
   methods: {
     // 获取列表
