@@ -2,7 +2,7 @@
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
 
-function resolve(dir) {
+function resolve (dir) {
   return path.join(__dirname, dir)
 }
 
@@ -40,11 +40,13 @@ module.exports = {
     hot: true,
     proxy: {
       '/': {
-        target: 'http://mt-gateway18765.cspv2.njpk-uat-a.sxc.sh',
+        // target: 'http://mt-gateway18765.cspv2.njpk-uat-a.sxc.sh',
+        // target: 'https://saic-aws.saicmotor.com/cspv2-web/gateway-api/',
+        // target:'http://mt-gateway-18765.cspv2-njuat.njpk-uat-a.sxc.sh',
         // target:'www.baidu.com',
         // target:'https://saic-aws.saicmotor.com/cspv2-web/api',
-        // target: 'http://mt-service-user8093.cspv2.njpk-uat-a.sxc.sh',
-        // target:'https://www.sail-cloud.com/mt-api/',
+        // target: 'https://cloudtest.sail-cloud.com/api-mgmt',
+        target: 'https://www.sail-cloud.com/mt-api/',
         changeOrigin: true,
         secure: false,
         pathRewrite: {
@@ -65,7 +67,7 @@ module.exports = {
       }
     }
   },
-  chainWebpack(config) {
+  chainWebpack (config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
     // it can improve the speed of the first screen, it is recommended to turn on preload
     config.plugin('preload').tap(() => [

@@ -65,7 +65,7 @@
       <!-- <el-table-column prop="type" label="type" /> -->
       <el-table-column align="center" width="82" label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
+          <el-button size="mini" v-if="isxiangqingShow" @click="handleEdit(scope.$index, scope.row)"
             >详情</el-button
           >
         </template>
@@ -94,7 +94,7 @@ import jsonView from "@/components/json-view/index.vue";
 export default {
   // props: ['tableList', 'total'],
   filters: {
-    TimeRanges (value) {
+    TimeRanges(value) {
       let date = new Date(value); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
       let Y = date.getFullYear() + "-";
       let M =
@@ -112,7 +112,23 @@ export default {
     PrismEditor,
     jsonView,
   },
-
+created(){
+   const name = this.$router.currentRoute.meta.title;
+    console.log(name)
+    const buttonList = JSON.parse(sessionStorage.getItem("buttonList"));
+    console.log(buttonList);
+    for (let index = 0; index < buttonList.length; index++) {
+      if (buttonList[index].name === name) {
+        // console.log(buttonList[index].list)
+        for (let index1 = 0; index1 < buttonList[index].list.length; index1++) {
+          if (buttonList[index].list[index1].name === "详情") {
+            this.isxiangqingShow = true;
+          }
+          
+        }
+      }
+    }
+},
   props: {
     tableList: {
       type: Array,
@@ -127,7 +143,7 @@ export default {
       default: true,
     },
   },
-  data () {
+  data() {
     return {
       currentPage: 1,
       MKDialogVisible: false,
@@ -135,17 +151,18 @@ export default {
       responseExample: "",
       lineNumbers: true,
       readonly: true,
+      isxiangqingShow: false
     };
   },
   methods: {
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val;
       this.$emit("pageChange", val);
     },
-    highlighter (code) {
+    highlighter(code) {
       return highlight(code, languages.js);
     },
-    handleEdit (index, row) {
+    handleEdit(index, row) {
       //   this.$router.push({ path: "/app/add?message=" + JSON.stringify(row) });
       console.log(row);
       this.MKDialogVisible = true;
@@ -153,7 +170,7 @@ export default {
       this.requestExample = row;
       // this.requestExample = {}
     },
-    handleDelete (index, row) {
+    handleDelete(index, row) {
       //   const id = row.appId;
       //   appDelete(id).then((res) => {
       //     if (res.code === 200) {
@@ -177,8 +194,8 @@ export default {
   }
 }
 .my-editor {
-  background: #f4f6ff;
-  color: #373753;
+  background: #2d2d2d;
+  color: #ccc;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;

@@ -66,7 +66,7 @@ import { getuser, updateUser, updateorg, changePass } from "@/api/user";
 import { getToken } from "@/utils/auth"; // get token from cookie
 
 export default {
-  data() {
+  data () {
     return {
       name: "",
       orgName: "",
@@ -78,7 +78,7 @@ export default {
       surePass: "",
     };
   },
-  created() {
+  created () {
     // getToken('userId')
     const userId = getToken("userId_api");
     this.userId = userId;
@@ -90,7 +90,7 @@ export default {
     });
   },
   methods: {
-    baseSure() {
+    baseSure () {
       const data = {
         email: this.email,
         // mobile: this.mobile,
@@ -133,7 +133,7 @@ export default {
       //   }
       // });
     },
-    changePass() {
+    changePass () {
       if (this.newPass === this.surePass) {
         const data = {
           oldPwd: btoa(this.yuanPass),

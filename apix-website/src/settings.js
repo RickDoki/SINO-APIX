@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'API管理平台',
+  title: 'SINO APIX 开放服务平台',
 
   /**
    * @type {boolean} true | false

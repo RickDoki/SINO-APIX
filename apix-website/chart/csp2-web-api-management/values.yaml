@@ -1,0 +1,64 @@
+## 实例运行数量
+replicaCount: 1
+
+## 设置默认的 image、imageTag 和 imagePullPolicy。
+image:
+  repository: registry.cn-shanghai.aliyuncs.com/c7n/devops-service
+  tag: ~
+  pullPolicy: Always
+
+## Deployment 更新策略
+deploymentUpdate:
+  type: RollingUpdate
+  maxUnavailable: 0
+  maxSurge: 100%
+
+
+## 给 Pod 附加的 annotations
+podAnnotations: {}
+
+## ## Pod 附加的 labels
+podLabels: {}
+
+## 实例运行时的环境变量
+env:
+  open:
+    # 本实例服务端口
+    SERVER_PORT: 8093
+
+resources: 
+  limits:
+    # cpu: 100m
+    memory: 4Gi
+  requests:
+    # cpu: 100m
+    memory: 2Gi
+
+
+## 指标收集
+metrics:
+  # 收集应用的指标数据路径
+  path: /actuator/prometheus
+  # 性能指标应用分组
+  group: spring-boot
+
+service:
+  enabled: false
+  name: csp2-web-api-management
+  type: ClusterIP
+  clusterIP:
+  ports:
+    # 服务端口
+    http:
+      port: 8093
+      nodePort: 30138
+  ## externalIPs 设置
+  # externalIPs:
+  #   - externalIp1
+  annotations: {}
+ingress:
+  enabled: false
+  annotations: {}
+  path: /
+  host: web.example.com
+  tls: []

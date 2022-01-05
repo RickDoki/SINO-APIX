@@ -41,11 +41,56 @@ export function developerId() {
     method: 'get'
   })
 }
-
 export function updateUser(id, data) {
   return request({
     url: '/user/sys/' + id,
     method: 'put',
+    data
+  })
+}
+export function getUserInfo(id) {
+  return request({
+    url: '/user/sys/menu/nav/' + id,
+    method: 'get',
+  })
+}
+export function getuser(id) {
+  return request({
+    url: '/user/sys/' + id,
+    method: 'get',
+  })
+}
+export function updateorg(id, data) {
+  return request({
+    url: '/user/sys/org/' + id,
+    method: 'put',
+    data
+  })
+}
+export function changePass(data) {
+  return request({
+    url: '/user/sys/modify/pwd',
+    method: 'put',
+    data
+  })
+}
+export function orgList(data) {
+  return request({
+    url: '/user/sys/org/list' + data,
+    method: 'get'
+  })
+}
+export function neworg(id,data) {
+  return request({
+    url: '/user/sys/org/' + id,
+    method: 'put',
+    data
+  })
+}
+export function orgAddUser(data) {
+  return request({
+    url: '/user/sys/add',
+    method: 'post',
     data
   })
 }

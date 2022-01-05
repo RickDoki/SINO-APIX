@@ -18,3 +18,21 @@ export function Apidetail(apiId) {
     method: 'get',
   })
 }
+export function Apilease(appLesseeCode,appLessorCode) {
+  return request({
+    url: '/app/remove/'+ appLesseeCode +'/lease/' + appLessorCode,
+    method: 'delete',
+  })
+}
+export function getApplessor(apiId) {
+  return request({
+    url: '/app/'+ apiId +'/lessee/list',
+    method: 'get',
+  })
+}
+export function getcurrent(developerId,appCode) {
+  return request({
+    url: '/app/subscribe/current/list?developerId=' +developerId + '&appCode=' + appCode,
+    method: 'get',
+  })
+}

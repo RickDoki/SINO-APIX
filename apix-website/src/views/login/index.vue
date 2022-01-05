@@ -79,6 +79,18 @@
             :rules="re_rules"
             ref="re_ruleForm"
           >
+            <el-form-item prop="orgName">
+              <el-input
+                placeholder="请输入组织名称"
+                v-model="re_ruleForm.orgName"
+              >
+                <i
+                  slot="prefix"
+                  style="color: #476fd3; font-size: 14px; margin-left: 6px"
+                  class="iconfont icon-zuzhiguanli"
+                ></i>
+              </el-input>
+            </el-form-item>
             <el-form-item prop="mobile">
               <el-input placeholder="请输入手机号" v-model="re_ruleForm.mobile">
                 <i
@@ -160,7 +172,7 @@
             @click="goLogin"
             style="
               font-size: 12px;
-              color: #2650FF;
+              color: #2c66fb;
               margin-left: 5px;
               cursor: pointer;
             "
@@ -180,9 +192,10 @@ import { setToken, getToken, removeToken } from "@/utils/auth"; // get token fro
 import { Apiregister, Apilogin } from "@/api/user";
 import "@/assets/icons/eyes/iconfont.css";
 import "@/assets/icons/register/iconfont.css";
+import "@/assets/icons/orgain/iconfont.css";
 
 export default {
-  data () {
+  data() {
     return {
       ruleForm: {
         username: "",
@@ -201,8 +214,10 @@ export default {
         password: "",
         email: "",
         authCode: "123456",
+        orgName: "",
       },
       re_rules: {
+        orgName: { required: true, message: "请输入组织名称", trigger: "change" },
         mobile: {
           required: true,
           message: "请输入手机号",
@@ -235,21 +250,21 @@ export default {
     };
   },
   computed: {
-    type () {
+    type() {
       return this.flag ? "text" : "password";
     },
-    iconClass () {
+    iconClass() {
       return this.flag ? "el-icon-view" : "iconfont icon-eye-close";
     },
-    re_type () {
+    re_type() {
       return this.re_flag ? "text" : "password";
     },
-    re_iconClass () {
+    re_iconClass() {
       return this.re_flag ? "el-icon-view" : "iconfont icon-eye-close";
     },
   },
   watch: {
-    time (i, j) {
+    time(i, j) {
       // ...
       if (i === 0) {
         clearInterval(this._inter);
@@ -259,25 +274,32 @@ export default {
   },
   methods: {
     // 切换密码可见
-    isShow () {
+    isShow() {
       this.flag = !this.flag;
     },
-    isShow_re () {
+    isShow_re() {
       this.re_flag = !this.re_flag;
     },
     // 去注册
-    goRegister () {
+    goRegister() {
       this.isLogin = false;
     },
     // 注册
-    register (formName) {
+    register(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(this.re_ruleForm);
-          Apiregister(this.re_ruleForm).then((res) => {
+          const btoaform = {
+            mobile:this.re_ruleForm.mobile,
+            password: btoa(this.re_ruleForm.password),
+            email:this.re_ruleForm.email,
+            orgName:this.re_ruleForm.orgName
+          }
+          console.log(btoaform)
+          Apiregister(btoaform).then((res) => {
             console.log(res);
             if (res.code === 200) {
-              this.isLogin = true
+              this.isLogin = true;
               this.$message({
                 message: res.msg,
                 type: "success",
@@ -295,7 +317,7 @@ export default {
       });
     },
     // 登录
-    login (formName) {
+    login(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // alert("submit!");
@@ -307,12 +329,17 @@ export default {
           } else {
             setToken("ischecked", false);
           }
-          Apilogin(this.ruleForm).then((res) => {
+          const data = {
+            username: this.ruleForm.username,
+            password: btoa(this.ruleForm.password)
+            // password:'qw782806642'
+          }
+          Apilogin(data).then((res) => {
             console.log(res);
             if (res.code === 200) {
               setToken("FSH_AUTH_api", res.data.token);
-              setToken("userId", res.data.userId);
-              setToken('apiPhone', res.data.mobile)
+              setToken("userId_api", res.data.userId);
+              setToken("apiPhone", res.data.mobile);
               this.$router.push("/dashboard/index");
             } else {
               this.errorShow = true;
@@ -326,25 +353,29 @@ export default {
       });
     },
     // 已有账号去登录
-    goLogin () {
+    goLogin() {
       this.isLogin = true;
     },
     //
-    timing () {
+    timing() {
       this.time = 60;
       this._inter = setInterval(() => {
         this.time--;
       }, 1000);
     },
     // 获取验证码
-    getAuthCode () {
+    getAuthCode() {
       this.timeBegin = true;
       this.timing();
     },
-    CSPLogin () { },
+    CSPLogin() {
+      window.location.href = 'https://www.sail-cloud.com/#/login?redirect=api'
+    },
   },
-  created () {
+  created() {
     removeToken("FSH_AUTH_api");
+    removeToken("userId_api");
+
     const ischecked = getToken("ischecked");
     console.log(ischecked);
     if (ischecked === "true") {
@@ -354,6 +385,13 @@ export default {
       };
       this.checked = true;
     } else {
+    }
+    // console.log(this.$route.fullPath.indexOf('mobile') != -1) 
+    if(this.$route.fullPath.indexOf('mobile') != -1) {
+      const query = decodeURIComponent(this.$route.fullPath.replace('/login?mobile=', ''))
+      console.log(query)
+      this.isLogin = false
+      this.re_ruleForm.mobile = query
     }
     console.log("初始化");
   },
@@ -435,7 +473,7 @@ export default {
         height: 30px;
         div {
           line-height: 30px;
-          background-color: #2650ff;
+          background-color: #2c66fb;
           color: #fff;
           font-size: 14px;
           border-radius: 2px;
@@ -450,7 +488,7 @@ export default {
           line-height: 30px;
           background-color: #f0f2f5;
           border-radius: 2px;
-          color: #2650ff;
+          color: #2c66fb;
           font-size: 14px;
           cursor: pointer;
         }
@@ -474,7 +512,7 @@ export default {
         height: 30px;
         div {
           line-height: 30px;
-          background-color: #2650ff;
+          background-color: #2c66fb;
           color: #fff;
           font-size: 14px;
           border-radius: 2px;

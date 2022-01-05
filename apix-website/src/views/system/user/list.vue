@@ -121,7 +121,7 @@ export default {
         enabled: true
       },
       roleList: [],
-      offset: 1,
+      page: 1,
       limit: 10,
       total: 0,
       tableData: [],
@@ -149,7 +149,7 @@ export default {
   methods: {
     // 获取列表
     getuserList () {
-      let params = `?offset=${this.offset}&limit=${this.limit}`
+      let params = `?page=${this.page}&limit=${this.limit}`
       if (this.search.name) {
         params += `&username=${this.search.name}`
       }
@@ -241,7 +241,7 @@ export default {
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
-      this.offset = val
+      this.page = val
       this.getuserList()
     }
   }

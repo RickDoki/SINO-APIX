@@ -33,7 +33,7 @@
       <el-pagination
         background
         class="list-pagination"
-        :current-page.sync="page"
+        :current-page.sync="offset"
         layout="prev, pager, next"
         :total="total"
         @current-change="handleCurrentChange"
@@ -75,176 +75,153 @@
 </template>
 
 <script>
-import { getRoleList, getRoutes, addRole, updateRole, deleteRole, getRoleInfo } from '@/api/role'
-import { treeDataTranslate } from '@/utils'
+import { getList, updateUser } from '@/api/user'
+import { getRoles } from '@/api/role'
 import { getToken } from '@/utils/auth'
-import moment from 'moment'
 export default {
   components: {
   },
-  filters: {
-    formateDate (date) {
-      return moment(date).format('YYYY-MM-DD HH:mm:ss')
-    }
-  },
   data () {
     return {
-      menuList: [],
-      menuListTreeProps: {
-        label: 'name',
-        children: 'children'
-      },
-      tempKey: -666666, // 临时key, 用于解决tree半选中状态项不能传给后台接口问题. # 待优化
+      userId: 0,
       drawer: false,
       loading: false,
-      drawerTitle: '',
-      userId: 0, // 缓存中取
-      roleName: '',
-      dataForm: {
-        roleId: 0,
-        roleName: '',
-        remark: ''
+      isbuttonShow: false,
+      search: {
+        name: '',
+        role: ''
       },
-      rules: {
-        roleName: [
-          { required: true, message: '请输入角色名称', trigger: 'blur' }
-        ]
+      form: {
+        id: '',
+        username: '',
+        mobile: '',
+        email: '',
+        roleId: '',
+        enabled: true
       },
-      page: 1,
+      roleList: [],
+      offset: 1,
       limit: 10,
       total: 0,
-      tableData: []
+      tableData: [],
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名称', trigger: 'blur' }
+        ],
+        email: [
+          { pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/, message: '请输入正确的邮箱地址' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        roleId: [
+          { required: true, message: '请选用户角色', trigger: 'change' }
+        ]
+      }
     }
   },
   created () {
-    this.getRoleList()
-    this.userId = getToken('userId')
+    this.userId = parseInt(getToken('userId_api'))
+    this.getuserList()
+    this.getRoles()
+    // console.log(this.$router.currentRoute.meta.title)
+    const name = this.$router.currentRoute.meta.title
+    const buttonList = JSON.parse(sessionStorage.getItem('buttonList'))
+    for (let index = 0; index < buttonList.length; index++) {
+      if (buttonList[index].name === name) {
+        // console.log(buttonList[index].list)
+        if (buttonList[index].list.length === 1) {
+          this.isbuttonShow = true
+        } else {
+          this.isbuttonShow = false
+        }
+      }
+    }
   },
   methods: {
     // 获取列表
-    getRoleList () {
-      let params = `?userId=${this.userId}&page=${this.page}&limit=${this.limit}`
-      if (this.roleName) {
-        params += `&roleName=${this.roleName}`
+    getuserList () {
+      let params = `?offset=${this.offset}&limit=${this.limit}`
+      if (this.search.name) {
+        params += `&username=${this.search.name}`
       }
-      getRoleList(params).then(res => {
+      if (this.search.role) {
+        params += `&roleId=${this.search.role}`
+      }
+      getList(params).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data.list
-          this.total = res.data.totalCount
+          this.tableData = res.data.userList
+          this.total = res.data.total
         }
       })
     },
-    // 获取权限列表
-    getRoutes (roleId) {
-      getRoutes().then(res => {
+    // 获取角色列表
+    getRoles () {
+      getRoles().then(res => {
         if (res.code === 200) {
-          this.menuList = treeDataTranslate(res.data, 'menuId')
-          if (this.dataForm.roleId) {
-            this.getRoleInfo(this.dataForm.roleId)
-          }
+          this.roleList = res.data
         }
       })
     },
-    // 创建角色
-    add () {
-      // 打开抽屉
-      this.drawer = true
-      this.drawerTitle = '创建角色'
-      this.getRoutes()
+    // 重置搜索条件
+    resetSearch () {
+      this.search.name = ''
+      this.search.role = ''
+      this.getuserList()
     },
-    submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (!this.$refs.menuListTree.getCheckedKeys().length) {
-            this.$message('请选择要分配的权限！')
-            return
-          }
-          const params = {
-            roleName: this.dataForm.roleName,
-            remark: this.dataForm.remark,
-            createUserId: this.userId,
-            menuIdList: [].concat(this.$refs.menuListTree.getCheckedKeys(), [this.tempKey], this.$refs.menuListTree.getHalfCheckedKeys())
-          }
-          if (this.dataForm.roleId === 0) {
-            // 添加角色
-            addRole(params).then(res => {
-              if (res.code === 200) {
-                // 重置表单
-                this.resetForm('dataForm')
-                this.drawer = false
-                this.$refs.menuListTree.setCheckedKeys([])
-                // 查询列表
-                this.page = 1
-                this.getRoleList()
-              }
-            })
-          } else {
-            // 编辑角色
-            params.roleId = this.dataForm.roleId
-            updateRole(params).then(res => {
-              if (res.code === 200) {
-                // 重置表单
-                this.resetForm('dataForm')
-                this.drawer = false
-                this.$refs.menuListTree.setCheckedKeys([])
-                // 查询列表
-                this.page = 1
-                this.getRoleList()
-              }
-            })
-          }
-        }
-      })
-    },
+    // 重置表单
     resetForm (formName) {
       this.$refs[formName].resetFields()
     },
-    // 修改角色信息
+    // 修改用户信息
     edit (row) {
       // 打开抽屉
       this.drawer = true
-      this.drawerTitle = '配置角色'
-      this.dataForm.roleId = row.roleId
-      this.getRoutes()
+      this.form = {
+        id: row.id,
+        username: row.username,
+        mobile: row.mobile,
+        email: row.email,
+        roleId: row.roleId,
+        enabled: row.enabled
+      }
+      if (row.roleId === 0) {
+        this.form.roleId = ''
+      }
     },
-    // 获取角色信息
-    getRoleInfo (roleId) {
-      getRoleInfo(roleId).then(res => {
-        if (res.code === 200) {
-          const data = res.data
-          this.dataForm.roleName = data.roleName
-          this.dataForm.remark = data.remark
-          var idx = data.menuIdList.indexOf(this.tempKey)
-          if (idx !== -1) {
-            data.menuIdList.splice(idx, data.menuIdList.length - idx)
-          }
-          this.$refs.menuListTree.setCheckedKeys(data.menuIdList)
+    // 提交数据
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 修改用户
+          updateUser(this.form.id, this.form).then(res => {
+            if (res.code === 200) {
+              // 重置表单
+              this.resetForm('form')
+              this.drawer = false
+              // 查询列表
+              this.page = 1
+              this.getuserList()
+            }
+          })
         }
       })
     },
     // 关闭抽屉
-    handleClose () {
+    handleClose (done) {
       this.drawer = false
-      this.resetForm('dataForm')
-      this.$refs.menuListTree.setCheckedKeys([])
+      this.resetForm('form')
     },
-    // 删除角色信息
+    // 删除用户信息
     delCert (row) {
-      const params = {
-        roleIds: [row.roleId]
-      }
-      this.$confirm('确认删除角色：' + row.roleName + ', 是否继续?', '提示', {
+      this.$confirm('确认删除用户：' + row.username + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteRole(params).then(res => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-          this.page = 1
-          this.getRoleList()
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
         })
       }).catch(() => {
       })
@@ -252,12 +229,12 @@ export default {
     handleSizeChange (val) {
       console.log(`每页 ${val} 条`)
       this.limit = val
-      this.getRoleList()
+      this.getuserList()
     },
     handleCurrentChange (val) {
       console.log(`当前页: ${val}`)
-      this.page = val
-      this.getRoleList()
+      this.offset = val
+      this.getuserList()
     }
   }
 }

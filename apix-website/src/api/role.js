@@ -7,9 +7,9 @@ export function getRoutes() {
   })
 }
 
-export function getRoles(userId) {
+export function getRoles() {
   return request({
-    url: '/user/sys/role/select/' + userId,
+    url: '/user/sys/role/select',
     method: 'get'
   })
 }
@@ -49,5 +49,12 @@ export function deleteRole(data) {
     url: `/user/sys/role/delete`,
     method: 'post',
     data
+  })
+}
+
+export function getroleNav(id) {
+  return request({
+    url: `user/sys/menu/permList/` + id,
+    method: 'get'
   })
 }

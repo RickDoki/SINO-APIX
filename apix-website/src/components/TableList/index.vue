@@ -1,14 +1,13 @@
 <template>
   <div class="tableFather">
-    <el-dialog title="详情" :modal-append-to-body='false' :visible.sync="MKDialogVisible">
+    <el-dialog
+      title="详情"
+      :modal-append-to-body="false"
+      :visible.sync="MKDialogVisible"
+    >
       <div>
         <p>请求参数:</p>
-        <vxe-table
-          ref="xTable"
-          border
-          show-overflow
-          :data="requestParams"
-        >
+        <vxe-table ref="xTable" border show-overflow :data="requestParams">
           <!-- <vxe-table-column type="checkbox" width="60" /> -->
           <vxe-table-column
             field="parame"
@@ -82,14 +81,19 @@
         <el-button type="primary" @click="MKSure()">确 定</el-button>
       </span>
     </el-dialog>
-    <el-table :data="data" class="table" empty-text="暂无数据" border>
-      <el-table-column type="expand">
+    <el-table
+      :data="data"
+      class="table"
+      :header-cell-style="{ background: '#F0F2F5' }"
+      border
+      empty-text="暂无数据"
+    >
+      <!-- <el-table-column type="expand">
         <template slot-scope="props">
           <el-table border :data="props.row.apiVersions">
             <el-table-column align="center" width="82" prop="apiVersion" label="当前版本" />
             <el-table-column align="center" prop="apiLastUpdateDate" label="修改时间" />
             <el-table-column align="center" prop="apiUrl" label="API路径" />
-            <!-- <el-table-column prop="markdown" label="API参数" /> -->
             <el-table-column align="center" prop="description" label="描述" />
             <el-table-column align="center" width="95" prop="requestMethod" label="请求方式" />
             <el-table-column align="center" width="105" label="操作">
@@ -103,35 +107,67 @@
             </el-table-column>
           </el-table>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column align="center" prop="apiName" label="API名称" />
-      <el-table-column align="center" width="110" prop="apiVersion" label="最新版本号" />
-      <el-table-column align="center" prop="apiCreationUser" label="创建人" />
-      <el-table-column align="center" width="158" prop="apiCreationDate" label="创建时间" />
-      <el-table-column align="center" width="226" label="操作">
+      <el-table-column align="center" show-overflow-tooltip prop="domain" label="域名" />
+      <el-table-column align="center" prop="apiUrl" label="路径" />
+      <el-table-column align="center" prop="description" label="描述" />
+      <!-- <el-table-column align="center" prop="apiName" label="标签" /> -->
+      <!-- <el-table-column align="center" label="状态">
         <template slot-scope="scope">
-          <el-button
+          <el-tag size="mini" :type="status[scope.row.isPublished][0]">
+            {{ status[scope.row.isPublished][1] }}
+          </el-tag>
+        </template>
+      </el-table-column> -->
+      <el-table-column
+        align="center"
+        width="110"
+        prop="apiVersion"
+        label="最新版本号"
+      />
+      <el-table-column align="center" width="100" prop="apiCreationUser" label="创建人" />
+      <el-table-column
+        align="center"
+        width="158"
+        prop="apiCreationDate"
+        label="创建时间"
+      />
+      <el-table-column align="center" width="100" label="操作">
+        <template slot-scope="scope">
+          <!-- <el-button
             size="mini"
             type="primary"
             @click="publishNV(scope.$index, scope.row)"
-            >发布新版本</el-button
-          >
-          <el-button
+            >查看</el-button
+          > -->
+          <!-- <el-button
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)"
           >
             删除
-          </el-button>
+          </el-button> -->
+          <el-link
+            size="mini"
+            :underline="false"
+            style="margin-left: 15px"
+            type="danger"
+             @click="handleDelete(scope.$index, scope.row)"
+            >删除</el-link
+          >
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      style="margin-top: 20px"
+      style="float:right;margin: 20px"
       :current-page.sync="currentPage"
-      layout="prev, pager, next"
+      layout="total, sizes, prev, pager, next, jumper"
       :total="total"
       @current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="size"
     />
   </div>
 </template>
@@ -162,8 +198,16 @@ export default {
       default: 0,
     },
   },
-  data () {
+  data() {
     return {
+      status: {
+        '60012': ["info", "未发布"],
+        '60011': ["success", "已发布"],
+        '60002': ["success", "已上架"],
+        '60003': ["danger", "异常中"],
+        '60004': ["warning", "已停用"],
+      },
+      size:10,
       readonly: true,
       currentPage: 1,
       requestExample: "",
@@ -207,11 +251,15 @@ export default {
     };
   },
   methods: {
-    highlighter (code) {
+    handleSizeChange(val) {
+      console.log(val)
+       this.$emit("sizeChange", val)
+    },
+    highlighter(code) {
       return highlight(code, languages.js);
     },
     // 新增行
-    async insertEvent () {
+    async insertEvent() {
       const row = -1;
       const $table = this.$refs.xTable;
       const record = {
@@ -224,7 +272,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    showMenu () {
+    showMenu() {
       event.preventDefault();
       var x = event.clientX;
       var y = event.clientY;
@@ -233,19 +281,19 @@ export default {
         y,
       };
     },
-    savedata () {
+    savedata() {
       // 新增一列
       this.insertEvent();
     },
-    newdata () {
+    newdata() {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val;
       this.$emit("pageChange", val);
     },
-    handleEdit (index, row) {
+    handleEdit(index, row) {
       // this.$router.push({ path: '/api/add?message=' + JSON.stringify(row) })
       this.MKDialogVisible = true;
       // setTimeout(() => {
@@ -268,38 +316,37 @@ export default {
       this.requestExample = JSON.parse(row.requestExample);
       this.responseExample = JSON.parse(row.responseExample);
     },
-    handleDelete (index, row) {
+    handleDelete(index, row) {
       this.$confirm("是否确认删除?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
-      })
-        .then(() => {
-          listDelete(row.apiId).then((res) => {
-            if (res.code !== 200) {
-              this.$message({
-                message: res.msg,
-                type: "error",
-              });
-            } else {
-              this.$emit("refresh", true);
-              this.$message({
-                message: res.msg,
-                type: "success",
-              });
-            }
-          });
-          // this.$message({
-          //   type: 'success',
-          //   message: '删除成功!'
-          // });
-        })
+      }).then(() => {
+        listDelete(row.apiId).then((res) => {
+          if (res.code !== 200) {
+            this.$message({
+              message: res.msg,
+              type: "error",
+            });
+          } else {
+            this.$emit("refresh", true);
+            this.$message({
+              message: res.msg,
+              type: "success",
+            });
+          }
+        });
+        // this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
+      });
     },
     // 发布新版本
-    publishNV (index, row) {
+    publishNV(index, row) {
       this.$router.push({ path: "/api/add?message=" + JSON.stringify(row) });
     },
-    MKSure () {
+    MKSure() {
       const query = {
         // markdown: this.content,
       };
@@ -315,22 +362,22 @@ export default {
       });
     },
     // 关闭弹窗
-    handleClose (done) {
+    handleClose(done) {
       this.$confirm("确认关闭？")
         .then((_) => {
           done();
         })
-        .catch((_) => { });
+        .catch((_) => {});
     },
     // 成功消息
-    messageOK (msg) {
+    messageOK(msg) {
       this.$message({
         message: msg,
         type: "success",
       });
     },
     // 失败消息
-    messageERROR (msg) {
+    messageERROR(msg) {
       this.$message({
         message: msg,
         type: "error",
@@ -363,8 +410,8 @@ export default {
   }
 }
 .my-editor {
-  background: #f4f6ff;
-  color: #373753;
+  background: #2d2d2d;
+  color: #ccc;
   border: 0px;
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
   font-size: 14px;
