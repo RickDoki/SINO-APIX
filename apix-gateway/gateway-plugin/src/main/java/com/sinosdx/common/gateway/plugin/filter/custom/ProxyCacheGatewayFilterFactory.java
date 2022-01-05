@@ -1,26 +1,23 @@
 package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
-import cn.hutool.core.util.ObjectUtil;
 import com.sinosdx.common.base.constants.BaseConstants;
 import com.sinosdx.common.gateway.constants.CacheConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
-import com.sinosdx.common.gateway.plugin.entity.ResponseData;
 import com.sinosdx.common.gateway.plugin.enums.HitStatusEnum;
-import com.sinosdx.common.gateway.plugin.event.ResponseDataEvent;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.ProxyCacheGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.plugin.utils.RedisUtil;
 import com.sinosdx.common.toolkit.common.LogUtil;
+import java.util.function.Consumer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -54,29 +51,27 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
         ServerHttpRequest req = exchange.getRequest();
         String cacheKey = CACHE_KEY + req.getHeaders().getFirst(GatewayConstants.PATH);
         if (redisUtil.hasKey(cacheKey)) {
-            LogUtil.debug(log, "cacheKey:{} hit cache",cacheKey);
+            LogUtil.debug(log, "cacheKey:{} hit cache", cacheKey);
             ServerHttpResponse response = exchange.getResponse();
             response.getHeaders().add(CACHE_STATUS_HEAD, HitStatusEnum.HIT.name());
             exchange.mutate().response(response).build();
             return HttpUtil.response(exchange, redisUtil.get(cacheKey));
         }
-        return chain.filter(exchange);
+        Consumer<String> consumer = x -> {
+            int expire = Math.min(c.getExpire(), MAX_EXPIRE);
+            redisUtil.set(cacheKey, x, (long) expire);
+        };
+        return chain.filter(exchange.mutate().response(HttpUtil.getResponseDecorator(exchange, consumer)).build());
     }
 
-    @EventListener
-    public void listenerLogMessage(ResponseDataEvent responseDataEvent) {
-        ResponseData responseData=responseDataEvent.getResponseData();
-        ServerWebExchange exchange=responseData.getExchange();
-        //TODO 动态从缓存中获取配置
-        if(ObjectUtil.isEmpty(responseData.getO()) ){
-            return;
-        }
-        int expire = Math.min(43200, MAX_EXPIRE);
-        ServerHttpRequest req = exchange.getRequest();
-        String cacheKey = CACHE_KEY + req.getHeaders().getFirst(GatewayConstants.PATH);
-        if (!redisUtil.hasKey(cacheKey)) {
-            redisUtil.set(cacheKey,responseData.getO(), (long) expire);
-        }
+    /**
+     * 注意，顺序要小于-1，否则无法进入getResponseDecorator，因为默认的NettyResponseDecorator是-1
+     *
+     * @return
+     */
+    @Override
+    public int setOrder() {
+        return -100;
     }
 
     @Data

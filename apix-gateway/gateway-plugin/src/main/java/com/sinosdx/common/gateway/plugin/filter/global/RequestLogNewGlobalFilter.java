@@ -4,15 +4,11 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
-import com.sinosdx.common.gateway.plugin.component.ThreadResponseData;
-import com.sinosdx.common.gateway.plugin.entity.ResponseData;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
+import com.sinosdx.common.gateway.utils.GzipUtil;
 import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -21,9 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
-import java.util.zip.GZIPInputStream;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +36,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
@@ -54,11 +47,10 @@ import reactor.core.publisher.Mono;
  * @date 2021-06-18 00:43
  * @description
  */
-@Component
+//@Component
 @Slf4j
 public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
 
-    private static final String GZIP = "gzip";
     private static final String WEBSOCKET = "websocket";
     private static final List<String> STRING_LIST = Arrays.asList("http", "https");
 
@@ -179,8 +171,8 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
                         //处理gzip请求（方式二）
                         String responseData = new String(content, StandardCharsets.UTF_8);
                         List<String> strings = httpHeaders.get(HttpHeaders.CONTENT_ENCODING);
-                        if (!CollectionUtils.isEmpty(strings) && strings.contains(GZIP)) {
-                            responseData = getGZIPContent(content, responseData);
+                        if (!CollectionUtils.isEmpty(strings) && strings.contains(GzipUtil.GZIP)) {
+                            responseData = GzipUtil.getGzipContent(content, responseData);
                         } else {
                             responseData = new String(content, StandardCharsets.UTF_8);
                         }
@@ -193,8 +185,6 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
                         // originalResponse.getHeaders().setContentLength(content.length);
                         //}
                         //originalResponse.getHeaders().set("encrypt", "true");
-                        executorService.execute(new ThreadResponseData(
-                                ResponseData.builder().exchange(exchange).o(responseData).build()));
                     } catch (Exception e) {
                         log.error("RequestLogGlobalFilter ResponseDecorator writeWith error!", e);
                         gatewayLog.setResult(
@@ -204,20 +194,6 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
                     }
                     return bufferFactory.wrap(content);
                 }));
-            }
-
-            private String getGZIPContent(byte[] content, String responseData) {
-                try (
-                        GZIPInputStream gzipInputStream = new GZIPInputStream(
-                                new ByteArrayInputStream(content), content.length);
-                ) {
-                    StringWriter writer = new StringWriter();
-                    IOUtils.copy(gzipInputStream, writer, StandardCharsets.UTF_8);
-                    responseData = writer.toString();
-                } catch (IOException e) {
-                    log.error("request log response filter gzip IO error", e);
-                }
-                return responseData;
             }
         };
     }

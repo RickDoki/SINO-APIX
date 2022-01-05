@@ -2,22 +2,32 @@ package com.sinosdx.common.gateway.plugin.utils;
 
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.BaseEnum;
+import com.sinosdx.common.gateway.utils.GzipUtil;
+import com.sinosdx.common.toolkit.common.LogUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.reactive.resource.ResourceUrlProvider;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -27,6 +37,7 @@ import reactor.core.publisher.Mono;
  * @date 2021-06-08 15:48
  * @description
  */
+@Slf4j
 public class HttpUtil {
 
     private static final String GET = "GET";
@@ -211,5 +222,52 @@ public class HttpUtil {
                 return bodyString.get();
             }
         }
+    }
+
+    /**
+     * 获取返回结果
+     *
+     * @param exchange
+     * @param consumer 自定义消费
+     * @return
+     */
+    public static ServerHttpResponseDecorator getResponseDecorator(ServerWebExchange exchange, Consumer<String> consumer) {
+        ServerHttpResponse originalResponse = exchange.getResponse();
+        DataBufferFactory bufferFactory = originalResponse.bufferFactory();
+        ServerHttpResponseDecorator serverHttpResponseDecorator = new ServerHttpResponseDecorator(originalResponse) {
+            @Override
+            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
+                Flux<? extends DataBuffer> fluxBody;
+                try {
+                    fluxBody = Flux.from(DataBufferUtils.join(body));
+                } catch (Exception e) {
+                    log.error("ServerHttpResponseDecorator Flux.from error!", e);
+                    return super.writeWith(body);
+                }
+                return super.writeWith(fluxBody.buffer().map(dataBuffers -> {
+                    DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
+                    DataBuffer join = dataBufferFactory.join(dataBuffers);
+                    byte[] content = new byte[join.readableByteCount()];
+                    join.read(content);
+                    DataBufferUtils.release(join);
+                    try {
+                        HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
+                        String responseData = new String(content, StandardCharsets.UTF_8);
+                        List<String> strings = httpHeaders.get(HttpHeaders.CONTENT_ENCODING);
+                        if (!CollectionUtils.isEmpty(strings) && strings.contains(GzipUtil.GZIP)) {
+                            responseData = GzipUtil.getGzipContent(content, responseData);
+                        } else {
+                            responseData = new String(content, StandardCharsets.UTF_8);
+                        }
+                        LogUtil.debug(log, "getResponseDecorator result:{}", responseData);
+                        consumer.accept(responseData);
+                    } catch (Exception e) {
+                        log.error("ServerHttpResponseDecorator writeWith error!", e);
+                    }
+                    return bufferFactory.wrap(content);
+                }));
+            }
+        };
+        return serverHttpResponseDecorator;
     }
 }
