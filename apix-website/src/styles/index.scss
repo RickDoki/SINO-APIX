@@ -271,26 +271,15 @@ aside {
     }
   }
   // 表单样式
-  .bottom {
-    position: fixed;
-    width: calc(100% - 210px);
-    height: 60px;
-    background-color: #fff;
-    bottom: 0px;
-    .bottom_button {
-      margin-left: 185px;
-      margin-top: 10px;
-      div {
-        display: inline-block;
-        padding: 5px 8px;
-        margin-right: 20px;
-        cursor: pointer;
-      }
-    }
-    .bottom_button_b {
-      margin-left: 480px;
-      margin-top: 10px;
-    }
+  .bottom_button_a {
+    width: 48%;
+    text-align: center;
+    margin-top: 40px;
+  }
+  .bottom_button_b {
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
   }
   .top {
     padding: 0px 75px;

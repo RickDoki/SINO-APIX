@@ -200,6 +200,12 @@ export const asyncRoutes = [
         component: () => import('@/views/user/index'),
         name: 'user',
         meta: { title: '个人信息', affix: true }
+      },
+      {
+        path: '/system/config',
+        component: () => import('@/views/system/config'),
+        name: 'config',
+        meta: { title: '开放门户配置', affix: true }
       }
     ]
   },

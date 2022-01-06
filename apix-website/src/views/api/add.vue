@@ -1,5 +1,8 @@
 <template>
   <div class="main">
+    <div class="list_top">
+      <div class="list_title">创建API</div>
+    </div>
     <div class="top">
       <elx-steps-horizontal
         v-model="active"
@@ -385,7 +388,7 @@
       </div>
     </div>
     <div class="bottom">
-      <div class="bottom_button">
+      <div class="bottom_button_a">
         <el-button size="small" v-if="active === 0" @click="backList">取消</el-button>
         <el-button size="small" type="primary" v-if="active === 0" @click="goNext('form')">下一步</el-button>
       </div>

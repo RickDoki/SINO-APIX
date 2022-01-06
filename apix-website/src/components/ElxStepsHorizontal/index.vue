@@ -75,7 +75,7 @@ export default {
   min-width: 400px;
   position: relative;
   overflow: hidden;
-
+  margin-top: 24px;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
