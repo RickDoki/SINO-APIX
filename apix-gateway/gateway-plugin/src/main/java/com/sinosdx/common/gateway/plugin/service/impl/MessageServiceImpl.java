@@ -44,9 +44,11 @@ public class MessageServiceImpl implements IMessageService {
     }
     @Async
     @Override
-    public void saveAnalysisLog(String logType,GatewayLogDTO gatewayLog) {
+    public void saveAnalysisLog(ServerWebExchange exchange,String logType,GatewayLogDTO gatewayLog) {
 //        SpringContextHolder.getBean(LogServiceFeign.class).analysisGatewayLogSave(JSON.toJSONString(gatewayLog));
-        String s = JSON.toJSONString(gatewayLog);
+        LogEvent gatewayLogDTO = new LogEvent("gatewayLog",
+                LogUtil.buildLog(exchange, gatewayLog, serviceId));
+        String s = JSON.toJSONString(gatewayLogDTO);
         logService.analysisGatewayLogSave(s);
         //保存审计日志
         if(AUDIT.equals(logType)){
@@ -55,8 +57,10 @@ public class MessageServiceImpl implements IMessageService {
     }
     @Async
     @Override
-    public void saveLog(String logType,GatewayLogDTO gatewayLog) {
-        String s = JSON.toJSONString(gatewayLog);
+    public void saveLog(ServerWebExchange exchange,String logType,GatewayLogDTO gatewayLog) {
+        LogEvent gatewayLogDTO = new LogEvent("gatewayLog",
+                LogUtil.buildLog(exchange, gatewayLog, serviceId));
+        String s = JSON.toJSONString(gatewayLogDTO);
         logService.saveLog(logType,s);
 //        SpringContextHolder.getBean(LogServiceFeign.class).saveLog(logType,s);
     }

@@ -128,7 +128,7 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
         }
         gatewayLog.setRedirectUrl(redirectUrl);
         gatewayLog.setConsumingTime(getConsumingTime(exchange));
-        SpringContextHolder.getBean(IMessageService.class).saveLog(GATEWAY, gatewayLog);
+        SpringContextHolder.getBean(IMessageService.class).saveLog(exchange,GATEWAY, gatewayLog);
         exchange.getAttributes().remove(GatewayConstants.CACHED_REQUEST_BODY_STR);
     }
 
