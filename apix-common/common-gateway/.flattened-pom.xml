@@ -27,8 +27,8 @@
       <artifactId>common-public</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.springframework</groupId>
           <artifactId>spring-webmvc</artifactId>
+          <groupId>org.springframework</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -37,8 +37,8 @@
       <artifactId>common-tools</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.springframework</groupId>
           <artifactId>spring-webmvc</artifactId>
+          <groupId>org.springframework</groupId>
         </exclusion>
       </exclusions>
     </dependency>
