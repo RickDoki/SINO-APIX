@@ -23,5 +23,5 @@ public interface LogServiceFeign {
      * @return
      */
     @PostMapping(path = "/log/common/{logType}", consumes = "text/html;charset=UTF-8")
-    void saveLog(@PathVariable String logType, @RequestBody String string);
+    void saveLog(@PathVariable("logType") String logType, @RequestBody String string);
 }
