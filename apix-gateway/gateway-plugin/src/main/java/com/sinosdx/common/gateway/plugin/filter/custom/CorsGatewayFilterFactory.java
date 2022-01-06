@@ -15,9 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.reactive.CorsUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -32,7 +34,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class CorsGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
-    public static final String REGEX = "/|";
+    public static final String REGEX = "&";
 
     public CorsGatewayFilterFactory() {
         super(Config.class);
@@ -41,6 +43,10 @@ public class CorsGatewayFilterFactory extends BaseGatewayFilter<Config> {
     @Override
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
+        if (!CorsUtils.isCorsRequest(req)) {
+            log.info("not cors request!");
+            return chain.filter(exchange);
+        }
         ServerHttpResponse rep = exchange.getResponse();
         HttpHeaders headers = rep.getHeaders();
         headers.setAccessControlAllowOrigin(c.getAllowOrigins());
@@ -54,8 +60,17 @@ public class CorsGatewayFilterFactory extends BaseGatewayFilter<Config> {
         headers.setAccessControlMaxAge(c.getMaxAge());
         headers.setAccessControlAllowCredentials(c.allowCredentials);
         exchange.mutate().response(rep).build();
+        if (req.getMethod() == HttpMethod.OPTIONS) {
+            rep.setStatusCode(HttpStatus.OK);
+            return Mono.empty();
+        }
         return chain.filter(exchange);
 
+    }
+
+    @Override
+    public int setOrder() {
+        return -101;
     }
 
     @Data
