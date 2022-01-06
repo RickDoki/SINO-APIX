@@ -10,26 +10,36 @@
                   class="list_searchInput" placeholder="请输入资源名称"
                   @change="getLogList"></el-input>
         <el-date-picker
-          v-model="search.startTime"
-          type="datetimerange"
-          class="list_searchInput_date"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          size="small"
-          @change="getLogList()"
+          class="list_searchInput"
+          :picker-options="startTime"
           value-format="timestamp"
-          :default-time="['00:00:00', '23:59:59']"
-        />
+          size="small"
+          @change="getLogList"
+          v-model="search.startTime"
+          type="datetime"
+          placeholder="选择开始时间">
+        </el-date-picker>
+        <el-date-picker
+          class="list_searchInput"
+          :picker-options="endTime"
+          value-format="timestamp"
+          size="small"
+          @change="getLogList"
+          v-model="search.endTime"
+          type="datetime"
+          placeholder="选择结束时间"
+          default-time="23:59:59">
+        </el-date-picker>
       </div>
     </div>
     <div class="table_box">
-      <el-table :data="tableData" :row-style="{height: '50px'}" highlight-current-row
-                :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="appName" label="用户"/>
-        <el-table-column prop="appCode" label="事件类型"/>
-        <el-table-column prop="appCode" label="资源名称"/>
-        <el-table-column prop="appCode" label="发生时间"/>
+      <el-table
+        :data="tableData" :row-style="{height: '50px'}" highlight-current-row
+        :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
+        <el-table-column prop="username" label="用户"/>
+        <el-table-column prop="eventType" label="事件类型"/>
+        <el-table-column prop="resourceName" label="资源名称"/>
+        <el-table-column prop="eventTime" label="发生时间"/>
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
             <div class="handle">
@@ -59,9 +69,6 @@
           <el-descriptions-item label="用户名称">{{ infoObj.username }}</el-descriptions-item>
           <el-descriptions-item label="事件类型">{{ infoObj.eventType }}</el-descriptions-item>
           <el-descriptions-item label="资源名称">{{ infoObj.resourceName }}</el-descriptions-item>
-          <!-- <el-descriptions-item label="创建时间">
-          <el-tag size="small">学校</el-tag>
-          </el-descriptions-item> -->
           <el-descriptions-item label="创建时间">{{ infoObj.eventTime }}</el-descriptions-item>
         </el-descriptions>
         <div style="margin-top: 20px">
@@ -123,7 +130,7 @@ export default {
     }
   },
   created() {
-    // this.getLogList()
+    this.getLogList()
   },
   methods: {
     // 获取列表
@@ -176,11 +183,9 @@ export default {
       }
       this.getLogList()
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
-    },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      this.offset = val
+      this.getLogList()
     }
   }
 }

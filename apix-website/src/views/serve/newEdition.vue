@@ -1,22 +1,32 @@
 <template>
   <div class="main">
     <div class="list_top">
-      <div class="list_title titleFont">添加新本版本</div>
+      <div class="list_title">添加新本版本</div>
     </div>
     <div>
       <span class="secondTitle">向现有的服务添加新版本</span>
     </div>
-    <div class="createdNewedition">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-        <el-form-item label="版本名称:" prop="name">
-          <el-input v-model="ruleForm.name"></el-input>
+    <div class="formBox">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
+        <el-form-item label="版本名称" prop="name">
+          <el-input 
+            v-model="ruleForm.name"
+            placeholder=""
+            class="inputWidth"
+            clearable>
+          </el-input>
         </el-form-item>
-        <el-form-item label="版本描述:" prop="describe">
-          <el-input v-model="ruleForm.describe"></el-input>
+        <el-form-item label="版本描述" prop="describe">
+          <el-input 
+            v-model="ruleForm.describe"
+            placeholder=""
+            class="inputWidth"
+            clearable>
+          </el-input>
         </el-form-item>
-        <el-form-item label="关联API:" prop="API">
+        <el-form-item label="关联API" prop="API">
           <el-select
-            class="selectCss"
+            class="inputWidth"
             v-model="ruleForm.API"
             placeholder="请选择"
           >
@@ -28,14 +38,12 @@
             >
             </el-option>
           </el-select>
-          <span @click="createdApi" class="goCreate">还没有API?去创建>></span>
+          <span @click="createdApi" class="show-but">还没有API?去创建 >> </span>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')"
-            >立即创建</el-button
-          >
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
-        </el-form-item>
+        <div class="bottom_button_a">
+          <el-button size="small" type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+          <el-button size="small" @click="resetForm('ruleForm')">重置</el-button>
+        </div>
       </el-form>
     </div>
     <created-api :drawerProps="drawerIsshow" @showChange='showChange'></created-api>
@@ -75,7 +83,7 @@ export default {
     };
   },
   methods: {
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert("submit!");
@@ -97,23 +105,4 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-.createdNewedition {
-  margin-top: 10px;
-  width: 500px;
-  .selectCss {
-    display: block;
-    // vertical-align: middle;
-    ::v-deep .el-input__suffix {
-      height: 36px !important;
-      top: 36px;
-    }
-  }
-  .goCreate {
-    position: absolute;
-    top: 35px;
-    right: -140px;
-    cursor: pointer;
-    color: #2650ff;
-  }
-}
 </style>

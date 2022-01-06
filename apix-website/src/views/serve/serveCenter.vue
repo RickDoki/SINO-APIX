@@ -29,9 +29,9 @@
         <el-table-column prop="appCode" label="版本" />
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+            <el-button type="text" @click="goserveDteail(scope.row)">查看</el-button>
             <span class="handle">|</span>
-            <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
+            <el-button type="text" @click="goserveDteail(scope.row)">退订</el-button>
           </template>
         </el-table-column>
       </el-table>

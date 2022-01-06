@@ -7,9 +7,7 @@
       </el-steps>
     </div> -->
     <div class="list_top">
-      <div class="list_title">
-        <div class="titleFont">创建上游服务</div>
-      </div>
+      <div class="list_title">创建上游服务</div>
     </div>
     <div class="formBox">
         <el-form ref="form" :model="form" :rules="rules" label-width="130px" label-position="top" size="small">
@@ -256,7 +254,7 @@
         <!-- <el-button @click="step" :disabled="active == 0">上一步</el-button>
         <el-button @click="next" v-if="active == 0">下一步</el-button>
         <el-button type="primary" @click="onSubmit" style="background-color: #2650FF;" v-else>提交</el-button> -->
-        <div class="bottom_button">
+        <div class="bottom_button_a">
           <el-button size="small" @click="goBack">取消</el-button>
           <el-button size="small" type="primary" @click="submitForm('form')">提交</el-button>
         </div>
