@@ -2,6 +2,7 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.GzipGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.utils.GzipUtil;
@@ -82,6 +83,11 @@ public class GzipGatewayFilterFactory extends BaseGatewayFilter<Config> {
             return chain.filter(exchange.mutate().response(gzipResponse).build());
         }
         return chain.filter(exchange);
+    }
+
+    @Override
+    public int setOrder() {
+        return FilterOrderEnum.C_GZIP.getOrder();
     }
 
     @Data

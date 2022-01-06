@@ -3,6 +3,7 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.enums.ResultEnum;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.BlacklistIpGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
@@ -42,6 +43,11 @@ public class BlacklistIpGatewayFilterFactory extends BaseGatewayFilter<Config> {
             return HttpUtil.successResponse(exchange, ResultEnum.BLACKLIST_IP, requestIp);
         }
         return chain.filter(exchange);
+    }
+
+    @Override
+    public int setOrder() {
+        return FilterOrderEnum.C_BLACK_LIST_IP.getOrder();
     }
 
     @Data

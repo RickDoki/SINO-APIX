@@ -64,6 +64,6 @@ public class SafeControlGlobalFilter implements GlobalFilter, Ordered {
      */
     @Override
     public int getOrder() {
-        return FilterOrderEnum.SAFE_CONTROL.getOrder();
+        return FilterOrderEnum.G_SAFE_CONTROL.getOrder();
     }
 }

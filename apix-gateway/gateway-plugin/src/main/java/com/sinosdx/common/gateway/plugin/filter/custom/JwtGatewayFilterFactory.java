@@ -5,6 +5,7 @@ import com.auth0.jwt.interfaces.Claim;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.JwtGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
@@ -65,6 +66,11 @@ public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
             }
         }
         return chain.filter(exchange);
+    }
+
+    @Override
+    public int setOrder() {
+        return FilterOrderEnum.C_JWT.getOrder();
     }
 
     @Data

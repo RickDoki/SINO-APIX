@@ -6,6 +6,7 @@ import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.AuthorizeGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.service.AuthenticationServiceFeign;
@@ -103,6 +104,11 @@ public class AuthorizeGatewayFilterFactory extends BaseGatewayFilter<Config> {
             }
         }
         return chain.filter(exchange);
+    }
+
+    @Override
+    public int setOrder() {
+        return FilterOrderEnum.C_AUTHORIZE.getOrder();
     }
 
     @Data

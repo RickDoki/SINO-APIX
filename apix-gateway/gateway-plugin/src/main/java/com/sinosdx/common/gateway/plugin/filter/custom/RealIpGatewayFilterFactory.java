@@ -4,6 +4,7 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.RealIpGatewayFilterFactory.Config;
 import java.net.InetSocketAddress;
@@ -66,6 +67,11 @@ public class RealIpGatewayFilterFactory extends BaseGatewayFilter<Config> {
                 .header(GatewayConstants.REAL_IP, req.getHeaders().getFirst(HeaderConstant.IP))
                 .build();
         return chain.filter(exchange.mutate().request(req).build());
+    }
+
+    @Override
+    public int setOrder() {
+        return FilterOrderEnum.C_REAL_IP.getOrder();
     }
 
     @Data

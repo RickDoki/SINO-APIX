@@ -42,7 +42,7 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return FilterOrderEnum.REQUEST_LOG.getOrder();
+        return FilterOrderEnum.G_REQUEST_LOG.getOrder();
     }
 
     @Override
@@ -60,12 +60,12 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
         if (WEBSOCKET.equalsIgnoreCase(upgrade)) {
             return chain.filter(exchange);
         }
-        HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
+//        HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
         Integer statusCode = exchange.getResponse().getRawStatusCode() == null ? 0 : exchange.getResponse().getRawStatusCode();
         GatewayLogDTO gatewayLog = new GatewayLogDTO();
-        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
+//        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
         gatewayLog.setStatusCode(statusCode);
-        SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(gatewayLog.getType(),gatewayLog);
+        SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
         return chain.filter(exchange);
     }
 }

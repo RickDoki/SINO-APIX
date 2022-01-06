@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.base.constants.AppConstant;
 import com.sinosdx.common.base.constants.HeaderConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.utils.ReactiveAddrUtil;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -31,7 +32,7 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -200;
+        return FilterOrderEnum.G_BASE.getOrder();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.sinosdx.common.gateway.plugin.filter.global;
 
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -25,6 +26,6 @@ public class AfterGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Integer.MAX_VALUE;
+        return FilterOrderEnum.G_AFTER.getOrder();
     }
 }
