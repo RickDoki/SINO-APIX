@@ -1,6 +1,5 @@
 package com.sinosdx.common.gateway.plugin.filter.global;
 
-import cn.hutool.core.lang.UUID;
 import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.base.constants.AppConstant;
 import com.sinosdx.common.base.constants.HeaderConstant;
@@ -32,7 +31,7 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -100;
+        return -200;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
             return Mono.empty();
         }
         String uri = req.getURI().getHost();
-        final String traceId = UUID.randomUUID().toString();
+        final String traceId = req.getId();
         final String requestIp = ReactiveAddrUtil.getRemoteAddr(req);
         String startTime = String.valueOf(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
         String env = uri.contains(AppConstant.SAND_BOX) ? AppConstant.SAND_BOX : AppConstant.PRO_CODE;

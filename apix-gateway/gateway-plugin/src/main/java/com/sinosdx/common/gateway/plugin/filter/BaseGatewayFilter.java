@@ -43,6 +43,7 @@ import reactor.core.publisher.Mono;
 @Getter
 public abstract class BaseGatewayFilter<C extends BaseConfig> extends AbstractGatewayFilterFactory<C> {
 
+    public static final int ZERO = 0;
     private Class<C> configClass;
 
     protected BaseGatewayFilter(Class<C> configClass) {
@@ -65,12 +66,12 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends AbstractGa
      * @return
      */
     public int setOrder() {
-        return -2;
+        return ZERO;
     }
 
     @Override
     public GatewayFilter apply(C config) {
-        return new CustomFilter(config, setOrder());
+        return new CustomFilter(config, setOrder(), this.getClass().getSimpleName());
     }
 
     /**
@@ -80,10 +81,12 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends AbstractGa
 
         private C config;
         private int order;
+        private String customFilterName;
 
-        public CustomFilter(C config, int order) {
+        public CustomFilter(C config, int order, String customFilterName) {
             this.config = config;
             this.order = order;
+            this.customFilterName = customFilterName;
         }
 
         @Override
@@ -92,7 +95,7 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends AbstractGa
             if (!checkAuthVerifyExclude(config, path)) {
                 String requestNo = exchange.getRequest().getHeaders().getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
                 LogUtil.debug(log, "requestId【{}】processed by【{}】custom filter,config:{}",
-                        requestNo, this.getClass().getSimpleName(), JSON.toJSONString(config));
+                        requestNo, customFilterName, JSON.toJSONString(config));
                 return customApply(exchange, chain, config);
             }
             return chain.filter(exchange);

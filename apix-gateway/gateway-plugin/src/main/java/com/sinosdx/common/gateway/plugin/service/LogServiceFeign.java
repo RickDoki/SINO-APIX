@@ -15,7 +15,7 @@ import java.util.Map;
 @FeignClient(value = "service-support-log")
 public interface LogServiceFeign {
 
-    @PostMapping(value = "/log/common/analysis",consumes = "text/html;charset=UTF-8")
+    @PostMapping(value = "/gateway/log/analysis",consumes = "text/html;charset=UTF-8")
     R<Object> analysisGatewayLogSave(@RequestBody String log);
     /**
      * 根据type保存log 日志

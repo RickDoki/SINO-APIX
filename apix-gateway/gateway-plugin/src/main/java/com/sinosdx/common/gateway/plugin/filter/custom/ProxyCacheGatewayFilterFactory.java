@@ -83,7 +83,7 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
     }
 
     /**
-     * 注意，顺序要小于-1，否则无法进入getResponseDecorator，因为默认的NettyResponseDecorator是-1
+     * 注意，顺序要小于-1，须要先于NettyWriteResponseFilter过滤器执行，否则无法进入getResponse
      *
      * @return
      */
