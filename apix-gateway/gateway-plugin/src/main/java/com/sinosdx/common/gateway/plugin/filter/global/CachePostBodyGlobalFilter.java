@@ -35,7 +35,7 @@ public class CachePostBodyGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return FilterOrderEnum.CACHE_POST_BODY.getOrder();
+        return FilterOrderEnum.G_CACHE_POST_BODY.getOrder();
     }
 
     @Override

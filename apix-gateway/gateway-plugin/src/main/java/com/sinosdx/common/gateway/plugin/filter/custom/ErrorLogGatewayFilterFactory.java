@@ -6,10 +6,17 @@ import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.entity.ResponseInfo;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -24,13 +31,6 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * 防重放攻击
@@ -81,6 +81,11 @@ public class ErrorLogGatewayFilterFactory extends BaseGatewayFilter<ErrorLogGate
             }
         };
         return chain.filter(exchange.mutate().response(HttpUtil.getResponse(exchange, consumer)).build());
+    }
+
+    @Override
+    public int setOrder() {
+        return FilterOrderEnum.C_ERROR_LOG.getOrder();
     }
 
     @Data

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.enums.FilterResultCodeEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.SignAuthGatewayFilterFactory.Config;
@@ -115,6 +116,11 @@ public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
             return;
         }
         HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(ResultCodeEnum.SIGN_ERROR));
+    }
+
+    @Override
+    public int setOrder() {
+        return FilterOrderEnum.C_SIGN.getOrder();
     }
 
     @Data

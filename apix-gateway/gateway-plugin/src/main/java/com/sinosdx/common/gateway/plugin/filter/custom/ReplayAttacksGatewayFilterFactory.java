@@ -4,11 +4,11 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 import cn.hutool.core.date.DateTime;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.enums.FilterResultCodeEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.ReplayAttacksGatewayFilterFactory.Config;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
-
 import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -85,6 +85,11 @@ public class ReplayAttacksGatewayFilterFactory extends BaseGatewayFilter<Config>
 //                    R.fail(FilterResultCodeEnum.NONCE_EMPTY));
 //        }
         return chain.filter(exchange);
+    }
+
+    @Override
+    public int setOrder() {
+        return FilterOrderEnum.C_REPLAY_ATTACKS.getOrder();
     }
 
     @Data

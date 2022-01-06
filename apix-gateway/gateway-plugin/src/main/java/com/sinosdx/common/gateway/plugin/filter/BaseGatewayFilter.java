@@ -4,6 +4,7 @@ package com.sinosdx.common.gateway.plugin.filter;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.base.constants.HeaderConstant;
+import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.entity.RequestInfo;
 import com.sinosdx.common.toolkit.common.LogUtil;
@@ -91,11 +92,12 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends AbstractGa
 
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-            String path = exchange.getRequest().getURI().toString().toLowerCase();
+            HttpHeaders headers = exchange.getRequest().getHeaders();
+            String path = headers.getFirst(GatewayConstants.PATH);
             if (!checkAuthVerifyExclude(config, path)) {
-                String requestNo = exchange.getRequest().getHeaders().getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
-                LogUtil.debug(log, "requestId【{}】processed by【{}】custom filter,config:{}",
-                        requestNo, customFilterName, JSON.toJSONString(config));
+                String requestNo = headers.getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
+                LogUtil.debug(log, "url【{}】requestId【{}】processed by【{}】custom filter,config:{}",
+                        path, requestNo, customFilterName, JSON.toJSONString(config));
                 return customApply(exchange, chain, config);
             }
             return chain.filter(exchange);

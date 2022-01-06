@@ -48,7 +48,7 @@ public class GrayLoadBalancerClientGlobalFilter implements GlobalFilter, Ordered
     @Override
     public int getOrder() {
         //顺序不能低于以下值，否则会获取不到url值
-        return FilterOrderEnum.GRAY_LOAD_BALANCER.getOrder();
+        return FilterOrderEnum.G_GRAY_LOAD_BALANCER.getOrder();
     }
 
     @Override

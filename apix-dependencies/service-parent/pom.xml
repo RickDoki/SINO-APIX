@@ -17,6 +17,10 @@
     该模块继承自parent，微服务所常用的sinosdx-cloud框架组件依赖。
   </description>
 
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>com.sinosdx.cloud</groupId>

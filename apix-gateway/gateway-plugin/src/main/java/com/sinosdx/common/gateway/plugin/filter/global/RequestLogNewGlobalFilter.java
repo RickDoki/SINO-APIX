@@ -42,7 +42,7 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return FilterOrderEnum.REQUEST_LOG.getOrder();
+        return FilterOrderEnum.G_REQUEST_LOG.getOrder();
     }
 
     @Override

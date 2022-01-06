@@ -6,6 +6,7 @@ import com.sinosdx.common.gateway.constants.CacheConstant;
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.entity.ResponseInfo;
+import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.enums.HitStatusEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.ProxyCacheGatewayFilterFactory.Config;
@@ -89,7 +90,7 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
      */
     @Override
     public int setOrder() {
-        return -100;
+        return FilterOrderEnum.C_PROXY_CACHE.getOrder();
     }
 
     @Data

@@ -25,7 +25,7 @@ public class RequestPrintGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return FilterOrderEnum.REQUEST_PRINT.getOrder();
+        return FilterOrderEnum.G_REQUEST_PRINT.getOrder();
     }
 
     @Override
