@@ -3,6 +3,7 @@ package com.sinosdx.common.gateway.plugin.filter.custom;
 
 import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.interfaces.Claim;
+import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
@@ -47,8 +48,8 @@ import reactor.core.publisher.Mono;
 @Component
 public class AuthorizeGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
-    @Autowired
-    private AuthenticationServiceFeign authenticationService;
+//    @Autowired
+//    private AuthenticationServiceFeign authenticationService;
 
     @Autowired
     private ExecutorService executorService;
@@ -71,7 +72,7 @@ public class AuthorizeGatewayFilterFactory extends BaseGatewayFilter<Config> {
         }
 
         R<Object> result;
-
+        AuthenticationServiceFeign authenticationService = SpringContextHolder.getBean(AuthenticationServiceFeign.class);
         // 验证中台jwt
         if (StringUtils.isNotEmpty(token)) {
             String realToken = token.substring(AuthConstant.AUTH_HEADER_PREFIX.length());

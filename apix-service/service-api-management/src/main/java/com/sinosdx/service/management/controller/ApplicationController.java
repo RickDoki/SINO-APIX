@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVo;
@@ -444,7 +445,31 @@ public class ApplicationController {
      * @return
      */
     @PostMapping("/plugin")
-    public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
+    public R<Object> addAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
         return applicationService.addAppPlugin(applicationPlugin);
+    }
+
+    /**
+     * 修改服务插件
+     *
+     * @param applicationPlugin
+     * @return
+     */
+    @PutMapping("/plugin")
+    public R<Object> updateAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
+        return applicationService.updateAppPlugin(applicationPlugin);
+    }
+
+    /**
+     * 查询服务插件的配置参数
+     *
+     * @param pluginType
+     * @param appCode
+     * @return
+     */
+    @GetMapping("/plugin/configs")
+    public R<JSONObject> queryPluginConfigs(@RequestParam String pluginType,
+                                            @RequestParam String appCode) {
+        return applicationService.queryPluginConfigs(pluginType, appCode);
     }
 }

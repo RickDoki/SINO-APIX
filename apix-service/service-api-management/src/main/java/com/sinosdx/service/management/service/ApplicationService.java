@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.ApplicationNumVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
@@ -266,4 +267,13 @@ public interface ApplicationService {
      * @return
      */
     R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin);
+
+    /**
+     * 查询服务插件的配置参数
+     *
+     * @param pluginType
+     * @param appCode
+     * @return
+     */
+    R<JSONObject> queryPluginConfigs(String pluginType, String appCode);
 }

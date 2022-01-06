@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sinosdx.service.management.constants.Constants;
-import com.sinosdx.service.management.consumer.GatewayServiceFeign;
-import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
-import com.sinosdx.service.management.consumer.OmpServiceFeign;
-import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.consumer.*;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.*;
 import com.sinosdx.service.management.dao.entity.*;
@@ -95,6 +92,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Resource
     private ApplicationPluginClientMapper applicationPluginClientMapper;
+
+    @Autowired
+    private TokenServiceFeign tokenService;
 
     @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
@@ -793,23 +793,31 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (StringUtils.isNotEmpty(appPlugin.getPluginParams())) {
                 paramJson = JSONObject.parseObject(appPlugin.getPluginParams());
             }
-            ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
+            String secretKey = UUID.randomUUID().toString().split("-")[0];
+            ClientAppSecret secret = ClientAppSecret.builder()
+                    .appCode(appPlugin.getAppCode())
+                    .clientId(sysClient.getId())
+                    .build();
+            if ("user".equals(sysClient.getResourceType())) {
+                secret.setUserId(sysClient.getResourceId());
+            }
             // jwt插件
             if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
-                paramJson.put("secretKey", UUID.randomUUID().toString());
+                paramJson.put("secretKey", secretKey);
+                secret.setSecretKey(secretKey);
             }
             // oauth2插件
             else if (appPlugin.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
-                String clientId = UUID.randomUUID().toString().split("-")[0];
-                String clientSecret = MD5Util.getMD5(clientId);
-                paramJson.put("clientId", clientId);
+                String clientSecret = MD5Util.getMD5(secretKey);
+                paramJson.put("clientId", secretKey);
                 paramJson.put("clientSecret", clientSecret);
+                secret.setSecretKey(clientSecret);
 
                 // 插入OAuth2认证客户端信息
-                OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(clientId).getData();
+                OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(secretKey).getData();
                 if (null == oldClient) {
                     OauthClientDetails oauthClientDetails = new OauthClientDetails();
-                    oauthClientDetails.setClientId(clientId);
+                    oauthClientDetails.setClientId(secretKey);
                     oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
                     oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
                     oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
@@ -820,13 +828,18 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
             // base_auth插件
             else if (appPlugin.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
-                String username = UUID.randomUUID().toString().split("-")[0];
-                paramJson.put("username", username);
-                paramJson.put("password", MD5Util.getMD5(username));
+                String md5 = MD5Util.getMD5(secretKey);
+                paramJson.put("username", secretKey);
+                paramJson.put("password", md5);
+                secret.setSecretKey(md5);
             } else {
                 continue;
             }
 
+            // 保存客户端获取token的secretKey
+            tokenService.saveClientAppSecretKey(secret);
+
+            ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
             appPluginClient.setAppPluginId(appPlugin.getId());
             appPluginClient.setSysClientId(sysClient.getId());
             appPluginClient.setPluginType(appPlugin.getPluginType());
@@ -1287,5 +1300,25 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationPluginMapper.updateById(applicationPlugin);
 
         return R.success();
+    }
+
+    /**
+     * 查询服务插件的配置参数
+     *
+     * @param pluginType
+     * @param appCode
+     * @return
+     */
+    @Override
+    public R<JSONObject> queryPluginConfigs(String pluginType, String appCode) {
+        ApplicationPlugin appPlugin = applicationPluginMapper.selectOne(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppCode, appCode)
+                .eq(ApplicationPlugin::getPluginType, pluginType)
+                .eq(ApplicationPlugin::getDelFlag, 0));
+        if (null == appPlugin) {
+            return R.fail(ResultCodeEnum.RESULT_DATA_NONE);
+        }
+        JSONObject configJson = JSONObject.parseObject(appPlugin.getPluginParams());
+        return R.success(configJson);
     }
 }

@@ -49,7 +49,7 @@ public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
         R<Object> result;
 
-        // 验证csp2.0jwt
+        // jwt校验
         if (StringUtils.isNotEmpty(jwt)) {
             try {
                 Map<String, Claim> verifyJwt = JwtUtil.verifyJwt(null, jwt);
@@ -64,6 +64,10 @@ public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
                 result = R.fail(ResultCodeEnum.TOKEN_ERROR);
                 return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
             }
+        } else {
+            log.error("token为空");
+            result = R.fail(ResultCodeEnum.TOKEN_ERROR);
+            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
         }
         return chain.filter(exchange);
     }
