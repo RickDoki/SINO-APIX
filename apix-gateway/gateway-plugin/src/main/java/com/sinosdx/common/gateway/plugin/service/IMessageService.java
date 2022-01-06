@@ -19,7 +19,7 @@ public interface IMessageService {
      */
     void saveLog(ServerWebExchange exchange, GatewayLogDTO gatewayLog);
 
-    void saveAnalysisLog(GatewayLogDTO gatewayLog);
+    void saveAnalysisLog(String logType,GatewayLogDTO gatewayLog);
 
     void saveLog(String logType,GatewayLogDTO gatewayLog);
 }
