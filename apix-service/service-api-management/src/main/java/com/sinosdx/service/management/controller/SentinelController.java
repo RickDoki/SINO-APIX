@@ -20,6 +20,11 @@ public class SentinelController {
     @Autowired
     private SentinelProvider service;
 
+    /**
+     * 保存限流规则
+     * @param list
+     * @return
+     */
     @PostMapping("/save")
     public R save(@RequestBody List<LimitInfo> list){
         String save = service.save(list);
@@ -29,20 +34,34 @@ public class SentinelController {
         return R.fail(save);
     }
 
-    @GetMapping("/list")
+    /**
+     * 查询所有的限流规则
+     * @return
+     */
+    @GetMapping("/listRule")
     public R getRules(){
         return R.success(service.getRules());
     }
 
+    /**
+     * 根据appId 查询限流规则
+     * @param appId
+     * @return
+     */
+    @GetMapping("/appRule")
+    public R getAppRules(@RequestParam("appId") String appId){
+        return R.success(service.getAppRules(appId));
+    }
+
     @PostMapping("/open")
-    public R open(@RequestParam("code") String code){
-        service.open(code);
+    public R open(@RequestParam("appId") String appId){
+        service.open(appId);
         return R.success();
     }
 
     @PostMapping("/close")
-    public R close(@RequestParam("code") String code){
-        service.close(code);
+    public R close(@RequestParam("appId") String appId){
+        service.close(appId);
         return R.success();
     }
 }

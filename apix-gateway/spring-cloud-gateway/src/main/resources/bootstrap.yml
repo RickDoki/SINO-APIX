@@ -48,7 +48,7 @@ spring:
       filter:
         enabled: false
       transport:
-        # dashboard: 127.0.0.1:8080
+#        dashboard: 127.0.0.1:8080
         port: 8700
       datasource:
         ds1:
@@ -69,6 +69,7 @@ spring:
             username: '@nacos.username@'
             password: '@nacos.password@'
             namespace: '@nacos.config.namespace@'
+      eager: true
   main:
     allow-bean-definition-overriding: true
   profiles:
