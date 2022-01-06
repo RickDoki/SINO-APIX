@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class GatewayApplication {
 
     public static void main(String[] args) {
+//        System.setProperty("csp.sentinel.app.type", "1");//dashboard监控用
         SpringApplication springApplication = new SpringApplication(GatewayApplication.class);
         springApplication.addListeners(new ApplicationListenerStarted());
         springApplication.run(args);

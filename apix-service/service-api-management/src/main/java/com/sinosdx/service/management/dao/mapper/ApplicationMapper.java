@@ -64,4 +64,18 @@ public interface ApplicationMapper extends BaseMapper<Application> {
      */
     List<Application> querySubscribeCurrentAppList(@Param(value = "appCode") String appCode,
                                                    @Param("userIdList") List<Integer> userIdList);
+
+    /**
+     * 根据appId查询api列表
+     * @param appId
+     * @return
+     */
+    List<Map<String, String>> queryApiByAppId(@Param(value = "appId") String appId);
+
+    /**
+     * 根据appId查询订阅者code
+     * @param appId
+     * @return
+     */
+    List<String> querySubscribeCodeByAppId(@Param(value = "appId") String appId);
 }
