@@ -64,7 +64,7 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
         GatewayLogDTO gatewayLog = new GatewayLogDTO();
         gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
         gatewayLog.setStatusCode(statusCode);
-        SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(gatewayLog);
+        SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(gatewayLog.getType(),gatewayLog);
         return chain.filter(exchange);
     }
 }
