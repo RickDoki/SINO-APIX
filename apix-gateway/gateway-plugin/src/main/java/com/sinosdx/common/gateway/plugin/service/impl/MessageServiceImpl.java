@@ -42,7 +42,7 @@ public class MessageServiceImpl implements IMessageService {
         log.debug("send gatewayLog:{}", JSON.toJSONString(gatewayLogDTO));
         //streamBridge.send(GatewayConstants.LOG_TOPIC, gatewayLogDTO);
     }
-
+    @Async
     @Override
     public void saveAnalysisLog(String logType,GatewayLogDTO gatewayLog) {
 //        SpringContextHolder.getBean(LogServiceFeign.class).analysisGatewayLogSave(JSON.toJSONString(gatewayLog));
@@ -53,7 +53,7 @@ public class MessageServiceImpl implements IMessageService {
             logService.saveLog(logType,s);
         }
     }
-
+    @Async
     @Override
     public void saveLog(String logType,GatewayLogDTO gatewayLog) {
         String s = JSON.toJSONString(gatewayLog);
