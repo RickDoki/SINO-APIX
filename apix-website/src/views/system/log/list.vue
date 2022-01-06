@@ -10,21 +10,30 @@
                   class="list_searchInput" placeholder="请输入资源名称"
                   @change="getLogList"></el-input>
         <el-date-picker
-          v-model="search.startTime"
-          type="datetimerange"
-          class="list_searchInput_date"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          size="small"
-          @change="getLogList()"
+          class="list_searchInput"
+          :picker-options="startTime"
           value-format="timestamp"
-          :default-time="['00:00:00', '23:59:59']"
-        />
+          size="small"
+          @change="getLogList"
+          v-model="search.startTime"
+          type="datetime"
+          placeholder="选择开始时间">
+        </el-date-picker>
+        <el-date-picker
+          class="list_searchInput"
+          :picker-options="endTime"
+          value-format="timestamp"
+          size="small"
+          @change="getLogList"
+          v-model="search.endTime"
+          type="datetime"
+          placeholder="选择结束时间"
+          default-time="23:59:59">
+        </el-date-picker>
       </div>
     </div>
     <div class="table_box">
-      <el-table 
+      <el-table
         :data="tableData" :row-style="{height: '50px'}" highlight-current-row
         :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
         <el-table-column prop="username" label="用户"/>
@@ -71,7 +80,7 @@
 </template>
 
 <script>
-import { getLogList } from '@/api/data'
+import {getLogList} from '@/api/data'
 import jsonView from "@/components/json-view/index.vue";
 import "../../mainCss/index.scss";
 
@@ -79,7 +88,7 @@ export default {
   components: {
     jsonView
   },
-  data () {
+  data() {
     return {
       startTime: {
         disabledDate: time => {
@@ -120,12 +129,12 @@ export default {
       }]
     }
   },
-  created () {
+  created() {
     this.getLogList()
   },
   methods: {
     // 获取列表
-    getLogList () {
+    getLogList() {
       let params = `?offset=${this.offset}&limit=${this.limit}`
       if (this.search.username) {
         params += `&username=${this.search.username}`
@@ -153,17 +162,17 @@ export default {
       })
     },
     // 查看详情
-    detail (row) {
+    detail(row) {
       // 打开抽屉
       this.drawer = true
       this.infoObj = row
     },
     // 关闭抽屉
-    handleClose (done) {
+    handleClose(done) {
       this.drawer = false
     },
     // 重置搜索条件
-    resetSearch () {
+    resetSearch() {
       this.search = {
         username: '',
         userId: '',
@@ -174,11 +183,9 @@ export default {
       }
       this.getLogList()
     },
-    handleSizeChange (val) {
-      console.log(`每页 ${val} 条`)
-    },
-    handleCurrentChange (val) {
-      console.log(`当前页: ${val}`)
+    handleCurrentChange(val) {
+      this.offset = val
+      this.getLogList()
     }
   }
 }
