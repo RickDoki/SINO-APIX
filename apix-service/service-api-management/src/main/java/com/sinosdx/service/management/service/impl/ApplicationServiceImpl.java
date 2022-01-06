@@ -6,10 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sinosdx.common.base.base.entity.Entity;
 import com.sinosdx.service.management.constants.Constants;
-import com.sinosdx.service.management.consumer.GatewayServiceFeign;
-import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
-import com.sinosdx.service.management.consumer.OmpServiceFeign;
-import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.consumer.*;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
 import com.sinosdx.service.management.controller.vo.*;
@@ -98,6 +95,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Resource
     private ApplicationPluginClientMapper applicationPluginClientMapper;
+
+    @Autowired
+    private TokenServiceFeign tokenService;
 
     @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
@@ -250,10 +250,10 @@ public class ApplicationServiceImpl implements ApplicationService {
             appDetailMap.put("appLastUpdateUser", "-");
         }
 
-//        if (null != developerId) {
-//            List<Map<String, Object>> usingAppList = applicationMapper.queryUsingAppList(appCode);
-//            appDetailMap.put("usingAppList", usingAppList);
-//        }
+        //        if (null != developerId) {
+        //            List<Map<String, Object>> usingAppList = applicationMapper.queryUsingAppList(appCode);
+        //            appDetailMap.put("usingAppList", usingAppList);
+        //        }
         Integer clientId = null;
         if (null != developerId) {
             clientId = ((SysClient) sysUserService.queryClientByUserId(developerId).getData()).getId();
@@ -359,19 +359,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional(rollbackFor = Exception.class)
     public R<Object> deleteApplication(String appCode) {
         // 判断应用是否绑定了其他服务
-//        Long count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
-//                .eq("app_lessee_code", appCode).or().eq("app_lessor_code", appCode).eq("del_flag", 0));
-//        if (count > 0) {
-//            return R.fail(ResultCodeEnum.APP_BE_USED_OR_USING_OTHER_APP);
-//        }
+        //        Long count = applicationLeaseMapper.selectCount(new QueryWrapper<ApplicationLease>()
+        //                .eq("app_lessee_code", appCode).or().eq("app_lessor_code", appCode).eq("del_flag", 0));
+        //        if (count > 0) {
+        //            return R.fail(ResultCodeEnum.APP_BE_USED_OR_USING_OTHER_APP);
+        //        }
         // 删除应用
         applicationMapper.delete(new QueryWrapper<Application>().eq("code", appCode));
         // 删除应用版本
         applicationVersionMapper.delete(new QueryWrapper<ApplicationVersion>().eq("app_code", appCode));
         // 删除版本api关联
         applicationApiMapper.delete(new QueryWrapper<ApplicationApi>().eq("app_code", appCode));
-//        // 删除所有开发者
-//        applicationDeveloperMapper.delete(new QueryWrapper<ApplicationDeveloper>().eq("app_code", appCode));
+        //        // 删除所有开发者
+        //        applicationDeveloperMapper.delete(new QueryWrapper<ApplicationDeveloper>().eq("app_code", appCode));
 
         // 刪除订阅关系 sms
         applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
@@ -842,23 +842,31 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (StringUtils.isNotEmpty(appPlugin.getPluginParams())) {
                 paramJson = JSONObject.parseObject(appPlugin.getPluginParams());
             }
-            ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
+            String secretKey = UUID.randomUUID().toString().split("-")[0];
+            ClientAppSecret secret = ClientAppSecret.builder()
+                    .appCode(appPlugin.getAppCode())
+                    .clientId(sysClient.getId())
+                    .build();
+            if ("user".equals(sysClient.getResourceType())) {
+                secret.setUserId(sysClient.getResourceId());
+            }
             // jwt插件
             if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
-                paramJson.put("secretKey", UUID.randomUUID().toString());
+                paramJson.put("secretKey", secretKey);
+                secret.setSecretKey(secretKey);
             }
             // oauth2插件
             else if (appPlugin.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
-                String clientId = UUID.randomUUID().toString().split("-")[0];
-                String clientSecret = MD5Util.getMD5(clientId);
-                paramJson.put("clientId", clientId);
+                String clientSecret = MD5Util.getMD5(secretKey);
+                paramJson.put("clientId", secretKey);
                 paramJson.put("clientSecret", clientSecret);
+                secret.setSecretKey(clientSecret);
 
                 // 插入OAuth2认证客户端信息
-                OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(clientId).getData();
+                OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(secretKey).getData();
                 if (null == oldClient) {
                     OauthClientDetails oauthClientDetails = new OauthClientDetails();
-                    oauthClientDetails.setClientId(clientId);
+                    oauthClientDetails.setClientId(secretKey);
                     oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
                     oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
                     oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
@@ -869,13 +877,18 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
             // base_auth插件
             else if (appPlugin.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
-                String username = UUID.randomUUID().toString().split("-")[0];
-                paramJson.put("username", username);
-                paramJson.put("password", MD5Util.getMD5(username));
+                String md5 = MD5Util.getMD5(secretKey);
+                paramJson.put("username", secretKey);
+                paramJson.put("password", md5);
+                secret.setSecretKey(md5);
             } else {
                 continue;
             }
 
+            // 保存客户端获取token的secretKey
+            tokenService.saveClientAppSecretKey(secret);
+
+            ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
             appPluginClient.setAppPluginId(appPlugin.getId());
             appPluginClient.setSysClientId(sysClient.getId());
             appPluginClient.setPluginType(appPlugin.getPluginType());
@@ -1267,8 +1280,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         String urlCode = StringUtils.isEmpty(appDetailMap.get("productId").toString()) ? appDetailMap.get("appCode").toString() : appDetailMap.get("productId").toString();
         appDetailMap.put("gatewayDomain", gatewayDomain + "/" + urlCode);
-//        appDetailMap.put("clientId", oAuthInfo.get("clientId"));
-//        appDetailMap.put("clientSecret", oAuthInfo.get("clientSecret"));
+        //        appDetailMap.put("clientId", oAuthInfo.get("clientId"));
+        //        appDetailMap.put("clientSecret", oAuthInfo.get("clientSecret"));
         return R.success(appDetailMap);
     }
 
@@ -1403,7 +1416,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<Integer> changeUserIdsToClientIds(List<Integer> userIds) {
         // 根据userId 获取 对应的 clientIds
         List<Integer> clientIds = userIds.stream()
-//                .map(a -> ((SysClient) sysUserService.queryClientByUserId(a).getData()).getId())
+                //                .map(a -> ((SysClient) sysUserService.queryClientByUserId(a).getData()).getId())
                 .map(a -> {
                     Map sysClient = (Map) sysUserService.queryClientByUserId(a).getData();
 
@@ -1474,5 +1487,25 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .in(Api::getId, apiIds));
         ApplicationVersionDto applicationVersionDto = new ApplicationVersionDto().setApplicationVersion(applicationVersion).setApiList(apis);
         return R.success(applicationVersionDto);
+    }
+
+    /**
+     * 查询服务插件的配置参数
+     *
+     * @param pluginType
+     * @param appCode
+     * @return
+     */
+    @Override
+    public R<JSONObject> queryPluginConfigs(String pluginType, String appCode) {
+        ApplicationPlugin appPlugin = applicationPluginMapper.selectOne(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppCode, appCode)
+                .eq(ApplicationPlugin::getPluginType, pluginType)
+                .eq(ApplicationPlugin::getDelFlag, 0));
+        if (null == appPlugin) {
+            return R.fail(ResultCodeEnum.RESULT_DATA_NONE);
+        }
+        JSONObject configJson = JSONObject.parseObject(appPlugin.getPluginParams());
+        return R.success(configJson);
     }
 }

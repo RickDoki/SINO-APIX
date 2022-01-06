@@ -1,6 +1,7 @@
 package com.sinosdx.service.management.controller;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApplicationService;
@@ -26,7 +27,7 @@ public class AppPluginController {
      * @param applicationPlugin
      * @return
      */
-    @PostMapping("/create")
+    @PostMapping()
     public R<Object> addAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
         return applicationService.addAppPlugin(applicationPlugin);
     }
@@ -37,7 +38,7 @@ public class AppPluginController {
      * @param applicationPlugin
      * @return
      */
-    @PostMapping("/update")
+    @PutMapping()
     public R<Object> updateAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
         return applicationService.updateAppPlugin(applicationPlugin);
     }
@@ -52,5 +53,18 @@ public class AppPluginController {
     @GetMapping("/{pluginId}/{appCode}")
     public R<Object> getAppPlugin(@PathVariable(value = "pluginId") String pluginId, @PathVariable(value = "appCode") String appCode) {
         return applicationService.getAppPlugin(pluginId,appCode);
+    }
+
+    /**
+     * 查询服务插件的配置参数
+     *
+     * @param pluginType
+     * @param appCode
+     * @return
+     */
+    @GetMapping("/plugin/configs")
+    public R<JSONObject> queryPluginConfigs(@RequestParam String pluginType,
+                                            @RequestParam String appCode) {
+        return applicationService.queryPluginConfigs(pluginType, appCode);
     }
 }

@@ -1,5 +1,6 @@
 package com.sinosdx.service.authentication.consumer;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.service.authentication.dao.entity.Application;
 import com.sinosdx.service.authentication.result.R;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -32,4 +33,15 @@ public interface ApplicationServiceFeign {
      */
     @PostMapping("/app/lease/verify/{clientId}")
     R<Boolean> verifyClientId(@PathVariable("clientId") String clientId);
+
+    /**
+     * 查询服务插件的配置参数
+     *
+     * @param pluginType
+     * @param appCode
+     * @return
+     */
+    @GetMapping("/app/plugin/configs")
+    R<JSONObject> queryPluginConfigs(@RequestParam String pluginType,
+                                            @RequestParam String appCode);
 }

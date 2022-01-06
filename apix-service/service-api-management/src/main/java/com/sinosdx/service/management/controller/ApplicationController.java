@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVo;
@@ -471,4 +472,5 @@ public class ApplicationController {
     public R<Object> queryAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId) {
         return applicationService.queryAppVersion(appVersionId);
     }
+
 }

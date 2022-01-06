@@ -63,7 +63,6 @@ public class AuthorizeGatewayFilterFactory extends BaseGatewayFilter<Config> {
         }
 
         R<Object> result;
-
         // 验证中台jwt
         if (StringUtils.isNotEmpty(token)) {
             String realToken = token.substring(AuthConstant.AUTH_HEADER_PREFIX.length());
