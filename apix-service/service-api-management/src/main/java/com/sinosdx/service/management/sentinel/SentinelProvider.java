@@ -7,6 +7,7 @@ import com.sinosdx.service.management.sentinel.entity.LimitInfo;
 import com.sinosdx.service.management.sentinel.entity.RuleDefinitionEntity;
 import com.sinosdx.service.management.sentinel.process.ApiProcess;
 import com.sinosdx.service.management.sentinel.process.RuleProcess;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +20,10 @@ import java.util.Map;
 /**
  * @author shenjian
  * @create 2022-01-05 12:09
- * @Description
+ * @Description sentinel限流网关 push模式
  */
 @Component
+@Slf4j
 public class SentinelProvider {
 
     @Resource
@@ -37,6 +39,7 @@ public class SentinelProvider {
 
     /**
      * 刷新内存中的保存信息
+     * 直接从 nacos 修改限流信息后，需要调用这个方法刷新内存中的数据
      */
     public void refresh(){
         apiProcess.initApi();
@@ -101,7 +104,7 @@ public class SentinelProvider {
     }
 
     /**
-     * app的订阅者发生变动时调用
+     * app的订阅者发生变动时调用, 或者 app下的 api 数量发生变动时
      * @param appId
      */
     public String addOrRefreshApiGroup(String appId){//每次被订阅时，触发

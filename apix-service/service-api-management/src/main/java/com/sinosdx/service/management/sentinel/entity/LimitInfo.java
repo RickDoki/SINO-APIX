@@ -1,10 +1,19 @@
 package com.sinosdx.service.management.sentinel.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 /**
  * @author shenjian
  * @create 2021-12-31 11:27
  * @Description
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class LimitInfo {
 
     //限流类型 0-app 1-api
@@ -27,89 +36,6 @@ public class LimitInfo {
 
     //限流时间单位 0-秒 1-分 2-时 3-天
     private Integer intervalUnit;
-
-    public LimitInfo() {
-    }
-
-    public LimitInfo(/*Integer limitType,*/ String appId, /*String routeId,*/ String path, Integer count, Long interval, Integer intervalUnit) {
-//        this.limitType = limitType;
-        this.appId = appId;
-//        this.routeId = routeId;
-        this.path = path;
-        this.count = count;
-        this.interval = interval;
-        this.intervalUnit = intervalUnit;
-    }
-
-//    public Integer getLimitType() {
-//        return limitType;
-//    }
-//
-//    public void setLimitType(Integer limitType) {
-//        this.limitType = limitType;
-//    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-//    public String getRouteId() {
-//        return routeId;
-//    }
-
-//    public void setRouteId(String routeId) {
-//        this.routeId = routeId;
-//    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
-    }
-
-    public Long getInterval() {
-        return interval;
-    }
-
-    public void setInterval(Long interval) {
-        this.interval = interval;
-    }
-
-    public Integer getIntervalUnit() {
-        return intervalUnit;
-    }
-
-    public void setIntervalUnit(Integer intervalUnit) {
-        this.intervalUnit = intervalUnit;
-    }
-
-    @Override
-    public String toString() {
-        return "LimitInfo{" +
-//                "limitType='" + limitType + '\'' +
-                ", appId='" + appId + '\'' +
-//                ", routeId='" + routeId + '\'' +
-                ", path='" + path + '\'' +
-                ", count=" + count +
-                ", interval=" + interval +
-                ", intervalUnit=" + intervalUnit +
-                '}';
-    }
-
 
     public RuleDefinitionEntity generateRule(){
         RuleDefinitionEntity entity = new RuleDefinitionEntity();

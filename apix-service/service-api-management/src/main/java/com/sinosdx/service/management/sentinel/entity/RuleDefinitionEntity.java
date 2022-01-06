@@ -1,10 +1,19 @@
 package com.sinosdx.service.management.sentinel.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 /**
  * @author shenjian
  * @create 2021-12-30 15:39
  * @Description 根据app和 resource 确定唯一性
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class RuleDefinitionEntity {
 
     //app code
@@ -40,128 +49,4 @@ public class RuleDefinitionEntity {
     //匀速排队-最大时间/毫秒
     private Integer maxQueueingTimeoutMs;
 
-    public RuleDefinitionEntity() {
-    }
-
-    public RuleDefinitionEntity(String app, String resource, Integer count, Long intervalSec,
-                                Long interval, Integer intervalUnit, Integer resourceMode,
-                                Integer grade, Integer controlBehavior, Integer burst,
-                                Integer maxQueueingTimeoutMs) {
-        this.app = app;
-        this.resource = resource;
-        this.count = count;
-        this.intervalSec = intervalSec;
-        this.interval = interval;
-        this.intervalUnit = intervalUnit;
-        this.resourceMode = resourceMode;
-        this.grade = grade;
-        this.controlBehavior = controlBehavior;
-        this.burst = burst;
-        this.maxQueueingTimeoutMs = maxQueueingTimeoutMs;
-    }
-
-    public String getApp() {
-        return app;
-    }
-
-    public void setApp(String app) {
-        this.app = app;
-    }
-
-    public String getResource() {
-        return resource;
-    }
-
-    public void setResource(String resource) {
-        this.resource = resource;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
-    }
-
-    public Long getIntervalSec() {
-        return intervalSec;
-    }
-
-    public void setIntervalSec(Long intervalSec) {
-        this.intervalSec = intervalSec;
-    }
-
-    public Long getInterval() {
-        return interval;
-    }
-
-    public void setInterval(Long interval) {
-        this.interval = interval;
-    }
-
-    public Integer getIntervalUnit() {
-        return intervalUnit;
-    }
-
-    public void setIntervalUnit(Integer intervalUnit) {
-        this.intervalUnit = intervalUnit;
-    }
-
-    public Integer getResourceMode() {
-        return resourceMode;
-    }
-
-    public void setResourceMode(Integer resourceMode) {
-        this.resourceMode = resourceMode;
-    }
-
-    public Integer getGrade() {
-        return grade;
-    }
-
-    public void setGrade(Integer grade) {
-        this.grade = grade;
-    }
-
-    public Integer getControlBehavior() {
-        return controlBehavior;
-    }
-
-    public void setControlBehavior(Integer controlBehavior) {
-        this.controlBehavior = controlBehavior;
-    }
-
-    public Integer getBurst() {
-        return burst;
-    }
-
-    public void setBurst(Integer burst) {
-        this.burst = burst;
-    }
-
-    public Integer getMaxQueueingTimeoutMs() {
-        return maxQueueingTimeoutMs;
-    }
-
-    public void setMaxQueueingTimeoutMs(Integer maxQueueingTimeoutMs) {
-        this.maxQueueingTimeoutMs = maxQueueingTimeoutMs;
-    }
-
-    @Override
-    public String toString() {
-        return "GatewayLimitRule{" +
-                "app='" + app + '\'' +
-                ", resource='" + resource + '\'' +
-                ", count=" + count +
-                ", intervalSec=" + intervalSec +
-                ", interval=" + interval +
-                ", intervalUnit=" + intervalUnit +
-                ", resourceMode=" + resourceMode +
-                ", grade=" + grade +
-                ", controlBehavior=" + controlBehavior +
-                ", burst=" + burst +
-                ", maxQueueingTimeoutMs=" + maxQueueingTimeoutMs +
-                '}';
-    }
 }

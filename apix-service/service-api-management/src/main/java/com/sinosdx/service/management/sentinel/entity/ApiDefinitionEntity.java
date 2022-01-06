@@ -1,5 +1,10 @@
 package com.sinosdx.service.management.sentinel.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.util.Set;
 
 /**
@@ -7,6 +12,10 @@ import java.util.Set;
  * @create 2021-12-30 16:21
  * @Description  根据app code 和 路径名称确定
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class ApiDefinitionEntity {
     //app code
     private String app;
@@ -17,45 +26,4 @@ public class ApiDefinitionEntity {
     //保存具体的 api 信息
     private Set<ApiEntity> predicateItems;
 
-    public ApiDefinitionEntity() {
-    }
-
-    public ApiDefinitionEntity(String app, String apiName, Set<ApiEntity> predicateItems) {
-        this.app = app;
-        this.apiName = apiName;
-        this.predicateItems = predicateItems;
-    }
-
-    public String getApp() {
-        return app;
-    }
-
-    public void setApp(String app) {
-        this.app = app;
-    }
-
-    public String getApiName() {
-        return apiName;
-    }
-
-    public void setApiName(String apiName) {
-        this.apiName = apiName;
-    }
-
-    public Set<ApiEntity> getPredicateItems() {
-        return predicateItems;
-    }
-
-    public void setPredicateItems(Set<ApiEntity> predicateItems) {
-        this.predicateItems = predicateItems;
-    }
-
-    @Override
-    public String toString() {
-        return "GatewayApiDefinition{" +
-                "app='" + app + '\'' +
-                ", apiName='" + apiName + '\'' +
-                ", predicateItems=" + predicateItems +
-                '}';
-    }
 }
