@@ -60,10 +60,10 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
         if (WEBSOCKET.equalsIgnoreCase(upgrade)) {
             return chain.filter(exchange);
         }
-        HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
+//        HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
         Integer statusCode = exchange.getResponse().getRawStatusCode() == null ? 0 : exchange.getResponse().getRawStatusCode();
         GatewayLogDTO gatewayLog = new GatewayLogDTO();
-        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
+//        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
         gatewayLog.setStatusCode(statusCode);
         SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
         return chain.filter(exchange);

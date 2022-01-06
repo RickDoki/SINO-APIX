@@ -49,6 +49,7 @@ public class MessageServiceImpl implements IMessageService {
         LogEvent gatewayLogDTO = new LogEvent("gatewayLog",
                 LogUtil.buildLog(exchange, gatewayLog, serviceId));
         String s = JSON.toJSONString(gatewayLogDTO);
+        log.info("aaaaaaaaaaaaa=====> {}",s);
         logService.analysisGatewayLogSave(s);
         //保存审计日志
         if(AUDIT.equals(logType)){
