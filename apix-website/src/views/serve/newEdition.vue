@@ -28,7 +28,7 @@
             >
             </el-option>
           </el-select>
-          <span class="goCreate">还没有API?去创建>></span>
+          <span @click="createdApi" class="goCreate">还没有API?去创建>></span>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')"
@@ -38,14 +38,20 @@
         </el-form-item>
       </el-form>
     </div>
+    <created-api :drawerProps="drawerIsshow" @showChange='showChange'></created-api>
   </div>
 </template>
 
 <script>
 import "./../mainCss/index.scss";
+import createdApi from "./component/createdApi.vue";
 export default {
+  components: {
+    createdApi,
+  },
   data() {
     return {
+      drawerIsshow: false,
       ruleForm: {
         name: "",
         describe: "",
@@ -79,6 +85,13 @@ export default {
         }
       });
     },
+    createdApi() {
+      this.drawerIsshow = true
+    },
+    showChange() {
+      // console.log('change')
+      this.drawerIsshow = false
+    }
   },
 };
 </script>
@@ -100,7 +113,7 @@ export default {
     top: 35px;
     right: -140px;
     cursor: pointer;
-    color: #2650FF;
+    color: #2650ff;
   }
 }
 </style>

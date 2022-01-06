@@ -21,9 +21,7 @@
           <el-button type="primary" size="small">编辑文档</el-button>
         </div>
       </div>
-      <div class="secondTitle">
-        创建服务来管理和代理现有API或发布到门户。
-      </div>
+      <div class="secondTitle">创建服务来管理和代理现有API或发布到门户。</div>
       <div class="status">
         <div class="left-span">
           <span>使用状态:</span>
@@ -62,12 +60,21 @@
         <!-- <p>版本</p> -->
         <div class="serve-table">
           <div class="table-tile">版本</div>
-          <el-button plain type="primary" size="small" @click="gonewEdition" class="add-but">添加版本 </el-button>
+          <el-button
+            plain
+            type="primary"
+            size="small"
+            @click="gonewEdition"
+            class="add-but"
+            >添加版本
+          </el-button>
         </div>
         <el-table
           :data="table"
           empty-text="暂无数据"
-          :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, color:'#494E6A'}"
+          :row-style="{ height: '50px' }"
+          highlight-current-row
+          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -89,12 +96,21 @@
       <div class="table_box mode-margin">
         <div class="serve-table">
           <div class="table-tile">插件</div>
-          <el-button plain type="primary" size="small" class="add-but">添加插件 </el-button>
+          <el-button
+            plain
+            type="primary"
+            size="small"
+            class="add-but"
+            @click="goplugin"
+            >添加插件
+          </el-button>
         </div>
         <el-table
           :data="table"
           empty-text="暂无数据"
-          :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, color:'#494E6A'}"
+          :row-style="{ height: '50px' }"
+          highlight-current-row
+          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -120,7 +136,9 @@
         <el-table
           :data="table"
           empty-text="暂无数据"
-          :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, color:'#494E6A'}"
+          :row-style="{ height: '50px' }"
+          highlight-current-row
+          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -146,7 +164,9 @@
         <el-table
           :data="table"
           empty-text="暂无数据"
-          :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, color:'#494E6A'}"
+          :row-style="{ height: '50px' }"
+          highlight-current-row
+          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -173,13 +193,13 @@
 <script>
 import "./../mainCss/index.scss";
 export default {
-  data () {
+  data() {
     return {
       routerView: false,
       table: [],
     };
   },
-  created () {
+  created() {
     // console.log(this.$route);
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
@@ -188,8 +208,11 @@ export default {
     }
   },
   methods: {
-    gonewEdition () {
-      this.$router.push({ path: '/serve/newEdition' })
+    gonewEdition() {
+      this.$router.push({ path: "/serve/newEdition" });
+    },
+    goplugin() {
+      this.$router.push({ path: "/serve/serveDetail/plug-in" });
     },
   },
 };
