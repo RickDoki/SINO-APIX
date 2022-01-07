@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.consumer;
 
+import com.sinosdx.service.management.dao.entity.SysClient;
 import com.sinosdx.service.management.result.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,5 +62,5 @@ public interface SysUserServiceFeign {
      * @return
      */
     @GetMapping("/user/sys/client")
-    R<Object> queryClientByUserId(@RequestParam("sysUserId") Integer sysUserId);
+    R<SysClient> queryClientByUserId(@RequestParam("sysUserId") Integer sysUserId);
 }
