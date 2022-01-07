@@ -1,6 +1,7 @@
 package com.sinosdx.common.gateway.plugin.filter.global;
 
 import com.sinosdx.common.base.context.SpringContextHolder;
+import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGlobalFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
@@ -57,15 +58,11 @@ public class RequestLogNewGlobalFilter extends BaseGlobalFilter {
         if (WEBSOCKET.equalsIgnoreCase(upgrade)) {
             return chain.filter(exchange);
         }
-//        HttpHeaders httpHeaders = exchange.getResponse().getHeaders();
         Integer statusCode = exchange.getResponse().getRawStatusCode() == null ? 0 : exchange.getResponse().getRawStatusCode();
         GatewayLogDTO gatewayLog = new GatewayLogDTO();
-//        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
+        String appCode = request.getHeaders().getFirst(GatewayConstants.SERVICE_CODE);
+        gatewayLog.setAppCode(appCode);
         gatewayLog.setStatusCode(statusCode);
-//        String urlPath = request.getURI().getPath();
-//        String traceId = request.getId();
-//        String path = stringRedisTemplate.opsForValue().get(traceId);
-//        log.info("traceId ==> {},path==>{},==>{}",traceId,path,urlPath);
         SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
         return chain.filter(exchange);
     }

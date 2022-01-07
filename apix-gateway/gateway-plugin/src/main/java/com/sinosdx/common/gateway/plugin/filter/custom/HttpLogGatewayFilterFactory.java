@@ -73,6 +73,7 @@ public class HttpLogGatewayFilterFactory extends BaseGatewayFilter<HttpLogGatewa
         Consumer<ResponseInfo> consumer = x -> {
             if (200 == x.getStatusCode()) {
                 GatewayLogDTO gatewayLog = new GatewayLogDTO();
+                gatewayLog.setAppCode(request.getHeaders().getFirst(GatewayConstants.SERVICE_CODE));
                 gatewayLog.setParams(getRequestParams(exchange, request));
                 gatewayLog.setResponseHeaders(x.getHeaders());
                 gatewayLog.setStatusCode(x.getStatusCode());
