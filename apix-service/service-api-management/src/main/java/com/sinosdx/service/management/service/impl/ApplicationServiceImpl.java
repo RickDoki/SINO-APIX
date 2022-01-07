@@ -144,15 +144,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         applicationMapper.insert(application);
 
-        // 插入application_developer
-        ApplicationDeveloper applicationDeveloper = new ApplicationDeveloper();
-        applicationDeveloper.setAppId(application.getId());
-        applicationDeveloper.setAppCode(application.getCode());
-        applicationDeveloper.setIsCreator(true);
-        applicationDeveloper.setUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-        applicationDeveloper.setUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        applicationDeveloper.setPhone(ThreadContext.get(Constants.THREAD_CONTEXT_PHONE));
-        applicationDeveloperMapper.insert(applicationDeveloper);
+//        // 插入application_developer
+//        ApplicationDeveloper applicationDeveloper = new ApplicationDeveloper();
+//        applicationDeveloper.setAppId(application.getId());
+//        applicationDeveloper.setAppCode(application.getCode());
+//        applicationDeveloper.setIsCreator(true);
+//        applicationDeveloper.setUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+//        applicationDeveloper.setUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+//        applicationDeveloper.setPhone(ThreadContext.get(Constants.THREAD_CONTEXT_PHONE));
+//        applicationDeveloperMapper.insert(applicationDeveloper);
 
         return R.success(application);
     }
