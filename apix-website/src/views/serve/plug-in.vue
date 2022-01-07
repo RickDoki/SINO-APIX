@@ -48,7 +48,7 @@
 <script>
 import "./../mainCss/index.scss";
 export default {
-  data() {
+  data () {
     return {
       name: "",
       plugNameList: [
@@ -65,15 +65,15 @@ export default {
         "defaultCss",
         "defaultCss",
       ],
-      plugTypeList:['','','','','','','','','','']
+      plugTypeList: ['', '', '', '', '', '', '', '', '', '']
     };
   },
   methods: {
     // 切换插件类型
-    hitplugName(e, i) {
+    hitplugName (e, i) {
       const defaultCss = []
       for (let index = 0; index < this.defaultCss.length; index++) {
-        console.log(index,i)
+        console.log(index, i)
         if (index === i) {
           defaultCss.push('defaultCss hitCss')
         } else {
@@ -115,7 +115,7 @@ export default {
         position: relative;
         color: #2650ff;
         &:after {
-          content: " ";
+          content: ' ';
           position: absolute;
           right: 20px;
           top: 3px;
@@ -141,7 +141,7 @@ export default {
       .messageBox {
         width: 32%;
         height: 180px;
-        border: 1px solid #ccc;
+        border: 1px solid #e1e6eb;
         border-radius: 3px;
         margin-bottom: 15px;
         .title {
@@ -149,14 +149,14 @@ export default {
           height: 40px;
           line-height: 40px;
           text-align: center;
-          background-color: #F4F6FF;
+          background-color: #f4f6ff;
         }
         .middle {
           width: 100%;
           height: 100px;
           overflow: hidden;
           .middle-img {
-            margin:10px;
+            margin: 10px;
             height: 80px;
             vertical-align: middle;
             // background-color: #ccc;
@@ -168,25 +168,27 @@ export default {
             }
             span {
               vertical-align: middle;
+              padding: 0px 10px;
             }
           }
         }
         .plug-bottom {
           height: 38px;
           width: 100%;
-          color: #2650FF;
+          color: #2650ff;
           text-align: center;
           line-height: 38px;
           cursor: pointer;
           font-size: 12px;
         }
         .plug-bottom:hover {
-          background-color: #2650FF;
-          font-size: 12px;
+          background-color: #2650ff;
           color: #fff;
-          border: 2px solid #2650FF;
           border-radius: 3px;
         }
+      }
+      .messageBox:hover {
+        border: 1px solid #2650ff;
       }
     }
     .plugDetailRight::-webkit-scrollbar {

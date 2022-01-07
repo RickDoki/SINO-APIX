@@ -59725,12 +59725,13 @@
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
-    color: #72767b;
+    color: #1D1C35;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
     margin-bottom: 32px;
     padding: 20px;
+    font-weight: bold;
     padding-bottom: 0; }
     .el-drawer__header > :first-child {
       -webkit-box-flex: 1;

@@ -41,8 +41,9 @@
                 <el-table
                   :data="table"
                   empty-text="暂无数据"
-                  stripe
-                  style="width: 100%"
+                  :row-style="{ height: '50px' }"
+                  highlight-current-row
+                  :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
                 >
                   <el-table-column prop="appName" label="应用名称" />
                   <el-table-column prop="appCode" label="APPCode" />
@@ -50,13 +51,9 @@
                   <el-table-column prop="appCode" label="描述" />
                   <el-table-column label="操作" width="180px">
                     <template slot-scope="scope">
-                      <div class="handle">
-                        <span @click="getMessage(scope.row)" class="linkcolor"
-                          >查看</span
-                        >
-                        <span class="handle_middle">|</span>
-                        <span class="linkcolor">退订</span>
-                      </div>
+                      <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+                      <span class="handle">|</span>
+                      <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -68,8 +65,9 @@
                 <el-table
                   :data="table"
                   empty-text="暂无数据"
-                  stripe
-                  style="width: 100%"
+                  :row-style="{ height: '50px' }"
+                  highlight-current-row
+                  :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
                 >
                   <el-table-column prop="appName" label="应用名称" />
                   <el-table-column prop="appCode" label="APPCode" />
@@ -77,13 +75,9 @@
                   <el-table-column prop="appCode" label="描述" />
                   <el-table-column label="操作" width="180px">
                     <template slot-scope="scope">
-                      <div class="handle">
-                        <span @click="getMessage(scope.row)" class="linkcolor"
-                          >查看</span
-                        >
-                        <span class="handle_middle">|</span>
-                        <span class="linkcolor">退订</span>
-                      </div>
+                      <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+                      <span class="handle">|</span>
+                      <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -98,7 +92,7 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       table: [],
       apiOptions: [],
@@ -113,7 +107,7 @@ p {
   margin: 0px 0px 10px 0px;
 }
 .apiList {
-  padding: 20px 10px;
+  padding: 20px 0px;
 }
 .apiMessage {
   height: 100%;
@@ -139,7 +133,6 @@ p {
       color: #373753;
     }
     .table_box {
-      padding: 30px;
       border: 1px solid #e1e6ee;
       margin-top: 10px;
       border-radius: 10px;

@@ -83,7 +83,11 @@ export default {
   methods: {
     handleCommand (command) {
       // this.$message("click on item " + command);
-      this.$router.push({ path: '/login' })
+      if (command == 'a') {
+        this.$router.push({ path: '/system/index' })
+      } else {
+        this.$router.push({ path: '/login' })
+      }
     },
   },
 };
