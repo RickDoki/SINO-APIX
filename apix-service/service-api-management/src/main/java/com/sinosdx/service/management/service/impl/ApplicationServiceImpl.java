@@ -256,7 +256,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         //        }
         Integer clientId = null;
         if (null != developerId) {
-            clientId = ((SysClient) sysUserService.queryClientByUserId(developerId).getData()).getId();
+            clientId = (sysUserService.queryClientByUserId(developerId).getData()).getId();
             LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Objects.nonNull(clientId), ApplicationSubscribe::getSubscribeClientId, clientId)
                     .eq(Objects.nonNull(appCode), ApplicationSubscribe::getAppSubscribedCode, appCode)
@@ -716,7 +716,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.NONE_APP_VERSION);
         }
 
-        SysClient sysClient = (SysClient) sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
+        SysClient sysClient = sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
         if (null == sysClient) {
             return R.fail(ResultCodeEnum.RESOURCE_NOT_EXISTED);
         }
@@ -808,7 +808,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.NONE_APP_VERSION);
         }
 
-        SysClient sysClient = (SysClient) sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
+        SysClient sysClient = sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
         if (null == sysClient) {
             return R.fail(ResultCodeEnum.RESOURCE_NOT_EXISTED);
         }
@@ -862,6 +862,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 paramJson.put("clientSecret", clientSecret);
                 secret.setSecretKey(clientSecret);
 
+                JSONObject oAuthConfigJson = queryPluginConfigs(PluginTypeEnum.OAUTH2.getType(), appPlugin.getAppCode()).getData();
+                Integer tokenExpiration = oAuthConfigJson.getInteger("tokenExpiration");
+                Integer refreshTokenExpiration = oAuthConfigJson.getInteger("refreshTokenExpiration");
+
                 // 插入OAuth2认证客户端信息
                 OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(secretKey).getData();
                 if (null == oldClient) {
@@ -870,8 +874,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                     oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
                     oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
                     oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
-                    oauthClientDetails.setAccessTokenValidity(Constants.ACCESS_TOKEN_VALIDITY);
-                    oauthClientDetails.setRefreshTokenValidity(Constants.REFRESH_TOKEN_VALIDITY);
+                    oauthClientDetails.setAccessTokenValidity(tokenExpiration);
+                    oauthClientDetails.setRefreshTokenValidity(refreshTokenExpiration);
                     oauthClientDetailsService.createOauthClientDetail(oauthClientDetails);
                 }
             }
@@ -1263,7 +1267,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (null == oAuthInfo) {
             return R.fail(ResultCodeEnum.APP_DEVELOPER_IS_NOT_EXIST);
         }
-        Map data = (Map) sysUserService.queryClientByUserId(userId).getData();
+        SysClient sysClient = sysUserService.queryClientByUserId(userId).getData();
         // 加入插件信息
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
                 .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
@@ -1418,10 +1422,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<Integer> clientIds = userIds.stream()
                 //                .map(a -> ((SysClient) sysUserService.queryClientByUserId(a).getData()).getId())
                 .map(a -> {
-                    Map sysClient = (Map) sysUserService.queryClientByUserId(a).getData();
+                    SysClient sysClient = sysUserService.queryClientByUserId(a).getData();
 
                     if (Objects.nonNull(sysClient)) {
-                        return Integer.valueOf(sysClient.get("id") + "");
+                        return sysClient.getId();
                     }
                     return 0;
                 })
