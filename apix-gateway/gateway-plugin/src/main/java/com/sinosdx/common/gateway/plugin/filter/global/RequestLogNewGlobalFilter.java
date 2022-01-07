@@ -5,6 +5,7 @@ import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
 import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
+import com.sinosdx.common.toolkit.common.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -65,6 +66,9 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
         GatewayLogDTO gatewayLog = new GatewayLogDTO();
 //        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
         gatewayLog.setStatusCode(statusCode);
+        String urlPath = request.getURI().getPath();
+        String s = StringUtil.splitToList(urlPath).get(0);
+        log.info("aaaaaaaaaaaaa ==> {},bbbbbbbb=>{}",urlPath,s);
         SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
         return chain.filter(exchange);
     }
