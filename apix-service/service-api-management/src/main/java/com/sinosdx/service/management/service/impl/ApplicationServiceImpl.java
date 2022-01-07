@@ -449,18 +449,18 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         List<ApiVo> apiVoList = new ArrayList<>();
         for (Api api : apiList) {
-            ApplicationApi applicationApi = applicationApiMapper.selectOne(new LambdaQueryWrapper<ApplicationApi>()
-                    .eq(ApplicationApi::getAppId, application.getId())
-                    .eq(ApplicationApi::getApiId, api.getId())
-                    .eq(ApplicationApi::getDelFlag, 0));
-            if (null == applicationApi) {
-                applicationApi = new ApplicationApi();
+//            ApplicationApi applicationApi = applicationApiMapper.selectOne(new LambdaQueryWrapper<ApplicationApi>()
+//                    .eq(ApplicationApi::getAppId, application.getId())
+//                    .eq(ApplicationApi::getApiId, api.getId())
+//                    .eq(ApplicationApi::getDelFlag, 0));
+//            if (null == applicationApi) {
+            ApplicationApi  applicationApi = new ApplicationApi();
                 applicationApi.setAppId(application.getId());
                 applicationApi.setAppVersionId(applicationVersion.getId());
                 applicationApi.setAppCode(application.getCode());
                 applicationApi.setApiId(api.getId());
                 applicationApiMapper.insert(applicationApi);
-            }
+//            }
 
             apiVoList.add(new ApiVo(api));
         }
@@ -1484,7 +1484,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .map(ApplicationApi::getApiId).distinct().collect(Collectors.toList());
         List<Api> apis = apiMapper.selectList(new LambdaQueryWrapper<Api>()
                 .eq(Api::getDelFlag, 0)
-                .in(Api::getId, apiIds));
+                .in(!CollectionUtils.isEmpty(apiIds), Api::getId, apiIds));
         ApplicationVersionDto applicationVersionDto = new ApplicationVersionDto().setApplicationVersion(applicationVersion).setApiList(apis);
         return R.success(applicationVersionDto);
     }
