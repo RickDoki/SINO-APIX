@@ -8,11 +8,15 @@ import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.utils.ReactiveAddrUtil;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.concurrent.TimeUnit;
+
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -29,6 +33,9 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 public class BaseGlobalFilter implements GlobalFilter, Ordered {
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public int getOrder() {
@@ -51,6 +58,7 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
         String startTime = String.valueOf(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
         String env = uri.contains(AppConstant.SAND_BOX) ? AppConstant.SAND_BOX : AppConstant.PRO_CODE;
         String path = req.getURI().getPath();
+        stringRedisTemplate.opsForValue().set(traceId, path, 5, TimeUnit.MINUTES);
         MDC.put(HeaderConstant.REQUEST_NO_HEADER_NAME, traceId);
         req.mutate()
                 .header(HeaderConstant.REQUEST_NO_HEADER_NAME, traceId)
