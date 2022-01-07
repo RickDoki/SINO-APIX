@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,10 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
     @Autowired
     private ExecutorService executorService;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+
     @Override
     public int getOrder() {
         return FilterOrderEnum.G_REQUEST_LOG.getOrder();
@@ -67,8 +72,9 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
 //        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
         gatewayLog.setStatusCode(statusCode);
         String urlPath = request.getURI().getPath();
-        String s = StringUtil.splitToList(urlPath).get(0);
-        log.info("aaaaaaaaaaaaa ==> {},bbbbbbbb=>{}",urlPath,s);
+        String traceId = request.getId();
+        String path = stringRedisTemplate.opsForValue().get(traceId);
+        log.info("traceId ==> {},path==>{},==>{}",traceId,path,urlPath);
         SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
         return chain.filter(exchange);
     }
