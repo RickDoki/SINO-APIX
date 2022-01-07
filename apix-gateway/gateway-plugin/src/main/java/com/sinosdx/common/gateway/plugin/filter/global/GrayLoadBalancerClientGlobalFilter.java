@@ -1,6 +1,7 @@
 package com.sinosdx.common.gateway.plugin.filter.global;
 
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
+import com.sinosdx.common.gateway.plugin.filter.BaseGlobalFilter;
 import com.sinosdx.common.gateway.plugin.service.impl.GrayLoadBalancer;
 import java.net.URI;
 import lombok.AllArgsConstructor;
@@ -12,14 +13,12 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerUriTools;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.Response;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.ReactiveLoadBalancerClientFilter;
 import org.springframework.cloud.gateway.support.DelegatingServiceInstance;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -39,7 +38,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Component
 @AllArgsConstructor
-public class GrayLoadBalancerClientGlobalFilter implements GlobalFilter, Ordered {
+public class GrayLoadBalancerClientGlobalFilter extends BaseGlobalFilter {
 
     public static final String GRAY_LB = "grayLB";
     public static final String NULL = "null";
@@ -52,7 +51,7 @@ public class GrayLoadBalancerClientGlobalFilter implements GlobalFilter, Ordered
     }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    public Mono<Void> customFilter(ServerWebExchange exchange, GatewayFilterChain chain) {
         URI url = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
         String schemePrefix = StringUtils.defaultString(
                 exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_SCHEME_PREFIX_ATTR),

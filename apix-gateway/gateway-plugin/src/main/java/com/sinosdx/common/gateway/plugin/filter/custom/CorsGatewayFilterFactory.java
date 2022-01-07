@@ -7,6 +7,7 @@ import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
 import com.sinosdx.common.gateway.plugin.filter.custom.CorsGatewayFilterFactory.Config;
+import com.sinosdx.common.toolkit.common.LogUtil;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,7 +47,7 @@ public class CorsGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         if (!CorsUtils.isCorsRequest(req)) {
-            log.info("[{}] not cors request!", req.getHeaders().getFirst(GatewayConstants.PATH));
+            LogUtil.debug(log, "[{}] not cors request!", req.getHeaders().getFirst(GatewayConstants.PATH));
             return chain.filter(exchange);
         }
         ServerHttpResponse rep = exchange.getResponse();

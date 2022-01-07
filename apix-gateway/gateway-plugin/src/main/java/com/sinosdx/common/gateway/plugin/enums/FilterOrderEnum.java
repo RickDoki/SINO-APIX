@@ -14,6 +14,7 @@ public enum FilterOrderEnum {
     /**
      * global
      */
+    G_DEFAULT(-51),
     G_BASE(-100),
     G_CACHE_POST_BODY(-99),
     G_REQUEST_LOG(-98),

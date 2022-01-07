@@ -2,26 +2,20 @@ package com.sinosdx.common.gateway.plugin.filter.global;
 
 import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
+import com.sinosdx.common.gateway.plugin.filter.BaseGlobalFilter;
 import com.sinosdx.common.gateway.plugin.service.IMessageService;
-import com.sinosdx.common.gateway.utils.LogUtil;
 import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
-import com.sinosdx.common.toolkit.common.StringUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.core.Ordered;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
-
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 
 /**
@@ -31,7 +25,7 @@ import java.util.concurrent.ExecutorService;
  */
 @Component
 @Slf4j
-public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
+public class RequestLogNewGlobalFilter extends BaseGlobalFilter {
 
     private static final String WEBSOCKET = "websocket";
     private static final List<String> STRING_LIST = Arrays.asList("http", "https");
@@ -52,10 +46,7 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
     }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if (log.isDebugEnabled()) {
-            log.debug("Enter RequestLogGlobalFilter");
-        }
+    public Mono<Void> customFilter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         URI originalRequestUrl = request.getURI();
         String scheme = originalRequestUrl.getScheme();

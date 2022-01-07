@@ -2,11 +2,10 @@ package com.sinosdx.common.gateway.plugin.filter.global;
 
 import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
+import com.sinosdx.common.gateway.plugin.filter.BaseGlobalFilter;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.NettyDataBufferFactory;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +30,7 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-public class CachePostBodyGlobalFilter implements GlobalFilter, Ordered {
+public class CachePostBodyGlobalFilter extends BaseGlobalFilter {
 
     @Override
     public int getOrder() {
@@ -39,10 +38,7 @@ public class CachePostBodyGlobalFilter implements GlobalFilter, Ordered {
     }
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if (log.isDebugEnabled()) {
-            log.debug("Enter CachePostBodyGlobalFilter");
-        }
+    public Mono<Void> customFilter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
         MediaType mediaType = exchange.getRequest().getHeaders().getContentType();
         if (null == mediaType) {

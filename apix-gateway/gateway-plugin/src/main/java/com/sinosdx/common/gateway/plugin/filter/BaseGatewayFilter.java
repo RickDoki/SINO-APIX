@@ -96,8 +96,8 @@ public abstract class BaseGatewayFilter<C extends BaseConfig> extends AbstractGa
             String path = headers.getFirst(GatewayConstants.PATH);
             if (!checkAuthVerifyExclude(config, path)) {
                 String requestNo = headers.getFirst(HeaderConstant.REQUEST_NO_HEADER_NAME);
-                LogUtil.debug(log, "url【{}】requestId【{}】processed by【{}】custom filter,config:{}",
-                        path, requestNo, customFilterName, JSON.toJSONString(config));
+                LogUtil.debug(log, "url【{}】order：【{}】 requestId【{}】processed by【{}】custom filter,config:{}",
+                        path, order, requestNo, customFilterName, JSON.toJSONString(config));
                 return customApply(exchange, chain, config);
             }
             return chain.filter(exchange);

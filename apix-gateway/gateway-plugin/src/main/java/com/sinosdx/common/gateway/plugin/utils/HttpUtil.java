@@ -232,7 +232,7 @@ public class HttpUtil {
     }
 
     /**
-     * 获取返回结果
+     * 获取返回结果,调用自定义消费
      *
      * @param exchange
      * @param consumer 自定义消费

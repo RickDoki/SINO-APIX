@@ -43,4 +43,6 @@ public interface GatewayConstants {
 
     String REAL_IP = "real-ip";
 
+    String SERVICE_CODE = "service-code";
+
 }
