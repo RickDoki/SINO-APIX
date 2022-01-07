@@ -48,7 +48,7 @@ import reactor.core.publisher.Mono;
 public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
     public static final String SUCCESS = "success";
-    public static final String SIGN = "sign";
+    public static final int CODE = 100006;
 
     public SignAuthGatewayFilterFactory() {
         super(Config.class);
@@ -58,7 +58,8 @@ public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         String sign = req.getHeaders().getFirst(AuthConstant.AUTH_SIGN);
-        if (StringUtils.isBlank(sign)) {
+        String timestamp = req.getHeaders().getFirst(AuthConstant.TIMESTAMP);
+        if (StringUtils.isAnyBlank(sign, timestamp)) {
             return HttpUtil.errorResponse(exchange, FilterResultCodeEnum.SIGN_EMPTY);
         }
         if (StringUtils.isBlank(c.appKey)) {
@@ -77,7 +78,10 @@ public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
                         dataBuffer.read(bytes);
                         String bodyString = new String(bytes, StandardCharsets.UTF_8);
                         HashMap<String, String> hashMap = JSON.parseObject(bodyString, HashMap.class);
-                        verifySign(exchange, hashMap, sign, c);
+                        Mono<Void> result = verifySign(exchange, hashMap, sign, timestamp, c);
+                        if (!result.equals(Mono.empty())) {
+                            return result;
+                        }
                         exchange.getAttributes().put("POST_BODY", bodyString);
                         DataBufferUtils.release(dataBuffer);
 
@@ -102,20 +106,34 @@ public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
             for (Object o : requestQueryParams.keySet()) {
                 hashMap.put(o.toString(), requestQueryParams.get(o).get(0));
             }
-            verifySign(exchange, hashMap, sign, c);
+            Mono<Void> result = verifySign(exchange, hashMap, sign, timestamp, c);
+            if (!result.equals(Mono.empty())) {
+                return result;
+            }
             return chain.filter(exchange);
         }
         return chain.filter(exchange);
     }
 
-    private void verifySign(ServerWebExchange exchange, HashMap<String, String> hashMap, String sign, Config c) {
-        hashMap.put(SIGN, sign);
+    /**
+     * 校验签名
+     *
+     * @param exchange
+     * @param hashMap
+     * @param sign
+     * @param timestamp
+     * @param c
+     */
+    private Mono<Void> verifySign(ServerWebExchange exchange, HashMap<String, String> hashMap, String sign,
+            String timestamp, Config c) {
+        hashMap.put(AuthConstant.AUTH_SIGN, sign);
+        hashMap.put(AuthConstant.TIMESTAMP, timestamp);
         String result = SignUtil.verify(hashMap, c.getAppKey());
-        LogUtil.debug(log, "sign验签,param：{},key：{},result：{}", hashMap, c.getAppKey(), result);
+        LogUtil.debug(log, "sign auth,param：{},key：{},result：{}", hashMap, c.getAppKey(), result);
         if (SUCCESS.equals(result)) {
-            return;
+            return Mono.empty();
         }
-        HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(ResultCodeEnum.SIGN_ERROR));
+        return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(CODE, result));
     }
 
     @Override
@@ -129,13 +147,13 @@ public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public static class Config extends BaseConfig {
 
         /**
-         * 签名位置
-         */
-        private String signPosition;
-        /**
          * key
          */
         private String appKey;
+        /**
+         * 签名位置
+         */
+        private String signPosition;
 
     }
 

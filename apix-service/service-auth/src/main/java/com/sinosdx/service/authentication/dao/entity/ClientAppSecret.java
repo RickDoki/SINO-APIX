@@ -1,5 +1,6 @@
 package com.sinosdx.service.authentication.dao.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -14,7 +15,7 @@ import lombok.Data;
 @TableName("client_app_secret")
 public class ClientAppSecret {
 
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer clientId;
     private Integer userId;

@@ -28,6 +28,11 @@ public class AuthConstant {
     public static final String AUTH_SIGN = "sign";
 
     /**
+     * 接口签名时间戳
+     */
+    public static final String TIMESTAMP = "timestamp";
+
+    /**
      * csp2.0 jwt
      */
     public static final String AUTH_JWT = "JWT";
