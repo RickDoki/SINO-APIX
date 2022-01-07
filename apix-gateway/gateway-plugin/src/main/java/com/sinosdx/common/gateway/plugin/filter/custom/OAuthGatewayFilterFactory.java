@@ -62,7 +62,7 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
         R<Object> result;
 
-        // 验证中台jwt
+        // 验证OAuth token
         if (StringUtils.isNotEmpty(token)) {
             String realToken = token.substring(AuthConstant.AUTH_HEADER_PREFIX.length());
             Map<String, String> paramMap = new HashMap<>();
@@ -82,6 +82,10 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
                 result = R.fail(ResultCodeEnum.TOKEN_ERROR);
                 return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
             }
+        } else {
+            log.error("token为空");
+            result = R.fail(ResultCodeEnum.TOKEN_ERROR);
+            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
         }
 
         return chain.filter(exchange);
