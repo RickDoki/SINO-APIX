@@ -42,8 +42,8 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
     @Autowired
     private ExecutorService executorService;
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+//    @Autowired
+//    private StringRedisTemplate stringRedisTemplate;
 
 
     @Override
@@ -71,10 +71,10 @@ public class RequestLogNewGlobalFilter implements GlobalFilter, Ordered {
         GatewayLogDTO gatewayLog = new GatewayLogDTO();
 //        gatewayLog.setResponseHeaders(LogUtil.getHttpHeaders(httpHeaders));
         gatewayLog.setStatusCode(statusCode);
-        String urlPath = request.getURI().getPath();
-        String traceId = request.getId();
-        String path = stringRedisTemplate.opsForValue().get(traceId);
-        log.info("traceId ==> {},path==>{},==>{}",traceId,path,urlPath);
+//        String urlPath = request.getURI().getPath();
+//        String traceId = request.getId();
+//        String path = stringRedisTemplate.opsForValue().get(traceId);
+//        log.info("traceId ==> {},path==>{},==>{}",traceId,path,urlPath);
         SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
         return chain.filter(exchange);
     }

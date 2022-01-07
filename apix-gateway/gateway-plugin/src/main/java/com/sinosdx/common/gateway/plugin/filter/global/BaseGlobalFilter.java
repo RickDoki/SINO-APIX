@@ -34,9 +34,6 @@ import reactor.core.publisher.Mono;
 @Component
 public class BaseGlobalFilter implements GlobalFilter, Ordered {
 
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-
     @Override
     public int getOrder() {
         return FilterOrderEnum.G_BASE.getOrder();
@@ -58,7 +55,6 @@ public class BaseGlobalFilter implements GlobalFilter, Ordered {
         String startTime = String.valueOf(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());
         String env = uri.contains(AppConstant.SAND_BOX) ? AppConstant.SAND_BOX : AppConstant.PRO_CODE;
         String path = req.getURI().getPath();
-        stringRedisTemplate.opsForValue().set(traceId, path, 5, TimeUnit.MINUTES);
         MDC.put(HeaderConstant.REQUEST_NO_HEADER_NAME, traceId);
         req.mutate()
                 .header(HeaderConstant.REQUEST_NO_HEADER_NAME, traceId)

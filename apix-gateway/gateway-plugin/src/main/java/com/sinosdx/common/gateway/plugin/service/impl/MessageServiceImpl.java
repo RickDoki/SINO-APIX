@@ -51,10 +51,6 @@ public class MessageServiceImpl implements IMessageService {
         String s = JSON.toJSONString(gatewayLogDTO.getEntity());
 //        log.info("aaaaaaaaaaaaa=====> {}",s);
         logService.analysisGatewayLogSave(s);
-        //保存审计日志
-        if(AUDIT.equals(logType)){
-            logService.saveLog(logType,s);
-        }
     }
     @Async
     @Override
