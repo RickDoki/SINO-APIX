@@ -47,7 +47,7 @@
           size="small"
           @click="gonewEdition"
           class="add-but"
-          >添加版本
+          >关联API
         </el-button>
       </div>
       <el-table

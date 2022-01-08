@@ -48,7 +48,7 @@
 <script>
 import "./../mainCss/index.scss";
 export default {
-  data () {
+  data() {
     return {
       name: "",
       plugNameList: [
@@ -65,7 +65,7 @@ export default {
         "defaultCss",
         "defaultCss",
       ],
-      plugTypeList: ["", "", "", "", "", ""],
+      plugTypeList: ["", "", "", "", "", "", "", "", "", "", "", ""],
     };
   },
   methods: {
@@ -115,7 +115,7 @@ export default {
         position: relative;
         color: #2650ff;
         &:after {
-          content: ' ';
+          content: " ";
           position: absolute;
           right: 20px;
           top: 3px;

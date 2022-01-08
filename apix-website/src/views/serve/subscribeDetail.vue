@@ -1,58 +1,60 @@
 <template>
   <div class="main">
-    <div class="list_top">
-      <div class="list_title">服务名称</div>
-      <div class="list_search">
-        <el-button type="primary" size="small" class="td-but">退订</el-button>
-      </div>
-    </div>
-    <div class="secondTitle">这是一段服务描述</div>
-    <div class="status">
-      <div class="left-span">
-        <span>服务商: </span>
-        <span>博冀信息</span>
-      </div>
-      <div class="time">
-        <div>
-          <span>发布时间 : </span>
-          <span>2021-08-05 10:05:00:00</span>
-        </div>
-        <div>
-          <span>订阅时间 : </span>
-          <span>2021-08-05 10:05:00:00</span>
+    <div class="he_height">
+      <div class="list_top">
+        <div class="list_title">服务名称</div>
+        <div class="list_search">
+          <el-button type="primary" size="small" class="td-but">退订</el-button>
         </div>
       </div>
+      <div class="secondTitle">这是一段服务描述</div>
+      <div class="status">
+        <div class="left-span">
+          <span>服务商: </span>
+          <span>博冀信息</span>
+        </div>
+        <div class="time">
+          <div>
+            <span>发布时间 : </span>
+            <span>2021-08-05 10:05:00:00</span>
+          </div>
+          <div>
+            <span>订阅时间 : </span>
+            <span>2021-08-05 10:05:00:00</span>
+          </div>
+        </div>
+      </div>
+      <div class="tabsMessage">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane label="API详情" name="first">
+            <api-detail></api-detail>
+          </el-tab-pane>
+          <el-tab-pane label="插件详情" name="second">
+            <plug-in></plug-in>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
     </div>
-    <div class="tabsMessage">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="API详情" name="first">
-          <api-detail></api-detail>
-        </el-tab-pane>
-        <el-tab-pane label="插件详情" name="second">
-          <plug-in></plug-in>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
- </div>
+  </div>
 </template>
 
 <script>
 import "./../mainCss/index.scss";
 import apiDetail from "./component/apiDetail.vue";
-import plugIn from './component/plug-in.vue'
+import plugIn from "./component/plug-in.vue";
 export default {
-  data () {
+  data() {
     return {
       activeName: "first",
     };
   },
   components: {
     apiDetail,
-    plugIn
+    plugIn,
   },
   methods: {
     // 切换tab
-    handleClick () { },
+    handleClick() {},
   },
 };
 </script>
@@ -61,11 +63,34 @@ export default {
 .td-but {
   width: 124px;
 }
+.he-main {
+  min-height: inherit;
+}
+.he_height {
+  // height: 100%;
+  min-height: inherit;
+  overflow: hidden;
+  position: relative;
+}
 .tabsMessage {
   margin-top: 20px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  // min-height: inherit;
+  overflow: hidden;
   ::v-deep {
     .el-tabs__header {
       margin: 0px;
+    }
+    .el-tabs {
+      height: 100%;
+      .el-tabs__content {
+        height: 100%;
+        .el-tab-pane {
+          height: 100%;
+        }
+      }
     }
   }
 }

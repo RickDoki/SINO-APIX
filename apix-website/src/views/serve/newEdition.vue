@@ -7,21 +7,28 @@
       <span class="secondTitle">向现有的服务添加新版本</span>
     </div>
     <div class="formBox">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-position="top"
+      >
         <el-form-item label="版本名称" prop="name">
-          <el-input 
+          <el-input
             v-model="ruleForm.name"
             placeholder=""
             class="inputWidth"
-            clearable>
+            clearable
+          >
           </el-input>
         </el-form-item>
         <el-form-item label="版本描述" prop="describe">
-          <el-input 
+          <el-input
             v-model="ruleForm.describe"
             placeholder=""
             class="inputWidth"
-            clearable>
+            clearable
+          >
           </el-input>
         </el-form-item>
         <el-form-item label="关联API" prop="API">
@@ -32,27 +39,37 @@
           >
             <el-option
               v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.apiId"
+              :label="item.apiName"
+              :value="item.apiId"
             >
             </el-option>
           </el-select>
           <span @click="createdApi" class="show-but">还没有API?去创建 >> </span>
         </el-form-item>
         <div class="bottom_button_a">
-          <el-button size="small" type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          <el-button size="small" @click="resetForm('ruleForm')">重置</el-button>
+          <el-button size="small" type="primary" @click="submitForm('ruleForm')"
+            >立即创建</el-button
+          >
+          <el-button size="small" @click="resetForm('ruleForm')"
+            >重置</el-button
+          >
         </div>
       </el-form>
     </div>
-    <created-api :drawerProps="drawerIsshow" @showChange='showChange'></created-api>
+    <created-api
+      :drawerProps="drawerIsshow"
+      @showChange="showChange"
+    ></created-api>
   </div>
 </template>
 
 <script>
 import "./../mainCss/index.scss";
 import createdApi from "./component/createdApi.vue";
+import { apiList, publish } from "@/api/AboutServe.js";
+import { getToken } from "@/utils/auth"; // get token from cookie
+
 export default {
   components: {
     createdApi,
@@ -60,46 +77,65 @@ export default {
   data() {
     return {
       drawerIsshow: false,
+      developerId: "",
+      appCode:'',
       ruleForm: {
         name: "",
         describe: "",
         API: "",
       },
-      options: [{ label: "111", value: "111" }],
+      options: [],
       rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
+        name: [{ required: true, message: "请输入版本名称", trigger: "blur" }],
         describe: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
+          { required: true, message: "请输入版本描述", trigger: "blur" },
         ],
-        API: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
+        API: [{ required: true, message: "请选择关联API", trigger: "blur" }],
       },
     };
   },
+  created() {
+    // 获取appcode
+    this.appCode = this.$route.query.appcode;
+    this.developerId = getToken("userId_api");
+    this.getApiList();
+  },
   methods: {
-    submitForm (formName) {
+    // 获取apilist
+    getApiList() {
+      apiList(this.developerId).then((res) => {
+        if (res.code === 200) {
+          // console.log(res)
+          this.options = res.data.apiList;
+        }
+      });
+    },
+    submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          console.log(this.ruleForm);
+          const query = {
+            appVersion: this.ruleForm.name,
+            versionDesc: this.ruleForm.describe,
+            apiIds: this.ruleForm.API
+          }
+          publish(this.appCode, query).then((res) => {
+            if (res.code === 200) {
+              this.$router.push({path:'/serve/serveDetail?appcode=' + this.appCode})
+            }
+          });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
     },
     createdApi() {
-      this.drawerIsshow = true
+      this.drawerIsshow = true;
     },
     showChange() {
       // console.log('change')
-      this.drawerIsshow = false
-    }
+      this.drawerIsshow = false;
+    },
   },
 };
 </script>

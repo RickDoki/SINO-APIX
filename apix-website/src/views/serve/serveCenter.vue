@@ -9,29 +9,68 @@
           suffix-icon="el-icon-search"
           v-model="name"
           class="list_searchInput"
+          @input="nameSerach"
         >
         </el-input>
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="goCreatdServe">添加新服务</el-button>
+        <el-button
+          type="primary"
+          size="small"
+          icon="el-icon-plus"
+          @click="goCreatdServe"
+          >添加新服务</el-button
+        >
       </div>
     </div>
     <div class="secondTitle list_top_bom">
       创建服务来管理和代理现有API或发布到门户。
     </div>
     <div class="table_box">
-      <el-table :data="table" empty-text="暂无数据" :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="appName" label="应用名称">
+      <el-table
+        :data="table"
+        empty-text="暂无数据"
+        v-loading="loading"
+        :row-style="{ height: '50px' }"
+        highlight-current-row
+        :header-cell-style="{
+          'font-weight': 400,
+          'font-size': '16px',
+          color: '#1D1C35',
+        }"
+      >
+        <el-table-column prop="appName" label="服务名称">
           <template slot-scope="scope">
-            <span @click="goserveDteail" class="linkcolor">{{scope.row.appName}}</span>
+            <span @click="goserveDteail(scope)" class="linkcolor">{{
+              scope.row.appName
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="appCode" label="code" />
-        <el-table-column prop="appCode" label="门户状态" />
-        <el-table-column prop="appCode" label="版本" />
+        <el-table-column prop="appCode" label="启用状态">
+          <template slot-scope="scope">
+            <div class="hasPublished" v-if="scope.row.isPublished === '60005'">
+              已发布
+            </div>
+            <div class="noPublished" v-else>未发布</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="description1" label="版本" />
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <el-button type="text" @click="goserveDteail(scope.row)">查看</el-button>
-            <span class="handle">|</span>
-            <el-button type="text" @click="goserveDteail(scope.row)">退订</el-button>
+            <div v-if="scope.row.isPublished === '60005'">
+              <el-button
+                style="color: #f03063"
+                type="text"
+                @click="undercarriage(scope.row)"
+                >下架</el-button
+              >
+            </div>
+            <div v-else>
+              <el-button type="text" @click="Published(scope.row)"
+                >发布到门户</el-button
+              >
+              <span class="handle">|</span>
+              <el-button type="text" @click="del(scope.row)">删除</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -49,31 +88,121 @@
 
 <script>
 import "./../mainCss/index.scss";
+import { serveList, serveupdate, serveDelete } from "@/api/AboutServe.js";
+import { getToken } from "@/utils/auth"; // get token from cookie
+
 export default {
-  data () {
+  data() {
     return {
-      table: [{
-        appName: '我的服务'
-      }],
+      table: [
+        {
+          appName: "我的服务",
+        },
+      ],
       total: 100,
       currentPage: 1,
       name: "",
+      developerId: "",
+      // 数据加载
+      loading: false,
     };
   },
-  created () { },
+  created() {
+    this.developerId = getToken("userId_api");
+    this.getServeList();
+  },
   methods: {
-    handleCurrentChange () {
-      console.log("页面跳转");
+    // 获取列表
+    getServeList() {
+      this.loading = true;
+      const query =
+        "developerId=" +
+        this.developerId +
+        "&" +
+        "limit=10" +
+        "&" +
+        "offset=" +
+        this.currentPage +
+        "&" +
+        "appName=" +
+        this.name +
+        "&" +
+        "market=false";
+      serveList(query).then((res) => {
+        if (res.code === 200) {
+          this.loading = false;
+          this.table = res.data.appList;
+          this.total = res.data.total;
+        }
+      });
     },
-    goserveDteail () {
-      this.$router.push({ path: '/serve/serveDetail' })
+    // 页面跳转
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.getServeList();
     },
-    goCreatdServe () {
-      this.$router.push({path:'/serve/create'})
-    }
+    // 查看详情
+    goserveDteail(e) {
+      this.$router.push({ path: "/serve/serveDetail?appcode=" + e.row.appCode });
+    },
+    //创建新服务
+    goCreatdServe() {
+      this.$router.push({ path: "/serve/create" });
+    },
+    // 搜索
+    nameSerach() {
+      this.currentPage = 1;
+      this.getServeList();
+    },
+    // 下架服务
+    undercarriage(e) {
+      const query = {
+        isPublished: "60001",
+      };
+      serveupdate(e.appCode, query).then((res) => {
+        if (res.code === 200) {
+          this.getServeList();
+        }
+      });
+    },
+    // 发布到门户
+    Published(e) {
+      const query = {
+        isPublished: "60005",
+      };
+      serveupdate(e.appCode, query).then((res) => {
+        if (res.code === 200) {
+          this.getServeList();
+        }
+      });
+    },
+    // 删除
+    del(e) {
+      serveDelete(e.appCode).then((res) => {
+        if (res.code === 200) {
+          this.getServeList();
+        }
+      });
+    },
   },
 };
 </script>
 
 <style lang='scss' scoped>
+.hasPublished {
+  width: 58px;
+  height: 20px;
+  background-color: #e1f8da;
+  color: #61b874;
+  border-radius: 3px;
+  text-align: center;
+}
+.noPublished {
+  width: 58px;
+  height: 20px;
+  background-color: #e1e6ee;
+  color: #727491;
+  border-radius: 3px;
+  text-align: center;
+}
 </style>

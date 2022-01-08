@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <el-row>
-      <el-col :span="4">
+  <div class="he_main">
+    <el-row style="height:100%">
+      <el-col style="height:100%" :span="4">
         <div class="apiList">
           <el-select v-model="apiValue" size="mini" placeholder="请选择">
             <el-option
@@ -14,7 +14,7 @@
           </el-select>
         </div>
       </el-col>
-      <el-col :span="20">
+      <el-col style="height:100%" :span="20">
         <div class="apiMessage">
           <div class="api-info">
             <div class="title">API名称</div>
@@ -88,15 +88,24 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.he_main {
+  // min-height: inherit;
+  height: 100%;
+  overflow: hidden;
+}
 .apiList {
   padding: 20px 0px;
 }
 .apiMessage {
+  overflow: auto;
   border-left: 1px solid #e1e6ee;
   padding: 24px;
   margin-left: 16px;
+  height: 100%;
+  padding-bottom: 150px;
+  // margin-bottom: 20px;
   .api-info {
-    margin-bottom: 24p;
+    margin-bottom: 24px;
     .title {
       line-height: 22px;
       font-size: 16px;
@@ -109,4 +118,7 @@ export default {
     }
   }
 }
+.apiMessage::-webkit-scrollbar {
+      display: none;
+    }
 </style>

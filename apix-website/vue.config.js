@@ -46,7 +46,7 @@ module.exports = {
         // target:'www.baidu.com',
         // target:'https://saic-aws.saicmotor.com/cspv2-web/api',
         // target: 'https://cloudtest.sail-cloud.com/api-mgmt',
-        target: 'https://www.sail-cloud.com/mt-api/',
+        target: 'http://47.103.109.225:30000/api',
         changeOrigin: true,
         secure: false,
         pathRewrite: {

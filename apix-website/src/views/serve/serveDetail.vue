@@ -2,7 +2,7 @@
   <div class="main">
     <div v-if="!routerView">
       <div class="list_top">
-        <div class="list_title">服务名称</div>
+        <div class="list_title">{{ serveData.appName }}</div>
         <div class="list_search">
           <div class="but-left">
             <el-dropdown>
@@ -24,36 +24,35 @@
       <div class="secondTitle">创建服务来管理和代理现有API或发布到门户。</div>
       <div class="status">
         <div class="left-span">
-          <span>使用状态: </span>
-          <span>停用</span>
-        </div>
-        <div class="left-span">
           <span>门户状态: </span>
-          <span>已发布</span>
+          <span class="noPublished" v-if="serveData.isPublished === '60001'"
+            >未发布</span
+          >
+          <span class="hasPublished" v-else>已发布</span>
         </div>
         <div class="time">
           <div>
             <span>创建时间 : </span>
-            <span>2021-08-05 10:05:00:00</span>
+            <span>{{ serveData.appCreationDate }}</span>
           </div>
           <div>
             <span>更新时间 : </span>
-            <span>2021-08-05 10:05:00:00</span>
+            <span>{{ serveData.appLastUpdateDate }}</span>
           </div>
         </div>
       </div>
       <div class="numbers mode-margin">
         <div class="requestAll">
           <div class="font">请求计数</div>
-          <div class="num">123</div>
+          <div class="num">{{ serveNum.totalNum }}</div>
         </div>
         <div class="requestError">
           <div class="font">失败的请求</div>
-          <div class="num">123</div>
+          <div class="num">{{ serveNum.failNum }}</div>
         </div>
         <div class="edition">
           <div class="font">版本计数</div>
-          <div class="num">123</div>
+          <div class="num">{{ serveNum.subscribedNum }}</div>
         </div>
       </div>
       <div class="table_box mode-margin">
@@ -70,21 +69,26 @@
           </el-button>
         </div>
         <el-table
-          :data="table"
+          :data="serveData.appVersion"
           empty-text="暂无数据"
           :row-style="{ height: '50px' }"
           highlight-current-row
           :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
         >
-          <el-table-column prop="appName" label="应用名称" />
-          <el-table-column prop="appCode" label="APPCode" />
-          <el-table-column prop="appCode" label="启用状态" />
-          <el-table-column prop="appCode" label="描述" />
+          <el-table-column prop="appVersion" label="版本名称" />
+          <el-table-column prop="appVersionDesc" label="版本描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <el-button type="text" @click="edition(scope.row)">编辑</el-button>
+              <el-button type="text" @click="edition(scope.row)"
+                >编辑</el-button
+              >
               <span class="handle">|</span>
-              <el-button style="color:red" type="text" @click="getMessage(scope.row)">删除</el-button>
+              <el-button
+                style="color: red"
+                type="text"
+                @click="getMessage(scope.row)"
+                >删除</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -114,9 +118,13 @@
           <el-table-column prop="appCode" label="描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <el-button type="text" @click="getMessage(scope.row)"
+                >查看</el-button
+              >
               <span class="handle">|</span>
-              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
+              <el-button type="text" @click="getMessage(scope.row)"
+                >退订</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -138,9 +146,13 @@
           <el-table-column prop="appCode" label="描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <el-button type="text" @click="getMessage(scope.row)"
+                >查看</el-button
+              >
               <span class="handle">|</span>
-              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
+              <el-button type="text" @click="getMessage(scope.row)"
+                >退订</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -162,9 +174,13 @@
           <el-table-column prop="appCode" label="描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <el-button type="text" @click="getMessage(scope.row)"
+                >查看</el-button
+              >
               <span class="handle">|</span>
-              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
+              <el-button type="text" @click="getMessage(scope.row)"
+                >退订</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
@@ -176,33 +192,61 @@
 
 <script>
 import "./../mainCss/index.scss";
+import { serveDetail, appNum } from "@/api/AboutServe.js";
+
 export default {
   data() {
     return {
       routerView: false,
-      table: [{
-        appName:'111'
-      }],
+      table: [
+        {
+          appName: "111",
+        },
+      ],
+      appCode: "",
+      serveData: {},
+      serveNum: {},
     };
   },
   created() {
-    // console.log(this.$route);
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
     } else {
       this.routerView = true;
     }
+    // 获取appcode
+    this.appCode = this.$route.query.appcode;
+    this.getServeDeatil();
+    this.getAppNum();
   },
   methods: {
+    // 通过appcode查询详情
+    getServeDeatil() {
+      serveDetail(this.appCode).then((res) => {
+        if (res.code === 200) {
+          // console.log(res)
+          this.serveData = res.data;
+        }
+      });
+    },
+    // 内部详情
+    getAppNum() {
+      appNum(this.appCode).then((res) => {
+        // console.log(res);
+        if (res.code === 200) {
+          this.serveNum = res.data;
+        }
+      });
+    },
     gonewEdition() {
-      this.$router.push({ path: "/serve/newEdition" });
+      this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
     goplugin() {
       this.$router.push({ path: "/serve/serveDetail/plug-in" });
     },
-    edition () {
-      this.$router.push({path:'/serve/editionDetail'})
-    }
+    edition() {
+      this.$router.push({ path: "/serve/editionDetail" });
+    },
   },
 };
 </script>
@@ -246,5 +290,25 @@ export default {
   .table-tilelong {
     line-height: 30px;
   }
+}
+.hasPublished {
+  width: 58px;
+  height: 20px;
+  background-color: #e1f8da;
+  color: #61b874;
+  border-radius: 3px;
+  text-align: center;
+  display: inline-block;
+  line-height: 20px;
+}
+.noPublished {
+  width: 58px;
+  height: 20px;
+  background-color: #e1e6ee;
+  color: #727491;
+  border-radius: 3px;
+  text-align: center;
+  display: inline-block;
+  line-height: 20px;
 }
 </style>

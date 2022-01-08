@@ -55,7 +55,7 @@
         <el-form-item label="服务描述" prop="describe">
           <el-input
             type="textarea"
-            style="width:48%"
+            style="width: 48%"
             :autosize="{ minRows: 4, maxRows: 4 }"
             placeholder="请输入内容"
             v-model="ruleForm.describe"
@@ -77,6 +77,8 @@
 
 <script>
 import "./../mainCss/index.scss";
+import { createServe } from "@/api/AboutServe.js";
+
 export default {
   data() {
     return {
@@ -84,20 +86,15 @@ export default {
       ruleForm: {
         name: "",
         describe: "",
-        dynamicTags: ["标签一", "标签二", "标签三"],
+        dynamicTags: [],
       },
-      options: [{ label: "111", value: "111" }],
       rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
+        name: [{ required: true, message: "请输入服务名称", trigger: "blur" }],
         describe: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
+          { required: true, message: "请输入服务标签", trigger: "blur" },
         ],
         dynamicTags: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
+          { required: true, message: "请输入服务描述", trigger: "blur" },
         ],
       },
 
@@ -109,9 +106,22 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          const query = {
+            appName: this.ruleForm.name,
+            description: this.ruleForm.describe,
+            label: this.ruleForm.dynamicTags,
+            appCode: "",
+            Productid: "",
+            markdown: "",
+          };
+          createServe(query).then((res) => {
+            // console.log(res);
+            if(res.code === 200) {
+              this.$router.push('/serve/center')
+            }
+          });
         } else {
-          console.log("error submit!!");
+          // console.log("error submit!!");
           return false;
         }
       });

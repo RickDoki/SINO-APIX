@@ -53,37 +53,34 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    if (res.code === 821022) {
-      Message({
-        message: '登录已过期,请重新登录',
-        type: 'error',
-        duration: 5 * 1000
-      })
-      // window.location = 'https://www.sail-cloud.com/#/login'
-      // window.location = 'https://saic-aws.saicmotor.com/cspv2-web/#/login'
-      // window.location = process.env.marketing_url
-      router.replace({
-        path: '/login',
-        // query: {
-        //   redirect: router.currentRoute.fullPath
-        // }
-      })
-    } else if (res.code === 4003) {
-      Message({
-        message: '登录已过期,请重新登录',
-        type: 'error',
-        duration: 5 * 1000
-      })
-      // window.location = 'https://www.sail-cloud.com/#/login'
-      // window.location = 'https://saic-aws.saicmotor.com/cspv2-web/#/login'
-      // window.location = process.env.marketing_url
-      router.replace({
-        path: '/login',
-        // query: {
-        //   redirect: router.currentRoute.fullPath
-        // }
-      })
+    if (res.code !== 200) {
+      if (res.code === 821022) {
+        Message({
+          message: '登录已过期,请重新登录',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        router.replace({
+          path: '/login',
+        })
+      } else if (res.code === 4003) {
+        Message({
+          message: '登录已过期,请重新登录',
+          type: 'error',
+          duration: 5 * 1000
+        })
+        router.replace({
+          path: '/login',
+        })
+      } else {
+        Message({
+          message: res.msg,
+          type: 'error',
+          duration: 5 * 1000
+        })
+      }
     }
+
     // console.log(99999999999)
     // if the custom code is not 20000, it is judged as an error.
     // if (res.code !== 200) {
