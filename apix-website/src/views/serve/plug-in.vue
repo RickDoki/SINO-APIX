@@ -26,19 +26,19 @@
         </div>
       </div>
       <div class="plugDetailRight">
-        <div class="messageBox" v-for="(item,index) in plugTypeList" :key='index'>
-          <div class="title">
-            jwt-auth
-          </div>
+        <div
+          class="messageBox"
+          v-for="(item, index) in plugTypeList"
+          :key="index"
+        >
+          <div class="title">jwt-auth</div>
           <div class="middle">
             <div class="middle-img">
-              <img src="" alt="">
+              <img src="" alt="" />
               <span>123456</span>
             </div>
           </div>
-          <div class="plug-bottom">
-            添加
-          </div>
+          <div class="plug-bottom">添加</div>
         </div>
       </div>
     </div>
@@ -65,22 +65,22 @@ export default {
         "defaultCss",
         "defaultCss",
       ],
-      plugTypeList:['','','','','','','','','','']
+      plugTypeList: ["", "", "", "", "", ""],
     };
   },
   methods: {
     // 切换插件类型
     hitplugName(e, i) {
-      const defaultCss = []
+      const defaultCss = [];
       for (let index = 0; index < this.defaultCss.length; index++) {
-        console.log(index,i)
+        console.log(index, i);
         if (index === i) {
-          defaultCss.push('defaultCss hitCss')
+          defaultCss.push("defaultCss hitCss");
         } else {
-          defaultCss.push('defaultCss')
+          defaultCss.push("defaultCss");
         }
       }
-      this.defaultCss = defaultCss
+      this.defaultCss = defaultCss;
     },
   },
 };
@@ -138,6 +138,7 @@ export default {
       flex-wrap: wrap;
       overflow: auto;
       height: 100%;
+      align-content: flex-start;
       .messageBox {
         width: 32%;
         height: 180px;
@@ -149,14 +150,14 @@ export default {
           height: 40px;
           line-height: 40px;
           text-align: center;
-          background-color: #F4F6FF;
+          background-color: #f4f6ff;
         }
         .middle {
           width: 100%;
           height: 100px;
           overflow: hidden;
           .middle-img {
-            margin:10px;
+            margin: 10px;
             height: 80px;
             vertical-align: middle;
             // background-color: #ccc;
@@ -174,17 +175,17 @@ export default {
         .plug-bottom {
           height: 38px;
           width: 100%;
-          color: #2650FF;
+          color: #2650ff;
           text-align: center;
           line-height: 38px;
           cursor: pointer;
           font-size: 12px;
         }
         .plug-bottom:hover {
-          background-color: #2650FF;
+          background-color: #2650ff;
           font-size: 12px;
           color: #fff;
-          border: 2px solid #2650FF;
+          border: 2px solid #2650ff;
           border-radius: 3px;
         }
       }
