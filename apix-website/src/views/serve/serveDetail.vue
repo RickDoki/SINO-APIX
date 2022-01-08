@@ -23,13 +23,14 @@
       </div>
       <div class="secondTitle">创建服务来管理和代理现有API或发布到门户。</div>
       <div class="status">
-        <div class="left-span">
+        <!-- <div class="left-span">
           <span>使用状态: </span>
           <span>停用</span>
-        </div>
+        </div> -->
         <div class="left-span">
-          <span>门户状态: </span>
-          <span>已发布</span>
+          <span>门户状态 : </span>
+          <div class="tag success">已发布</div>
+          <div class="tag info">未发布</div>
         </div>
         <div class="time">
           <div>
@@ -177,13 +178,13 @@
 <script>
 import "./../mainCss/index.scss";
 export default {
-  data() {
+  data () {
     return {
       routerView: false,
       table: [],
     };
   },
-  created() {
+  created () {
     // console.log(this.$route);
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
@@ -192,10 +193,10 @@ export default {
     }
   },
   methods: {
-    gonewEdition() {
+    gonewEdition () {
       this.$router.push({ path: "/serve/newEdition" });
     },
-    goplugin() {
+    goplugin () {
       this.$router.push({ path: "/serve/serveDetail/plug-in" });
     },
   },
