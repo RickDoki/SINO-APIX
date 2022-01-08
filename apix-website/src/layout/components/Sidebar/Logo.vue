@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
-      <router-link key="collapse" class="sidebar-logo-link" to="/">
+      <router-link key="collapse" class="sidebar-logo-link" to="/dashboard/index">
         <img src="./../../../assets/img/sdx_logo.png" class="sidebar-logo">
         <!-- <p class="sidebar-title">SINO APIX</p> -->
       </router-link>

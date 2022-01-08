@@ -48,7 +48,7 @@
 <script>
 import "./../mainCss/index.scss";
 export default {
-  data() {
+  data () {
     return {
       name: "",
       plugNameList: [
@@ -115,7 +115,7 @@ export default {
         position: relative;
         color: #2650ff;
         &:after {
-          content: " ";
+          content: ' ';
           position: absolute;
           right: 20px;
           top: 3px;
@@ -142,7 +142,7 @@ export default {
       .messageBox {
         width: 32%;
         height: 180px;
-        border: 1px solid #ccc;
+        border: 1px solid #e1e6eb;
         border-radius: 3px;
         margin-bottom: 15px;
         .title {
@@ -169,6 +169,7 @@ export default {
             }
             span {
               vertical-align: middle;
+              padding: 0px 10px;
             }
           }
         }
@@ -188,6 +189,9 @@ export default {
           border: 2px solid #2650ff;
           border-radius: 3px;
         }
+      }
+      .messageBox:hover {
+        border: 1px solid #2650ff;
       }
     }
     .plugDetailRight::-webkit-scrollbar {

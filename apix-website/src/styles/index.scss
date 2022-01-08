@@ -6,7 +6,13 @@
 @import './btn.scss';
 
 body {
-  height: 100%;
+  background: url('./../assets/img/img_login_bg.png') no-repeat center center fixed;
+  /*兼容浏览器版本*/
+  -webkit-background-size: cover;
+  -o-background-size: cover;                
+  background-size: cover;
+
+  // height: 100%;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -206,6 +212,7 @@ aside {
       line-height: 32px;
       font-size: 20px;
       font-weight: bold;
+      color: #1D1C35;
     }
     .list_search {
       display: flex;
@@ -241,6 +248,7 @@ aside {
   }
   .secondTitle {
     margin-top: 6px;
+    color: #727491;
   }
   .table_box {
     padding: 15px 30px 30px 30px;
@@ -335,6 +343,68 @@ aside {
         margin-right: 20px;
         width: 90px;
       }
+    }
+  }
+}
+.login-main {
+  .center-form {
+    .el-input__inner {
+      background-color: rgba(38, 80, 255, 0.05);
+      border: none;
+    }
+    .el-input__inner {
+      &::placeholder {
+        color: #494E6A;
+      }
+    }
+    .el-form-item__error {
+      position: absolute !important;
+      top: 3px;
+      right: 14px !important;
+      text-align: right;
+      filter: alpha(Opacity=40);
+      border-radius: 2px;
+      font-size: 14px;
+      color: #FA3458;
+      line-height: 22px;
+      z-index: -99;
+    }
+    .el-form-item__error:after {
+      margin-left: 5px;
+      display: inline-table;
+      vertical-align: text-top;
+      width: 14px;
+      content: url('./../assets/img/icon_tips.png');
+    }
+  }
+}
+
+.apiMessage {
+  padding-top: 24px;
+  .api-info {
+    margin-bottom: 24px;
+    span {
+      height: 20px;
+      font-size: 14px;
+      font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+      font-weight: 400;
+      line-height: 20px;
+    }
+    .label-color {
+      color: #494e6a;
+    }
+    .conten-color {
+      color: #373753;
+    }
+    .table_top {
+      margin-top: 10px;
+    }
+    .icon-color {
+      margin-left: 8px;
+      color: #264FFB;
+    }
+    .icon-color:hover {
+      color: #9BAEFF;
     }
   }
 }

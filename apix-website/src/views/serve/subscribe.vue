@@ -16,15 +16,19 @@
     </div>
     <div class="table_box">
       <el-table :data="table" empty-text="暂无数据" :row-style="{height: '50px'}" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="appName" label="应用名称" />
+        <el-table-column prop="appName" label="应用名称">
+          <template slot-scope="scope">
+            <span @click="goserveDteail" class="linkcolor">{{scope.row.appName}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="appCode" label="APPCode" />
         <el-table-column prop="appCode" label="启用状态" />
         <el-table-column prop="appCode" label="描述" />
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+            <el-button type="text" @click="goserveDteail(scope.row)">查看</el-button>
             <span class="handle">|</span>
-            <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
+            <el-button type="text" @click="goserveDteail(scope.row)">退订</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -64,7 +68,7 @@ export default {
       console.log("页面跳转");
     },
     // 跳转api详情
-    getMessage () {
+    goserveDteail () {
       this.$router.push({ path: "/serve/subscribeDetail" });
     },
   },

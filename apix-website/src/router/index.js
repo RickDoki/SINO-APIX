@@ -197,18 +197,18 @@ export const asyncRoutes = [
     alwaysShow: true,
     meta: { title: '系统设置', icon: 'system', Aicon: 'system_Aicon' },
     children: [
-      {
-        path: '/system/user',
-        component: () => import('@/views/system/user/list'),
-        name: 'User',
-        meta: { title: '用户管理', affix: true }
-      },
-      {
-        path: '/system/role',
-        component: () => import('@/views/system/role/list'),
-        name: 'Role',
-        meta: { title: '角色管理', affix: true }
-      },
+      // {
+      //   path: '/system/user',
+      //   component: () => import('@/views/system/user/list'),
+      //   name: 'User',
+      //   meta: { title: '用户管理', affix: true }
+      // },
+      // {
+      //   path: '/system/role',
+      //   component: () => import('@/views/system/role/list'),
+      //   name: 'Role',
+      //   meta: { title: '角色管理', affix: true }
+      // },
       {
         path: '/system/index',
         component: () => import('@/views/user/index'),

@@ -1,37 +1,71 @@
 <template>
   <div class="plug-in">
-    <div class="table_box">
+    <div class="table_box mode-margin">
       <p>已添加插件</p>
-      <el-table :data="table" empty-text="暂无数据" stripe style="width: 100%">
+      <el-table
+          :data="table"
+          empty-text="暂无数据"
+          :row-style="{ height: '50px' }"
+          highlight-current-row
+          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+        >
+          <el-table-column prop="appName" label="应用名称" />
+          <el-table-column prop="appCode" label="APPCode" />
+          <el-table-column prop="appCode" label="启用状态" />
+          <el-table-column prop="appCode" label="描述" />
+          <el-table-column label="操作" width="180px">
+            <template slot-scope="scope">
+              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <span class="handle">|</span>
+              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+    </div>
+    <div class="table_box mode-margin">
+      <div class="serve-table">
+        <div class="table-tilelong">请求日志</div>
+      </div>
+      <el-table
+        :data="table"
+        empty-text="暂无数据"
+        :row-style="{ height: '50px' }"
+        highlight-current-row
+        :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+      >
         <el-table-column prop="appName" label="应用名称" />
         <el-table-column prop="appCode" label="APPCode" />
         <el-table-column prop="appCode" label="启用状态" />
         <el-table-column prop="appCode" label="描述" />
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <div class="handle">
-              <span @click="getMessage(scope.row)" class="linkcolor">查看</span>
-              <span class="handle_middle">|</span>
-              <span class="linkcolor">退订</span>
-            </div>
+            <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+            <span class="handle">|</span>
+            <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="table_box second">
-      <p>数据统计-http日志/log日志</p>
-      <el-table :data="table" empty-text="暂无数据" stripe style="width: 100%">
+    <div class="table_box mode-margin">
+      <div class="serve-table">
+        <div class="table-tilelong">错误日志</div>
+      </div>
+      <el-table
+        :data="table"
+        empty-text="暂无数据"
+        :row-style="{ height: '50px' }"
+        highlight-current-row
+        :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+      >
         <el-table-column prop="appName" label="应用名称" />
         <el-table-column prop="appCode" label="APPCode" />
         <el-table-column prop="appCode" label="启用状态" />
         <el-table-column prop="appCode" label="描述" />
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <div class="handle">
-              <span @click="getMessage(scope.row)" class="linkcolor">查看</span>
-              <span class="handle_middle">|</span>
-              <span class="linkcolor">退订</span>
-            </div>
+            <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+            <span class="handle">|</span>
+            <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -41,7 +75,7 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       table: [],
     };
@@ -50,28 +84,21 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-p {
-  margin: 0px;
-  margin-bottom: 10px;
-}
-.plug-in {
-  padding: 20px 10px;
-  .table_box {
-    padding: 30px;
-    border: 1px solid #e1e6ee;
-    border-radius: 10px;
-    ::v-deep {
-      .el-table th.el-table__cell.is-leaf,
-      .el-table td.el-table__cell {
-        border: none;
-      }
-      .el-table::before {
-        height: 0px;
-      }
+.table_box {
+  padding: 30px;
+  border: 1px solid #e1e6ee;
+  border-radius: 10px;
+  ::v-deep {
+    .el-table th.el-table__cell.is-leaf,
+    .el-table td.el-table__cell {
+      border: none;
+    }
+    .el-table::before {
+      height: 0px;
     }
   }
-  .second {
-    margin-top: 20px;
-  }
+}
+.mode-margin {
+  margin-top: 24px;
 }
 </style>
