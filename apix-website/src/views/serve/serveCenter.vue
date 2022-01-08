@@ -11,7 +11,7 @@
           class="list_searchInput"
         >
         </el-input>
-        <el-button type="primary" size="small" icon="el-icon-plus">添加新服务</el-button>
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="goCreatdServe">添加新服务</el-button>
       </div>
     </div>
     <div class="secondTitle list_top_bom">
@@ -67,6 +67,9 @@ export default {
     },
     goserveDteail () {
       this.$router.push({ path: '/serve/serveDetail' })
+    },
+    goCreatdServe () {
+      this.$router.push({path:'/serve/create'})
     }
   },
 };

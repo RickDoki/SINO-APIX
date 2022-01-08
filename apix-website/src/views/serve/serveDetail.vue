@@ -83,9 +83,9 @@
           <el-table-column prop="appCode" label="描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
+              <el-button type="text" @click="edition(scope.row)">编辑</el-button>
               <span class="handle">|</span>
-              <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
+              <el-button style="color:red" type="text" @click="getMessage(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -181,7 +181,9 @@ export default {
   data () {
     return {
       routerView: false,
-      table: [],
+      table: [{
+        appName:'111'
+      }],
     };
   },
   created () {
@@ -199,6 +201,9 @@ export default {
     goplugin () {
       this.$router.push({ path: "/serve/serveDetail/plug-in" });
     },
+    edition () {
+      this.$router.push({path:'/serve/editionDetail'})
+    }
   },
 };
 </script>
