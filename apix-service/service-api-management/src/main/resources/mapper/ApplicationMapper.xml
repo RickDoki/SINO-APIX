@@ -17,7 +17,7 @@
         <result column="appCreationUser" property="appCreationUser" javaType="String"/>
         <result column="appLastUpdateDate" property="appLastUpdateDate" javaType="String"/>
         <result column="appLastUpdateUser" property="appLastUpdateUser" javaType="String"/>
-        <collection property="apis" column="appCode" ofType="java.util.Map" select="queryAppVersionDetails"/>
+        <collection property="appVersion" column="appCode" ofType="java.util.Map" select="queryAppVersionDetails"/>
     </resultMap>
     
     <resultMap id="appVersion" type="java.util.Map">
