@@ -195,7 +195,7 @@ import "./../mainCss/index.scss";
 import { serveDetail, appNum } from "@/api/AboutServe.js";
 
 export default {
-  data() {
+  data () {
     return {
       routerView: false,
       table: [
@@ -241,7 +241,7 @@ export default {
     gonewEdition() {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
-    goplugin() {
+    goplugin () {
       this.$router.push({ path: "/serve/serveDetail/plug-in" });
     },
     edition() {

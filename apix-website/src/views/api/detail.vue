@@ -25,12 +25,12 @@
     </div>
     <div class="status">
       <div class="left-span">
-        <span>使用状态: </span>
-        <span>停用</span>
+        <span>被调用次数 : </span>
+        <div class="tag info">18次</div>
       </div>
       <div class="left-span">
-        <span>门户状态: </span>
-        <span>已发布</span>
+        <span>调用失败次数 : </span>
+        <div class="tag info">3次</div>
       </div>
       <div class="time">
         <div>

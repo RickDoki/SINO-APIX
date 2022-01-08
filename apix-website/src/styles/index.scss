@@ -233,8 +233,7 @@ aside {
     display: flex;
     justify-content: space-between;
     .left-span {
-      width: 200px;
-      font-size: 12px;
+      display: flex;
       margin-top: 24px;
     }
     .time {
@@ -407,4 +406,28 @@ aside {
       color: #9BAEFF;
     }
   }
+}
+.tag {
+  font-size: 13px;
+  height: 20px;
+  border-radius: 4px 4px 4px 4px;
+  font-weight: 400;
+  line-height: 20px;
+  padding: 0px 8px;
+  margin-left: 10px;
+}
+.success {
+  background: #E1F8DA;
+  color: #61B874;
+}
+.info {
+  background: #E1E6EE;
+  color: #6C757D;
+}
+.default{
+  background: #E9EEFF;
+  color: #2650FF;
+}
+.danger {
+
 }
