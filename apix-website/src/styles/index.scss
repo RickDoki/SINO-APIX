@@ -212,6 +212,7 @@ aside {
       line-height: 32px;
       font-size: 20px;
       font-weight: bold;
+      color: #1D1C35;
     }
     .list_search {
       display: flex;
@@ -247,6 +248,7 @@ aside {
   }
   .secondTitle {
     margin-top: 6px;
+    color: #727491;
   }
   .table_box {
     padding: 15px 30px 30px 30px;
@@ -373,6 +375,36 @@ aside {
       vertical-align: text-top;
       width: 14px;
       content: url('./../assets/img/icon_tips.png');
+    }
+  }
+}
+
+.apiMessage {
+  padding-top: 24px;
+  .api-info {
+    margin-bottom: 24px;
+    span {
+      height: 20px;
+      font-size: 14px;
+      font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+      font-weight: 400;
+      line-height: 20px;
+    }
+    .label-color {
+      color: #494e6a;
+    }
+    .conten-color {
+      color: #373753;
+    }
+    .table_top {
+      margin-top: 10px;
+    }
+    .icon-color {
+      margin-left: 8px;
+      color: #264FFB;
+    }
+    .icon-color:hover {
+      color: #9BAEFF;
     }
   }
 }

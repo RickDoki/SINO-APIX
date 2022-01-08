@@ -16,72 +16,57 @@
       </el-col>
       <el-col :span="20">
         <div class="apiMessage">
-          <div class="content">
-            <p>测试Api</p>
-            <p>测试api描述</p>
-            <div class="flex font12">
-              <div class="left leftFontColor">调用路径:</div>
-              <div class="right">https://www.baidu.com</div>
+          <div class="api-info">
+            <div class="title">API名称</div>
+            <div class="secondTitle">这是一段API描述</div>
+          </div>
+          <div class="api-info">
+            <span class="label-color">调用路径 : </span>
+            <span class="conten-color">https://www.baidu.com</span> <i class="el-icon-copy-document icon-color"/>
+          </div>
+          <div class="api-info">
+            <span class="label-color agrement">协议类型 : </span>
+            <span class="conten-color">https</span>
+          </div>
+          <div class="api-info">
+            <span class="label-color">请求方式 : </span>
+            <span class="conten-color">GET</span>
+          </div>
+          <div class="api-info">
+            <span class="label-color">返回类型 : </span>
+            <span class="conten-color">JSON</span>
+          </div>
+          <div class="api-info">
+            <span class="label-color">请求参数 : </span>
+            <div class="table_box table_top">
+              <el-table
+                :data="table"
+                empty-text="暂无数据"
+                :row-style="{ height: '50px' }"
+                highlight-current-row
+                :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+              >
+                <el-table-column prop="appName" label="名称" />
+                <el-table-column prop="appCode" label="类型" />
+                <el-table-column prop="appCode" label="是否必选" />
+                <el-table-column prop="appCode" label="描述" />
+                <el-table-column prop="appCode" label="默认值" />
+              </el-table>
             </div>
-            <div class="flex font12">
-              <div class="left leftFontColor agrement">协议:</div>
-              <div class="right">https</div>
-            </div>
-            <div class="flex font12">
-              <div class="left leftFontColor">请求方式:</div>
-              <div class="right">get</div>
-            </div>
-            <div class="flex font12">
-              <div class="left leftFontColor">返回类型:</div>
-              <div class="right">JSON</div>
-            </div>
-            <div class="request">
-              <div class="leftFontColor font12">请求参数:</div>
-              <div class="table_box">
-                <el-table
-                  :data="table"
-                  empty-text="暂无数据"
-                  :row-style="{ height: '50px' }"
-                  highlight-current-row
-                  :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
-                >
-                  <el-table-column prop="appName" label="应用名称" />
-                  <el-table-column prop="appCode" label="APPCode" />
-                  <el-table-column prop="appCode" label="启用状态" />
-                  <el-table-column prop="appCode" label="描述" />
-                  <el-table-column label="操作" width="180px">
-                    <template slot-scope="scope">
-                      <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
-                      <span class="handle">|</span>
-                      <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
-            </div>
-            <div class="statusCode">
-              <div class="leftFontColor font12">状态码:</div>
-              <div class="table_box">
-                <el-table
-                  :data="table"
-                  empty-text="暂无数据"
-                  :row-style="{ height: '50px' }"
-                  highlight-current-row
-                  :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
-                >
-                  <el-table-column prop="appName" label="应用名称" />
-                  <el-table-column prop="appCode" label="APPCode" />
-                  <el-table-column prop="appCode" label="启用状态" />
-                  <el-table-column prop="appCode" label="描述" />
-                  <el-table-column label="操作" width="180px">
-                    <template slot-scope="scope">
-                      <el-button type="text" @click="getMessage(scope.row)">查看</el-button>
-                      <span class="handle">|</span>
-                      <el-button type="text" @click="getMessage(scope.row)">退订</el-button>
-                    </template>
-                  </el-table-column>
-                </el-table>
-              </div>
+          </div>
+          <div class="api-info">
+            <span class="label-color">状态码 : </span>
+            <div class="table_box table_top">
+              <el-table
+                :data="table"
+                empty-text="暂无数据"
+                :row-style="{ height: '50px' }"
+                highlight-current-row
+                :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+              >
+                <el-table-column prop="appName" label="状态码" width="200"/>
+                <el-table-column prop="appCode" label="描述" />
+              </el-table>
             </div>
           </div>
         </div>
@@ -103,58 +88,25 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-p {
-  margin: 0px 0px 10px 0px;
-}
 .apiList {
   padding: 20px 0px;
 }
 .apiMessage {
-  height: 100%;
-  border-left: 1px solid #ccc;
-  padding-top: 20px;
-  .content {
-    margin-left: 20px;
-    .flex {
-      display: flex;
-      margin-bottom: 10px;
+  border-left: 1px solid #e1e6ee;
+  padding: 24px;
+  margin-left: 16px;
+  .api-info {
+    margin-bottom: 24p;
+    .title {
+      line-height: 22px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #1d1c35;
     }
-    .font12 {
-      font-size: 12px;
-    }
-    .left {
-      width: 52px;
-    }
-    .agrement {
-      text-align: right;
-    }
-    .right {
-      margin-left: 10px;
-      color: #373753;
-    }
-    .table_box {
-      border: 1px solid #e1e6ee;
-      margin-top: 10px;
-      border-radius: 10px;
-      ::v-deep {
-        .el-table th.el-table__cell.is-leaf,
-        .el-table td.el-table__cell {
-          border: none;
-        }
-        .el-table::before {
-          height: 0px;
-        }
-      }
-    }
-    .statusCode {
-      margin: 10px 0px;
+    .secondTitle {
+      margin-top: 6px;
+      color: #727491;
     }
   }
-}
-.leftFontColor {
-  color: #494e6a;
-}
-.rightFontColor {
-  color: #373753;
 }
 </style>
