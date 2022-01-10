@@ -380,10 +380,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 删除关联的插件
         LambdaQueryWrapper<ApplicationPlugin> wrapper = new LambdaQueryWrapper<ApplicationPlugin>().eq(ApplicationPlugin::getAppCode, appCode);
         List<Integer> idList = applicationPluginMapper.selectList(wrapper).stream().map(Entity::getId).collect(Collectors.toList());
-        applicationPluginMapper.deleteBatchIds(idList);
-        // 删除 用户和插件关联表
-        applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId, idList));
-
+        if(!CollectionUtils.isEmpty(idList)){
+            applicationPluginMapper.deleteBatchIds(idList);
+            // 删除 用户和插件关联表
+            applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId, idList));
+        }
         // 删除对应客户端认证信息
         oauthClientDetailsService.deleteOAuthClientDetail(appCode);
         revokeClientToken(appCode);
