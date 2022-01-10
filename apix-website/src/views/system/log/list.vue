@@ -43,7 +43,7 @@
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
             <div class="handle">
-              <span @click="detail(scope.row)" class="linkcolor">查看</span>
+              <span @click="detail(scope.row)" class="linkcolor">日志详情</span>
             </div>
           </template>
         </el-table-column>
@@ -62,10 +62,10 @@
       :before-close="handleClose"
       :visible.sync="drawer"
       direction="rtl"
-      size="35%"
+      size="40%"
     >
       <div class="demo-drawer__content">
-        <el-descriptions title=" " size="medium" :column="1" border>
+        <el-descriptions title=" " size="medium" :column="1" :labelStyle="{'font-weight':'bold', 'width': '60px'}">
           <el-descriptions-item label="用户名称">{{ infoObj.username }}</el-descriptions-item>
           <el-descriptions-item label="事件类型">{{ infoObj.eventType }}</el-descriptions-item>
           <el-descriptions-item label="资源名称">{{ infoObj.resourceName }}</el-descriptions-item>
@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import {getLogList} from '@/api/data'
+import { getLogList } from '@/api/data'
 import jsonView from "@/components/json-view/index.vue";
 import "../../mainCss/index.scss";
 
@@ -88,7 +88,7 @@ export default {
   components: {
     jsonView
   },
-  data() {
+  data () {
     return {
       startTime: {
         disabledDate: time => {
@@ -129,12 +129,12 @@ export default {
       }]
     }
   },
-  created() {
+  created () {
     this.getLogList()
   },
   methods: {
     // 获取列表
-    getLogList() {
+    getLogList () {
       let params = `?offset=${this.offset}&limit=${this.limit}`
       if (this.search.username) {
         params += `&username=${this.search.username}`
@@ -162,17 +162,17 @@ export default {
       })
     },
     // 查看详情
-    detail(row) {
+    detail (row) {
       // 打开抽屉
       this.drawer = true
       this.infoObj = row
     },
     // 关闭抽屉
-    handleClose(done) {
+    handleClose (done) {
       this.drawer = false
     },
     // 重置搜索条件
-    resetSearch() {
+    resetSearch () {
       this.search = {
         username: '',
         userId: '',
@@ -183,7 +183,7 @@ export default {
       }
       this.getLogList()
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.offset = val
       this.getLogList()
     }

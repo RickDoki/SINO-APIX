@@ -143,7 +143,7 @@ export default {
     },
     // 查看详情
     goserveDteail (e) {
-      this.$router.push({ path: "/serve/serveDetail?appcode=" + e.row.appCode });
+      this.$router.push({ path: "/serve/serveDetail/" + e.row.appCode });
     },
     //创建新服务
     goCreatdServe () {

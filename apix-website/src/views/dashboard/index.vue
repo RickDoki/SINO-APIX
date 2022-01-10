@@ -308,9 +308,9 @@ export default {
   created () {
     this.developerId = getToken("userId");
     const query = "?developerId=" + this.developerId;
-    this.getapplist(query);
-    this.getlistSubscribe(query);
-    this.getApiNums(query);
+    // this.getapplist(query);
+    // this.getlistSubscribe(query);
+    // this.getApiNums(query);
   },
   methods: {
     getapplist (query) {

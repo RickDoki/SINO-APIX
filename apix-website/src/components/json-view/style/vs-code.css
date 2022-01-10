@@ -1,0 +1,29 @@
+.json-view-container.vs-code {
+  background-color: #F4F6FF;
+}
+.json-view-container.vs-code .json-view {
+  font-family: Menlo, Consolas, "Courier New", Courier, FreeMono, monospace !important;
+}
+.json-view-container.vs-code .json-view .json-note {
+  color: #909399;
+  font-size: 12px;
+  font-style: italic;
+}
+.json-view-container.vs-code .json-view .json-key {
+  color: #2650FF;
+}
+.json-view-container.vs-code .json-view .json-value {
+  color: #c6937c;
+}
+.json-view-container.vs-code .json-view .first-line {
+  color: #d4d4d4;
+}
+.json-view-container.vs-code .json-view .json-body .base-line {
+  border-left: 1px solid #999;
+}
+.json-view-container.vs-code .json-view .last-line {
+  color: #d4d4d4;
+}
+.json-view-container.vs-code .json-view .json-item {
+  color: #d4d4d4;
+}

@@ -17,15 +17,17 @@
     </div>
     <div class="table_box">
       <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="name" label="上游名称" show-overflow-tooltip min-width="150"></el-table-column>
+        <el-table-column prop="name" label="上游名称" show-overflow-tooltip min-width="150">
+          <template slot-scope="scope">
+            <span @click="view(scope.row)" class="text_detail">{{scope.row.name}}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="protocol" label="协议" width="120" align="center"></el-table-column>
         <el-table-column prop="server_address" label="服务地址" show-overflow-tooltip min-width="250"></el-table-column>
         <el-table-column prop="description" label="服务描述" show-overflow-tooltip min-width="250"></el-table-column>
         <el-table-column label="操作" min-width="200">
           <template slot-scope="scope">
             <el-button type="text" @click="edit(scope.row)">配置</el-button>
-            <span class="handle">|</span>
-            <el-button type="text" @click="view(scope.row)">查看</el-button>
             <span class="handle">|</span>
             <el-button type="text" @click="delCert(scope.row)" class="textBut-danger">删除</el-button>
           </template>
@@ -81,17 +83,17 @@
       :before-close="handleClose"
       :visible.sync="drawerInfo"
       direction="rtl"
-      size="45%"
+      size="40%"
     >
       <div class="demo-drawer__content">
-        <el-descriptions title=" " size="medium" :column="2" border>
+        <el-descriptions title=" " size="medium" :column="1" :labelStyle="{'font-weight':'bold', 'width': '120px'}">
           <el-descriptions-item label="服务名称">{{ upstreamInfo.name }}</el-descriptions-item>
-          <el-descriptions-item label="负载均衡算法">{{ upstreamInfo.load_balance }}</el-descriptions-item>
+          <!-- <el-descriptions-item label="负载均衡算法">{{ upstreamInfo.load_balance }}</el-descriptions-item> -->
           <el-descriptions-item label="服务端口">{{ upstreamInfo.port }}</el-descriptions-item>
-          <el-descriptions-item label="路由前置路径">{{ upstreamInfo.prefix_path }}</el-descriptions-item>
+          <el-descriptions-item label="路由前置路径">{{ upstreamInfo.prefix_path || '-' }}</el-descriptions-item>
           <el-descriptions-item label="协议">{{ upstreamInfo.protocol }}</el-descriptions-item>
           <el-descriptions-item label="服务地址">{{ upstreamInfo.server_address }}</el-descriptions-item>
-          <el-descriptions-item label="服务描述">{{ upstreamInfo.description }}</el-descriptions-item>
+          <el-descriptions-item label="服务描述">{{ upstreamInfo.description || '-' }}</el-descriptions-item>
         </el-descriptions>
       </div>
     </el-drawer>

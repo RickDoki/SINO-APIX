@@ -61967,7 +61967,7 @@
   .el-descriptions--medium.is-bordered .el-descriptions-item__cell {
     padding: 10px; }
   .el-descriptions--medium:not(.is-bordered) .el-descriptions-item__cell {
-    padding-bottom: 10px; }
+    padding-bottom: 20px; }
   .el-descriptions--small {
     font-size: 12px; }
     .el-descriptions--small.is-bordered .el-descriptions-item__cell {

@@ -17,7 +17,21 @@ const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 // const accessRoutes = store.dispatch('permission/generateRoutes', 0)
 // router.addRoutes(accessRoutes)
 router.beforeEach(async (to, from, next) => {
-  next()
+  // next()
+  //路由拦截器 是否需要登录
+  if (to.meta.requiresAuth) {
+    const token = getToken('FSH_AUTH_api')
+    if (!token) {
+      console.log("需要登录");
+      next('/login');
+    } else {
+      console.log("已登录");
+      next()
+    }
+  } else {
+    console.log("不需要登录");
+    next()
+  }
   // router.addRoutes(routersList)
   // console.log(router.options.isAddDynamicMenuRoutes)
   // const userid = getToken('userId_api')

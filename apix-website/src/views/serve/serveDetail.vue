@@ -215,7 +215,7 @@ export default {
       this.routerView = true;
     }
     // 获取appcode
-    this.appCode = this.$route.query.appcode;
+    this.appCode = this.$route.params.appcode;
     this.getServeDeatil();
     this.getAppNum();
   },
