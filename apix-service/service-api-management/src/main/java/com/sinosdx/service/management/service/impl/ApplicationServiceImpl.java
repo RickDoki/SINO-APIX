@@ -202,6 +202,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                 labelList = Arrays.stream(String.valueOf(label).split("/")).filter(Objects::nonNull).collect(Collectors.toList());
             }
             map.put("label", labelList);
+            // 查询版本
+            List<String> appVersions = applicationVersionMapper.selectList(new LambdaQueryWrapper<ApplicationVersion>()
+                    .eq(ApplicationVersion::getAppId, map.get("appId"))
+                    .eq(ApplicationVersion::getDelFlag, 0))
+                    .stream().map(ApplicationVersion::getVersion).collect(Collectors.toList());
+            map.put("appVersions", appVersions);
         });
         Map<String, Object> appListMap = new HashMap<>();
         List<Map<String, Object>> applicationVoList = applicationMapper.queryAppVoList(developerId, appName, appCode,
