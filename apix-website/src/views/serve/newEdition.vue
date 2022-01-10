@@ -34,6 +34,7 @@
         <el-form-item label="关联API" prop="API">
           <el-select
             class="inputWidth"
+            multiple 
             v-model="ruleForm.API"
             placeholder="请选择"
           >
@@ -82,7 +83,7 @@ export default {
       ruleForm: {
         name: "",
         describe: "",
-        API: "",
+        API: [],
       },
       options: [],
       rules: {
@@ -113,11 +114,10 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.ruleForm);
           const query = {
             appVersion: this.ruleForm.name,
             versionDesc: this.ruleForm.describe,
-            apiIds: this.ruleForm.API
+            apiIds: this.ruleForm.API.toString()
           }
           publish(this.appCode, query).then((res) => {
             if (res.code === 200) {

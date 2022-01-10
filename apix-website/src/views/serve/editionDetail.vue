@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="list_top">
-      <div class="list_title">服务名称</div>
+      <div class="list_title">{{applicationVersion.version}}</div>
       <div class="list_search">
         <div class="but-left">
           <el-dropdown>
@@ -20,11 +20,11 @@
         <el-button type="primary" size="small">编辑文档</el-button>
       </div>
     </div>
-    <div class="secondTitle">创建服务来管理和代理现有API或发布到门户。</div>
+    <div class="secondTitle">{{applicationVersion.description}}</div>
     <div class="status">
       <div class="left-span">
         <span>已关联api数量: </span>
-        <span>15个</span>
+        <span class="divbox">{{table.length}}个</span>
       </div>
       <div class="time">
         <div>
@@ -40,7 +40,7 @@
     <div class="table_box mode-margin">
       <!-- <p>版本</p> -->
       <div class="serve-table">
-        <div class="table-tile">版本</div>
+        <div class="table-tile">已关联API</div>
         <el-button
           plain
           type="primary"
@@ -57,32 +57,21 @@
         highlight-current-row
         :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
       >
-        <el-table-column prop="appName" label="应用名称" />
-        <el-table-column prop="appCode" label="APPCode" />
-        <el-table-column prop="appCode" label="启用状态" />
-        <el-table-column prop="appCode" label="描述" />
-        <!-- <el-table-column label="操作" width="180px">
-          <template slot-scope="scope">
-            <el-button type="text" @click="edition(scope.row)">编辑</el-button>
-            <span class="handle">|</span>
-            <el-button
-              style="color: red"
-              type="text"
-              @click="getMessage(scope.row)"
-              >删除</el-button
-            >
-          </template>
-        </el-table-column> -->
+        <el-table-column prop="name" label="API名称" />
+        <el-table-column prop="appCode" label="协议" />
+        <el-table-column prop="appCode" label="域名" />
+        <el-table-column prop="appCode" label="路径" />
+        <el-table-column prop="appCode" label="API描述" />
       </el-table>
     </div>
     <el-drawer
       title="关联"
-      size='40%'
+      size="40%"
       :visible.sync="drawer"
       :direction="direction"
       :before-close="handleClose"
     >
-      <div class="formBox" style="margin-left:20px">
+      <div class="formBox" style="margin-left: 20px">
         <el-form
           :model="ruleForm"
           :rules="rules"
@@ -115,9 +104,9 @@
             >
               <el-option
                 v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.apiId"
+                :label="item.apiName"
+                :value="item.apiId"
               >
               </el-option>
             </el-select>
@@ -143,6 +132,9 @@
 </template>
 
 <script>
+import { queryApiList, apiList } from "@/api/AboutServe.js";
+import { getToken } from "@/utils/auth"; // get token from cookie
+import "./../mainCss/index.scss";
 export default {
   data() {
     return {
@@ -154,7 +146,7 @@ export default {
         describe: "",
         API: "",
       },
-      options: [{ label: "111", value: "111" }],
+      options: [],
       rules: {
         name: [
           { required: true, message: "请输入活动名称", trigger: "blur" },
@@ -169,9 +161,41 @@ export default {
           { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
         ],
       },
+      appCode: "",
+      appVersionId: "",
+      applicationVersion:{}
     };
   },
+  created() {
+    this.appCode = this.$route.query.appCode;
+    this.appVersionId = this.$route.query.appVersionId;
+    this.getqueryApiList();
+    this.developerId = getToken("userId_api");
+    this.getApiList();
+  },
   methods: {
+    // 查询关联apilist
+    getqueryApiList() {
+      const query = {
+        appCode: this.appCode,
+        appVersionId: this.appVersionId,
+      };
+      queryApiList(query).then((res) => {
+        if (res.code === 200) {
+          this.table = res.data.apiList
+          this.applicationVersion = res.data.applicationVersion
+        }
+      });
+    },
+    // 查询全部api
+    getApiList() {
+      apiList(this.developerId).then((res) => {
+        if (res.code === 200) {
+          // console.log(res)
+          this.options = res.data.apiList;
+        }
+      });
+    },
     handleClose(done) {
       done();
     },
@@ -205,5 +229,13 @@ export default {
 }
 .drawer {
   width: 80% !important;
+}
+.divbox {
+  display: inline-block;
+  margin-left: 5px;
+  padding: 0px 5px;
+  background-color: #e1e6ee;
+  color: #6c757d;
+  border-radius: 3px;
 }
 </style>

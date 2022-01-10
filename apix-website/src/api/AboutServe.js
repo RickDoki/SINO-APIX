@@ -1,5 +1,8 @@
 import request from '@/utils/request'
 
+/*
+2022 1 8
+ */
 // 服务列表
 export function serveList(query) {
   return request({
@@ -44,7 +47,7 @@ export function appNum(appcode) {
     method: 'post',
   })
 }
-// 添加新办查询api
+// 添加新版本查询api
 export function apiList(id) {
   return request({
     url: '/app/api/list?developerId=' + id,
@@ -55,6 +58,32 @@ export function apiList(id) {
 export function publish(appcode, data) {
   return request({
     url: '/app/' + appcode + '/publish',
+    method: 'post',
+    data
+  })
+}
+
+/*
+2022 1 10
+*/
+// 服务版本删除
+export function delApiversion(query) {
+  return request({
+    url: '/app/appVersion/' + query,
+    method: 'delete',
+  })
+}
+// 我的订阅列表
+export function Mysubscribed(query) {
+  return request({
+    url: '/app/subscribed/list?' + query,
+    method: 'get',
+  })
+}
+// 根据appcode 和 appversionId 查询API合集
+export function queryApiList(data) {
+  return request({
+    url: '/app/api/queryApiList',
     method: 'post',
     data
   })
