@@ -79,7 +79,7 @@ public class ApiHomeController {
         return R.success(applicationInnerNumDTO);
     }
 
-    @PostMapping("/{apiId}/apiNum")
+    @GetMapping("/{apiId}/apiNum")
     public R<Object> apiInnerNum(@PathVariable String apiId) {
         // 时间范围目前写死为 前3个月 到 当前时间
         LocalDateTime endLocalDateTime = LocalDateTime.now();

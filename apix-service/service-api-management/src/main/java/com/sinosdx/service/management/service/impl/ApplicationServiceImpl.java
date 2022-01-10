@@ -711,6 +711,11 @@ public class ApplicationServiceImpl implements ApplicationService {
      */
     @Override
     public R<Object> appSubscribe(String appSubscribedCode) {
+        // 判断是否登录
+        if(Objects.isNull(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID))){
+            return R.fail("请先登录,再订阅");
+        }
+
         Application subscribedApp = applicationMapper.queryAppByStatus(appSubscribedCode,
                 Arrays.asList(Constants.APP_STATUS_IS_PUBLISHED, Constants.APP_STATUS_ERROR, Constants.APP_STATUS_IS_ADDED));
         if (null == subscribedApp) {

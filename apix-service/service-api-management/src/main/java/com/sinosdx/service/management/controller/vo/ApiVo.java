@@ -67,5 +67,6 @@ public class ApiVo implements Serializable {
         this.creationByUsername = api.getCreationByUsername();
         this.lastUpdateDate = api.getLastUpdateDate();
         this.lastUpdatedByUsername = api.getLastUpdatedByUsername();
+        this.protocol = api.getProtocol();
     }
 }

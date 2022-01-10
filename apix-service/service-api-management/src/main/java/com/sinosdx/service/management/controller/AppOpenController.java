@@ -90,7 +90,6 @@ public class AppOpenController {
      */
     @PostMapping("/subscribe/{appSubscribedCode}")
     public R<Object> appSubscribe(@PathVariable("appSubscribedCode") String appSubscribedCode) {
-        // TODO 校验是否为外部访问
         return applicationService.appSubscribe(appSubscribedCode);
     }
 

@@ -2,9 +2,11 @@ package com.sinosdx.service.management.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Maps;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.controller.dto.ApplicationVersionDetailDto;
 import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
 import com.sinosdx.service.management.controller.vo.ApiVersionVo;
 import com.sinosdx.service.management.controller.vo.ApiVo;
@@ -17,6 +19,7 @@ import com.sinosdx.service.management.utils.ThreadContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -385,14 +388,16 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public R<Object> queryApiListByAppVersionId(String appCode, Integer appVersionId) {
-        ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
+        ApplicationVersionDetailDto applicationVersionDetailDto = applicationVersionMapper.queryByIdWithDate(appVersionId);
         List<ApplicationApi> applicationApis = applicationApiMapper.selectList(new LambdaQueryWrapper<ApplicationApi>()
                 .eq(ApplicationApi::getAppCode, appCode)
                 .eq(ApplicationApi::getAppVersionId, appVersionId)
                 .eq(ApplicationApi::getDelFlag, 0)
         );
         List<Api> apiList = applicationApis.stream().map(a -> apiMapper.selectById(a.getApiId())).collect(Collectors.toList());
-        ApplicationVersionDto applicationVersionDto = new ApplicationVersionDto().setApiList(apiList).setApplicationVersion(applicationVersion);
-        return R.success(applicationVersionDto);
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("applicationVersion",applicationVersionDetailDto);
+        data.put("apiList",apiList);
+        return R.success(data);
     }
 }
