@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.GatewayServiceFeign;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author wendy
@@ -379,5 +381,16 @@ public class ApiServiceImpl implements ApiService {
     @Override
     public R<Object> queryApiDetail(Integer apiId) {
         return R.success(apiMapper.selectById(apiId));
+    }
+
+    @Override
+    public R<Object> queryApiListByAppVersionId(String appCode, Integer appVersionId) {
+        List<ApplicationApi> applicationApis = applicationApiMapper.selectList(new LambdaQueryWrapper<ApplicationApi>()
+                .eq(ApplicationApi::getAppCode, appCode)
+                .eq(ApplicationApi::getAppVersionId, appVersionId)
+                .eq(ApplicationApi::getDelFlag, 0)
+        );
+        List<Api> apiList = applicationApis.stream().map(a -> apiMapper.selectById(a.getApiId())).collect(Collectors.toList());
+        return R.success(apiList);
     }
 }

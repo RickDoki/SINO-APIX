@@ -97,4 +97,13 @@ public interface ApiService {
      */
     R<Object> queryApiDetail(Integer apiId);
 
+    /**
+     * 查看api详情
+     *
+     * @param appCode
+     * @param appVersionId
+     * @return
+     */
+    R<Object> queryApiListByAppVersionId(String appCode,Integer appVersionId);
+
 }
