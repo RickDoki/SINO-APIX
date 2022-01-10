@@ -5,16 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
 import com.sinosdx.service.management.controller.vo.ApiVersionVo;
 import com.sinosdx.service.management.controller.vo.ApiVo;
-import com.sinosdx.service.management.dao.entity.Api;
-import com.sinosdx.service.management.dao.entity.ApiTemplate;
-import com.sinosdx.service.management.dao.entity.ApiVersion;
-import com.sinosdx.service.management.dao.entity.ApplicationApi;
-import com.sinosdx.service.management.dao.mapper.ApiMapper;
-import com.sinosdx.service.management.dao.mapper.ApiTemplateMapper;
-import com.sinosdx.service.management.dao.mapper.ApiVersionMapper;
-import com.sinosdx.service.management.dao.mapper.ApplicationApiMapper;
+import com.sinosdx.service.management.dao.entity.*;
+import com.sinosdx.service.management.dao.mapper.*;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApiService;
@@ -58,6 +53,9 @@ public class ApiServiceImpl implements ApiService {
 
     @Autowired
     private SysUserServiceFeign sysUserService;
+
+    @Autowired
+    private ApplicationVersionMapper applicationVersionMapper;
 
     /**
      * 创建API
@@ -387,12 +385,14 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public R<Object> queryApiListByAppVersionId(String appCode, Integer appVersionId) {
+        ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
         List<ApplicationApi> applicationApis = applicationApiMapper.selectList(new LambdaQueryWrapper<ApplicationApi>()
                 .eq(ApplicationApi::getAppCode, appCode)
                 .eq(ApplicationApi::getAppVersionId, appVersionId)
                 .eq(ApplicationApi::getDelFlag, 0)
         );
         List<Api> apiList = applicationApis.stream().map(a -> apiMapper.selectById(a.getApiId())).collect(Collectors.toList());
-        return R.success(apiList);
+        ApplicationVersionDto applicationVersionDto = new ApplicationVersionDto().setApiList(apiList).setApplicationVersion(applicationVersion);
+        return R.success(applicationVersionDto);
     }
 }
