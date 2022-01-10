@@ -21,7 +21,7 @@
     </resultMap>
     
     <resultMap id="appVersion" type="java.util.Map">
-        <result column="appVersionId" property="version" javaType="Integer"/>
+        <result column="appVersionId" property="id" javaType="Integer"/>
         <result column="appVersion" property="version" javaType="String"/>
         <result column="appVersionDesc" property="description" javaType="String"/>
         <collection property="apiList" javaType="java.util.ArrayList" ofType="java.util.Map">
