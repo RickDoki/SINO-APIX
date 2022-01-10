@@ -5,10 +5,7 @@ import com.sinosdx.service.authentication.controller.dto.GenerateTokenDto;
 import com.sinosdx.service.authentication.dao.entity.ClientAppSecret;
 import com.sinosdx.service.authentication.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author wendy
@@ -41,5 +38,27 @@ public class TokenController {
     @PostMapping("/jwt")
     public R<Object> generateJwt(@RequestBody GenerateTokenDto generateTokenDto) {
         return tokenService.generateJwt(generateTokenDto);
+    }
+
+    /**
+     * 查询客户端的secret
+     *
+     * @param secretKey
+     * @return
+     */
+    @GetMapping("/secret")
+    public R<ClientAppSecret> queryClientSecret(@RequestParam String secretKey) {
+        return tokenService.queryBySecret(secretKey);
+    }
+
+    /**
+     * 给订阅方生成basic_token
+     *
+     * @param generateTokenDto
+     * @return
+     */
+    @PostMapping("/basic")
+    public R<Object> generateBasicToken(@RequestBody GenerateTokenDto generateTokenDto) {
+        return tokenService.generateBasicToken(generateTokenDto);
     }
 }

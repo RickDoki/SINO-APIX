@@ -7,6 +7,7 @@ import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVo;
 import com.sinosdx.service.management.dao.entity.Application;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
+import com.sinosdx.service.management.dao.entity.ApplicationSubscribe;
 import com.sinosdx.service.management.result.R;
 
 import java.util.List;
@@ -328,4 +329,12 @@ public interface ApplicationService {
      * @return
      */
     R<JSONObject> queryPluginConfigs(String pluginType, String appCode);
+
+    /**
+     * 根据订阅编号查询订阅信息
+     *
+     * @param subscribeCode
+     * @return
+     */
+    R<ApplicationSubscribe> queryAppCodeBySubscribeCode(String subscribeCode);
 }

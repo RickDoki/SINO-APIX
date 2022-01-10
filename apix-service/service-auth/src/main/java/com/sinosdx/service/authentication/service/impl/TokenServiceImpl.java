@@ -2,7 +2,6 @@ package com.sinosdx.service.authentication.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.toolkit.auth.JwtUtil;
 import com.sinosdx.service.authentication.consumer.ApplicationServiceFeign;
@@ -17,10 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,12 +47,11 @@ public class TokenServiceImpl implements TokenService {
         if (StringUtils.isEmpty(generateTokenDto.getClaimValue())) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
         }
-        List<ClientAppSecret> secretList = clientAppSecretMapper.selectList(new LambdaQueryWrapper<ClientAppSecret>()
-                .eq(ClientAppSecret::getSecretKey, generateTokenDto.getClaimValue()));
-        if (secretList.isEmpty()) {
+
+        ClientAppSecret clientAppSecret = this.queryBySecret(generateTokenDto.getClaimValue()).getData();
+        if (null == clientAppSecret) {
             return R.fail(ResultCodeEnum.PARAM_IS_INVALID);
         }
-        ClientAppSecret clientAppSecret = secretList.get(0);
         Map<String, String> claimMap = new HashMap<>();
         claimMap.put("appCode", clientAppSecret.getAppCode());
         claimMap.put("clientId", String.valueOf(clientAppSecret.getClientId()));
@@ -86,7 +84,48 @@ public class TokenServiceImpl implements TokenService {
      */
     @Override
     public R<Object> saveClientAppSecretKey(ClientAppSecret secret) {
-        clientAppSecretMapper.insert(secret);
+        ClientAppSecret clientAppSecret = clientAppSecretMapper.selectOne(new LambdaQueryWrapper<ClientAppSecret>()
+                .eq(ClientAppSecret::getSecretKey, secret.getSecretKey()));
+        if (null == clientAppSecret) {
+            clientAppSecretMapper.insert(secret);
+        }
         return R.success();
+    }
+
+    /**
+     * 查询客户端的secret
+     *
+     * @param secretKey
+     * @return
+     */
+    @Override
+    public R<ClientAppSecret> queryBySecret(String secretKey) {
+        ClientAppSecret clientAppSecret = clientAppSecretMapper.selectOne(new LambdaQueryWrapper<ClientAppSecret>()
+                .eq(ClientAppSecret::getSecretKey, secretKey));
+        return R.success(clientAppSecret);
+    }
+
+    /**
+     * 给订阅方生成basic_token
+     *
+     * @param generateTokenDto
+     * @return
+     */
+    @Override
+    public R<Object> generateBasicToken(GenerateTokenDto generateTokenDto) {
+        if (StringUtils.isAnyEmpty(generateTokenDto.getUsername(), generateTokenDto.getPassword())) {
+            return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
+        }
+
+        ClientAppSecret clientAppSecret = this.queryBySecret(generateTokenDto.getClaimValue()).getData();
+        if (null == clientAppSecret) {
+            return R.fail(ResultCodeEnum.PARAM_IS_INVALID);
+        }
+
+        String token = new String(
+                Base64.getEncoder().encode(
+                        String.format("%s:%s", generateTokenDto.getUsername(), generateTokenDto.getPassword())
+                                .getBytes(StandardCharsets.UTF_8)));
+        return R.success(Collections.singletonMap("token", token));
     }
 }
