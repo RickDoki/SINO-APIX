@@ -69,7 +69,7 @@ public class ApiServiceImpl implements ApiService {
     @Transactional(rollbackFor = Exception.class)
     public R<Object> createApi(Api api) {
         String domain = api.getDomain();
-        if (StringUtils.isAnyEmpty(api.getName(), api.getUrl(), api.getVersion(), domain)) {
+        if (StringUtils.isAnyEmpty(api.getName(), api.getUrl(), domain)) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
         }
 
