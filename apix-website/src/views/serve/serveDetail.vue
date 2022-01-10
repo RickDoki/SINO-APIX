@@ -5,16 +5,17 @@
         <div class="list_title">{{ serveData.appName }}</div>
         <div class="list_search">
           <div class="but-left">
-            <el-dropdown>
+            <el-dropdown @command="handleCommand">
               <el-button type="primary" size="small">
                 操作<i class="el-icon-arrow-down el-icon--right"></i>
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>黄金糕</el-dropdown-item>
-                <el-dropdown-item>狮子头</el-dropdown-item>
-                <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                <el-dropdown-item>双皮奶</el-dropdown-item>
-                <el-dropdown-item>蚵仔煎</el-dropdown-item>
+                <el-dropdown-item
+                  v-for="(item, index) in dropdownItems"
+                  :key="index"
+                  :command="item"
+                  >{{ item }}</el-dropdown-item
+                >
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -71,12 +72,13 @@
         <el-table
           :data="serveData.appVersion"
           empty-text="暂无数据"
+          v-loading="versionLoading"
           :row-style="{ height: '50px' }"
           highlight-current-row
           :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
         >
-          <el-table-column prop="appVersion" label="版本名称" />
-          <el-table-column prop="appVersionDesc" label="版本描述" />
+          <el-table-column prop="version" label="版本名称" />
+          <el-table-column prop="description" label="版本描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
               <el-button type="text" @click="edition(scope.row)"
@@ -86,7 +88,7 @@
               <el-button
                 style="color: red"
                 type="text"
-                @click="getMessage(scope.row)"
+                @click="delversion(scope.row)"
                 >删除</el-button
               >
             </template>
@@ -192,20 +194,24 @@
 
 <script>
 import "./../mainCss/index.scss";
-import { serveDetail, appNum } from "@/api/AboutServe.js";
+import {
+  serveDetail,
+  appNum,
+  serveupdate,
+  serveDelete,
+  delApiversion,
+} from "@/api/AboutServe.js";
 
 export default {
-  data () {
+  data() {
     return {
       routerView: false,
-      table: [
-        {
-          appName: "111",
-        },
-      ],
+      table: [],
+      dropdownItems: [],
       appCode: "",
       serveData: {},
       serveNum: {},
+      versionLoading: false
     };
   },
   created() {
@@ -222,10 +228,16 @@ export default {
   methods: {
     // 通过appcode查询详情
     getServeDeatil() {
+      this.versionLoading = true
       serveDetail(this.appCode).then((res) => {
         if (res.code === 200) {
-          // console.log(res)
+          this.versionLoading = false
           this.serveData = res.data;
+          if (res.data.isPublished === "60005") {
+            this.dropdownItems = ["下架"];
+          } else {
+            this.dropdownItems = ["发布到门户", "删除"];
+          }
         }
       });
     },
@@ -238,14 +250,58 @@ export default {
         }
       });
     },
+    // 操作
+    handleCommand(command) {
+      // console.log(command)
+      if (command === "下架") {
+        const query = {
+          isPublished: "60001",
+        };
+        serveupdate(this.appCode, query).then((res) => {
+          if (res.code === 200) {
+            this.getServeDeatil();
+          }
+        });
+      } else if (command === "发布到门户") {
+        const query = {
+          isPublished: "60005",
+        };
+        serveupdate(this.appCode, query).then((res) => {
+          if (res.code === 200) {
+            this.getServeDeatil();
+          }
+        });
+      } else {
+        serveDelete(this.appCode).then((res) => {
+          if (res.code === 200) {
+            this.$router.push({ path: "/serve/center" });
+          }
+        });
+      }
+    },
+    // 删除服务版本
+    delversion(e) {
+      delApiversion(e.id).then((res) => {
+        if (res.code === 200) {
+          this.getServeDeatil();
+        }
+      });
+    },
     gonewEdition() {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
-    goplugin () {
+    goplugin() {
       this.$router.push({ path: "/serve/serveDetail/plug-in" });
     },
-    edition() {
-      this.$router.push({ path: "/serve/editionDetail" });
+    // 版本详情
+    edition(e) {
+      this.$router.push({
+        path:
+          "/serve/editionDetail?appCode=" +
+          this.appCode +
+          "&appVersionId=" +
+          e.id,
+      });
     },
   },
 };

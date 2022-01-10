@@ -1,5 +1,5 @@
 <template>
-  <div class="apiMain">
+  <div class="main">
     <div class="apiMain_content">
       <div class="apiMain_search">
         <div>
