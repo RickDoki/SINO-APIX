@@ -47,10 +47,10 @@
         <el-table-column prop="appCode" label="code" />
         <el-table-column label="启用状态">
           <template slot-scope="scope">
-            <div class="hasPublished" v-if="scope.row.isPublished === '60005'">
+            <div class="tag success" v-if="scope.row.isPublished === '60005'">
               已发布
             </div>
-            <div class="noPublished" v-else>未发布</div>
+            <div class="tag info" v-else>未发布</div>
           </template>
         </el-table-column>
         <el-table-column prop="description1" label="版本">
@@ -98,7 +98,7 @@ import { serveList, serveupdate, serveDelete } from "@/api/AboutServe.js";
 import { getToken } from "@/utils/auth"; // get token from cookie
 
 export default {
-  data() {
+  data () {
     return {
       table: [
         {
@@ -113,13 +113,13 @@ export default {
       loading: false,
     };
   },
-  created() {
+  created () {
     this.developerId = getToken("userId_api");
     this.getServeList();
   },
   methods: {
     // 获取列表
-    getServeList() {
+    getServeList () {
       this.loading = true;
       const query =
         "developerId=" +
@@ -143,25 +143,25 @@ export default {
       });
     },
     // 页面跳转
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val;
       this.getServeList();
     },
     // 查看详情
-    goserveDteail(e) {
-      this.$router.push({ path: "/serve/serveDetail?appcode=" + e.row.appCode });
+    goserveDteail (e) {
+      this.$router.push({ path: "/serve/serveDetail/" + e.row.appCode });
     },
     //创建新服务
-    goCreatdServe() {
+    goCreatdServe () {
       this.$router.push({ path: "/serve/create" });
     },
     // 搜索
-    nameSerach() {
+    nameSerach () {
       this.currentPage = 1;
       this.getServeList();
     },
     // 下架服务
-    undercarriage(e) {
+    undercarriage (e) {
       const query = {
         isPublished: "60001",
       };
@@ -172,7 +172,7 @@ export default {
       });
     },
     // 发布到门户
-    Published(e) {
+    Published (e) {
       const query = {
         isPublished: "60005",
       };
@@ -183,7 +183,7 @@ export default {
       });
     },
     // 删除
-    del(e) {
+    del (e) {
       serveDelete(e.appCode).then((res) => {
         if (res.code === 200) {
           this.getServeList();

@@ -235,6 +235,8 @@ aside {
     .left-span {
       display: flex;
       margin-top: 24px;
+      font-size: 14px;
+      line-height: 20px;
     }
     .time {
       width: calc(100% - 400px);
@@ -250,6 +252,9 @@ aside {
     color: #727491;
   }
   .table_box {
+    .tag {
+      width: 55px;
+    }
     padding: 15px 30px 30px 30px;
     border: 1px solid #e1e6ee;
     border-radius: 10px;

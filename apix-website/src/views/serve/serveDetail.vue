@@ -26,10 +26,10 @@
       <div class="status">
         <div class="left-span">
           <span>门户状态: </span>
-          <span class="noPublished" v-if="serveData.isPublished === '60001'"
+          <span class="tag info" v-if="serveData.isPublished === '60001'"
             >未发布</span
           >
-          <span class="hasPublished" v-else>已发布</span>
+          <span class="tag success" v-else>已发布</span>
         </div>
         <div class="time">
           <div>
@@ -214,14 +214,14 @@ export default {
       versionLoading: false
     };
   },
-  created() {
+  created () {
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
     } else {
       this.routerView = true;
     }
     // 获取appcode
-    this.appCode = this.$route.query.appcode;
+    this.appCode = this.$route.params.appcode;
     this.getServeDeatil();
     this.getAppNum();
   },
@@ -242,7 +242,7 @@ export default {
       });
     },
     // 内部详情
-    getAppNum() {
+    getAppNum () {
       appNum(this.appCode).then((res) => {
         // console.log(res);
         if (res.code === 200) {
@@ -346,25 +346,5 @@ export default {
   .table-tilelong {
     line-height: 30px;
   }
-}
-.hasPublished {
-  width: 58px;
-  height: 20px;
-  background-color: #e1f8da;
-  color: #61b874;
-  border-radius: 3px;
-  text-align: center;
-  display: inline-block;
-  line-height: 20px;
-}
-.noPublished {
-  width: 58px;
-  height: 20px;
-  background-color: #e1e6ee;
-  color: #727491;
-  border-radius: 3px;
-  text-align: center;
-  display: inline-block;
-  line-height: 20px;
 }
 </style>

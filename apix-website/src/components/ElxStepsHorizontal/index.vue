@@ -1,11 +1,11 @@
 <template>
   <div class="elx-steps-horizontal">
-    <div v-for="(item,index) in abstracts" class="info" :key="index">
-      <div class="info-content">
+    <div v-for="(item,index) in abstracts" class="steps" :key="index">
+      <div class="steps-content">
         <div  v-if="index < value" class="square squarefinish" @click="btnClick( index )">{{ index + 1 }}</div>
         <div  v-else-if="index == value" class="square squareactive" @click="btnClick( index )">{{ index + 1 }}</div>
         <div  v-else class="square" @click="btnClick( index )">{{ index + 1 }}</div>
-        <div class="info-text-groups">
+        <div class="steps-text-groups">
           <span v-if="index == value" class="text-active"></span>
           <span v-if="index > value" class="text-active"></span>
           <span v-if="index < value" class="text-active"></span>
@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="title">
-        <div :class="['info-text',index < value?'text-active':'']" @click="btnClick( index )">{{ item }}</div>
+        <div :class="['steps-text',index < value?'text-active':'']" @click="btnClick( index )">{{ item }}</div>
       </div>
     </div>
   </div>
@@ -80,13 +80,13 @@ export default {
   flex-flow: row nowrap;
   justify-content: space-around;
   align-items: center;
-  .info {
+  .steps {
     width: 100%;
     display: flex;
     flex-direction: column;
     .title {
       padding-left: 20px;
-      .info-text {
+      .steps-text {
         margin-top: 24px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -102,7 +102,7 @@ export default {
         margin-top: 16px;
       }
     }
-    .info-content {
+    .steps-content {
       width: 100%;
       height: 40px;
       padding: 2px;
@@ -154,7 +154,7 @@ export default {
         // color: $--color-primary;
         // border: 1px solid $--color-primary;
       }
-      .info-text-groups {
+      .steps-text-groups {
         display: flex;
         flex-flow: row nowrap;
         justify-content: flex-start;
@@ -174,7 +174,7 @@ export default {
         .text-active {
           height: 1px;
         }
-        .info-active {
+        .steps-active {
           padding-top: 16px;
           padding-left: 3px;
           display: flex;
