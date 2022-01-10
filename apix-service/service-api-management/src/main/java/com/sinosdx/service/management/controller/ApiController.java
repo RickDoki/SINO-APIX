@@ -225,7 +225,7 @@ public class ApiController {
      * 根据版本 版本id 获取 api
      */
     @AuditLog(type = "根据appCode 及 appVersionId 查询API集合", name = "API")
-    @GetMapping("/queryApiList")
+    @PostMapping("/queryApiList")
     public R<Object> queryApiList(@RequestBody AppApiReq req) {
         return apiService.queryApiListByAppVersionId(req.getAppCode(),req.getAppVersionId());
     }
