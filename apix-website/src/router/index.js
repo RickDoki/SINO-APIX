@@ -49,6 +49,16 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/openServe',
+    children: [
+      {
+        path: '/openServe',
+        name: 'openServe',
+        meta: { title: '开放服务', icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
+      },
+    ]
+  },
+  {
     path: '/serve',
     component: Layout,
     alwaysShow: true,
@@ -223,16 +233,17 @@ export const constantRoutes = [
   },
   {
     path: '/openServe',
+    hidden: false,
     component: () => import('@/views/openServe/index'),
     name: 'openServe',
-    meta: {title: '开放服务', icon: 'openServe', Aicon: 'openServe_Aicon', affix: true}
+    meta: { title: '开放服务', icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
   },
   {
     path: '/openServe/detail',
     component: () => import('@/views/openServe/detail'),
     name: 'openServeDetail',
     hidden: true,
-    meta: {title: '开发服务详情', affix: true}
+    meta: { title: '开发服务详情', affix: true }
   },
   {
     path: '/login',

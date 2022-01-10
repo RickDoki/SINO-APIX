@@ -412,6 +412,9 @@ aside {
     }
   }
 }
+.el-table .cell {
+  white-space: nowrap;
+}
 .tag {
   font-size: 13px;
   height: 20px;

@@ -45,7 +45,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="appCode" label="code" />
-        <el-table-column label="启用状态">
+        <el-table-column label="启用状态" min-width="100">
           <template slot-scope="scope">
             <div class="tag success" v-if="scope.row.isPublished === '60005'">
               已发布
@@ -53,7 +53,7 @@
             <div class="tag info" v-else>未发布</div>
           </template>
         </el-table-column>
-        <el-table-column prop="description1" label="版本">
+        <el-table-column prop="description1" label="版本" min-width="250">
           <template slot-scope="scope">
             <div v-for="(item,index) in scope.row.appVersions" :key=index class="version">
               {{item}}
@@ -195,6 +195,11 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+/deep/ .el-table {
+  .cell {
+    white-space: nowrap;
+  }
+}
 .hasPublished {
   width: 58px;
   height: 20px;
@@ -213,9 +218,9 @@ export default {
 }
 .version {
   display: inline-block;
-  padding: 0px 5px;
-  color: #2650FF;
-  margin: 2px 2px 0px 0px;
+  padding: 0px 12px;
+  color: #2650ff;
+  margin: 4px 14px 4px 0px;
   background-color: #d4dcff;
   border-radius: 3px;
 }
