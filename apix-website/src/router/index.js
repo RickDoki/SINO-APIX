@@ -175,7 +175,7 @@ export const asyncRoutes = [
         component: () => import('@/views/openServe/detail'),
         name: 'openServeDetail',
         hidden: true,
-        meta: { title: 'API门户', affix: true }
+        meta: { title: '开发服务详情', affix: true }
       }
     ]
   },
