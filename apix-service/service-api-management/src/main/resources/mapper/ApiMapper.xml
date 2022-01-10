@@ -111,7 +111,7 @@
     <select id="getApiDetail" resultType="com.sinosdx.service.management.dao.entity.Api">
         select api.* from api api
         <where>
-            api.del_flag = 0 api.id = #{apiId}
+            api.del_flag = 0 and api.id = #{apiId}
         </where>
     </select>
 </mapper>
