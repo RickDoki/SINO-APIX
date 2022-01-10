@@ -317,9 +317,9 @@
             </if>
         </where>
     </select>
-
+    <!--select a.app_code as code,CONCAT(b.prefix_path,b.url) as path-->
     <select id="queryApiByAppId" resultType="java.util.Map">
-      select a.app_code as code,CONCAT(b.prefix_path,b.url) as path
+      select a.app_code as code,b.url as path
       from application_api a
       left join api b
       on a.api_id = b.id
