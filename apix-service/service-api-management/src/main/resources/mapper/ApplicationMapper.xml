@@ -263,7 +263,9 @@
         SELECT SQL_CALC_FOUND_ROWS DISTINCT
         app.id AS appId,
         app.`name` AS appName,
-        app.`code` AS appCode
+        app.`code` AS appCode,
+        app.`is_published` AS isPublished,
+        app.`description` AS description
         FROM
         application app
         JOIN application_subscribe appSub ON appSub.app_subscribed_id = app.id
