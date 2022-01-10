@@ -27,4 +27,19 @@ public interface TokenService {
      */
     R<Object> saveClientAppSecretKey(ClientAppSecret secret);
 
+    /**
+     * 查询客户端的secret
+     *
+     * @param secretKey
+     * @return
+     */
+    R<ClientAppSecret> queryBySecret(String secretKey);
+
+    /**
+     * 给订阅方生成basic_token
+     *
+     * @param generateTokenDto
+     * @return
+     */
+    R<Object> generateBasicToken(GenerateTokenDto generateTokenDto);
 }

@@ -18,6 +18,11 @@ public class AuthConstant {
     public static final String AUTH_HEADER_PREFIX = "Bearer ";
 
     /**
+     * BASIC_HEADER_PREFIX
+     */
+    public static final String BASIC_HEADER_PREFIX = "Basic ";
+
+    /**
      * AUTH_ACCESS_TOKEN
      */
     public static final String AUTH_ACCESS_TOKEN = "access_token";
@@ -33,7 +38,8 @@ public class AuthConstant {
     public static final String TIMESTAMP = "timestamp";
 
     /**
-     * csp2.0 jwt
+     * jwt
      */
     public static final String AUTH_JWT = "JWT";
+
 }

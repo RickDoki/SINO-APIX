@@ -2,6 +2,7 @@ package com.sinosdx.service.management.controller;
 
 
 import com.sinosdx.common.base.annotation.AuditLog;
+import com.sinosdx.service.management.dao.entity.ApplicationSubscribe;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApplicationService;
 import io.swagger.annotations.*;
@@ -91,6 +92,17 @@ public class AppOpenController {
     public R<Object> appSubscribe(@PathVariable("appSubscribedCode") String appSubscribedCode) {
         // TODO 校验是否为外部访问
         return applicationService.appSubscribe(appSubscribedCode);
+    }
+
+    /**
+     * 根据订阅编号查询订阅信息
+     *
+     * @param subscribeCode
+     * @return
+     */
+    @GetMapping("/subscribe")
+    public R<ApplicationSubscribe> queryAppCodeBySubscribeCode(@RequestParam String subscribeCode) {
+        return applicationService.queryAppCodeBySubscribeCode(subscribeCode);
     }
 
 }
