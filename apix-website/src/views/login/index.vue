@@ -33,8 +33,8 @@
         </div>
         <div v-show="!isLogin">
           <el-form :model="re_ruleForm" :rules="re_rules" ref="re_ruleForm">
-            <el-form-item prop="orgName">
-              <el-input placeholder="请输入用户名" v-model="re_ruleForm.orgName"></el-input>
+            <el-form-item prop="username">
+              <el-input placeholder="请输入用户名" v-model="re_ruleForm.username"></el-input>
             </el-form-item>
             <el-form-item prop="mobile">
               <el-input placeholder="请输入手机号" v-model="re_ruleForm.mobile"></el-input>
@@ -78,10 +78,10 @@ export default {
         mobile: "",
         password: "",
         email: "",
-        orgName: "",
+        username: "",
       },
       re_rules: {
-        orgName: { required: true, message: "请输入用户名", trigger: "change" },
+        username: { required: true, message: "请输入用户名", trigger: "change" },
         mobile: { required: true, message: "请输入手机号", trigger: "change" },
         email: [
           { required: true, message: "请输入邮箱", trigger: "change" },
@@ -110,7 +110,7 @@ export default {
             mobile: this.re_ruleForm.mobile,
             password: btoa(this.re_ruleForm.password),
             email: this.re_ruleForm.email,
-            orgName: this.re_ruleForm.orgName
+            username: this.re_ruleForm.username
           }
           console.log(btoaform)
           Apiregister(btoaform).then((res) => {

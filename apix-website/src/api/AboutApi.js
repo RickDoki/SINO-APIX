@@ -20,6 +20,13 @@ export function detail (id) {
     // data
   })
 }
+export function detailNum (id) {
+  return request({
+    url: '/api/app/data/' + id + '/apiNum',
+    method: 'get'
+    // data
+  })
+}
 export function listDelete (id) {
   return request({
     url: '/app/api/' + id,

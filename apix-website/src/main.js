@@ -23,6 +23,7 @@ import './permission' // permission control
 import './utils/error-log' // error log
 import VueContextMenu from 'vue-contextmenu'
 import * as filters from './filters' // global filters
+import VueClipboard from 'vue-clipboard2'
 
 Vue.use(VXETable)
 // VXETable.setup({
@@ -32,6 +33,7 @@ Vue.use(VXETable)
 //   editConfig: { trigger: 'click', mode: 'cell', showIcon: false }
 // })
 Vue.use(VueContextMenu)
+Vue.use(VueClipboard)
 
 /**
  * If you don't want to use mock-server
