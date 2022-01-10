@@ -24,7 +24,10 @@
           <div v-for="(item,index) in serviceList" :key='index' class="service_list_item" @click="goDetail">
             <div class="list_item_title">{{ item.title }}</div>
             <div class="list_item_content">{{ item.content }}</div>
-            <div></div>
+            <div>
+              <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+              <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+            </div>
             <div class="list_item_v">{{ item.verion }}</div>
             <div class="list_item_button">订阅</div>
           </div>
@@ -36,7 +39,10 @@
             <div class="cards_item_button">订阅</div>
             <div class="cards_item_title">{{ item.title }}</div>
             <div class="cards_item_content">{{ item.content }}</div>
-            <div></div>
+            <div>
+              <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+              <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+            </div>
             <div class="cards_item_v">{{ item.verion }}</div>
           </div>
         </div>
