@@ -32,31 +32,39 @@
       <div class="time">
         <div>
           <span>创建时间 : </span>
-          <span>2021-08-05 10:05:00:00</span>
+          <span>{{apiInfo.creationDate}}</span>
         </div>
         <div>
           <span>更新时间 : </span>
-          <span>2021-08-05 10:05:00:00</span>
+          <span>{{apiInfo.lastUpdateDate}}</span>
         </div>
       </div>
     </div>
     <div class="apiMessage">
       <div class="api-info">
         <span class="label-color">域名 : </span>
-        <span class="conten-color">{{apiInfo.domain}}</span> <i class="el-icon-copy-document icon-color"/>
+        <span class="conten-color">{{apiInfo.domain}}</span>
+          <i class="el-icon-copy-document icon-color"
+            v-clipboard:copy="apiInfo.domain"
+            v-clipboard:success="onCopy"
+            v-clipboard:error="onError"/>
       </div>
       <div class="api-info">
         <span class="label-color">路径 : </span>
-        <span class="conten-color">{{apiInfo.url}}</span> <i class="el-icon-copy-document icon-color"/>
+        <span class="conten-color">{{apiInfo.url}}</span>
+        <i class="el-icon-copy-document icon-color"
+            v-clipboard:copy="apiInfo.url"
+            v-clipboard:success="onCopy"
+            v-clipboard:error="onError"/>
       </div>
       <div class="api-info">
         <span class="label-color">请求方式 : </span>
         <span class="conten-color">{{apiInfo.requestMethod}}</span>
       </div>
-      <div class="api-info">
+      <!-- <div class="api-info">
         <span class="label-color">返回类型 : </span>
         <span class="conten-color">{{apiInfo.requestMethod}}</span>
-      </div>
+      </div> -->
       <div class="api-info">
         <span class="label-color">请求参数 : </span>
         <div class="table_box table_top">
@@ -95,13 +103,14 @@
 </template>
 
 <script>
-import { detail } from "@/api/AboutApi";
+import { detail, detailNum } from "@/api/AboutApi";
 import "./../mainCss/index.scss";
 export default {
   data () {
     return {
       apiId: '',
       apiInfo: {},
+      numbers: {},
       paramsTable: [],
       statusTable: [
         { code: '200', desc: '操作成功' }
@@ -112,17 +121,32 @@ export default {
     console.log(this.$route);
     this.apiId = this.$route.params.id
     this.getDetail()
+    this.getDetailNum()
   },
   methods: {
+    // 获取api详情
     getDetail () {
-      // 获取api详情
       detail(this.apiId).then((res) => {
         if (res.code === 200) {
           this.apiInfo = res.data
           this.paramsTable = JSON.parse(res.data.requestParams)
         }
       });
-    }
+    },
+    // 获取API数据统计
+    getDetailNum () {
+      detailNum(this.apiId).then((res) => {
+        if (res.code === 200) {
+          this.numbers = res.data
+        }
+      });
+    },
+    onCopy () {
+      this.$message('复制成功')
+    },
+    onError () {
+      this.$message('复制失败');
+    },
   }
 };
 </script>
