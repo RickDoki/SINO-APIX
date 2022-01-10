@@ -274,7 +274,7 @@ export default {
   .open_service {
     margin: 0 auto;
     margin-top: 3vh;
-    width: 90%;
+    width: 80%;
     padding: 20px;
 
     .open_service_title {
