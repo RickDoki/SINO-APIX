@@ -1,28 +1,33 @@
 package com.sinosdx.common.gateway.plugin.filter.custom;
 
 
-import com.auth0.jwt.interfaces.Claim;
+import com.alibaba.fastjson.JSONObject;
+import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
-import com.sinosdx.common.gateway.plugin.filter.custom.JwtGatewayFilterFactory.Config;
+import com.sinosdx.common.gateway.plugin.filter.custom.BasicAuthGatewayFilterFactory.Config;
+import com.sinosdx.common.gateway.plugin.service.AuthenticationServiceFeign;
 import com.sinosdx.common.gateway.plugin.utils.HttpUtil;
 import com.sinosdx.common.gateway.properties.AuthConstant;
-import com.sinosdx.common.toolkit.auth.JwtUtil;
-import java.util.Map;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.Base64;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 
 /**
@@ -32,29 +37,38 @@ import reactor.core.publisher.Mono;
  */
 @Slf4j
 @Component
-public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
+public class BasicAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
-    public JwtGatewayFilterFactory() {
+    @Autowired
+    private ExecutorService executorService;
+
+    public BasicAuthGatewayFilterFactory() {
         super(Config.class);
     }
 
     @Override
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
-        String jwt = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);
-        if (StringUtils.isEmpty(jwt)) {
+        String basicAuth = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);
+        if (StringUtils.isEmpty(basicAuth)
+                || (StringUtils.isNotEmpty(basicAuth) && !basicAuth.startsWith(AuthConstant.BASIC_HEADER_PREFIX))) {
             return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
                     R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
         }
 
-        R<Object> result;
+        R<JSONObject> result;
 
-        // jwt校验
-        if (StringUtils.isNotEmpty(jwt)) {
+        if (StringUtils.isNotEmpty(basicAuth)) {
             try {
-                Map<String, Claim> verifyJwt = JwtUtil.verifyJwt(null, jwt);
-                if (null == verifyJwt) {
-                    log.error("jwt解析错误");
+                String realToken = basicAuth.substring(AuthConstant.BASIC_HEADER_PREFIX.length());
+                String usernameAndPwd = new String(Base64.getDecoder().decode(realToken));
+                String pwd = usernameAndPwd.split(":")[1];
+
+                Future<R<JSONObject>> future = executorService
+                        .submit(() -> SpringContextHolder.getBean(AuthenticationServiceFeign.class).queryClientSecret(pwd));
+                result = future.get();
+                log.info("result:{}", result);
+                if (!result.isSuccess() || null == result.getData()) {
                     result = R.fail(ResultCodeEnum.TOKEN_ERROR);
                     return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
                 }
@@ -74,7 +88,7 @@ public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
     @Override
     public int setOrder() {
-        return FilterOrderEnum.C_JWT.getOrder();
+        return FilterOrderEnum.C_AUTHORIZE.getOrder();
     }
 
     @Data

@@ -1519,4 +1519,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         JSONObject configJson = JSONObject.parseObject(appPlugin.getPluginParams());
         return R.success(configJson);
     }
+
+    /**
+     * 根据订阅编号查询订阅信息
+     *
+     * @param subscribeCode
+     * @return
+     */
+    @Override
+    public R<ApplicationSubscribe> queryAppCodeBySubscribeCode(String subscribeCode) {
+        ApplicationSubscribe appSubscribe = applicationSubscribeMapper.selectOne(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppClientCode, subscribeCode));
+        return R.success(appSubscribe);
+    }
+
 }

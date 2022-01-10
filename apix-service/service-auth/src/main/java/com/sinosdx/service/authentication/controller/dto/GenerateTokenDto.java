@@ -10,4 +10,6 @@ import lombok.Data;
 public class GenerateTokenDto {
 
     private String claimValue;
+    private String username;
+    private String password;
 }
