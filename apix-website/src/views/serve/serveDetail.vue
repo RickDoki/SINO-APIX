@@ -25,10 +25,10 @@
       <div class="status">
         <div class="left-span">
           <span>门户状态: </span>
-          <span class="noPublished" v-if="serveData.isPublished === '60001'"
+          <span class="tag info" v-if="serveData.isPublished === '60001'"
             >未发布</span
           >
-          <span class="hasPublished" v-else>已发布</span>
+          <span class="tag success" v-else>已发布</span>
         </div>
         <div class="time">
           <div>
@@ -208,7 +208,7 @@ export default {
       serveNum: {},
     };
   },
-  created() {
+  created () {
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
     } else {
@@ -221,7 +221,7 @@ export default {
   },
   methods: {
     // 通过appcode查询详情
-    getServeDeatil() {
+    getServeDeatil () {
       serveDetail(this.appCode).then((res) => {
         if (res.code === 200) {
           // console.log(res)
@@ -230,7 +230,7 @@ export default {
       });
     },
     // 内部详情
-    getAppNum() {
+    getAppNum () {
       appNum(this.appCode).then((res) => {
         // console.log(res);
         if (res.code === 200) {
@@ -238,13 +238,13 @@ export default {
         }
       });
     },
-    gonewEdition() {
+    gonewEdition () {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
     goplugin () {
       this.$router.push({ path: "/serve/serveDetail/plug-in" });
     },
-    edition() {
+    edition () {
       this.$router.push({ path: "/serve/editionDetail" });
     },
   },
@@ -290,25 +290,5 @@ export default {
   .table-tilelong {
     line-height: 30px;
   }
-}
-.hasPublished {
-  width: 58px;
-  height: 20px;
-  background-color: #e1f8da;
-  color: #61b874;
-  border-radius: 3px;
-  text-align: center;
-  display: inline-block;
-  line-height: 20px;
-}
-.noPublished {
-  width: 58px;
-  height: 20px;
-  background-color: #e1e6ee;
-  color: #727491;
-  border-radius: 3px;
-  text-align: center;
-  display: inline-block;
-  line-height: 20px;
 }
 </style>

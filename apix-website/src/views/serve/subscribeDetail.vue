@@ -10,8 +10,7 @@
       <div class="secondTitle">这是一段服务描述</div>
       <div class="status">
         <div class="left-span">
-          <span>服务商: </span>
-          <span>博冀信息</span>
+          <span>服务商 : </span> <span> 博冀信息</span>
         </div>
         <div class="time">
           <div>
@@ -43,7 +42,7 @@ import "./../mainCss/index.scss";
 import apiDetail from "./component/apiDetail.vue";
 import plugIn from "./component/plug-in.vue";
 export default {
-  data() {
+  data () {
     return {
       activeName: "first",
     };
@@ -54,7 +53,7 @@ export default {
   },
   methods: {
     // 切换tab
-    handleClick() {},
+    handleClick () { },
   },
 };
 </script>
