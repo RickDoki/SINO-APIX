@@ -7,6 +7,7 @@ import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.ApplicationNumVo;
 import com.sinosdx.service.management.controller.vo.StatisticsVo;
 import com.sinosdx.service.management.dao.entity.Api;
+import com.sinosdx.service.management.dao.mapper.ApiMapper;
 import com.sinosdx.service.management.service.ApiService;
 import com.sinosdx.service.management.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class ApiHomeController {
 
     @Autowired
     private ApiService apiService;
+
+    @Autowired
+    private ApiMapper apiMapper;
 
     /**
      * 查询首页柱状图数据
@@ -86,7 +90,7 @@ public class ApiHomeController {
         LocalDateTime startLocalDateTime = endLocalDateTime.minusMonths(3);
         Long endTime = endLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
         Long startTime = startLocalDateTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
-        Api api = (Api) apiService.queryApiDetail(Integer.valueOf(apiId)).getData();
+        Api api = apiMapper.selectById(apiId);
         String requestUri =  api.getDomain() + api.getUrl();
         R<Object> objectR = supportLogService.queryGatewayLogByStatus(null,requestUri,startTime, endTime);
         return R.success(objectR.getData());
