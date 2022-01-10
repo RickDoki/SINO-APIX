@@ -380,7 +380,9 @@ public class ApiServiceImpl implements ApiService {
      */
     @Override
     public R<Object> queryApiDetail(Integer apiId) {
-        return R.success(apiMapper.selectById(apiId));
+//        return R.success(apiMapper.selectById(apiId));
+        // 默认过滤通用参数,自己写sql
+        return R.success(apiMapper.getApiDetail(apiId));
     }
 
     @Override

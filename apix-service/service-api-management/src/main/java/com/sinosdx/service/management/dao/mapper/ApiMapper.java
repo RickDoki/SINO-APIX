@@ -28,4 +28,6 @@ public interface ApiMapper extends BaseMapper<Api> {
                                            @Param("userIdList") List<Integer> userIdList);
 
     List<Api> queryApiListByAppCode(@Param("appCode") String appCode);
+
+    Api getApiDetail(@Param("apiId") Integer apiId);
 }
