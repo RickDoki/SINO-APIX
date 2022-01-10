@@ -24,8 +24,8 @@
         <result column="appVersion" property="version" javaType="String"/>
         <result column="appVersionDesc" property="description" javaType="String"/>
         <collection property="apiList" javaType="java.util.ArrayList" ofType="java.util.Map">
-            <id column="apiVersionId" property="apiVersionId" javaType="Integer"/>
-            <result column="apiId" property="apiId" javaType="Integer"/>
+<!--            <id column="apiVersionId" property="apiVersionId" javaType="Integer"/>-->
+            <id column="apiId" property="apiId" javaType="Integer"/>
             <result column="apiName" property="apiName" javaType="String"/>
             <result column="apiDescription" property="description" javaType="String"/>
             <result column="apiMarkdown" property="apiMarkdown" javaType="String"/>
@@ -148,7 +148,7 @@
 <!--        order by av.id desc-->
 <!--    </select>-->
 
-    <select id="queryAppVersionDetails" resultType="appVersion">
+    <select id="queryAppVersionDetails" resultMap="appVersion">
         SELECT
         av.version AS appVersion,
         av.description AS appVersionDesc,
