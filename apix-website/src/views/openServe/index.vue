@@ -1,5 +1,6 @@
 <template>
   <div class="main">
+    <navbar></navbar>
     <div class="apiMain_content">
       <div class="welcome">欢迎访问我们的开放服务平台</div>
       <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
@@ -63,8 +64,10 @@
 
 <script>
 import {list} from "@/api/AboutApp";
+import navbar from "@/views/openServe/component/Navbar";
 
 export default {
+  components: {navbar},
   data() {
     return {
       searchKey: "",
@@ -203,10 +206,10 @@ export default {
 
 <style lang='scss' scoped>
 .main {
-  margin-right: 0px;
-  margin-bottom: 0px;
+  margin: 0px;
 
   .apiMain_content {
+    margin-top: 60px;
     background-image: url("../../../src/assets/img/img_bg.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;

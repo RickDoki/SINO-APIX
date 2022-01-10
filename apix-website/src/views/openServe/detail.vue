@@ -1,6 +1,7 @@
 <template>
   <div class="main">
-    <div>
+    <navbar></navbar>
+    <div style="padding: 30px;margin-top: 60px">
       <div class="list_top">
         <div>
           <div class="list_top_title">服务名称</div>
@@ -8,6 +9,7 @@
         </div>
         <div class="">
           <el-button type="primary" size="small" style="width: 100px">订阅</el-button>
+          <el-button size="small" style="width: 100px" icon="el-icon-back" @click="$router.back()">返回</el-button>
         </div>
       </div>
       <div class="list_top2">
@@ -40,9 +42,11 @@
 import {detail, list, AppLease} from "@/api/AboutApp";
 import {getToken} from "@/utils/auth"; // get token from cookie
 import apiDetail from './component/apiDetail'
+import navbar from "@/views/openServe/component/Navbar";
 
 export default {
   components: {
+    navbar,
     apiDetail
     // apidetail,
     // apiTest,
@@ -123,6 +127,10 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.main {
+  margin: 0px;
+}
+
 .list_top {
   .list_top_title {
     height: 26px;

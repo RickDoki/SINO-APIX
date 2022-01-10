@@ -161,25 +161,6 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/openServe',
-    component: Layout,
-    children: [
-      {
-        path: '/openServe/index',
-        component: () => import('@/views/openServe/index'),
-        name: 'openServe',
-        meta: { title: '开放服务', requiresAuth: false, icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
-      },
-      {
-        path: '/openServe/detail',
-        component: () => import('@/views/openServe/detail'),
-        name: 'openServeDetail',
-        hidden: true,
-        meta: { title: '开放服务详情', requiresAuth: false, affix: true }
-      }
-    ]
-  },
-  {
     path: '/log',
     component: Layout,
     children: [
@@ -241,6 +222,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/openServe',
+    component: () => import('@/views/openServe/index'),
+    name: 'openServe',
+    meta: {title: '开放服务', icon: 'openServe', Aicon: 'openServe_Aicon', affix: true}
+  },
+  {
+    path: '/openServe/detail',
+    component: () => import('@/views/openServe/detail'),
+    name: 'openServeDetail',
+    hidden: true,
+    meta: {title: '开发服务详情', affix: true}
+  },
+  {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
@@ -248,7 +242,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: () => import('@/views/login/index'),
-    redirect: '/login',
+    redirect: '/openServe',
     hidden: true
   },
   {
