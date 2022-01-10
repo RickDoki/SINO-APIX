@@ -1,96 +1,184 @@
 <template>
-  <div class="apiMain">
+  <div class="main">
     <div class="apiMain_content">
-      <div class="apiMain_search">
+      <div class="welcome">欢迎访问我们的开放服务平台</div>
+      <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
+      <div style="width: 100%;text-align: center;margin-top: 5vh">
+        <el-input placeholder="请输入服务名称" v-model="searchKey" class="input-with-select">
+          <el-button type="primary" slot="append">搜一下</el-button>
+        </el-input>
+      </div>
+    </div>
+    <div class="open_service">
+      <div style="display: flex;justify-content: space-between">
+        <div class="open_service_title">开放服务</div>
         <div>
-          <el-input placeholder="请输入" v-model="searchKey">
-            <template slot="append">
-              <div @click="search" style="cursor: pointer">搜索</div>
-            </template>
-          </el-input>
+          <img src="../../../src/assets/img/icon_list.png"
+               style="width: 20px;height: 20px;margin-right: 10px;cursor: pointer" @click="isshow=1">
+          <img src="../../../src/assets/img/icon_cards.png" style="width: 20px;height: 20px;cursor: pointer"
+               @click="isshow=2">
         </div>
       </div>
-      <div v-if="isshow">
-        <div
-          v-for="(item, index) in items"
-          :key="index"
-          @click="itemsClick(item)"
-          class="apiMain_list"
-        >
-          <div class="list_items">
+      <transition name="el-fade-in-linear">
+        <div class="open_service_list" v-show="isshow===1">
+          <div v-for="(item,index) in serviceList" :key='index' class="service_list_item" @click="goDetail">
+            <div class="list_item_title">{{ item.title }}</div>
+            <div class="list_item_content">{{ item.content }}</div>
             <div>
-              <img src="./../../assets/img/door-p.png" alt="" />
+              <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+              <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
             </div>
-            <div class="items_message">
-              <div class="one">
-                <span>{{ item.appName }}</span>
-              </div>
-              <div class="two">
-                <span
-                  >在中台产品的研发过程中，会出现不同的设计规范和实现方式，会出现不同的设计规范和实现方式...</span
-                >
-              </div>
-              <div class="three">
-                <span>操作系统: windows</span>
-                <span>交付方式: 人工服务</span>
-                <span>发布时间: {{ item.creationDate }}</span>
-              </div>
-              <div class="four">
-                <span>服务商: 上汽集团</span>
-              </div>
-              <div class="five">
-                <span>人工智能服务</span>
-                <span> api</span>
-              </div>
-            </div>
-            <div class="price">
-              <span>¥00.00</span>
-              <i>/年</i>
-            </div>
+            <div class="list_item_v">{{ item.verion }}</div>
+            <div class="list_item_button">订阅</div>
           </div>
         </div>
-      </div>
-      <div v-if="!isshow">
-        <div class="shuoming">
-          <img src="./../../assets/img/picture.png" alt="" />
-          <p>暂无数据</p>
+      </transition>
+      <transition name="el-fade-in-linear">
+        <div class="open_service_cards" v-show="isshow===2">
+          <div v-for="(item,index) in serviceList" :key='index' class="service_cards_item">
+            <div class="cards_item_button">订阅</div>
+            <div class="cards_item_title">{{ item.title }}</div>
+            <div class="cards_item_content">{{ item.content }}</div>
+            <div>
+              <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+              <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+            </div>
+            <div class="cards_item_v">{{ item.verion }}</div>
+          </div>
         </div>
+      </transition>
+    </div>
+    <div class="service_footer">
+      <div>
+        <img src="../../../src/assets/img/img_sinosdx_logo.png" style="width: 119px;height: 43px;opacity: 1;">
       </div>
+      <div class="footer_text1">
+        <div style="margin-right: 50px">上海博冀信息科技有限公司</div>
+        <div>联系电话 000-0000-8888</div>
+      </div>
+      <div class="footer_text2">Copyright © 2021 上海博冀信息科技有限公司</div>
     </div>
   </div>
 </template>
 
 <script>
-import { list } from "@/api/AboutApp";
+import {list} from "@/api/AboutApp";
 
 export default {
-  data () {
+  data() {
     return {
       searchKey: "",
       items: [],
-      isshow: true,
+      isshow: 1,
+      serviceList: [
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        },
+        {
+          title: "测试服务",
+          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
+          verion: "v1.0"
+        }
+      ]
     };
   },
-  created () {
-    const query = "?market=true";
-    list(query).then((res) => {
-      console.log(res);
-      this.items = res.data.appList;
-      if (res.data.appList.length === 0) {
-        this.isshow = false;
-      } else {
-        this.isshow = true;
-      }
-    });
+  created() {
+    // const query = "?market=true";
+    // list(query).then((res) => {
+    //   console.log(res);
+    //   this.items = res.data.appList;
+    //   if (res.data.appList.length === 0) {
+    //     this.isshow = false;
+    //   } else {
+    //     this.isshow = true;
+    //   }
+    // });
   },
   methods: {
-    itemsClick (i) {
+    itemsClick(i) {
       console.log(i);
       this.$router.push({
         path: "/apiDoor/detail?message=" + JSON.stringify(i),
       });
     },
-    search () {
+    search() {
       // console.log('搜索')
       const query = "?market=true&appName=" + this.searchKey;
       list(query).then((res) => {
@@ -104,83 +192,400 @@ export default {
         }
       });
     },
+    goDetail() {
+      this.$router.push({
+        name: 'openServeDetail'
+      })
+    }
   },
 };
 </script>
 
 <style lang='scss' scoped>
-.apiMain {
-  margin: 24px;
-}
-.shuoming {
-  height: 300px;
-  text-align: center;
-  p {
-    color: #999999;
-  }
-}
-.apiMain_content {
-  width: 100%;
-  background-color: #fff;
-  .apiMain_search {
-    padding: 15px 30%;
-    ::v-deep .el-input-group__append {
-      background-color: #2650ff;
-      color: #fff;
+.main {
+  margin-right: 0px;
+  margin-bottom: 0px;
+
+  .apiMain_content {
+    background-image: url("../../../src/assets/img/img_bg.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    height: 50vh;
+    width: 100%;
+    background-color: #fff;
+    padding-top: 7vh;
+
+    ::v-deep {
+      .el-input--medium .el-input__inner {
+        height: 48px;
+        line-height: 48px;
+        background: #F1F4FE;
+        opacity: 1;
+        color: #494E6A;
+      }
+
+      .el-button--primary:hover, .el-button--primary:focus {
+        height: 48px;
+        color: #FFFFFF;
+        background: #5173ff;
+        border-color: #5173ff;
+      }
+
+      .el-button--primary {
+        height: 48px;
+        background: rgba(38, 80, 255, 0.85);
+        border-color: #2650FF;
+        color: #FFFFFF;
+      }
+    }
+
+    .welcome {
+      text-align: center;
+      width: 100%;
+      height: 28px;
+      font-size: 24px;
+      font-family: Roboto-Regular, Roboto;
+      font-weight: 400;
+      color: #000000;
+      line-height: 28px;
+    }
+
+    .all_services {
+      margin-top: 5vh;
+      text-align: center;
+      width: 100%;
+      height: 41px;
+      font-size: 32px;
+      font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
+      font-weight: bold;
+      color: #000000;
+      line-height: 38px;
+    }
+
+    .input-with-select {
+      width: 55vh;
+      height: 48px;
     }
   }
-  .apiMain_list {
-    padding: 24px;
-    cursor: pointer;
-    .list_items {
-      height: 130px;
-      border-bottom: 1px solid #ccc;
+
+  .open_service {
+    margin: 0 auto;
+    margin-top: 3vh;
+    width: 90%;
+    padding: 20px;
+
+    .open_service_title {
+      height: 25px;
+      font-size: 20px;
+      font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
+      font-weight: bold;
+      color: #000000;
+      line-height: 23px;
+    }
+
+    .open_service_list {
+      margin-top: 20px;
+
+      .service_list_item {
+        cursor: pointer;
+        width: 100%;
+        height: 84px;
+        background: #FFFFFF;
+        box-shadow: 0px 0px 8px 1px rgba(29, 28, 53, 0.2);
+        border-radius: 8px 8px 8px 8px;
+        opacity: 1;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .list_item_title {
+          height: 20px;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
+          font-weight: bold;
+          color: #000000;
+          line-height: 20px;
+        }
+
+        .list_item_content {
+          overflow: hidden;
+          width: 60%;
+          white-space: nowrap; /*不换行*/
+          text-overflow: ellipsis;
+          height: 20px;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #494E6A;
+          line-height: 20px;
+        }
+
+        .list_item_v {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 44px;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #2650FF;
+          height: 20px;
+          background: #E0E6FF;
+          border-radius: 4px 4px 4px 4px;
+        }
+
+        .list_item_button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #2650FF;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+          border: 1px solid #2650FF;
+        }
+
+        .list_item_button:hover {
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          background: #2650FF;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+        }
+      }
+
+      .service_list_item:hover {
+        width: 100%;
+        height: 84px;
+        background: #FFFFFF;
+        box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
+        border: 1px solid #2650FF;
+        border-radius: 8px 8px 8px 8px;
+        opacity: 1;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        .list_item_title {
+          height: 20px;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
+          font-weight: bold;
+          color: #000000;
+          line-height: 20px;
+        }
+
+        .list_item_content {
+          overflow: hidden;
+          white-space: nowrap; /*不换行*/
+          width: 60%;
+          text-overflow: ellipsis;
+          height: 20px;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #494E6A;
+          line-height: 20px;
+        }
+
+        .list_item_v {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 44px;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #2650FF;
+          height: 20px;
+          background: #E0E6FF;
+          border-radius: 4px 4px 4px 4px;
+        }
+
+        .list_item_button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #2650FF;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+          border: 1px solid #2650FF;
+        }
+
+        .list_item_button:hover {
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          background: #2650FF;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+        }
+      }
+    }
+
+    .open_service_cards {
+      margin-top: 20px;
       display: flex;
-      .items_message {
-        width: 70%;
-        margin-left: 24px;
-        font-size: 12px;
-        div {
-          padding: 5px 0px;
+      flex-wrap: wrap;
+      flex-direction: row;
+
+      .service_cards_item {
+        cursor: pointer;
+        margin-right: 20px;
+        box-sizing: border-box;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        padding: 20px;
+        width: 250px;
+        height: 300px;
+        background: #FFFFFF;
+        box-shadow: 0px 0px 8px 1px rgba(29, 28, 53, 0.2);
+        border-radius: 8px 8px 8px 8px;
+        opacity: 1;
+        border: 1px solid #ffffff;
+
+        .cards_item_button {
+          margin-top: 10px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #2650FF;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+          border: 1px solid #2650FF;
         }
-        .one {
-          color: #000;
+
+        .cards_item_button:hover {
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          background: #2650FF;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
         }
-        .two {
-          color: #666666;
+
+        .cards_item_title {
+          margin-top: 10px;
+          height: 20px;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
+          font-weight: bold;
+          color: #000000;
+          line-height: 20px;
         }
-        .three {
-          color: #999999;
-          span {
-            display: inline-block;
-            width: 30%;
-          }
+
+        .cards_item_content {
+          margin-top: 10px;
+          width: 100%;
+          height: 15vh;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #494E6A;
+          line-height: 20px;
         }
-        .four {
-          color: #999999;
-        }
-        .five {
-          span {
-            display: inline-block;
-            padding: 3px;
-            margin-right: 5px;
-            color: #2650ff;
-            background: rgba(44, 102, 251, 0.1);
-          }
+
+        .cards_item_v {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 44px;
+          font-size: 14px;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #2650FF;
+          height: 20px;
+          background: #E0E6FF;
+          border-radius: 4px 4px 4px 4px;
         }
       }
-      .price {
-        margin-top: 23px;
-        span {
-          color: #f6323c;
-          font-size: 16px;
-        }
-        i {
-          font-style: normal;
-          font-size: 12px;
-          color: #999999;
-        }
+
+      .service_cards_item:hover {
+        width: 250px;
+        height: 300px;
+        background: #FFFFFF;
+        box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
+        border-radius: 8px 8px 8px 8px;
+        opacity: 1;
+        border: 1px solid #2650FF;
       }
+    }
+  }
+
+  .service_footer {
+    width: 100%;
+    min-height: 199px;
+    background: #1D1C35;
+    opacity: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+    .footer_text1 {
+      height: 20px;
+      font-size: 14px;
+      font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+      font-weight: 400;
+      color: #FFFFFF;
+      line-height: 20px;
+      display: flex;
+    }
+
+    .footer_text2 {
+      height: 15px;
+      font-size: 12px;
+      font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+      font-weight: 400;
+      color: #FFFFFF;
+      line-height: 14px;
     }
   }
 }

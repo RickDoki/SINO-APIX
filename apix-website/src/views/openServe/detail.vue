@@ -1,119 +1,54 @@
 <template>
-  <div class="detail_main">
-    <div class="apiMain_list">
-      <div class="list_items">
+  <div class="main">
+    <div>
+      <div class="list_top">
         <div>
-          <img src="./../../assets/img/door-p.png" alt="" />
+          <div class="list_top_title">服务名称</div>
+          <div class="introduction">这是一段服务描述这是一段服务描述这是一段服务描述这是一段服务描述这是一段服务描述</div>
         </div>
-        <div class="items_message">
-          <div class="one">
-            <span>API{{ 1 }}</span>
-          </div>
-          <div class="two">
-            <span
-              >在中台产品的研发过程中，会出现不同的设计规范和实现方式，会出现不同的设计规范和实现方式...</span
-            >
-          </div>
-          <div class="three">
-            <span>操作系统: windows</span>
-            <span>交付方式: 人工服务</span>
-            <span>发布时间: 2021-09-08</span>
-          </div>
-          <div class="four">
-            <span>服务商: 上汽集团</span>
-          </div>
-          <div class="five">
-            <span>人工智能服务</span>
-            <span> api</span>
-          </div>
-        </div>
-        <div class="price">
-          <span>¥00.00</span>
-          <i>/年</i>
+        <div class="">
+          <el-button type="primary" size="small" style="width: 100px">订阅</el-button>
         </div>
       </div>
-    </div>
-    <div class="main_tables">
-      <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane name="first">
-          <span slot="label"><i class="iconfont icon-detail"></i>接口详情</span>
-          <apidetail></apidetail>
-        </el-tab-pane>
-        <!-- <el-tab-pane name="second">
-          <span slot="label"
-            ><i class="iconfont icon-xiuding fontSize"></i>接口测试</span
-          >
-          <api-test></api-test>
-        </el-tab-pane> -->
-        <el-tab-pane name="third">
-          <span slot="label"
-            ><i class="iconfont icon-wenjian1 fontSize"></i>产品说明</span
-          >
-          <div class="shuoming">
-            <img src="./../../assets/img/picture.png" alt="" />
-            <p>暂无说明</p>
-          </div></el-tab-pane
-        >
-        <!-- <el-tab-pane name="fourth">
-          <span slot="label"
-            ><i class="iconfont icon-wenjian fontSize"></i>接口文档</span
-          >
-          接口文档</el-tab-pane
-        >
-        <el-tab-pane name="fivth">
-          <span slot="label"
-            ><i class="iconfont icon-pinglun fontSize"></i>评论</span
-          >
-          评论</el-tab-pane
-        > -->
-        <el-tab-pane name="sixth">
-          <span slot="label"
-            ><i class="iconfont icon-wenhao fontSize"></i>帮助文档</span
-          >
-          <help></help>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-    <div class="bottom">
-      <div class="left">
-        <el-select
-          v-model="value"
-          style="width: 200px"
-          size="mini"
-          placeholder="请选择应用"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+      <div class="list_top2">
+        <div style="display: flex">
+          <div class="service_providers">服务商：博冀科技</div>
+          <div class="service_providers">发布时间：2021-10-05 08:05:00</div>
+          <div class="service_providers" style="display: flex">
+            已添加的插件：
+            <div class="plug-in" style="display: flex">
+              <el-tooltip class="item" effect="light" content="Left Bottom 提示文字" placement="bottom-start">
+                <div class="chajian_qian"></div>
+              </el-tooltip>
+              <div>jwt-auth</div>
+            </div>
+          </div>
+        </div>
+        <div class="release_time">发布时间： 2021-08-05 10:05:00</div>
       </div>
-      <div class="price">
-        <span>¥00.00</span>
-        <i>/年</i>
-        <div @click="leaseSure" class="dingyue">订阅</div>
+      <div style="margin-top: 20px">
+        <api-detail></api-detail>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import "@/assets/icons/apiIcon/iconfont.css";
-import apidetail from "./detail/detail.vue";
-import apiTest from "./detail/test.vue";
-import help from "./detail/help.vue";
-import { detail, list, AppLease } from "@/api/AboutApp";
-import { getToken } from "@/utils/auth"; // get token from cookie
+// import apidetail from "./detail/detail.vue";
+// import apiTest from "./detail/test.vue";
+// import help from "./detail/help.vue";
+import {detail, list, AppLease} from "@/api/AboutApp";
+import {getToken} from "@/utils/auth"; // get token from cookie
+import apiDetail from './component/apiDetail'
 
 export default {
   components: {
-    apidetail,
-    apiTest,
-    help,
+    apiDetail
+    // apidetail,
+    // apiTest,
+    // help,
   },
-  data () {
+  data() {
     return {
       activeName: "first",
       appMessage: "",
@@ -123,15 +58,15 @@ export default {
     };
   },
   methods: {
-    handleClick (tab, event) {
+    handleClick(tab, event) {
       console.log(tab, event);
     },
-    getappMessage () {
+    getappMessage() {
       detail(this.appMessage.appCode, "").then((res) => {
         console.log(res);
       });
     },
-    getUserapp () {
+    getUserapp() {
       const developerId = getToken("userId");
       const query = "?developerId=" + developerId;
       this.options = [];
@@ -149,7 +84,7 @@ export default {
         }
       });
     },
-    leaseSure () {
+    leaseSure() {
       if (this.value === "") {
         this.messageERROR("请先选择应用");
         return false;
@@ -164,147 +99,86 @@ export default {
       }
     },
     // 成功消息
-    messageOK (msg) {
+    messageOK(msg) {
       this.$message({
         message: msg,
         type: "success",
       });
     },
     // 失败消息
-    messageERROR (msg) {
+    messageERROR(msg) {
       this.$message({
         message: msg,
         type: "error",
       });
     },
   },
-  created () {
-    this.appMessage = JSON.parse(this.$route.query.message);
-    this.getUserapp();
-    console.log(this.appMessage);
-    this.getappMessage();
+  created() {
+    // this.appMessage = JSON.parse(this.$route.query.message);
+    // this.getUserapp();
+    // console.log(this.appMessage);
+    // this.getappMessage();
   },
 };
 </script>
 
 <style lang='scss' scoped>
-.detail_main {
-  padding: 24px;
-  .apiMain_list {
-    background-color: #fff;
-    padding: 24px;
-    cursor: pointer;
-    .list_items {
-      height: 130px;
-      display: flex;
-      .items_message {
-        width: 70%;
-        margin-left: 24px;
-        font-size: 12px;
-        div {
-          padding: 5px 0px;
-        }
-        .one {
-          color: #000;
-        }
-        .two {
-          color: #666666;
-        }
-        .three {
-          color: #999999;
-          span {
-            display: inline-block;
-            width: 30%;
-          }
-        }
-        .four {
-          color: #999999;
-        }
-        .five {
-          span {
-            display: inline-block;
-            padding: 3px;
-            margin-right: 5px;
-            color: #2650ff;
-            background: rgba(44, 102, 251, 0.1);
-          }
-        }
-      }
-      .price {
-        margin-top: 23px;
-        span {
-          color: #f6323c;
-          font-size: 16px;
-        }
-        i {
-          font-style: normal;
-          font-size: 12px;
-          color: #999999;
-        }
-      }
-    }
+.list_top {
+  .list_top_title {
+    height: 26px;
+    font-size: 20px;
+    font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
+    font-weight: bold;
+    color: #1D1C35;
+    line-height: 26px;
   }
-  .main_tables {
-    background-color: #fff;
-    margin-top: 24px;
-    padding: 24px;
-    margin-bottom: 50px;
-  }
-  .fontSize {
+
+  .introduction {
+    margin-top: 5px;
+    height: 20px;
     font-size: 14px;
-    margin-left: 5px;
-    padding-right: 8px;
+    font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+    font-weight: 400;
+    color: #727491;
+    line-height: 20px;
   }
-  .shuoming {
-    height: 300px;
-    text-align: center;
-    p {
-      text-align: center;
-      font-size: 12px;
-      color: #ccc;
+}
+
+.list_top2 {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+
+  .service_providers {
+    height: 20px;
+    font-size: 14px;
+    font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+    font-weight: 400;
+    color: #1D1C35;
+    line-height: 20px;
+    margin-right: 40px;
+
+    .plug-in {
+      margin-right: 10px;
+
+      .chajian_qian {
+        margin-right: 10px;
+        width: 20px;
+        height: 20px;
+        background: #F1F1F1;
+        border-radius: 0px 0px 0px 0px;
+        opacity: 1;
+      }
     }
   }
-  .bottom {
-    position: fixed;
-    width: calc(100% - 210px);
-    height: 50px;
-    background-color: #fff;
-    bottom: 0px;
-    right: 0px;
-    display: flex;
-    justify-content: space-between;
-    div {
-      width: 30%;
-    }
-    .left {
-      margin-top: 10px;
-    }
-    .price {
-      margin-top: 15px;
-      vertical-align: middle;
-      span {
-        color: #f6323c;
-        font-size: 16px;
-        vertical-align: middle;
-      }
-      i {
-        font-style: normal;
-        font-size: 12px;
-        color: #999999;
-        vertical-align: middle;
-      }
-      .dingyue {
-        display: inline-block;
-        width: 70px;
-        text-align: center;
-        line-height: 30px;
-        height: 30px;
-        vertical-align: middle;
-        background-color: #2650ff;
-        color: #fff;
-        margin-left: 30px;
-      }
-    }
+
+  .release_time {
+    height: 20px;
+    font-size: 12px;
+    font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+    font-weight: 400;
+    color: #727491;
+    line-height: 20px;
   }
 }
 </style>
