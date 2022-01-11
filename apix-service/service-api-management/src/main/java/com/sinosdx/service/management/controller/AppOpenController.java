@@ -88,7 +88,7 @@ public class AppOpenController {
      * @param appSubscribedCode
      * @return
      */
-    @PostMapping("/subscribe/{appSubscribedCode}")
+    @GetMapping("/subscribe/{appSubscribedCode}")
     public R<Object> appSubscribe(@PathVariable("appSubscribedCode") String appSubscribedCode) {
         return applicationService.appSubscribe(appSubscribedCode);
     }
