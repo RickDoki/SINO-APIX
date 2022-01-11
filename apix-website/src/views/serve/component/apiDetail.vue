@@ -1,20 +1,33 @@
 <template>
   <div class="he_main">
-    <el-row style="height:100%">
-      <el-col style="height:100%" :span="4">
+    <el-row style="height: 100%">
+      <el-col style="height: 100%" :span="4">
         <div class="apiList">
-          <el-select v-model="apiValue" size="mini" placeholder="请选择">
+          <el-select
+            v-model="apiValue"
+            size="mini"
+            placeholder="请选择"
+            @change="apiValueChange"
+          >
             <el-option
-              v-for="item in apiOptions"
+              v-for="item in list"
               :key="item.value"
               :label="item.label"
               :value="item.value"
             >
             </el-option>
           </el-select>
+          <p
+            :class="classList[index]"
+            v-for="(item, index) in defaultApiList"
+            :key="index"
+            @click="choseApi(item, index)"
+          >
+            {{ item.apiName }}
+          </p>
         </div>
       </el-col>
-      <el-col style="height:100%" :span="20">
+      <el-col style="height: 100%" :span="20">
         <div class="apiMessage">
           <div class="api-info">
             <div class="title">API名称</div>
@@ -22,7 +35,8 @@
           </div>
           <div class="api-info">
             <span class="label-color">调用路径 : </span>
-            <span class="conten-color">https://www.baidu.com</span> <i class="el-icon-copy-document icon-color"/>
+            <span class="conten-color">https://www.baidu.com</span>
+            <i class="el-icon-copy-document icon-color" />
           </div>
           <div class="api-info">
             <span class="label-color agrement">协议类型 : </span>
@@ -64,7 +78,7 @@
                 highlight-current-row
                 :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
               >
-                <el-table-column prop="appName" label="状态码" width="200"/>
+                <el-table-column prop="appName" label="状态码" width="200" />
                 <el-table-column prop="appCode" label="描述" />
               </el-table>
             </div>
@@ -76,13 +90,69 @@
 </template>
 
 <script>
+import { queryApiList } from "@/api/AboutServe.js";
+
 export default {
-  data () {
+  data() {
     return {
       table: [],
       apiOptions: [],
-      apiValue: ''
+      apiValue: "",
+      classList: [],
+      appCode: "",
     };
+  },
+  props: ["list", "defaultApiList"],
+  created() {
+    this.appCode = this.$route.params.appCode;
+    console.log(this.$route.params.appCode);
+  },
+  mounted() {
+    // console.log(this.list);
+  },
+  methods: {
+    choseApi(e, i) {
+      // this.classList[i] = 'hitClass'
+      // console.log(this.classList)
+      this.classList = [];
+      for (let index = 0; index < this.defaultApiList.length; index++) {
+        if (index === i) {
+          this.classList.push("hitClass");
+        } else {
+          this.classList.push("nohit");
+        }
+      }
+    },
+    apiValueChange() {
+      // console.log(this.apiValue)
+      const query = {
+        appCode: this.appCode,
+        appVersionId: this.apiValue,
+      };
+      queryApiList(query).then((res) => {
+        if (res.code === 200) {
+          // console.log(res)
+          this.$emit("changeVersion", res.data.apiList);
+        }
+      });
+    },
+  },
+  watch: {
+    list() {
+      this.apiValue = this.list[0].value;
+    },
+    defaultApiList() {
+      console.log('api变化')
+      console.log(this.defaultApiList)
+      for (let index = 0; index < this.defaultApiList.length; index++) {
+        // this.classList.push('hitClass')
+        if (index === 0) {
+          this.classList.push("hitClass");
+        } else {
+          this.classList.push("nohit");
+        }
+      }
+    },
   },
 };
 </script>
@@ -119,6 +189,13 @@ export default {
   }
 }
 .apiMessage::-webkit-scrollbar {
-      display: none;
-    }
+  display: none;
+}
+.hitClass {
+  cursor: pointer;
+  color: #2650ff;
+}
+.nohit {
+  cursor: pointer;
+}
 </style>

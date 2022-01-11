@@ -29,7 +29,7 @@
       >
         <el-table-column prop="appName" label="服务名称">
           <template slot-scope="scope">
-            <span @click="goserveDteail" class="linkcolor">{{
+            <span @click="goserveDteail(scope.row)" class="linkcolor">{{
               scope.row.appName
             }}</span>
           </template>
@@ -81,7 +81,7 @@ export default {
       ],
       total: 0,
       currentPage: 1,
-      name: "hwd",
+      name: "",
       loading:false
     };
   },
@@ -108,6 +108,7 @@ export default {
         if(res.code === 200) {
           this.table = res.data.appList
           this.total = res.data.total
+          this.total = 100
           this.loading = false
         }
       });
@@ -117,8 +118,8 @@ export default {
       this.getMysubscribed()
     },
     // 跳转api详情
-    goserveDteail() {
-      this.$router.push({ path: "/serve/subscribeDetail" });
+    goserveDteail(e) {
+      this.$router.push({ path: "/serve/subscribeDetail/" + e.appCode });
     },
   },
 };
