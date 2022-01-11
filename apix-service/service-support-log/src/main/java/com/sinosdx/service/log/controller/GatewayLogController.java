@@ -55,9 +55,10 @@ public class GatewayLogController extends
                                          @RequestParam(name = "startTime", required = false) Long startTime,
                                          @RequestParam(name = "endTime", required = false) Long endTime,
                                          @RequestParam(name = "appCode", required = false) String appCode,
+                                         @RequestParam(name = "statusCode", required = false) Integer statusCode,
                                          @RequestParam(name = "limit", required = false) Integer limit,
                                          @RequestParam(name = "offset", required = false)Integer offset) {
-        return gatewayLogService.queryGatewayLogList(httpMethod, domain, requestPath, startTime, endTime,appCode, limit, offset);
+        return gatewayLogService.queryGatewayLogList(httpMethod, domain, requestPath, startTime, endTime,appCode,statusCode, limit, offset);
     }
 
     @GetMapping("/queryListByAppCode")
