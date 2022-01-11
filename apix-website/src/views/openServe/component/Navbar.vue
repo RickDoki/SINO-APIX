@@ -10,7 +10,7 @@
         <img src="../../../assets/img/img_avatar.png" alt="" v-if="isLogin"/>
         <el-dropdown trigger="click" @command="handleCommand" v-if="isLogin">
           <span style="color: #1D1C35" class="el-dropdown-link">
-            {{ phone }}<i class="el-icon-arrow-down el-icon--right"></i>
+            {{ userName }}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown" class="drop-div">
             <el-dropdown-item command="a">个人信息</el-dropdown-item>
@@ -23,19 +23,21 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import {getToken, removeToken} from "@/utils/auth";
+import { mapGetters } from "vuex";
+import { getToken, removeToken } from "@/utils/auth";
 
 export default {
   components: {},
-  data() {
+  data () {
     return {
       phone: '',
+      userName: '',
       isLogin: true
     };
   },
-  created() {
+  created () {
     this.phone = getToken('apiPhone')
+    this.userName = getToken('userName_api')
     if (this.phone) {
       this.isLogin = true
     } else {
@@ -54,20 +56,20 @@ export default {
     ...mapGetters(["sidebar", "avatar", "device"]),
   },
   methods: {
-    handleCommand(command) {
+    handleCommand (command) {
       // this.$message("click on item " + command);
       if (command == 'a') {
-        this.$router.push({path: '/system/index'})
+        this.$router.push({ path: '/system/index' })
       } else {
-        this.$router.push({path: '/login'})
+        this.$router.push({ path: '/login' })
       }
     },
-    godashboard() {
+    godashboard () {
       this.$router.push({
         name: 'Dashboard'
       })
     },
-    gologin() {
+    gologin () {
       this.$router.push({
         path: '/login'
       })
