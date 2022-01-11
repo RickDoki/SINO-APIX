@@ -44,7 +44,7 @@ export const asyncRoutes = [
         path: '/dashboard/index',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: {title: '控制台', requiresAuth: true, icon: 'dashboard', Aicon: 'dashboard_Aicon', affix: true}
+        meta: { title: '控制台', requiresAuth: true, icon: 'dashboard', Aicon: 'dashboard_Aicon', affix: true }
       }
     ]
   },
@@ -62,54 +62,54 @@ export const asyncRoutes = [
     path: '/serve',
     component: Layout,
     alwaysShow: true,
-    meta: {title: '服务管理', requiresAuth: true, icon: 'serve', Aicon: 'serve_Aicon'},
+    meta: { title: '服务管理', requiresAuth: true, icon: 'serve', Aicon: 'serve_Aicon' },
     children: [
       {
         path: '/serve/center',
         component: () => import('@/views/serve/serveCenter'),
         name: 'center',
-        meta: {title: '我的服务', requiresAuth: true}
+        meta: { title: '我的服务', requiresAuth: true }
       },
       {
         path: '/serve/subscribe',
         component: () => import('@/views/serve/subscribe'),
         name: 'subscribe',
-        meta: {title: '我的订阅', requiresAuth: true}
+        meta: { title: '我的订阅', requiresAuth: true }
       },
       {
         path: '/serve/create',
         component: () => import('@/views/serve/createServe'),
         name: 'create',
         hidden: true,
-        meta: {title: '创建服务', requiresAuth: true}
+        meta: { title: '创建服务', requiresAuth: true }
       },
       {
         path: '/serve/editionDetail',
         component: () => import('@/views/serve/editionDetail'),
         name: 'editionDetail',
         hidden: true,
-        meta: {title: '版本详情', requiresAuth: true}
+        meta: { title: '版本详情', requiresAuth: true }
       },
       {
         path: '/serve/subscribeDetail',
         component: () => import('@/views/serve/subscribeDetail'),
         name: 'subscribeDetail',
         hidden: true,
-        meta: {title: '订阅服务详情', requiresAuth: true}
+        meta: { title: '订阅服务详情', requiresAuth: true }
       },
       {
         path: '/serve/serveDetail/:appcode',
         component: () => import('@/views/serve/serveDetail'),
         name: 'serveDteail',
         hidden: true,
-        meta: {title: '服务详情', requiresAuth: true},
+        meta: { title: '服务详情', requiresAuth: true },
         children: [
           {
             path: '/serve/serveDetail/plug-in',
             component: () => import('@/views/serve/plug-in'),
             name: 'plug-in',
             hidden: true,
-            meta: {title: '插件中心', requiresAuth: true}
+            meta: { title: '插件中心', requiresAuth: true }
           },
         ]
       },
@@ -118,7 +118,7 @@ export const asyncRoutes = [
         component: () => import('@/views/serve/newEdition'),
         hidden: true,
         name: 'newEdition',
-        meta: {title: '添加新版本', requiresAuth: true}
+        meta: { title: '添加新版本', requiresAuth: true }
       }
     ]
   },
@@ -126,47 +126,47 @@ export const asyncRoutes = [
     path: '/api',
     component: Layout,
     alwaysShow: true,
-    meta: {title: 'API管理', requiresAuth: true, icon: 'api', Aicon: 'api_Aicon'},
+    meta: { title: 'API管理', requiresAuth: true, icon: 'api', Aicon: 'api_Aicon' },
     children: [
       {
         path: '/api/list',
         component: () => import('@/views/api/list'),
         name: 'App',
-        meta: {title: 'API列表', requiresAuth: true}
+        meta: { title: 'API列表', requiresAuth: true }
       },
       {
         path: '/api/add',
         component: () => import('@/views/api/add'),
         name: 'release',
         hidden: true,
-        meta: {title: '创建API', requiresAuth: true}
+        meta: { title: '创建API', requiresAuth: true }
       },
       {
         path: '/api/detail/:id',
         component: () => import('@/views/api/detail'),
         name: 'detail',
         hidden: true,
-        meta: {title: 'API详情', requiresAuth: true}
+        meta: { title: 'API详情', requiresAuth: true }
       },
       {
         path: '/api/upstream',
         component: () => import('@/views/upstream/index'),
         name: 'Upstream',
-        meta: {title: '上游管理', requiresAuth: true, affix: true}
+        meta: { title: '上游管理', requiresAuth: true, affix: true }
       },
       {
         path: '/api/upstream/create',
         component: () => import('@/views/upstream/detail'),
         hidden: true,
         name: 'UpstreamCreate',
-        meta: {title: '创建上游服务', requiresAuth: true, affix: true}
+        meta: { title: '创建上游服务', requiresAuth: true, affix: true }
       },
       {
         path: '/api/upstream/edit/:id',
         component: () => import('@/views/upstream/detail'),
         hidden: true,
         name: 'UpstreamEdit',
-        meta: {title: '配置上游服务', requiresAuth: true, affix: true}
+        meta: { title: '配置上游服务', requiresAuth: true, affix: true }
       }
     ]
   },
@@ -178,7 +178,7 @@ export const asyncRoutes = [
         path: '/log/index',
         component: () => import('@/views/system/log/list'),
         name: 'Log',
-        meta: {title: '审计日志', requiresAuth: true, icon: 'log', Aicon: 'log_Aicon', affix: true}
+        meta: { title: '审计日志', requiresAuth: true, icon: 'log', Aicon: 'log_Aicon', affix: true }
       }
     ]
   },
@@ -186,7 +186,7 @@ export const asyncRoutes = [
     path: '/system',
     component: Layout,
     alwaysShow: true,
-    meta: {title: '系统设置', requiresAuth: true, icon: 'system', Aicon: 'system_Aicon'},
+    meta: { title: '系统设置', requiresAuth: true, icon: 'system', Aicon: 'system_Aicon' },
     children: [
       // {
       //   path: '/system/user',
@@ -204,27 +204,27 @@ export const asyncRoutes = [
         path: '/system/index',
         component: () => import('@/views/user/index'),
         name: 'user',
-        meta: {title: '个人信息', requiresAuth: true, affix: true}
+        meta: { title: '个人信息', requiresAuth: true, affix: true }
       },
       {
         path: '/system/config',
         component: () => import('@/views/system/config'),
         name: 'config',
-        meta: {title: '开放门户配置', requiresAuth: true, affix: true}
+        meta: { title: '开放门户配置', requiresAuth: true, affix: true }
       },
       {
         path: '/docsEdit/:type',
         hidden: true,
         component: () => import('@/views/system/docsEdit'),
         name: 'docsEdit',
-        meta: { title: '文档编辑', affix: true }
+        meta: { title: '文档编辑', requiresAuth: true, affix: true }
       }
     ]
   },
   /** when your routing map is too long, you can split it into small modules **/
 
   // 404 page must be placed at the end !!!
-  {path: '*', redirect: '/404', hidden: true}
+  { path: '*', redirect: '/404', hidden: true }
 ]
 export const constantRoutes = [
   {
@@ -293,14 +293,14 @@ export const constantRoutes = [
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
-  scrollBehavior: () => ({y: 0}),
+  scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
 
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter() {
+export function resetRouter () {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
