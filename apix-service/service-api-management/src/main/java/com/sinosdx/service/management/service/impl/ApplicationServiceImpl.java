@@ -1323,6 +1323,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 添加订阅时间
         Integer clientId = sysClient.getId();
         ApplicationSubscribeDto applicationSubscribe = applicationSubscribeMapper.querySubscribeDate(clientId,appCode);
+        appDetailMap.put("subscribeDate", "");
         if(Objects.nonNull(applicationSubscribe)){
             appDetailMap.put("subscribeDate", applicationSubscribe.getSubscribeDate());
         }
