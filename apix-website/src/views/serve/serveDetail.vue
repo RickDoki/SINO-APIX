@@ -136,11 +136,15 @@
           <div class="table-tilelong">请求日志</div>
         </div>
         <el-table
-          :data="table"
+          :data="requestTable"
           empty-text="暂无数据"
           :row-style="{ height: '50px' }"
           highlight-current-row
-          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+          :header-cell-style="{
+            'font-weight': 400,
+            'font-size': '16px',
+            color: '#1D1C35',
+          }"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -158,13 +162,21 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          class="list-pagination"
+          :current-page.sync="currentPageRequest"
+          layout="prev, pager, next"
+          :total="totalRequest"
+          @current-change="handleCurrentChangeRequest"
+        />
       </div>
       <div class="table_box mode-margin">
         <div class="serve-table">
           <div class="table-tilelong">错误日志</div>
         </div>
         <el-table
-          :data="table"
+          :data="ErrorTable"
           empty-text="暂无数据"
           :row-style="{ height: '50px' }"
           highlight-current-row
@@ -186,6 +198,14 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          class="list-pagination"
+          :current-page.sync="currentPageError"
+          layout="prev, pager, next"
+          :total="totalError"
+          @current-change="handleCurrentChangeError"
+        />
       </div>
     </div>
     <router-view v-if="routerView"></router-view>
@@ -200,6 +220,7 @@ import {
   serveupdate,
   serveDelete,
   delApiversion,
+  log,
 } from "@/api/AboutServe.js";
 
 export default {
@@ -211,27 +232,38 @@ export default {
       appCode: "",
       serveData: {},
       serveNum: {},
-      versionLoading: false
+      versionLoading: false,
+      // 请求日志分页
+      currentPageRequest: 1,
+      totalRequest: 20,
+      requestTable: [],
+      // 错误日志分页
+      currentPageError: 1,
+      totalError: 30,
+      ErrorTable: [],
     };
   },
-  created () {
+  created() {
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
     } else {
       this.routerView = true;
     }
     // 获取appcode
+    console.log(this.$route);
     this.appCode = this.$route.params.appcode;
     this.getServeDeatil();
     this.getAppNum();
+    this.getLog('request');
+    this.getLog('error')
   },
   methods: {
     // 通过appcode查询详情
     getServeDeatil() {
-      this.versionLoading = true
+      this.versionLoading = true;
       serveDetail(this.appCode).then((res) => {
         if (res.code === 200) {
-          this.versionLoading = false
+          this.versionLoading = false;
           this.serveData = res.data;
           if (res.data.isPublished === "60005") {
             this.dropdownItems = ["下架"];
@@ -242,7 +274,7 @@ export default {
       });
     },
     // 内部详情
-    getAppNum () {
+    getAppNum() {
       appNum(this.appCode).then((res) => {
         // console.log(res);
         if (res.code === 200) {
@@ -287,6 +319,38 @@ export default {
         }
       });
     },
+    // 请求日志
+    getLog(e) {
+      if (e === "request") {
+        const query =
+          "appCode=" +
+          this.appCode +
+          "&limit=10" +
+          "&offset=" +
+          this.currentPageRequest;
+        log(query).then((res) => {
+          if (res.code === 200) {
+            this.requestTable = res.data.logList
+          }
+        });
+      } else {
+        const query =
+          "appCode=" +
+          this.appCode +
+          "&limit=10" +
+          "&offset=" +
+          this.currentPageError;
+        log(query).then((res) => {
+          if (res.code === 200) {
+            this.ErrorTable = res.data.logList
+          }
+        });
+      }
+    },
+    // 请求日志页面跳转
+    handleCurrentChangeRequest(val) {},
+    // 错误日志页面跳转
+    handleCurrentChangeError(val) {},
     gonewEdition() {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
