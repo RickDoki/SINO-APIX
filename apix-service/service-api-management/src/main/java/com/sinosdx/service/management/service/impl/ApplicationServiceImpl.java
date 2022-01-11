@@ -201,7 +201,17 @@ public class ApplicationServiceImpl implements ApplicationService {
                 appId, isPublished, LocalDateTime.ofEpochSecond(startTime / 1000, 0, ZoneOffset.ofHours(8)),
                 LocalDateTime.ofEpochSecond(endTime / 1000, 0, ZoneOffset.ofHours(8)),
                 limit, offset == null || limit == null ? null : limit * (offset - 1), statusList, userIdList);
+        Integer clientId = null;
+        if(null !=market && market){
+            Integer userId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
+            if(Objects.nonNull(userId)){
+                SysClient sysClient = sysUserService.queryClientByUserId(userId).getData();
+                clientId = sysClient.getId();
+            }
+
+        }
         // 将标签处理为数组返回给前端
+        Integer finalClientId = clientId;
         applicationVos.forEach(map -> {
             Object label = map.get("label");
             List<String> labelList = new ArrayList<>();
@@ -215,6 +225,17 @@ public class ApplicationServiceImpl implements ApplicationService {
                             .eq(ApplicationVersion::getDelFlag, 0))
                     .stream().map(ApplicationVersion::getVersion).collect(Collectors.toList());
             map.put("appVersions", appVersions);
+            map.put("subscribed",false);
+            if(market && Objects.nonNull(finalClientId)){
+                Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
+                        .eq(ApplicationSubscribe::getAppSubscribedCode, map.get("appCode"))
+                        .eq(ApplicationSubscribe::getSubscribeClientId,finalClientId)
+                        .eq(ApplicationSubscribe::getDelFlag, 0)
+                );
+                if(count>0){
+                    map.put("subscribed",true);
+                }
+            }
         });
         Map<String, Object> appListMap = new HashMap<>();
         List<Map<String, Object>> applicationVoList = applicationMapper.queryAppVoList(developerId, appName, appCode,
