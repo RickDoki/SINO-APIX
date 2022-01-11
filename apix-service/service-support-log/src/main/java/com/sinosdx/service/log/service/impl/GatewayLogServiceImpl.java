@@ -59,7 +59,15 @@ public class GatewayLogServiceImpl extends SuperServiceImpl<GatewayLogMapper, Ga
         if (null == endTime) {
             endTime = System.currentTimeMillis();
         }
-        List<Object> list = gatewayLogMapper.queryGatewayLogList(httpMethod, domain, requestPath, startTime, endTime, appCode,statusCode+"",limit, offset);
+        String responseStatus = "";
+        if(Objects.nonNull(statusCode)){
+            if(statusCode == 200){
+                responseStatus = "ok";
+            }else {
+                responseStatus = "fail";
+            }
+        }
+        List<Object> list = gatewayLogMapper.queryGatewayLogList(httpMethod, domain, requestPath, startTime, endTime, appCode,responseStatus,limit, offset);
         // 数据集合
         List<GatewayLog> logList = (List<GatewayLog>) list.get(0);
         // 数据总量

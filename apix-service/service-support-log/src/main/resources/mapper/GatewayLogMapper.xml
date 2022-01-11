@@ -26,11 +26,11 @@
         <if test="startTime != null and endTime != null">
             and event_time BETWEEN #{startTime} and #{endTime}
         </if>
-        <if test="statusCode != null statusCode != ''">
-            <if test="statusCode == '200' ">
+        <if test="responseStatus != null responseStatus != ''">
+            <if test="responseStatus == 'ok' ">
                 and status_code = 200
             </if>
-            <if test="statusCode != '200' ">
+            <if test="statusCode == 'fail' ">
                 and status_code != 200
             </if>
         </if>
