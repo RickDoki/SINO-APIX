@@ -20,7 +20,7 @@ router.beforeEach(async (to, from, next) => {
   // next()
   //路由拦截器 是否需要登录
   if (to.meta.requiresAuth) {
-    const token = getToken('FSH_AUTH_api')
+    const token = getToken('token')
     if (!token) {
       console.log("需要登录");
       next('/login');
@@ -145,7 +145,7 @@ router.beforeEach(async (to, from, next) => {
   document.title = getPageTitle(to.meta.title)
 
   // determine whether the user has logged in
-  const hasToken = getToken('FSH_AUTH_api')
+  const hasToken = getToken('token')
   // if (to.path === '/login') {
   //   removeToken('Admin-Token')
   // }

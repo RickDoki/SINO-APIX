@@ -22,7 +22,7 @@
       </div>
       <transition name="el-fade-in-linear">
         <div class="open_service_list" v-show="isshow===1">
-          <div v-for="(item,index) in serviceList" :key='index' class="service_list_item" @click="goDetail">
+          <div v-for="(item,index) in serviceList" :key='index' class="service_list_item" @click.self="goDetail">
             <div class="list_item_title">{{ item.title }}</div>
             <div class="list_item_content">{{ item.content }}</div>
             <div>
@@ -30,7 +30,7 @@
               <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
             </div>
             <div class="list_item_v">{{ item.verion }}</div>
-            <div class="list_item_button">订阅</div>
+            <div class="list_item_button" @click="subscribe">订阅</div>
           </div>
         </div>
       </transition>
@@ -65,6 +65,7 @@
 <script>
 import {list} from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
+import {getToken} from "@/utils/auth";
 
 export default {
   components: {navbar},
@@ -199,6 +200,9 @@ export default {
       this.$router.push({
         name: 'openServeDetail'
       })
+    },
+    subscribe() {
+      console.log('subscribe')
     }
   },
 };
