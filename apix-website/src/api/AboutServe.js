@@ -120,3 +120,10 @@ export function subscribed(query) {
     method: 'get',
   })
 }
+// 查询api详情
+export function apiMessage(query) {
+  return request({
+    url: '/app/api/' + query,
+    method: 'get',
+  })
+}
