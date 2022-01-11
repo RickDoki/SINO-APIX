@@ -1,39 +1,35 @@
 <template>
   <div class="main">
     <div class="list_top">
-      <div class="list_title">{{applicationVersion.version}}</div>
+      <div class="list_title">{{ applicationVersion.version }}</div>
       <div class="list_search">
         <div class="but-left">
-          <el-dropdown>
+          <el-dropdown @command="handleCommand">
             <el-button type="primary" size="small">
               操作<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>黄金糕</el-dropdown-item>
-              <el-dropdown-item>狮子头</el-dropdown-item>
-              <el-dropdown-item>螺蛳粉</el-dropdown-item>
-              <el-dropdown-item>双皮奶</el-dropdown-item>
-              <el-dropdown-item>蚵仔煎</el-dropdown-item>
+              <el-dropdown-item command="del">删除版本</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
         <el-button type="primary" size="small">编辑文档</el-button>
       </div>
     </div>
-    <div class="secondTitle">{{applicationVersion.description}}</div>
+    <div class="secondTitle">{{ applicationVersion.description }}</div>
     <div class="status">
       <div class="left-span">
         <span>已关联api数量: </span>
-        <span class="divbox">{{table.length}}个</span>
+        <span class="divbox">{{ table.length }}个</span>
       </div>
       <div class="time">
         <div>
           <span>创建时间 : </span>
-          <span>2021-08-05 10:05:00:00</span>
+          <span>{{ applicationVersion.creationDate }}</span>
         </div>
         <div>
           <span>更新时间 : </span>
-          <span>2021-08-05 10:05:00:00</span>
+          <span>{{ applicationVersion.lastUpdateDate }}</span>
         </div>
       </div>
     </div>
@@ -55,13 +51,17 @@
         empty-text="暂无数据"
         :row-style="{ height: '50px' }"
         highlight-current-row
-        :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+        :header-cell-style="{
+          'font-weight': 400,
+          'font-size': '16px',
+          color: '#1D1C35',
+        }"
       >
         <el-table-column prop="name" label="API名称" />
-        <el-table-column prop="appCode" label="协议" />
-        <el-table-column prop="appCode" label="域名" />
-        <el-table-column prop="appCode" label="路径" />
-        <el-table-column prop="appCode" label="API描述" />
+        <el-table-column prop="protocol" label="协议" />
+        <el-table-column prop="domain" label="域名" />
+        <el-table-column prop="url" label="路径" />
+        <el-table-column prop="description" label="API描述" />
       </el-table>
     </div>
     <el-drawer
@@ -83,6 +83,7 @@
               v-model="ruleForm.name"
               placeholder=""
               class="inputWidth drawer"
+              :disabled="true"
               clearable
             >
             </el-input>
@@ -92,12 +93,14 @@
               v-model="ruleForm.describe"
               placeholder=""
               class="inputWidth drawer"
+              :disabled="true"
               clearable
             >
             </el-input>
           </el-form-item>
           <el-form-item label="关联API" prop="API">
             <el-select
+              multiple
               class="inputWidth drawer"
               v-model="ruleForm.API"
               placeholder="请选择"
@@ -110,19 +113,19 @@
               >
               </el-option>
             </el-select>
-            <!-- <span @click="createdApi" class="show-but"
-              >还没有API?去创建 >>
-            </span> -->
           </el-form-item>
-          <div class="bottom_button_a">
+          <div @click="createdApi" style="margin-top: 30px" class="show-but">
+            还没有API?去创建 >>
+          </div>
+          <div style="margin: 0 auto" class="bottom_button_a">
+            <el-button size="small" @click="resetForm('ruleForm')"
+              >取消</el-button
+            >
             <el-button
               size="small"
               type="primary"
               @click="submitForm('ruleForm')"
-              >立即创建</el-button
-            >
-            <el-button size="small" @click="resetForm('ruleForm')"
-              >重置</el-button
+              >创建</el-button
             >
           </div>
         </el-form>
@@ -132,7 +135,12 @@
 </template>
 
 <script>
-import { queryApiList, apiList } from "@/api/AboutServe.js";
+import {
+  queryApiList,
+  apiList,
+  changeAppversion,
+  delApiversion,
+} from "@/api/AboutServe.js";
 import { getToken } from "@/utils/auth"; // get token from cookie
 import "./../mainCss/index.scss";
 export default {
@@ -144,34 +152,23 @@ export default {
       ruleForm: {
         name: "",
         describe: "",
-        API: "",
+        API: [],
       },
       options: [],
       rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
-        describe: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
-        API: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
+        API: [{ required: true, message: "请选择API", trigger: "blur" }],
       },
       appCode: "",
       appVersionId: "",
-      applicationVersion:{}
+      applicationVersion: {},
     };
   },
   created() {
+    this.developerId = getToken("userId_api");
+    this.getApiList();
     this.appCode = this.$route.query.appCode;
     this.appVersionId = this.$route.query.appVersionId;
     this.getqueryApiList();
-    this.developerId = getToken("userId_api");
-    this.getApiList();
   },
   methods: {
     // 查询关联apilist
@@ -182,8 +179,14 @@ export default {
       };
       queryApiList(query).then((res) => {
         if (res.code === 200) {
-          this.table = res.data.apiList
-          this.applicationVersion = res.data.applicationVersion
+          this.table = res.data.apiList;
+          this.applicationVersion = res.data.applicationVersion;
+          this.ruleForm.name = res.data.applicationVersion.version;
+          this.ruleForm.describe = res.data.applicationVersion.description;
+          this.ruleForm.API = []
+          for (let index = 0; index < res.data.apiList.length; index++) {
+            this.ruleForm.API.push(res.data.apiList[index].id);
+          }
         }
       });
     },
@@ -191,26 +194,56 @@ export default {
     getApiList() {
       apiList(this.developerId).then((res) => {
         if (res.code === 200) {
-          // console.log(res)
           this.options = res.data.apiList;
         }
       });
     },
+    // 去创建api
+    createdApi() {
+      this.$router.push({path:'/api/add'})
+    },
     handleClose(done) {
       done();
+    },
+    // 取消侧面
+    resetForm() {
+      this.drawer = false;
     },
     gonewEdition() {
       this.drawer = true;
     },
+    // 版本关联api
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          // alert("submit!");
+          const query = {
+            apiIds: this.ruleForm.API.toString(),
+          };
+          changeAppversion(this.appVersionId, query).then((res) => {
+            if (res.code === 200) {
+              this.drawer = false;
+              this.getqueryApiList();
+            }
+          });
         } else {
           console.log("error submit!!");
           return false;
         }
       });
+    },
+    // 删除版本
+    handleCommand(command) {
+      // console.log(command)
+      if (command === "del") {
+        delApiversion(this.appVersionId).then((res) => {
+          if (res.code === 200) {
+            // this.getServeDeatil();
+            // 删除成功跳转详情页
+            this.$router.push({path:'/serve/serveDetail/' + this.appCode})
+          }
+        });
+      }
     },
   },
 };

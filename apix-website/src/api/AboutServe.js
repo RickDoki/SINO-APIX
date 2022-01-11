@@ -88,3 +88,21 @@ export function queryApiList(data) {
     data
   })
 }
+// app版本修改
+export function changeAppversion(appvsersionId,data) {
+  return request({
+    url: '/app/appVersion/' + appvsersionId,
+    method: 'post',
+    data
+  })
+}
+/*
+2020 1 11
+*/
+// 请求日志
+export function log(query) {
+  return request({
+    url: '/gateway/log?' + query,
+    method: 'get',
+  })
+}
