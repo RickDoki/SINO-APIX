@@ -40,5 +40,6 @@ public class ApiDto  {
     private String lastUpdateDate;
     private String protocol;
     private String apiName;
+    private String apiId;
 
 }

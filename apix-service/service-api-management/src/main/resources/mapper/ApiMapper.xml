@@ -110,6 +110,7 @@
     </select>
     <select id="getApiDetail" resultType="com.sinosdx.service.management.controller.dto.ApiDto">
         select api.*,date_format(api.creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,api.name AS apiName,
+        api.id AS apiId,
         date_format(api.last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate from api api
         <where>
             api.del_flag = 0 and api.id = #{apiId}
