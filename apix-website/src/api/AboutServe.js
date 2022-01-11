@@ -113,3 +113,10 @@ export function log (query) {
     method: 'get',
   })
 }
+// 我的订阅服务详情
+export function subscribed(query) {
+  return request({
+    url: '/app/subscribed/' + query,
+    method: 'get',
+  })
+}

@@ -71,7 +71,7 @@ export const asyncRoutes = [
         meta: { title: '我的服务', requiresAuth: true }
       },
       {
-        path: '/serve/subscribe',
+        path: '/serve/subscribe/',
         component: () => import('@/views/serve/subscribe'),
         name: 'subscribe',
         meta: { title: '我的订阅', requiresAuth: true }
@@ -91,7 +91,7 @@ export const asyncRoutes = [
         meta: { title: '版本详情', requiresAuth: true }
       },
       {
-        path: '/serve/subscribeDetail',
+        path: '/serve/subscribeDetail/:appCode',
         component: () => import('@/views/serve/subscribeDetail'),
         name: 'subscribeDetail',
         hidden: true,

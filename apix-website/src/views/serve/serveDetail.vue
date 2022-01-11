@@ -75,7 +75,11 @@
           v-loading="versionLoading"
           :row-style="{ height: '50px' }"
           highlight-current-row
-          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+          :header-cell-style="{
+            'font-weight': 400,
+            'font-size': '16px',
+            color: '#1D1C35',
+          }"
         >
           <el-table-column prop="version" label="版本名称" />
           <el-table-column prop="description" label="版本描述" />
@@ -112,7 +116,11 @@
           empty-text="暂无数据"
           :row-style="{ height: '50px' }"
           highlight-current-row
-          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+          :header-cell-style="{
+            'font-weight': 400,
+            'font-size': '16px',
+            color: '#1D1C35',
+          }"
         >
           <el-table-column prop="appName" label="应用名称" />
           <el-table-column prop="appCode" label="APPCode" />
@@ -138,6 +146,7 @@
         <el-table
           :data="requestTable"
           empty-text="暂无数据"
+          v-loading="requestLoding"
           :row-style="{ height: '50px' }"
           highlight-current-row
           :header-cell-style="{
@@ -146,18 +155,20 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="appName" label="应用名称" />
-          <el-table-column prop="appCode" label="APPCode" />
-          <el-table-column prop="appCode" label="启用状态" />
-          <el-table-column prop="appCode" label="描述" />
-          <el-table-column label="操作" width="180px">
+          <el-table-column prop="requestUri" label="请求地址" width="280px" />
+          <el-table-column prop="httpMethod" label="请求方式" />
+          <el-table-column prop="remoteIp" label="客户端IP" />
+          <el-table-column prop="serverIp" label="服务端IP" />
+          <el-table-column prop="consumingTime" label="耗时(ms)" />
+           <el-table-column label="调用时间" width="180px">
+            <template slot-scope="scope">
+              <span>{{scope.row.eventTime | formatDate}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button type="text" @click="getMessage(scope.row)"
                 >查看</el-button
-              >
-              <span class="handle">|</span>
-              <el-button type="text" @click="getMessage(scope.row)"
-                >退订</el-button
               >
             </template>
           </el-table-column>
@@ -177,23 +188,29 @@
         </div>
         <el-table
           :data="ErrorTable"
-          empty-text="暂无数据"
+          v-loading="errorLoading"
           :row-style="{ height: '50px' }"
           highlight-current-row
-          :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+          :header-cell-style="{
+            'font-weight': 400,
+            'font-size': '16px',
+            color: '#1D1C35',
+          }"
         >
-          <el-table-column prop="appName" label="应用名称" />
-          <el-table-column prop="appCode" label="APPCode" />
-          <el-table-column prop="appCode" label="启用状态" />
-          <el-table-column prop="appCode" label="描述" />
-          <el-table-column label="操作" width="180px">
+          <el-table-column prop="requestUri" label="请求地址" width="280px" />
+          <el-table-column prop="httpMethod" label="请求方式" />
+          <el-table-column prop="remoteIp" label="客户端IP" />
+          <el-table-column prop="serverIp" label="服务端IP" />
+          <el-table-column prop="consumingTime" label="耗时(ms)" />
+          <el-table-column label="调用时间" width="180px">
+            <template slot-scope="scope">
+              <span>{{scope.row.eventTime | formatDate}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作">
             <template slot-scope="scope">
               <el-button type="text" @click="getMessage(scope.row)"
                 >查看</el-button
-              >
-              <span class="handle">|</span>
-              <el-button type="text" @click="getMessage(scope.row)"
-                >退订</el-button
               >
             </template>
           </el-table-column>
@@ -235,12 +252,14 @@ export default {
       versionLoading: false,
       // 请求日志分页
       currentPageRequest: 1,
-      totalRequest: 20,
+      totalRequest: 0,
       requestTable: [],
+      requestLoding: false,
       // 错误日志分页
       currentPageError: 1,
-      totalError: 30,
+      totalError: 0,
       ErrorTable: [],
+      errorLoading: false,
     };
   },
   created () {
@@ -254,8 +273,8 @@ export default {
     this.appCode = this.$route.params.appcode;
     this.getServeDeatil();
     this.getAppNum();
-    this.getLog('request');
-    this.getLog('error')
+    this.getLog("request");
+    this.getLog("error");
   },
   methods: {
     // 编辑服务文档
@@ -326,15 +345,19 @@ export default {
     // 请求日志
     getLog (e) {
       if (e === "request") {
+        this.requestLoding = true;
         const query =
           "appCode=" +
           this.appCode +
           "&limit=10" +
           "&offset=" +
-          this.currentPageRequest;
+          this.currentPageRequest +
+          "&statusCode=200";
         log(query).then((res) => {
           if (res.code === 200) {
-            this.requestTable = res.data.logList
+            this.requestTable = res.data.logList;
+            this.requestLoding = false;
+            this.totalRequest = res.data.total;
           }
         });
       } else {
@@ -343,19 +366,27 @@ export default {
           this.appCode +
           "&limit=10" +
           "&offset=" +
-          this.currentPageError;
+          this.currentPageError +
+          "&statusCode=500";
+        this.errorLoading = true;
         log(query).then((res) => {
           if (res.code === 200) {
-            this.ErrorTable = res.data.logList
+            this.errorLoading = false;
+            this.ErrorTable = res.data.logList;
+            this.totalError = res.data.total;
           }
         });
       }
     },
     // 请求日志页面跳转
-    handleCurrentChangeRequest (val) { },
+    handleCurrentChangeRequest(val) {
+      this.getLog("request");
+    },
     // 错误日志页面跳转
-    handleCurrentChangeError (val) { },
-    gonewEdition () {
+    handleCurrentChangeError(val) {
+      this.getLog("error");
+    },
+    gonewEdition() {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
     goplugin () {

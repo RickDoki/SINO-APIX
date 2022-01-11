@@ -24,7 +24,7 @@ import './utils/error-log' // error log
 import VueContextMenu from 'vue-contextmenu'
 import * as filters from './filters' // global filters
 import VueClipboard from 'vue-clipboard2'
-
+import Moment from 'moment'
 Vue.use(VXETable)
 // VXETable.setup({
 //   headerCellStyle: { backgroundColor: '#fff', color: '#494E6A' },
@@ -34,7 +34,9 @@ Vue.use(VXETable)
 // })
 Vue.use(VueContextMenu)
 Vue.use(VueClipboard)
-
+Vue.filter('formatDate', function(value) {
+  return Moment(value).format('YYYY-MM-DD HH:mm:ss')
+})
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

@@ -57,7 +57,7 @@
           color: '#1D1C35',
         }"
       >
-        <el-table-column prop="name" label="API名称" />
+        <el-table-column prop="apiName" label="API名称" />
         <el-table-column prop="protocol" label="协议" />
         <el-table-column prop="domain" label="域名" />
         <el-table-column prop="url" label="路径" />

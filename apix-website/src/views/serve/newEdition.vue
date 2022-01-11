@@ -121,7 +121,7 @@ export default {
           }
           publish(this.appCode, query).then((res) => {
             if (res.code === 200) {
-              this.$router.push({path:'/serve/serveDetail?appcode=' + this.appCode})
+              this.$router.push({path:'/serve/serveDetail/' + this.appCode})
             }
           });
         } else {
