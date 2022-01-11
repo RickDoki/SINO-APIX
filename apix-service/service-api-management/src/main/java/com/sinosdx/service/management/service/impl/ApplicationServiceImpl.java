@@ -8,6 +8,7 @@ import com.sinosdx.common.base.base.entity.Entity;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.*;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
+import com.sinosdx.service.management.controller.dto.ApplicationSubscribeDto;
 import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
 import com.sinosdx.service.management.controller.vo.*;
 import com.sinosdx.service.management.dao.entity.*;
@@ -1321,12 +1322,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .eq(ApplicationPlugin::getDelFlag, 0));
         // 添加订阅时间
         Integer clientId = sysClient.getId();
-        ApplicationSubscribe applicationSubscribe = applicationSubscribeMapper.selectOne(new LambdaQueryWrapper<ApplicationSubscribe>()
-                .eq(ApplicationSubscribe::getSubscribeClientId, clientId)
-                .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
-                .eq(ApplicationSubscribe::getDelFlag, 0).last("LIMIT 1"));
+        ApplicationSubscribeDto applicationSubscribe = applicationSubscribeMapper.querySubscribeDate(clientId,appCode);
         if(Objects.nonNull(applicationSubscribe)){
-            appDetailMap.put("subscribeTime", applicationSubscribe.getCreationDate());
+            appDetailMap.put("subscribeDate", applicationSubscribe.getSubscribeDate());
         }
         // 遍历查询Client 相关信息
         applicationPlugins.forEach(a -> {
