@@ -4,17 +4,17 @@
       <div class="list_title">{{apiInfo.name}}</div>
       <div class="list_search">
         <div class="but-left">
-          <el-dropdown>
+          <el-dropdown @command="handleCommand">
             <el-button type="primary" size="small" style="width:85px">
               操作<i class="el-icon-arrow-down el-icon--conten-color"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>编辑API</el-dropdown-item>
-              <el-dropdown-item>删除API</el-dropdown-item>
+              <!-- <el-dropdown-item>编辑API</el-dropdown-item> -->
+              <el-dropdown-item command="delAPI">删除API</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <el-button type="primary" size="small" style="width:85px">编辑文档</el-button>
+        <el-button type="primary" size="small" style="width:85px" @click="docsEdit()">编辑文档</el-button>
       </div>
     </div>
     <div class="secondTitle">
@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { detail, detailNum } from "@/api/AboutApi";
+import { detail, detailNum, deleteApi } from "@/api/AboutApi";
 import "./../mainCss/index.scss";
 export default {
   data () {
@@ -124,6 +124,10 @@ export default {
     this.getDetailNum()
   },
   methods: {
+    // 编辑API文档
+    docsEdit () {
+      this.$router.push('/docsEdit/' + 'api?id=' + this.apiId + '&name=' + this.apiInfo.name)
+    },
     // 获取api详情
     getDetail () {
       detail(this.apiId).then((res) => {
@@ -140,6 +144,26 @@ export default {
           this.numbers = res.data
         }
       });
+    },
+    handleCommand (command) {
+      if (command === 'delAPI') {
+        this.delAPI()
+      }
+    },
+    // 删除API数据信息
+    delAPI () {
+      this.$confirm('确认删除API：' + this.apiInfo.name + ', 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteApi(this.apiId).then(res => {
+          if (res.code === 200) {
+            this.$message.success('删除成功！')
+            this.$router.push({ path: '/api/list/' })
+          }
+        })
+      })
     },
     onCopy () {
       this.$message('复制成功')

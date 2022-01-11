@@ -54,7 +54,7 @@ export const asyncRoutes = [
       {
         path: '/openServe',
         name: 'openServe',
-        meta: { title: '开放服务', icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
+        meta: { title: '开放服务', requiresAuth: false, icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
       },
     ]
   },
@@ -211,6 +211,13 @@ export const asyncRoutes = [
         component: () => import('@/views/system/config'),
         name: 'config',
         meta: { title: '开放门户配置', requiresAuth: true, affix: true }
+      },
+      {
+        path: '/docsEdit/:type',
+        hidden: true,
+        component: () => import('@/views/system/docsEdit'),
+        name: 'docsEdit',
+        meta: { title: '文档编辑', requiresAuth: true, affix: true }
       }
     ]
   },
@@ -236,14 +243,14 @@ export const constantRoutes = [
     hidden: false,
     component: () => import('@/views/openServe/index'),
     name: 'openServe',
-    meta: { title: '开放服务', icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
+    meta: { title: '开放服务', requiresAuth: false, affix: true }
   },
   {
     path: '/openServe/detail',
     component: () => import('@/views/openServe/detail'),
     name: 'openServeDetail',
     hidden: true,
-    meta: { title: '开发服务详情', affix: true }
+    meta: { title: '开发服务详情', requiresAuth: false, affix: true }
   },
   {
     path: '/login',
@@ -252,7 +259,7 @@ export const constantRoutes = [
   },
   {
     path: '/',
-    component: () => import('@/views/login/index'),
+    component: () => import('@/views/openServe/index'),
     redirect: '/openServe',
     hidden: true
   },

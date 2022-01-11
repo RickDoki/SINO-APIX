@@ -27,7 +27,7 @@ export function detailNum (id) {
     // data
   })
 }
-export function listDelete (id) {
+export function deleteApi (id) {
   return request({
     url: '/app/api/' + id,
     method: 'delete'

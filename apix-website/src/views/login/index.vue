@@ -151,7 +151,7 @@ export default {
           Apilogin(data).then((res) => {
             console.log(res);
             if (res.code === 200) {
-              setToken("FSH_AUTH_api", res.data.token);
+              setToken("token", res.data.token);
               setToken("userId_api", res.data.userId);
               setToken("apiPhone", res.data.mobile);
               this.$router.push("/dashboard/index");
@@ -170,7 +170,8 @@ export default {
     },
   },
   created () {
-    removeToken("FSH_AUTH_api");
+    removeToken("apiPhone");
+    removeToken("token");
     removeToken("userId_api");
     const ischecked = getToken("ischecked");
     console.log(ischecked);

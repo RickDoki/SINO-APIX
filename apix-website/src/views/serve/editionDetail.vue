@@ -13,7 +13,7 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <el-button type="primary" size="small">编辑文档</el-button>
+        <el-button type="primary" size="small" @click="docsEdit()">编辑文档</el-button>
       </div>
     </div>
     <div class="secondTitle">{{ applicationVersion.description }}</div>
@@ -144,7 +144,7 @@ import {
 import { getToken } from "@/utils/auth"; // get token from cookie
 import "./../mainCss/index.scss";
 export default {
-  data() {
+  data () {
     return {
       drawer: false,
       direction: "rtl",
@@ -163,7 +163,7 @@ export default {
       applicationVersion: {},
     };
   },
-  created() {
+  created () {
     this.developerId = getToken("userId_api");
     this.getApiList();
     this.appCode = this.$route.query.appCode;
@@ -171,8 +171,12 @@ export default {
     this.getqueryApiList();
   },
   methods: {
+    // 编辑版本文档
+    docsEdit () {
+      this.$router.push('/docsEdit/' + 'version?id=' + this.appVersionId + '&name=' + this.applicationVersion.version)
+    },
     // 查询关联apilist
-    getqueryApiList() {
+    getqueryApiList () {
       const query = {
         appCode: this.appCode,
         appVersionId: this.appVersionId,
@@ -191,7 +195,7 @@ export default {
       });
     },
     // 查询全部api
-    getApiList() {
+    getApiList () {
       apiList(this.developerId).then((res) => {
         if (res.code === 200) {
           this.options = res.data.apiList;
@@ -199,21 +203,21 @@ export default {
       });
     },
     // 去创建api
-    createdApi() {
-      this.$router.push({path:'/api/add'})
+    createdApi () {
+      this.$router.push({ path: '/api/add' })
     },
-    handleClose(done) {
+    handleClose (done) {
       done();
     },
     // 取消侧面
-    resetForm() {
+    resetForm () {
       this.drawer = false;
     },
-    gonewEdition() {
+    gonewEdition () {
       this.drawer = true;
     },
     // 版本关联api
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // alert("submit!");
@@ -233,14 +237,14 @@ export default {
       });
     },
     // 删除版本
-    handleCommand(command) {
+    handleCommand (command) {
       // console.log(command)
       if (command === "del") {
         delApiversion(this.appVersionId).then((res) => {
           if (res.code === 200) {
             // this.getServeDeatil();
             // 删除成功跳转详情页
-            this.$router.push({path:'/serve/serveDetail/' + this.appCode})
+            this.$router.push({ path: '/serve/serveDetail/' + this.appCode })
           }
         });
       }

@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { list } from "@/api/AboutApi";
+import { list, deleteApi } from "@/api/AboutApi";
 import { getToken } from "@/utils/auth"; // get token from cookie
 
 export default {
@@ -85,22 +85,19 @@ export default {
     },
     // 删除API数据信息
     delAPI (row) {
-      this.$confirm('确认删除API：' + row.name + ', 是否继续?', '提示', {
+      this.$confirm('确认删除API：' + row.apiName + ', 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
+      }).then(() => {
+        deleteApi(row.apiId).then(res => {
+          if (res.code === 200) {
+            this.$message.success('删除成功！')
+            this.page = 1
+            this.search()
+          }
+        })
       })
-      // .then(() => ({
-      //   deleteApi(row.id).then(res => {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '删除成功!'
-      //     })
-      //     this.page = 1
-      //     this.search()
-      //   })
-      // }).catch(() => {
-      // })
     },
     sizeChange (val) {
       this.size = val
@@ -152,11 +149,6 @@ export default {
     refresh () {
       const query = "limit=" + this.size + "&offset= " + this.page + "&developerId=" + this.developerId;
       this.getList(query);
-    },
-    reset () {
-      this.value1 = [];
-      this.APIName = "";
-      this.search();
     },
     handleCurrentChange (val) {
       this.page = val

@@ -19,7 +19,7 @@
               </el-dropdown-menu>
             </el-dropdown>
           </div>
-          <el-button type="primary" size="small">编辑文档</el-button>
+          <el-button type="primary" size="small" @click="docsEdit()">编辑文档</el-button>
         </div>
       </div>
       <div class="secondTitle">创建服务来管理和代理现有API或发布到门户。</div>
@@ -241,7 +241,7 @@ import {
 } from "@/api/AboutServe.js";
 
 export default {
-  data() {
+  data () {
     return {
       routerView: false,
       table: [],
@@ -262,7 +262,7 @@ export default {
       errorLoading: false,
     };
   },
-  created() {
+  created () {
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
     } else {
@@ -277,8 +277,12 @@ export default {
     this.getLog("error");
   },
   methods: {
+    // 编辑服务文档
+    docsEdit () {
+      this.$router.push('/docsEdit/' + 'serve?id=' + this.appCode + '&name=' + this.serveData.appName)
+    },
     // 通过appcode查询详情
-    getServeDeatil() {
+    getServeDeatil () {
       this.versionLoading = true;
       serveDetail(this.appCode).then((res) => {
         if (res.code === 200) {
@@ -293,7 +297,7 @@ export default {
       });
     },
     // 内部详情
-    getAppNum() {
+    getAppNum () {
       appNum(this.appCode).then((res) => {
         // console.log(res);
         if (res.code === 200) {
@@ -302,7 +306,7 @@ export default {
       });
     },
     // 操作
-    handleCommand(command) {
+    handleCommand (command) {
       // console.log(command)
       if (command === "下架") {
         const query = {
@@ -331,7 +335,7 @@ export default {
       }
     },
     // 删除服务版本
-    delversion(e) {
+    delversion (e) {
       delApiversion(e.id).then((res) => {
         if (res.code === 200) {
           this.getServeDeatil();
@@ -339,7 +343,7 @@ export default {
       });
     },
     // 请求日志
-    getLog(e) {
+    getLog (e) {
       if (e === "request") {
         this.requestLoding = true;
         const query =
@@ -385,11 +389,11 @@ export default {
     gonewEdition() {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
-    goplugin() {
+    goplugin () {
       this.$router.push({ path: "/serve/serveDetail/plug-in" });
     },
     // 版本详情
-    edition(e) {
+    edition (e) {
       this.$router.push({
         path:
           "/serve/editionDetail?appCode=" +
