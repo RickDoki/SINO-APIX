@@ -1319,6 +1319,15 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                         .eq(ApplicationPlugin::getAppCode, appCode)
                         .eq(ApplicationPlugin::getDelFlag, 0));
+        // 添加订阅时间
+        Integer clientId = sysClient.getId();
+        ApplicationSubscribe applicationSubscribe = applicationSubscribeMapper.selectOne(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getSubscribeClientId, clientId)
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
+                .eq(ApplicationSubscribe::getDelFlag, 0).last("LIMIT 1"));
+        if(Objects.nonNull(applicationSubscribe)){
+            appDetailMap.put("subscribeTime", applicationSubscribe.getCreationDate());
+        }
         // 遍历查询Client 相关信息
         applicationPlugins.forEach(a -> {
             List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.queryByAppSubscribe(appCode);
