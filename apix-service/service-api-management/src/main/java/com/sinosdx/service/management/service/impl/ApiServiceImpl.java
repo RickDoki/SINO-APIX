@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.controller.dto.ApiDto;
 import com.sinosdx.service.management.controller.dto.ApplicationVersionDetailDto;
 import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
 import com.sinosdx.service.management.controller.vo.ApiVersionVo;
@@ -395,7 +396,7 @@ public class ApiServiceImpl implements ApiService {
                 .eq(ApplicationApi::getAppVersionId, appVersionId)
                 .eq(ApplicationApi::getDelFlag, 0)
         );
-        List<Api> apiList = applicationApis.stream().map(a -> apiMapper.selectById(a.getApiId())).collect(Collectors.toList());
+        List<ApiDto> apiList = applicationApis.stream().map(a -> apiMapper.getApiDetail(a.getApiId())).collect(Collectors.toList());
         Map<String, Object> data = Maps.newHashMap();
         data.put("applicationVersion",applicationVersionDetailDto);
         data.put("apiList",apiList);
