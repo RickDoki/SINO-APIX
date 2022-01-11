@@ -26,6 +26,14 @@
         <if test="startTime != null and endTime != null">
             and event_time BETWEEN #{startTime} and #{endTime}
         </if>
+        <if test="statusCode != null statusCode != ''">
+            <if test="statusCode == '200' ">
+                and status_code = 200
+            </if>
+            <if test="statusCode != '200' ">
+                and status_code != 200
+            </if>
+        </if>
         order by event_time desc
         <if test="limit != null and offset != null">
             LIMIT ${(offset -1)*limit},#{limit}

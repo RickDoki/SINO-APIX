@@ -15,6 +15,7 @@ import com.sinosdx.service.management.dao.mapper.*;
 import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
+import com.sinosdx.service.management.sentinel.SentinelProvider;
 import com.sinosdx.service.management.service.ApplicationService;
 import com.sinosdx.service.management.utils.MD5Util;
 import com.sinosdx.service.management.utils.ThreadContext;
@@ -101,6 +102,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
+
+    @Autowired
+    private SentinelProvider sentinelProvider;
 
     /**
      * 创建新应用
@@ -756,7 +760,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
-                .eq(ApplicationPlugin::getEnabled, 1));
+                .eq(ApplicationPlugin::getEnabled, 0));
+
+        //单独查询是否包含sentinel 插件
+        long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
+        if(sentinel>0){
+            sentinelProvider.addOrRefreshApiGroup(subscribedApp.getId()+"");
+        }
 
         // 生成订阅用户调用信息
         processPlugin(plugins, sysClient);
