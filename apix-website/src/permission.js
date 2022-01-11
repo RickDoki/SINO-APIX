@@ -150,33 +150,33 @@ router.beforeEach(async (to, from, next) => {
   //   removeToken('Admin-Token')
   // }
   // if()
-  console.log(to)
-  if (to.path === '/login') {
-    next()
-    NProgress.done()
-  } else {
-    if (hasToken) {
-      next()
-      NProgress.done()
-    } else {
-      // next()
-      router.push({
-        path: '/',
-      })
-      NProgress.done()
+  // console.log(to)
+  // if (to.path === '/login') {
+  //   next()
+  //   NProgress.done()
+  // } else {
+  //   if (hasToken) {
+  //     next()
+  //     NProgress.done()
+  //   } else {
+  //     // next()
+  //     router.push({
+  //       path: '/',
+  //     })
+  //     NProgress.done()
 
-      // next()
-      // router.push({path:'/login'})
-      // NProgress.done()
-      /* has no token*/
-      // console.log(process.env.VUE_APP_BASE_API)
-      // console.log(process.env.marketing_url)
-      // window.location = 'https://saic-aws.saicmotor.com/api-mgmt/#/login'
-      // window.location = 'https://saic-aws.saicmotor.com/cspv2-web/#/login'
-      // window.location = 'https://saic-aws.saicmotor.com/cspv2-web/#/login'
-      // console.log(process.env.marketing_url)
-    }
-  }
+  // next()
+  // router.push({path:'/login'})
+  // NProgress.done()
+  /* has no token*/
+  // console.log(process.env.VUE_APP_BASE_API)
+  // console.log(process.env.marketing_url)
+  // window.location = 'https://saic-aws.saicmotor.com/api-mgmt/#/login'
+  // window.location = 'https://saic-aws.saicmotor.com/cspv2-web/#/login'
+  // window.location = 'https://saic-aws.saicmotor.com/cspv2-web/#/login'
+  // console.log(process.env.marketing_url)
+  // }
+  //   }
 
 })
 
