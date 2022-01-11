@@ -30,7 +30,7 @@
     <div class="sub-div">
       <el-button v-show="viewFlag" class="sub-but right_bottom" type="primary" @click="edit">编辑</el-button>
       <el-button v-show="!viewFlag" class="sub-but right_bottom_a" @click="cancel">取消</el-button>
-      <el-button v-show="!viewFlag" class="sub-but right_bottom" type="primary" @click="updatePlatformMarkdown">提交</el-button>
+      <el-button v-show="!viewFlag" class="sub-but right_bottom" type="primary" @click="updateDocs">提交</el-button>
     </div>
   </div>
 </template>
@@ -67,6 +67,8 @@
 // 导入组件 及 组件样式
 import { mavonEditor } from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import { detail, edit, editApiVersion } from "@/api/AboutApi"
+import { versionDetail, changeAppversion, serveDetail, serveupdate } from "@/api/AboutServe"
 export default {
   // 注册
   components: {
@@ -74,9 +76,11 @@ export default {
   },
   data () {
     return {
+      type: '',
       docsId: '',
       pageTitle: '',
-      viewFlag: true,
+      viewFlag: false,
+      doscInfo: {},
       content: '', // 输入的markdown
       html: '',    // 及时转的html
       platName: 'dev',  //用户平台
@@ -118,7 +122,8 @@ export default {
     }
   },
   created () {
-    switch (this.$route.params.type) {
+    this.tyep = this.$route.params.type
+    switch (this.tyep) {
       case 'api':
         this.pageTitle = 'API文档'
         break;
@@ -132,7 +137,7 @@ export default {
     this.docsId = this.$route.query.id
     this.docsName = this.$route.query.name
     console.log(this.$route)
-    // this.getPlatformMarkdown();
+    this.getDetail();
   },
   methods: {
     /**
@@ -140,22 +145,39 @@ export default {
     */
     cancel () {
       this.viewFlag = true;
-      // this.getPlatformMarkdown();
+      this.getDetail();
     },
     /**
-     * 获取用户手册详情
+     * 获取md详情
      */
-    // getPlatformMarkdown () {
-    //   this.$http.request(this.$baseUrl.getPlatformMarkdown.url + this.platName, null, this.$baseUrl.getPlatformMarkdown.method).then((res) => {
-    //     if (res.code == 200) {
-    //       this.content = res.data.markdown;
-    //     } else {
-    //       this.html = '';
-    //     }
-    //   }).catch(() => {
-    //     this.html = '';
-    //   });
-    // },
+    getDetail () {
+      switch (this.tyep) {
+        case 'api':
+          detail(this.docsId).then((res) => {
+            if (res.code === 200) {
+              this.doscInfo = res.data
+              this.content = res.data.markdown
+            }
+          });
+          break;
+        case 'version':
+          versionDetail(this.docsId).then((res) => {
+            if (res.code === 200) {
+              this.doscInfo = res.data.applicationVersion
+              this.content = res.data.applicationVersion.markdown
+            }
+          });
+          break;
+        case 'serve':
+          serveDetail(this.docsId).then((res) => {
+            if (res.code === 200) {
+              this.doscInfo = res.data
+              this.content = res.data.appMarkdown
+            }
+          });
+          break;
+      }
+    },
     // 所有操作都会被解析重新渲染
     change (value, render) {
       // render 为 markdown 解析后的结果[html]
@@ -188,32 +210,51 @@ export default {
     //     });
     // },
     // 提交
-    updatePlatformMarkdown () {
-      let params = {
-        platName: this.platName,
+    updateDocs () {
+      if (this.type == 'serve') {
+        this.doscInfo.appMarkdown = this.content
+      } else {
+        this.doscInfo.markdown = this.content
+      }
+      const params = {
         markdown: this.content
       }
-      let url = this.$baseUrl.updatePlatformMarkdown.url + this.platName;
-      let method = this.$baseUrl.updatePlatformMarkdown.method;
-      this.$http.request(url, params, method)
-        .then(res => {
-          if (res.code == 200) {
-            this.$message(res.msg);
-            //提交好了展示预览页面
-            this.getPlatformMarkdown();
-            this.viewFlag = true;
-          } else {
-            this.$message(res.msg);
-          }
-        })
-        .catch((error) => {
-          this.$alert(error.response.data.msg, '提示', {
-            confirmButtonText: '确定',
-            type: 'warning',
-            callback: action => {
+      switch (this.tyep) {
+        case 'api':
+          edit(this.docsId, params).then(res => {
+            if (res.code === 200) {
+              this.$message(res.msg);
+              //提交好了展示预览页面
+              this.getDetail();
+              this.viewFlag = true;
             }
-          });
-        });
+          })
+          break;
+        case 'version':
+          const versionParams = {
+            markdown: this.content,
+            appCode: this.doscInfo.appCode
+          }
+          changeAppversion(this.docsId, versionParams).then(res => {
+            if (res.code === 200) {
+              this.$message(res.msg);
+              //提交好了展示预览页面
+              this.getDetail();
+              this.viewFlag = true;
+            }
+          })
+          break;
+        case 'serve':
+          serveupdate(this.docsId, params).then(res => {
+            if (res.code === 200) {
+              this.$message(res.msg);
+              //提交好了展示预览页面
+              this.getDetail();
+              this.viewFlag = true;
+            }
+          })
+          break;
+      }
     }
   }
 }

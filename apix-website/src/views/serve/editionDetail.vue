@@ -173,7 +173,7 @@ export default {
   methods: {
     // 编辑版本文档
     docsEdit () {
-      this.$router.push('/docsEdit/' + 'version?id=' + this.appVersionId + '&name=' + this.version)
+      this.$router.push('/docsEdit/' + 'version?id=' + this.appVersionId + '&name=' + this.applicationVersion.version)
     },
     // 查询关联apilist
     getqueryApiList () {
