@@ -160,12 +160,13 @@ public class ApiServiceImpl implements ApiService {
         }
 
         // 判断修改后的api是否重复
-        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
-                .eq("url", oldApi.getUrl()).eq("request_method", oldApi.getRequestMethod())
-                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
-        if (count1 > 0) {
-            return R.fail(ResultCodeEnum.API_IS_EXIST);
-        }
+//        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
+//                .eq("url", oldApi.getUrl())
+//                .eq("request_method", oldApi.getRequestMethod())
+//                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
+//        if (count1 > 0) {
+//            return R.fail(ResultCodeEnum.API_IS_EXIST);
+//        }
 //        Integer count2 = apiMapper.selectCount(new QueryWrapper<Api>()
 //                .eq("url", oldApi.getUrl()).eq("name", oldApi.getName())
 //                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
