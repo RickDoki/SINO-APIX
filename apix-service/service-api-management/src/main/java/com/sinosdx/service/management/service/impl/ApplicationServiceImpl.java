@@ -209,8 +209,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             map.put("label", labelList);
             // 查询版本
             List<String> appVersions = applicationVersionMapper.selectList(new LambdaQueryWrapper<ApplicationVersion>()
-                    .eq(ApplicationVersion::getAppId, map.get("appId"))
-                    .eq(ApplicationVersion::getDelFlag, 0))
+                            .eq(ApplicationVersion::getAppId, map.get("appId"))
+                            .eq(ApplicationVersion::getDelFlag, 0))
                     .stream().map(ApplicationVersion::getVersion).collect(Collectors.toList());
             map.put("appVersions", appVersions);
         });
@@ -391,7 +391,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 删除关联的插件
         LambdaQueryWrapper<ApplicationPlugin> wrapper = new LambdaQueryWrapper<ApplicationPlugin>().eq(ApplicationPlugin::getAppCode, appCode);
         List<Integer> idList = applicationPluginMapper.selectList(wrapper).stream().map(Entity::getId).collect(Collectors.toList());
-        if(!CollectionUtils.isEmpty(idList)){
+        if (!CollectionUtils.isEmpty(idList)) {
             applicationPluginMapper.deleteBatchIds(idList);
             // 删除 用户和插件关联表
             applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId, idList));
@@ -466,17 +466,27 @@ public class ApplicationServiceImpl implements ApplicationService {
 //                    .eq(ApplicationApi::getApiId, api.getId())
 //                    .eq(ApplicationApi::getDelFlag, 0));
 //            if (null == applicationApi) {
-            ApplicationApi  applicationApi = new ApplicationApi();
-                applicationApi.setAppId(application.getId());
-                applicationApi.setAppVersionId(applicationVersion.getId());
-                applicationApi.setAppCode(application.getCode());
-                applicationApi.setApiId(api.getId());
-                applicationApiMapper.insert(applicationApi);
+            ApplicationApi applicationApi = new ApplicationApi();
+            applicationApi.setAppId(application.getId());
+            applicationApi.setAppVersionId(applicationVersion.getId());
+            applicationApi.setAppCode(application.getCode());
+            applicationApi.setApiId(api.getId());
+            applicationApiMapper.insert(applicationApi);
 //            }
 
             apiVoList.add(new ApiVo(api));
         }
 
+        // 查询服务插件
+        List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppCode, application.getCode())
+                .eq(ApplicationPlugin::getEnabled, 0));
+
+        //单独查询是否包含sentinel 插件
+        long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
+        if (sentinel > 0) {
+            sentinelProvider.addOrRefreshApiGroup(application.getId() + "");
+        }
         // 插入网关数据库
         //        updateGatewayConfig(application, apiList);
 
@@ -717,7 +727,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public R<Object> appSubscribe(String appSubscribedCode) {
         // 判断是否登录
-        if(Objects.isNull(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID))){
+        if (Objects.isNull(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID))) {
             return R.fail("请先登录,再订阅");
         }
 
@@ -764,8 +774,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         //单独查询是否包含sentinel 插件
         long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
-        if(sentinel>0){
-            sentinelProvider.addOrRefreshApiGroup(subscribedApp.getId()+"");
+        if (sentinel > 0) {
+            sentinelProvider.addOrRefreshApiGroup(subscribedApp.getId() + "");
         }
 
         // 生成订阅用户调用信息
@@ -847,6 +857,18 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .eq(ApplicationPluginClient::getSysClientId, sysClient.getId())
                 .eq(ApplicationPluginClient::getDelFlag, 0)
         );
+
+        // 查询服务插件
+        List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
+                .eq(ApplicationPlugin::getEnabled, 0));
+
+        //单独查询是否包含sentinel 插件
+        long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
+        if (sentinel > 0) {
+            sentinelProvider.addOrRefreshApiGroup(subscribedApp.getId() + "");
+        }
+
         // 3.删除对应路由 TODO
 
         return R.success();
@@ -1488,13 +1510,35 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationVersion.setVersion(applicationVersionVo.getAppVersion());
         }
         applicationVersionMapper.updateById(applicationVersion);
+        // 查询服务插件
+        List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppCode, applicationVersion.getAppCode())
+                .eq(ApplicationPlugin::getEnabled, 0));
+        //单独查询是否包含sentinel 插件
+        List<ApplicationPlugin> applicationPlugins = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(applicationPlugins)) {
+            sentinelProvider.addOrRefreshApiGroup(applicationPlugins.get(0).getId() + "");
+        }
         return R.success();
     }
 
     @Override
     public R<Object> deleteAppVersion(Integer appVersionId) {
-        int i = applicationVersionMapper.deleteById(appVersionId);
-        // TODO 是否需要删除路由？
+        ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
+        if (Objects.nonNull(applicationVersion)) {
+            int i = applicationVersionMapper.deleteById(appVersionId);
+            // 查询服务插件
+            List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                    .eq(ApplicationPlugin::getAppCode, applicationVersion.getAppCode())
+                    .eq(ApplicationPlugin::getEnabled, 0));
+            //单独查询是否包含sentinel 插件
+            List<ApplicationPlugin> applicationPlugins = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(applicationPlugins)) {
+                sentinelProvider.addOrRefreshApiGroup(applicationPlugins.get(0).getId() + "");
+            }
+            // TODO 是否需要删除路由？
+
+        }
         return R.success();
     }
 
