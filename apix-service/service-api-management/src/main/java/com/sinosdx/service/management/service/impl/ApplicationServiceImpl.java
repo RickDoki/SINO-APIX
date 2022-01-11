@@ -187,8 +187,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             statusList = null;
             userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         } else {
-            statusList.add(Constants.APP_STATUS_IS_ADDED);
-            statusList.add(Constants.APP_STATUS_ERROR);
+//            statusList.add(Constants.APP_STATUS_IS_ADDED);
+//            statusList.add(Constants.APP_STATUS_ERROR);
+            statusList.add(Constants.APP_STATUS_IS_PUBLISHED);
         }
         List<Map<String, Object>> applicationVos = applicationMapper.queryAppVoList(developerId, appName, appCode,
                 appId, isPublished, LocalDateTime.ofEpochSecond(startTime / 1000, 0, ZoneOffset.ofHours(8)),
