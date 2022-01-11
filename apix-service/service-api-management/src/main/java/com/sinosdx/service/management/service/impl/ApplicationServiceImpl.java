@@ -457,6 +457,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationVersion.setAppId(application.getId());
         applicationVersion.setAppCode(applicationVersionVo.getAppCode());
         applicationVersion.setDescription(applicationVersionVo.getVersionDesc());
+        applicationVersion.setMarkdown(applicationVersionVo.getMarkdown());
         applicationVersionMapper.insert(applicationVersion);
 
         List<ApiVo> apiVoList = new ArrayList<>();
@@ -1508,6 +1509,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         if (StringUtils.isNotEmpty(applicationVersionVo.getAppVersion())) {
             applicationVersion.setVersion(applicationVersionVo.getAppVersion());
+        }
+        if(StringUtils.isNotEmpty(applicationVersionVo.getMarkdown())){
+            applicationVersion.setMarkdown(applicationVersionVo.getMarkdown());
         }
         applicationVersionMapper.updateById(applicationVersion);
         // 查询服务插件
