@@ -170,6 +170,7 @@ export default {
     },
   },
   created () {
+    removeToken("apiPhone");
     removeToken("token");
     removeToken("userId_api");
     const ischecked = getToken("ischecked");
