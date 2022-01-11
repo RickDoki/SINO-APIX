@@ -24,8 +24,8 @@ service.interceptors.request.use(
     //   config.headers['Authorization'] = 'Bearer ' + getToken()
     //   console.log('token')
     // }
-    if (getToken('FSH_AUTH_api')) {
-      config.headers['Authorization'] = 'Bearer ' + getToken('FSH_AUTH_api')
+    if (getToken('token')) {
+      config.headers['Authorization'] = 'Bearer ' + getToken('token')
       // console.log(service.interceptors.request)
       // config.headers['JWT'] = getToken('FSH_AUTH')
     } else {
