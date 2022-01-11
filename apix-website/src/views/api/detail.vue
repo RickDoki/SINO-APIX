@@ -9,12 +9,12 @@
               操作<i class="el-icon-arrow-down el-icon--conten-color"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>编辑API</el-dropdown-item>
+              <!-- <el-dropdown-item>编辑API</el-dropdown-item> -->
               <el-dropdown-item>删除API</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <el-button type="primary" size="small" style="width:85px">编辑文档</el-button>
+        <el-button type="primary" size="small" style="width:85px" @click="docsEdit()">编辑文档</el-button>
       </div>
     </div>
     <div class="secondTitle">
@@ -124,6 +124,10 @@ export default {
     this.getDetailNum()
   },
   methods: {
+    // 编辑API文档
+    docsEdit () {
+      this.$router.push('/docsEdit/' + 'api?id=' + this.apiId + '&name=' + this.apiInfo.name)
+    },
     // 获取api详情
     getDetail () {
       detail(this.apiId).then((res) => {

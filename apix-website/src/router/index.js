@@ -211,6 +211,13 @@ export const asyncRoutes = [
         component: () => import('@/views/system/config'),
         name: 'config',
         meta: { title: '开放门户配置', requiresAuth: true, affix: true }
+      },
+      {
+        path: '/docsEdit/:type',
+        hidden: true,
+        component: () => import('@/views/system/docsEdit'),
+        name: 'docsEdit',
+        meta: { title: '文档编辑', affix: true }
       }
     ]
   },
