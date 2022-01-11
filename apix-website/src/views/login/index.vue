@@ -139,7 +139,7 @@ export default {
         if (valid) {
           if (this.checked) {
             setToken("name", this.ruleForm.username);
-            setToken("word", this.ruleForm.password);
+            setToken("word", btoa(this.ruleForm.password));
             setToken("ischecked", true);
           } else {
             setToken("ischecked", false);
@@ -154,6 +154,7 @@ export default {
               setToken("token", res.data.token);
               setToken("userId_api", res.data.userId);
               setToken("apiPhone", res.data.mobile);
+              setToken("userName_api", res.data.username);
               this.$router.push("/dashboard/index");
             } else {
               this.$message({
@@ -173,12 +174,13 @@ export default {
     removeToken("apiPhone");
     removeToken("token");
     removeToken("userId_api");
+    removeToken("userName_api");
     const ischecked = getToken("ischecked");
     console.log(ischecked);
     if (ischecked === "true") {
       this.ruleForm = {
         username: getToken("name"),
-        password: getToken("word"),
+        password: atob(getToken("word")),
       };
       this.checked = true;
     } else {
