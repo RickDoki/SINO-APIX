@@ -1,6 +1,17 @@
-## 部署脚本说明
+## 基础环境搭建
 
-## docker-standalone ---mac系统本地化脚本
+## 1. CentOS快速安装环境
+- 下载安装脚本
+安装 jdk, git, maven, redis, mysql
+```
+wget -O download-install-all.sh https://gitee.com/sinosdx/sino-apix/tree/master/docs/deploy/env/download-install-all.sh
+```
+- 运行安装脚本
+```
+sh download-install-all.sh
+```
+
+## 1. docker-standalone ---mac系统本地化脚本
 已在mac系统上进行测试验证，支持docker-compose一键部署
 - nacos 2.0.0
 - mysql 8.0.21
@@ -25,12 +36,38 @@ docer-compose down
 docker-compose start
 ```
 
-## mysql ---docker安装5.7的脚本示例
+## 2. Nacos 服务发现与配置
+下载Nacos 1.2.1
 
-## nacos ---docker安装nacos的脚本示例
+https://github.com/alibaba/nacos/releases/tag/1.2.1
 
-## redis ---docker安装mysql的脚本示例
+启动Nacos
 
-## redis ---docker安装redis的脚本示例
+sh nacos/bin/startup.sh -m standalone
 
-## rockstmq ---docker安装rocketmq的脚本示例
+Nacos文档
+
+https://nacos.io/zh-cn/docs/quick-start.html
+
+访问Nacos控制台
+
+http://localhost:8848/nacos 
+
+Nacos控制台账号密码：nacos/nacos
+
+## 3. Sentinel 熔断/限流等
+下载Sentinel 1.7.2
+
+https://github.com/alibaba/Sentinel/releases/tag/1.7.2
+
+Sentinel文档
+
+https://sentinelguard.io/zh-cn/docs/quick-start.html
+
+启动Sentinel
+ ```
+java -Dserver.port=8600 -Dcsp.sentinel.dashboard.server=localhost:8600 -Dproject.name=sentinel-dashboard -jar sentinel-dashboard-1.7.2.jar
+ ```
+访问Sentinel控制台
+
+http://localhost:8600 Sentinel控制台账号密码：sentinel/sentinel

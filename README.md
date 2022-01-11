@@ -1,11 +1,21 @@
 # SINO APIX 平台
 
 
-## SINO APIX是什么？
+## 简介
+由实际项目业务演变而成。
+
+## 项目特点
+
+- 服务发现：支持从Nacos注册中心发现后端服务器。
+- 架构松耦合：业务代码实现在各自微服务上，网关不参与业务实现。
+- 扩展简单：在Spring Cloud Gateway基础上进行了抽象定义实现统一，可以自定义实现自己的需求。
 
 ## 演示环境（Demo）
 
-## 设计
+>平台地址：http://47.103.109.225:30000 
+
+>账号：15216666666  密码：apix123456
+
 ### 模块结构
 ```lua
 sino-apix
@@ -75,24 +85,61 @@ sino-apix
     9. 参数校验 Hibernate Validator 6.1.5.Final
     10. JSON序列化 Fastjson 1.2.62
     11. 代码简化插件 Lombok 1.18.12
-    12. 分布式缓存 Redis  
-    13. 非关系数据库 MongoDB
+    12. 对象属性复制工具 Mapstruct 1.3.1.Final
+    13. 分布式缓存 Redis  
     14. 数据库 Mysql
-    15. 分布式任务调度 XXL-Job 
     15. 服务发现/配置 Nacos 
     16. 消息队列 RabbitMQ
     17. 源码版本控制 Gitlab
     18. 项目构建框架 Maven
     19. 代码质量检测分析 SonarQube
+    
+## 开发环境
 
+- Java 8，Torna要求Java版本最低为Java8
+- Maven v3，包管理以及构建工具，最低版本要求maven3
+- nodejs v12，前端开发需要安装nodejs，建议版本12，版本太高可能会有问题
+- Mysql v5.7(推荐)
+- Nacos v2.0.3(推荐)
+- Redis v3.2.8
 
-## 部署说明
+## IDEA启动
+本项目采用IDEA进行开发，Eclipse理论上也能支持。
 
-- IDEA 启动
-- Jar部署
-- Docker部署 
-- K8S部署
+具体导入步骤如下：
+- 导入sino-apix工程项目。
+- 导入MySQL脚本，目录`/docs/mysql/`下四个数据库脚本文件。
+- 导入Nacos脚本，目录`/docs/nacos/`下配置文件，在Nacos控制台导入即可。
+- IDE安装lombok插件，然后打开项目(IDEA下可以打开根pom.xml，然后open as project)，初次导入会下载依赖包，请耐心等待
+- 进入Nacos控制台，`修改common-mysql.yml`数据库配置，`修改common-redis.yml`缓存配置。
+- 运行`GatewayApplication、ApplicationServiceApplication、AuthServiceApplication、UserServiceApplication、LogApplication`五个服务。
+- 至此，服务端启动完毕，下面讲解运行前端工程。
 
-## 系统截图
+运行前端:
+
+cd website，将命令提示符跳转到front目录
+
+- 执行`npm install`
+这一步是下载nodejs相关依赖
+
+- 执行`npm run dev`，访问`http://localhost:8080/`
+至此前端启动完毕
+
+前端请求的服务器地址配置在`.env.development`文件中，默认是`http://localhost:8080`
+
+## 运行/部署
+- [基础环境搭建（参考）](docs/deploy/README.md)
+- [Jar部署说明](docs/deploy/jar/README.md)
+- [Docker部署说明](docs/deploy/docker/README.md)
+- [Docker-compose部署说明](docs/deploy/docker-compose/README.md)
+- [Kubernetes部署说明](docs/deploy/kubernetes/README.md)
+
+## 界面预览
 
 ## QA
+
+1. 很多类缺少get/set方法？
+    ```
+    答：请用IDEA或Eclipse安装`lombok`插件
+    ```
+   
