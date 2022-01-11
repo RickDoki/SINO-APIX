@@ -23,11 +23,11 @@
     <div class="status">
       <div class="left-span">
         <span>被调用次数 : </span>
-        <div class="tag info">18次</div>
+        <div class="tag info">{{numbers.totalNum}}次</div>
       </div>
       <div class="left-span">
         <span>调用失败次数 : </span>
-        <div class="tag info">3次</div>
+        <div class="tag info">{{numbers.failNum}}次</div>
       </div>
       <div class="time">
         <div>

@@ -22,7 +22,7 @@ export function detail (id) {
 }
 export function detailNum (id) {
   return request({
-    url: '/api/app/data/' + id + '/apiNum',
+    url: '/app/data/' + id + '/apiNum',
     method: 'get'
     // data
   })

@@ -141,7 +141,7 @@ export default {
       page: 1,
       limit: 10,
       total: 0,
-      tableData: [{ name: '', code: '', status: '', version: '' }, { name: '', code: '', status: '', version: '' }]
+      tableData: []
     }
   },
   created () {

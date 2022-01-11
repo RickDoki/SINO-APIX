@@ -67,7 +67,7 @@ export default {
     return {
       APIName: "",
       value1: [],
-      tableData: [{ name: '', code: '', status: '', version: '', version2: '' }, { name: '', code: '', status: '', version: '', version2: '' }],
+      tableData: [],
       total: 0,
       developerId: "",
       page: 1,
