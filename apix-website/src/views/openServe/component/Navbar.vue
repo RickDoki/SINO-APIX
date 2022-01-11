@@ -6,8 +6,9 @@
       </div>
       <div class="navber_userHandle">
         <div class="kongzhitai" @click="godashboard">控制台</div>
-        <img src="../../../assets/img/img_avatar.png" alt=""/>
-        <el-dropdown trigger="click" @command="handleCommand">
+        <div class="kongzhitai" style="margin-left: 20px" @click="gologin" v-if="!isLogin">登录</div>
+        <img src="../../../assets/img/img_avatar.png" alt="" v-if="isLogin"/>
+        <el-dropdown trigger="click" @command="handleCommand" v-if="isLogin">
           <span style="color: #1D1C35" class="el-dropdown-link">
             {{ phone }}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
@@ -29,11 +30,17 @@ export default {
   components: {},
   data() {
     return {
-      phone: ''
+      phone: '',
+      isLogin: true
     };
   },
   created() {
     this.phone = getToken('apiPhone')
+    if (this.phone) {
+      this.isLogin = true
+    } else {
+      this.isLogin = false
+    }
   },
   watch: {
     $route: {
@@ -58,6 +65,11 @@ export default {
     godashboard() {
       this.$router.push({
         name: 'Dashboard'
+      })
+    },
+    gologin() {
+      this.$router.push({
+        path: '/login'
       })
     }
   },
