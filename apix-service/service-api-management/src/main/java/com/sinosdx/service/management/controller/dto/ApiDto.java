@@ -39,6 +39,6 @@ public class ApiDto  {
     private String creationDate;
     private String lastUpdateDate;
     private String protocol;
-    private String appName;
+    private String apiName;
 
 }
