@@ -140,6 +140,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         application.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         application.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+        application.setPublishDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         Long existApp = applicationMapper.selectCount(new QueryWrapper<Application>()
                 .eq("name", application.getName())
                 .or().eq("code", application.getCode())
@@ -340,6 +341,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                             return R.fail(ResultCodeEnum.APP_VERSION_IS_NOT_EXIST);
                         }
                         oldApp.setIsPublished(applicationVo.getIsPublished());
+                        oldApp.setPublishDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
                         msg = "上架成功";
                     } else {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ public class Application extends Entity<Integer> {
     private String isPublished;
     private String creationByUsername;
     private String lastUpdatedByUsername;
+    private LocalDateTime publishDate;
 
     public Application(ApplicationVo applicationVo) {
         this.id = applicationVo.getAppId();
@@ -44,5 +46,6 @@ public class Application extends Entity<Integer> {
         this.markdown = applicationVo.getMarkdown();
         this.iconUrl = applicationVo.getIconUrl();
         this.isPublished = applicationVo.getIsPublished();
+        this.publishDate = applicationVo.getPublishDate();
     }
 }
