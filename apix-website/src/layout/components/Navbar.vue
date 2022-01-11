@@ -5,7 +5,7 @@
         <img src="./../../assets/img/img_avatar.png" alt=""/>
         <el-dropdown trigger="click" @command="handleCommand">
           <span style="color: #1D1C35" class="el-dropdown-link">
-            {{phone}}<i class="el-icon-arrow-down el-icon--right"></i>
+            {{userName}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown" class="drop-div">
             <el-dropdown-item command="a">个人信息</el-dropdown-item>
@@ -58,7 +58,7 @@ export default {
       logoMenu: ["right-menu", "widthTrue"],
       searchContent: "",
       routerList: [],
-      phone: ''
+      userName: ''
     };
   },
   created () {
@@ -66,6 +66,7 @@ export default {
     this.routerList = this.$route.matched;
     console.log(this.routerList[0].meta.title);
     this.phone = getToken('apiPhone')
+    this.userName = getToken('userName_api')
   },
   watch: {
     $route: {
