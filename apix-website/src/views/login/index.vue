@@ -60,19 +60,19 @@
 </template>
 
 <script>
-import {setToken, getToken, removeToken} from "@/utils/auth"; // get token from cookie
-import {Apiregister, Apilogin} from "@/api/user";
+import { setToken, getToken, removeToken } from "@/utils/auth"; // get token from cookie
+import { Apiregister, Apilogin } from "@/api/user";
 
 export default {
-  data() {
+  data () {
     return {
       ruleForm: {
         username: "",
         password: "",
       },
       rules: {
-        username: {required: true, message: "请输入账号", trigger: "change"},
-        password: {required: true, message: "请输入密码", trigger: "change"},
+        username: { required: true, message: "请输入账号", trigger: "change" },
+        password: { required: true, message: "请输入密码", trigger: "change" },
       },
       re_ruleForm: {
         mobile: "",
@@ -81,13 +81,13 @@ export default {
         username: "",
       },
       re_rules: {
-        username: {required: true, message: "请输入用户名", trigger: "change"},
-        mobile: {required: true, message: "请输入手机号", trigger: "change"},
+        username: { required: true, message: "请输入用户名", trigger: "change" },
+        mobile: { required: true, message: "请输入手机号", trigger: "change" },
         email: [
-          {required: true, message: "请输入邮箱", trigger: "change"},
-          {type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"]},
+          { required: true, message: "请输入邮箱", trigger: "change" },
+          { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] },
         ],
-        password: {required: true, message: "请输入密码", trigger: "change"},
+        password: { required: true, message: "请输入密码", trigger: "change" },
       },
       checked: false,
       isLogin: true,
@@ -97,11 +97,11 @@ export default {
   methods: {
     // 去注册
     // 已有账号去登录
-    goOther() {
+    goOther () {
       this.isLogin = !this.isLogin;
     },
     // 注册
-    register(formName) {
+    register (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(this.re_ruleForm);
@@ -133,7 +133,7 @@ export default {
       });
     },
     // 登录
-    login(formName) {
+    login (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.checked) {
@@ -180,7 +180,7 @@ export default {
       });
     },
   },
-  created() {
+  created () {
     removeToken("apiPhone");
     removeToken("token");
     removeToken("userId_api");
@@ -262,7 +262,7 @@ export default {
       .dl-but {
         margin-top: 30px;
         width: 100%;
-        box-shadow: 0px 15px 10px #e2e7fe;
+        box-shadow: -2px 10px 10px #e2e7fe;
       }
 
       .zc-but {

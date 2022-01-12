@@ -1,14 +1,13 @@
 <template>
-  <div class="main">
+  <div class="main_open">
     <navbar></navbar>
     <div style="min-height: calc(100vh - 238px - 60px)">
       <div class="apiMain_content">
         <div class="welcome">欢迎访问我们的开放服务平台</div>
         <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
-        <div style="width: 100%;text-align: center;margin-top: 5vh">
-          <el-input placeholder="请输入服务名称" v-model="searchKey" class="input-with-select">
-            <el-button type="primary" slot="append" @click="search">搜一下</el-button>
-          </el-input>
+        <div  class="input-with-select">
+          <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
+          <el-button type="primary" slot="append" @click="search">搜一下</el-button>
         </div>
       </div>
       <div class="open_service">
@@ -74,13 +73,13 @@
 </template>
 
 <script>
-import {openList, subscribe} from "@/api/AboutApp";
+import { openList, subscribe } from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
-import {getToken} from "@/utils/auth";
+import { getToken } from "@/utils/auth";
 
 export default {
-  components: {navbar},
-  data() {
+  components: { navbar },
+  data () {
     return {
       searchKey: "",
       items: [],
@@ -88,17 +87,17 @@ export default {
       serviceList: []
     };
   },
-  created() {
+  created () {
     this.search()
   },
   methods: {
-    search() {
+    search () {
       const query = "?market=true&appName=" + this.searchKey;
       openList(query).then((res) => {
         this.serviceList = res.data.appList
       });
     },
-    goDetail(item) {
+    goDetail (item) {
       this.$router.push({
         name: 'openServeDetail',
         query: {
@@ -106,7 +105,7 @@ export default {
         }
       })
     },
-    subscribe(item) {
+    subscribe (item) {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + item.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -134,13 +133,12 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.main {
+.main_open {
   margin: 0px;
   min-height: calc(100vh - 60px);
-
   .apiMain_content {
     margin-top: 60px;
-    background-image: url("../../../src/assets/img/img_bg.png");
+    background-image: url('../../../src/assets/img/img_bg.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     height: 50vh;
@@ -150,25 +148,38 @@ export default {
 
     ::v-deep {
       .el-input--medium .el-input__inner {
-        height: 48px;
-        line-height: 48px;
-        background: #F1F4FE;
-        opacity: 1;
-        color: #494E6A;
+        height: 42px;
+        line-height: 42px;
+        background: #f1f4fe;
+        border-color: #f1f4fe;
+        box-shadow: -3px 10px 10px #e2e7fe;
+      }
+      input::-webkit-input-placeholder {
+        font-weight: 400;
+        color: #494e6a;
+      }
+      input::-moz-input-placeholder {
+        font-weight: 400;
+        color: #494e6a;
+      }
+      input::-ms-input-placeholder {
+        font-weight: 400;
+        color: #494e6a;
       }
 
-      .el-button--primary:hover, .el-button--primary:focus {
-        height: 48px;
-        color: #FFFFFF;
+      .el-button--primary:hover,
+      .el-button--primary:focus {
+        height: 42px;
+        color: #ffffff;
         background: #5173ff;
         border-color: #5173ff;
       }
 
       .el-button--primary {
-        height: 48px;
-        background: rgba(38, 80, 255, 0.85);
-        border-color: #2650FF;
-        color: #FFFFFF;
+        height: 42px;
+        background: #2650ff;
+        border-color: #2650ff;
+        color: #ffffff;
       }
     }
 
@@ -196,16 +207,18 @@ export default {
     }
 
     .input-with-select {
-      width: 60vh;
+      display: flex;
+      width: 80vh;
+      text-align: center;
+      margin: 5vh auto;
     }
   }
 
   .open_service {
-    margin: 0 auto;
-    margin-top: 3vh;
-    width: 80%;
-    padding: 20px;
-
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem 3rem var(--bottom-padding);
+    margin: 35px auto;
     .open_service_title {
       height: 25px;
       font-size: 20px;
@@ -222,8 +235,8 @@ export default {
         cursor: pointer;
         width: 100%;
         height: 84px;
-        background: #FFFFFF;
-        border: 1px solid #FFFFFF;
+        background: #ffffff;
+        border: 1px solid #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(29, 28, 53, 0.2);
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
@@ -233,6 +246,7 @@ export default {
         margin-bottom: 20px;
 
         .list_item_title {
+          margin-left: 24px;
           width: 100px;
           height: 20px;
           font-size: 14px;
@@ -244,14 +258,15 @@ export default {
 
         .list_item_content {
           overflow: hidden;
-          width: 60%;
+          width: 50%;
+          padding-right: 24px;
           white-space: nowrap; /*不换行*/
           text-overflow: ellipsis;
           height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #494E6A;
+          color: #494e6a;
           line-height: 20px;
         }
 
@@ -264,27 +279,29 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           height: 20px;
           line-height: 10px;
-          background: #E0E6FF;
+          background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
 
         .list_item_button {
+          margin-right: 24px;
+          margin-left: 100px;
           display: flex;
           justify-content: center;
           align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           line-height: 20px;
           width: 74px;
           height: 36px;
           border-radius: 4px 4px 4px 4px;
           opacity: 1;
-          border: 1px solid #2650FF;
+          border: 1px solid #2650ff;
         }
 
         .list_item_button:hover {
@@ -293,10 +310,10 @@ export default {
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          background: #2650FF;
+          background: #2650ff;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #ffffff;
           line-height: 20px;
           width: 74px;
           height: 36px;
@@ -310,10 +327,10 @@ export default {
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          background: #2650FF;
+          background: #2650ff;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #ffffff;
           line-height: 20px;
           width: 74px;
           height: 36px;
@@ -325,9 +342,9 @@ export default {
       .service_list_item:hover {
         width: 100%;
         height: 84px;
-        background: #FFFFFF;
+        background: #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
-        border: 1px solid #2650FF;
+        border: 1px solid #2650ff;
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
         display: flex;
@@ -352,7 +369,7 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #494E6A;
+          color: #494e6a;
           line-height: 20px;
         }
 
@@ -365,9 +382,9 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           height: 20px;
-          background: #E0E6FF;
+          background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
 
@@ -378,13 +395,13 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           line-height: 20px;
           width: 74px;
           height: 36px;
           border-radius: 4px 4px 4px 4px;
           opacity: 1;
-          border: 1px solid #2650FF;
+          border: 1px solid #2650ff;
         }
 
         .list_item_button:hover {
@@ -393,10 +410,10 @@ export default {
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          background: #2650FF;
+          background: #2650ff;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #ffffff;
           line-height: 20px;
           width: 74px;
           height: 36px;
@@ -423,7 +440,7 @@ export default {
         padding: 20px;
         width: 250px;
         height: 300px;
-        background: #FFFFFF;
+        background: #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(29, 28, 53, 0.2);
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
@@ -437,13 +454,13 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           line-height: 20px;
           width: 74px;
           height: 36px;
           border-radius: 4px 4px 4px 4px;
           opacity: 1;
-          border: 1px solid #2650FF;
+          border: 1px solid #2650ff;
         }
 
         .cards_item_button:hover {
@@ -453,10 +470,10 @@ export default {
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          background: #2650FF;
+          background: #2650ff;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #ffffff;
           line-height: 20px;
           width: 74px;
           height: 36px;
@@ -471,10 +488,10 @@ export default {
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          background: #2650FF;
+          background: #2650ff;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #ffffff;
           line-height: 20px;
           width: 74px;
           height: 36px;
@@ -501,7 +518,7 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #494E6A;
+          color: #494e6a;
           line-height: 20px;
         }
 
@@ -514,10 +531,10 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           height: 20px;
           line-height: 10px;
-          background: #E0E6FF;
+          background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
       }
@@ -525,11 +542,11 @@ export default {
       .service_cards_item:hover {
         width: 250px;
         height: 300px;
-        background: #FFFFFF;
+        background: #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
-        border: 1px solid #2650FF;
+        border: 1px solid #2650ff;
       }
     }
   }
@@ -538,7 +555,7 @@ export default {
     padding: 20px 0;
     width: 100%;
     min-height: 238px;
-    background: #1D1C35;
+    background: #1d1c35;
     opacity: 1;
     display: flex;
     flex-direction: column;
@@ -550,7 +567,7 @@ export default {
       font-size: 14px;
       font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
       font-weight: 400;
-      color: #FFFFFF;
+      color: #ffffff;
       line-height: 20px;
       display: flex;
     }
@@ -560,7 +577,7 @@ export default {
       font-size: 12px;
       font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
       font-weight: 400;
-      color: #FFFFFF;
+      color: #ffffff;
       line-height: 14px;
     }
   }

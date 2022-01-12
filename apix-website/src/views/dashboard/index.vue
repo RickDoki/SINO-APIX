@@ -125,7 +125,7 @@ export default {
       serveList(this.developerId).then((res) => {
         if (res.code === 200) {
           this.optionsMy = res.data;
-          this.serveNum = res.data.total;
+          this.serveNum = res.data.length;
           if (this.optionsMy.length > 0) {
             this.optionsMy.forEach((item) => {
               this.myApiQueryList.push(item.appCode);
@@ -270,9 +270,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .dashboard {
-  margin: 0px 40px 0px 40px;
-  background-color: #fff;
-  min-height: calc(100vh - 100px);
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem 3rem var(--bottom-padding);
+  margin: 0 auto;
   /deep/ .el-input__inner {
     border-radius: 25px 25px 25px 25px;
     border: 1px solid #f3f3f3;

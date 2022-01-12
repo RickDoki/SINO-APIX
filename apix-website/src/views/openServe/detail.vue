@@ -1,6 +1,7 @@
 <template>
+<div>
+  <navbar></navbar>
   <div class="main">
-    <navbar></navbar>
     <div style="padding: 90px 30px 0 30px;position: relative;min-height:calc(100vh - 211px)">
       <div class="list_top">
         <div>
@@ -39,14 +40,15 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
 // import apidetail from "./detail/detail.vue";
 // import apiTest from "./detail/test.vue";
 // import help from "./detail/help.vue";
-import {appCodeDetail, subscribe} from "@/api/AboutApp";
-import {getToken} from "@/utils/auth"; // get token from cookie
+import { appCodeDetail, subscribe } from "@/api/AboutApp";
+import { getToken } from "@/utils/auth"; // get token from cookie
 import apiDetail from './component/apiDetail'
 import navbar from "@/views/openServe/component/Navbar";
 
@@ -58,7 +60,7 @@ export default {
     // apiTest,
     // help,
   },
-  data() {
+  data () {
     return {
       appName: "",
       appDescription: "",
@@ -68,11 +70,11 @@ export default {
       subscribed: true
     };
   },
-  created() {
+  created () {
     this.query()
   },
   methods: {
-    query() {
+    query () {
       appCodeDetail(this.$route.query.code).then(res => {
         if (res.code === 200) {
           this.appName = res.data.appName
@@ -84,7 +86,7 @@ export default {
         }
       })
     },
-    subscribe() {
+    subscribe () {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + this.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -113,17 +115,13 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.main {
-  margin: 0px;
-}
-
 .list_top {
   .list_top_title {
     height: 26px;
     font-size: 20px;
     font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
     font-weight: bold;
-    color: #1D1C35;
+    color: #1d1c35;
     line-height: 26px;
   }
 
@@ -148,7 +146,7 @@ export default {
     font-size: 14px;
     font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
     font-weight: 400;
-    color: #1D1C35;
+    color: #1d1c35;
     line-height: 20px;
     margin-right: 40px;
 
@@ -159,7 +157,7 @@ export default {
         margin-right: 10px;
         width: 20px;
         height: 20px;
-        background: #F1F1F1;
+        background: #f1f1f1;
         border-radius: 0px 0px 0px 0px;
         opacity: 1;
       }
