@@ -108,7 +108,6 @@ export default {
     },
     subscribe(item) {
       if (getToken('token')) {
-        console.log(item)
         this.$confirm('确认订阅：' + item.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',

@@ -107,7 +107,6 @@ export default {
     getapiMessage(e) {
       apiMessage(e).then((res) => {
         if (res.code === 200) {
-          // console.log(res)
           this.apiMessageAll = res.data
           this.table = JSON.parse(res.data.requestParams);
         }
