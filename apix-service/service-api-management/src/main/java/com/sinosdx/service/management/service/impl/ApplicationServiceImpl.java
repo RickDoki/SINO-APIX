@@ -289,9 +289,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         //            appDetailMap.put("usingAppList", usingAppList);
         //        }
         appDetailMap.put("subscribed",false);
-        Integer clientId = null;
+        Integer clientId = (sysUserService.queryClientByUserId(developerId).getData()).getId();
         if (null != developerId) {
-            clientId = (sysUserService.queryClientByUserId(developerId).getData()).getId();
             LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Objects.nonNull(clientId), ApplicationSubscribe::getSubscribeClientId, clientId)
                     .eq(Objects.nonNull(appCode), ApplicationSubscribe::getAppSubscribedCode, appCode)
@@ -300,7 +299,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             appDetailMap.put("usingAppList", applicationSubscribes);
         }
         if(null != clientId){
-            clientId = (sysUserService.queryClientByUserId(developerId).getData()).getId();
             Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
                     .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
                     .eq(ApplicationSubscribe::getSubscribeClientId,clientId)
