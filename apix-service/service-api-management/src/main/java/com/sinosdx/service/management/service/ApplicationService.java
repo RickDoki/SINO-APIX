@@ -339,4 +339,12 @@ public interface ApplicationService {
     R<ApplicationSubscribe> queryAppCodeBySubscribeCode(String subscribeCode);
 
     R<Object> getMyAppCodes(Integer developId);
+
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    R<List<String>> queryAppAuthPluginNameList(String appCode);
 }

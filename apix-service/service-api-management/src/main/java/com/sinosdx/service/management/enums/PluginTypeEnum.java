@@ -16,29 +16,29 @@ public enum PluginTypeEnum {
     BASE_AUTH("base_auth", "BaseAuth"),
     OAUTH2("oauth2", "OAuth"),
 
-    BLACK_LIST_IP("black_list_ip","black_list_ip"),
+    BLACK_LIST_IP("black_list_ip","BlacklistIp"),
 
-    WHITE_LIST_IP("white_list_ip","white_list_ip"),
+    WHITE_LIST_IP("white_list_ip","WhitelistIp"),
 
-    CORS("cors","cors"),
+    CORS("cors","Cors"),
 
-    SIGN("sign","sign"),
+    SIGN("sign","SignAuth"),
 
-    ERROR_LOG("error_log","error_log"),
+    ERROR_LOG("error_log","ErrorLog"),
 
-    GZIP("gzip","gzip"),
+    GZIP("gzip","Gzip"),
 
-    HTTP_LOG("http_log","http_log"),
+    HTTP_LOG("http_log","HttpLog"),
 
-    PROXY_CACHE("proxy_cache","proxy_cache"),
+    PROXY_CACHE("proxy_cache","ProxyCache"),
 
-    REAL_IP("real_ip","real_ip"),
+    REAL_IP("real_ip","RealIp"),
 
-    REPLAY_ATTACKS("replay_attacks","replay_attacks"),
+    REPLAY_ATTACKS("replay_attacks","ReplayAttacks"),
 
     SENTINEL("sentinel","sentinel"),
 
-    RESPONSE_REWRITE("response_rewrite","response_rewrite"),
+    RESPONSE_REWRITE("response_rewrite","RespRewrite"),
     ;
 
     private final String type;
