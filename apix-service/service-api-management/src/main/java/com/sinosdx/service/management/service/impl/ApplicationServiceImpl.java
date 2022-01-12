@@ -1352,7 +1352,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         // 遍历查询Client 相关信息
         applicationPlugins.forEach(a -> {
-            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.queryByAppSubscribe(appCode);
+//            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.queryByAppSubscribe(appCode);
+            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.selectList(new LambdaQueryWrapper<ApplicationPluginClient>()
+                    .eq(ApplicationPluginClient::getAppPluginId,a.getId())
+                    .eq(ApplicationPluginClient::getDelFlag,0)
+            );
             if (!CollectionUtils.isEmpty(applicationPluginClients)) {
                 a.setApplicationPluginClients(applicationPluginClients);
             }
@@ -1485,7 +1489,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .last("LIMIT 1")
         );
         if (Objects.nonNull(applicationPlugin)) {
-            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.queryByAppSubscribe(appCode);
+            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.selectList(new LambdaQueryWrapper<ApplicationPluginClient>()
+                    .eq(ApplicationPluginClient::getAppPluginId,applicationPlugin.getId())
+                    .eq(ApplicationPluginClient::getDelFlag,0)
+            );
             if (!CollectionUtils.isEmpty(applicationPluginClients)) {
                 applicationPlugin.setApplicationPluginClients(applicationPluginClients);
             }

@@ -6,9 +6,9 @@
             resultType="com.sinosdx.service.management.dao.entity.ApplicationPluginClient">
         select apc.* from application_plugin_client apc
         join application_plugin ap on ap.id = apc.app_plugin_id
-        join application_subscribe as on as.app_subscribed_id = ap.app_id
+        join application_subscribe appsub on appsub.app_subscribed_id = ap.app_id
         <where>
-            apc.del_flag = 0 and ap.del_flag = 0 and as.del_flag = 0 and as.appClientCode = #{subscribeCode}
+            apc.del_flag = 0 and ap.del_flag = 0 and appsub.del_flag = 0 and appsub.app_client_code = #{subscribeCode}
         </where>
     </select>
 </mapper>

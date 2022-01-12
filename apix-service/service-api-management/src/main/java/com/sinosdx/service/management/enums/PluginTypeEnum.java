@@ -37,6 +37,8 @@ public enum PluginTypeEnum {
     REPLAY_ATTACKS("replay_attacks","replay_attacks"),
 
     SENTINEL("sentinel","sentinel"),
+
+    RESPONSE_REWRITE("response_rewrite","response_rewrite"),
     ;
 
     private final String type;
