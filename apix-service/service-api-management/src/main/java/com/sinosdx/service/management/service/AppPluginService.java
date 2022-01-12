@@ -2,7 +2,10 @@ package com.sinosdx.service.management.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
+import com.sinosdx.service.management.dao.entity.SysClient;
 import com.sinosdx.service.management.result.R;
+
+import java.util.List;
 
 /**
  * @author wendy
@@ -43,4 +46,11 @@ public interface AppPluginService {
      * @return
      */
     R<JSONObject> queryPluginConfigs(String pluginType, String appCode);
+
+    /**
+     * 订阅时处理各服务插件及绑定关系
+     *
+     * @param appPlugins
+     */
+    void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient);
 }

@@ -823,7 +823,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         // 生成订阅用户调用信息
-        processPlugin(plugins, sysClient);
+        appPluginService.processPlugin(plugins, sysClient);
 
         // 查询服务所有关联api
         List<Api> apiList = apiMapper.queryApiListByAppCode(subscribedApp.getCode());
@@ -918,79 +918,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return R.success();
     }
 
-
-    /**
-     * 订阅时处理各服务插件及绑定关系
-     *
-     * @param appPlugins
-     */
-    private void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient) {
-        for (ApplicationPlugin appPlugin : appPlugins) {
-            JSONObject paramJson = new JSONObject();
-            // 服务发布方设置的配置项
-            if (StringUtils.isNotEmpty(appPlugin.getPluginParams())) {
-                paramJson = JSONObject.parseObject(appPlugin.getPluginParams());
-            }
-            String secretKey = UUID.randomUUID().toString().split("-")[0];
-            ClientAppSecret secret = ClientAppSecret.builder()
-                    .appCode(appPlugin.getAppCode())
-                    .clientId(sysClient.getId())
-                    .build();
-            if ("user".equals(sysClient.getResourceType())) {
-                secret.setUserId(sysClient.getResourceId());
-            }
-            // jwt插件
-            if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
-                paramJson.put("secretKey", secretKey);
-                secret.setSecretKey(secretKey);
-            }
-            // oauth2插件
-            else if (appPlugin.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
-                String clientSecret = MD5Util.getMD5(secretKey);
-                paramJson.put("clientId", secretKey);
-                paramJson.put("clientSecret", clientSecret);
-                secret.setSecretKey(clientSecret);
-
-                JSONObject oAuthConfigJson = appPluginService.queryPluginConfigs(PluginTypeEnum.OAUTH2.getType(), appPlugin.getAppCode()).getData();
-                Integer tokenExpiration = oAuthConfigJson.getInteger("tokenExpiration");
-                Integer refreshTokenExpiration = oAuthConfigJson.getInteger("refreshTokenExpiration");
-
-                // 插入OAuth2认证客户端信息
-                OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(secretKey).getData();
-                if (null == oldClient) {
-                    OauthClientDetails oauthClientDetails = new OauthClientDetails();
-                    oauthClientDetails.setClientId(secretKey);
-                    oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
-                    oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
-                    oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
-                    oauthClientDetails.setAccessTokenValidity(tokenExpiration);
-                    oauthClientDetails.setRefreshTokenValidity(refreshTokenExpiration);
-                    oauthClientDetailsService.createOauthClientDetail(oauthClientDetails);
-                }
-            }
-            // base_auth插件
-            else if (appPlugin.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
-                String md5 = MD5Util.getMD5(secretKey);
-                paramJson.put("username", secretKey);
-                paramJson.put("password", md5);
-                secret.setSecretKey(md5);
-            } else {
-                continue;
-            }
-
-            // 保存客户端获取token的secretKey
-            tokenService.saveClientAppSecretKey(secret);
-
-            ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
-            appPluginClient.setAppPluginId(appPlugin.getId());
-            appPluginClient.setSysClientId(sysClient.getId());
-            appPluginClient.setPluginType(appPlugin.getPluginType());
-            appPluginClient.setPluginParams(paramJson.toJSONString());
-            appPluginClient.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-            appPluginClient.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-            applicationPluginClientMapper.insert(appPluginClient);
-        }
-    }
 
     /**
      * 添加应用开发者
