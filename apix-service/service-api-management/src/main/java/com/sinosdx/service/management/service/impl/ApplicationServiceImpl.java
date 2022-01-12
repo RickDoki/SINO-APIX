@@ -288,6 +288,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         //            List<Map<String, Object>> usingAppList = applicationMapper.queryUsingAppList(appCode);
         //            appDetailMap.put("usingAppList", usingAppList);
         //        }
+        appDetailMap.put("subscribed",false);
         Integer clientId = null;
         if (null != developerId) {
             clientId = (sysUserService.queryClientByUserId(developerId).getData()).getId();
@@ -298,7 +299,17 @@ public class ApplicationServiceImpl implements ApplicationService {
             List<ApplicationSubscribe> applicationSubscribes = applicationSubscribeMapper.selectList(wrapper);
             appDetailMap.put("usingAppList", applicationSubscribes);
         }
-
+        if(null != clientId){
+            clientId = (sysUserService.queryClientByUserId(developerId).getData()).getId();
+            Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
+                    .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
+                    .eq(ApplicationSubscribe::getSubscribeClientId,clientId)
+                    .eq(ApplicationSubscribe::getDelFlag, 0)
+            );
+            if(count>0){
+                appDetailMap.put("subscribed",true);
+            }
+        }
 
         // 加入插件信息
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
