@@ -9,6 +9,8 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 /**
  * @author wendy
  * @date 2020/12/10
@@ -62,9 +64,15 @@ public class AppPluginController {
      * @param appCode
      * @return
      */
-    @GetMapping("/plugin/configs")
+    @GetMapping("/configs")
     public R<JSONObject> queryPluginConfigs(@RequestParam String pluginType,
                                             @RequestParam String appCode) {
         return applicationService.queryPluginConfigs(pluginType, appCode);
+    }
+
+
+    @GetMapping("/randomKey")
+    public R<Object> get() {
+        return R.success(UUID.randomUUID().toString().split("-")[0]);
     }
 }
