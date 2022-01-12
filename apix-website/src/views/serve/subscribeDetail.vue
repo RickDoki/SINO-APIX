@@ -15,11 +15,11 @@
         <div class="time">
           <div>
             <span>发布时间 : </span>
-            <span>2021-08-05 10:05:00:00</span>
+            <span>2021-08-05 10:05:00</span>
           </div>
           <div>
             <span>订阅时间 : </span>
-            <span>2021-08-05 10:05:00:00</span>
+            <span>{{serveAllMeaasge.subscribeDate}}</span>
           </div>
         </div>
       </div>
@@ -89,7 +89,6 @@ export default {
     },
     // 选择服务版本
     changeVersion(e) {
-      // console.log(e)
       this.apiList = e
     }
   },
