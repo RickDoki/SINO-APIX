@@ -228,6 +228,7 @@ export default {
         margin-bottom: 20px;
 
         .list_item_title {
+          width: 100px;
           height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
