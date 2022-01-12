@@ -2,6 +2,7 @@ package com.sinosdx.service.management.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.google.common.collect.Lists;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
 import com.sinosdx.service.management.consumer.TokenServiceFeign;
@@ -18,6 +19,7 @@ import com.sinosdx.service.management.utils.ThreadContext;
 import com.sinosdx.starter.redis.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,10 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author wendy
@@ -133,7 +132,8 @@ public class AppPluginServiceImpl implements AppPluginService {
                 .eq(ApplicationPlugin::getDelFlag, 0)
                 .last("LIMIT 1")
         );
-        if (Objects.nonNull(applicationPlugin)) {
+        List<String> type = Lists.newArrayList(PluginTypeEnum.OAUTH2.getType(),PluginTypeEnum.JWT.getType());
+        if (Objects.nonNull(applicationPlugin) && type.contains(applicationPlugin.getPluginType())) {
             List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.selectList(new LambdaQueryWrapper<ApplicationPluginClient>()
                     .eq(ApplicationPluginClient::getAppPluginId, applicationPlugin.getId())
                     .eq(ApplicationPluginClient::getDelFlag, 0)
