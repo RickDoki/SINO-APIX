@@ -1,16 +1,16 @@
 <template>
   <div class="login-main">
     <div class="main-top">
-      <img src="./../../assets/img/sdx_logo.png" alt="" />
+      <img src="./../../assets/img/sdx_logo.png" alt=""/>
     </div>
     <div class="main-center">
       <div class="center-logo">
-        <img src="./../../assets/img/img_logo.png" alt="" />
+        <img src="./../../assets/img/img_logo.png" alt=""/>
       </div>
       <div class="center-welcome">欢迎使用博冀开放服务平台</div>
       <div class="center-form">
         <div v-show="isLogin">
-          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" >
+          <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
             <el-form-item prop="username">
               <el-input placeholder="请输入账号" v-model="ruleForm.username"/>
             </el-form-item>
@@ -60,19 +60,19 @@
 </template>
 
 <script>
-import { setToken, getToken, removeToken } from "@/utils/auth"; // get token from cookie
-import { Apiregister, Apilogin } from "@/api/user";
+import {setToken, getToken, removeToken} from "@/utils/auth"; // get token from cookie
+import {Apiregister, Apilogin} from "@/api/user";
 
 export default {
-  data () {
+  data() {
     return {
       ruleForm: {
         username: "",
         password: "",
       },
       rules: {
-        username: { required: true, message: "请输入账号", trigger: "change" },
-        password: { required: true, message: "请输入密码", trigger: "change" },
+        username: {required: true, message: "请输入账号", trigger: "change"},
+        password: {required: true, message: "请输入密码", trigger: "change"},
       },
       re_ruleForm: {
         mobile: "",
@@ -81,28 +81,27 @@ export default {
         username: "",
       },
       re_rules: {
-        username: { required: true, message: "请输入用户名", trigger: "change" },
-        mobile: { required: true, message: "请输入手机号", trigger: "change" },
+        username: {required: true, message: "请输入用户名", trigger: "change"},
+        mobile: {required: true, message: "请输入手机号", trigger: "change"},
         email: [
-          { required: true, message: "请输入邮箱", trigger: "change" },
-          { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] },
+          {required: true, message: "请输入邮箱", trigger: "change"},
+          {type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"]},
         ],
-        password: { required: true, message: "请输入密码", trigger: "change" },
+        password: {required: true, message: "请输入密码", trigger: "change"},
       },
       checked: false,
       isLogin: true,
     };
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     // 去注册
     // 已有账号去登录
-    goOther () {
+    goOther() {
       this.isLogin = !this.isLogin;
     },
     // 注册
-    register (formName) {
+    register(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log(this.re_ruleForm);
@@ -134,7 +133,7 @@ export default {
       });
     },
     // 登录
-    login (formName) {
+    login(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.checked) {
@@ -155,7 +154,18 @@ export default {
               setToken("userId_api", res.data.userId);
               setToken("apiPhone", res.data.mobile);
               setToken("userName_api", res.data.username);
-              this.$router.push("/dashboard/index");
+              if (this.$route.query.path && this.$route.query.code) {
+                this.$router.push({
+                  path: this.$route.query.path,
+                  query: {
+                    code: this.$route.query.code
+                  }
+                });
+              } else if (this.$route.query.path) {
+                this.$router.push(this.$route.query.path);
+              } else {
+                this.$router.push("/dashboard/index");
+              }
             } else {
               this.$message({
                 message: res.msg,
@@ -170,13 +180,12 @@ export default {
       });
     },
   },
-  created () {
+  created() {
     removeToken("apiPhone");
     removeToken("token");
     removeToken("userId_api");
     removeToken("userName_api");
     const ischecked = getToken("ischecked");
-    console.log(ischecked);
     if (ischecked === "true") {
       this.ruleForm = {
         username: getToken("name"),
@@ -201,6 +210,7 @@ export default {
   .main-top {
     margin: 17px 0px 0px 40px;
   }
+
   .main-center {
     text-align: center;
     height: 53%;
@@ -210,6 +220,7 @@ export default {
     right: 0;
     bottom: 30%;
     margin: auto;
+
     .center-welcome {
       margin: 18px 0px 24px 0px;
       font-size: 24px;
@@ -217,48 +228,59 @@ export default {
       font-weight: 400;
       color: #000000;
     }
+
     .center-form {
       .paws-input {
         margin: 30px 0px 14px 0px;
       }
+
       .right_handle {
         margin: 0 auto;
+
         .handle_left {
           width: 50%;
           display: inline-block;
           text-align: left;
         }
+
         .handle_right {
           width: 50%;
           display: inline-block;
           text-align: right;
+
           span {
             font-size: 14px;
             cursor: pointer;
           }
+
           span:hover {
             color: #2650ff;
           }
         }
       }
+
       .dl-but {
         margin-top: 30px;
         width: 100%;
         box-shadow: 0px 15px 10px #e2e7fe;
       }
+
       .zc-but {
         margin-top: 8px;
         width: 100%;
         box-shadow: 0px 15px 10px #e2e7fe;
       }
+
       .handle_bom {
         margin-top: 20px;
+
         .goreg-col {
           color: #2650ff;
         }
       }
     }
   }
+
   .main-bottom {
     text-align: center;
     font-size: 12px;

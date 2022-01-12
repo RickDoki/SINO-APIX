@@ -1,21 +1,26 @@
 <template>
   <div class="main">
     <navbar></navbar>
-    <div style="padding: 30px;margin-top: 60px">
+    <div style="padding: 90px 30px 0 30px;position: relative;min-height:calc(100vh - 211px)">
       <div class="list_top">
         <div>
-          <div class="list_top_title">服务名称</div>
-          <div class="introduction">这是一段服务描述这是一段服务描述这是一段服务描述这是一段服务描述这是一段服务描述</div>
+          <div class="list_top_title">{{ appName }}</div>
+          <div class="introduction">{{ appDescription }}</div>
         </div>
         <div class="">
-          <el-button type="primary" size="small" style="width: 100px">订阅</el-button>
-          <el-button size="small" style="width: 100px" icon="el-icon-back" @click="$router.back()">返回</el-button>
+          <el-button type="primary" size="small" v-if="subscribed" :disabled="true" style="width: 100px"
+                     @click="subscribe">已订阅
+          </el-button>
+          <el-button type="primary" size="small" v-else style="width: 100px" @click="subscribe">订阅
+          </el-button>
+          <el-button size="small" style="width: 100px" icon="el-icon-back" @click="$router.push({name:'openServe'})">返回
+          </el-button>
         </div>
       </div>
       <div class="list_top2">
         <div style="display: flex">
-          <div class="service_providers">服务商：博冀科技</div>
-          <div class="service_providers">发布时间：2021-10-05 08:05:00</div>
+          <div class="service_providers">服务商：{{ appProvider }}</div>
+          <!--          <div class="service_providers">发布时间：2021-10-05 08:05:00</div>-->
           <div class="service_providers" style="display: flex">
             已添加的插件：
             <div class="plug-in" style="display: flex">
@@ -26,10 +31,11 @@
             </div>
           </div>
         </div>
-        <div class="release_time">发布时间： 2021-08-05 10:05:00</div>
+        <div class="release_time">发布时间： {{ appCreationDate }}</div>
       </div>
-      <div style="margin-top: 20px">
-        <api-detail></api-detail>
+      <div
+        style="margin-top: 20px;padding-left:30px;position: absolute;left: 0;right: 0;width: 100%;height: 100%;background: #FFFFFF">
+        <api-detail :apiOptions="appVersion"></api-detail>
       </div>
     </div>
   </div>
@@ -39,7 +45,7 @@
 // import apidetail from "./detail/detail.vue";
 // import apiTest from "./detail/test.vue";
 // import help from "./detail/help.vue";
-import {detail, list, AppLease} from "@/api/AboutApp";
+import {appCodeDetail, subscribe} from "@/api/AboutApp";
 import {getToken} from "@/utils/auth"; // get token from cookie
 import apiDetail from './component/apiDetail'
 import navbar from "@/views/openServe/component/Navbar";
@@ -54,75 +60,55 @@ export default {
   },
   data() {
     return {
-      activeName: "first",
-      appMessage: "",
-      options: [],
-      value: "",
-      appCode: "",
+      appName: "",
+      appDescription: "",
+      appCreationDate: "",
+      appVersion: [],
+      appProvider: "",
+      subscribed: true
     };
   },
-  methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    getappMessage() {
-      detail(this.appMessage.appCode, "").then((res) => {
-        console.log(res);
-      });
-    },
-    getUserapp() {
-      const developerId = getToken("userId");
-      const query = "?developerId=" + developerId;
-      this.options = [];
-      list(query).then((res) => {
-        if (res.code === 200) {
-          res.data.appList.forEach((item) => {
-            if (item.isPublished === "60001") {
-            } else {
-              this.options.push({
-                value: item.appCode,
-                label: item.appName,
-              });
-            }
-          });
-        }
-      });
-    },
-    leaseSure() {
-      if (this.value === "") {
-        this.messageERROR("请先选择应用");
-        return false;
-      } else {
-        AppLease(this.value, this.appMessage.appCode, {}).then((res) => {
-          if (res.code === 200) {
-            this.messageOK(res.msg);
-          } else {
-            this.messageERROR(res.msg);
-          }
-        });
-      }
-    },
-    // 成功消息
-    messageOK(msg) {
-      this.$message({
-        message: msg,
-        type: "success",
-      });
-    },
-    // 失败消息
-    messageERROR(msg) {
-      this.$message({
-        message: msg,
-        type: "error",
-      });
-    },
-  },
   created() {
-    // this.appMessage = JSON.parse(this.$route.query.message);
-    // this.getUserapp();
-    // console.log(this.appMessage);
-    // this.getappMessage();
+    this.query()
   },
+  methods: {
+    query() {
+      appCodeDetail(this.$route.query.code).then(res => {
+        if (res.code === 200) {
+          this.appName = res.data.appName
+          this.appDescription = res.data.appDescription
+          this.appCreationDate = res.data.appCreationDate
+          this.appProvider = res.data.appProvider
+          this.appVersion = res.data.appVersion
+          this.subscribed = res.data.subscribed
+        }
+      })
+    },
+    subscribe() {
+      if (getToken('token')) {
+        this.$confirm('确认订阅：' + this.appName + '吗, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          subscribe(this.$route.query.code).then(res => {
+            if (res.code === 200) {
+              this.$message.success('订阅成功')
+              this.query()
+            }
+          })
+        })
+      } else {
+        this.$router.push({
+          path: '/login',
+          query: {
+            path: this.$route.path,
+            code: this.$route.query.code
+          }
+        })
+      }
+    }
+  }
 };
 </script>
 
