@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="main">
     <el-row :gutter="28" type="flex" class="dash_top" justify="space-between">
       <el-col :span="8">
         <div class="top_nums">
@@ -269,11 +269,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.dashboard {
-  width: 100%;
-  max-width: 1200px;
-  padding: 2rem 3rem var(--bottom-padding);
-  margin: 0 auto;
+.main {
   /deep/ .el-input__inner {
     border-radius: 25px 25px 25px 25px;
     border: 1px solid #f3f3f3;
