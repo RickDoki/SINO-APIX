@@ -95,6 +95,7 @@ export default {
           subscribe(this.$route.query.code).then(res => {
             if (res.code === 200) {
               this.$message.success('订阅成功')
+              this.query()
             }
           })
         })
