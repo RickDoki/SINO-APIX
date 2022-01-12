@@ -1449,12 +1449,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
         }
-
-        Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
-        if (null == application) {
+        Long count = applicationPluginMapper.selectCount(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getDelFlag, 0)
+                .eq(ApplicationPlugin::getPluginType, applicationPlugin.getPluginType())
+                .eq(ApplicationPlugin::getAppCode, applicationPlugin.getAppCode()));
+        if(count>0){
             return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
         }
-
+        Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
+        if (null == application) {
+            return R.fail(ResultCodeEnum.APP_IS_ADD_PLUGIN);
+        }
         applicationPlugin.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         applicationPlugin.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         applicationPluginMapper.insert(applicationPlugin);
