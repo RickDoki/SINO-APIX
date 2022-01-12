@@ -337,4 +337,12 @@ public interface ApplicationService {
      * @return
      */
     R<ApplicationSubscribe> queryAppCodeBySubscribeCode(String subscribeCode);
+
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    R<List<String>> queryAppAuthPluginNameList(String appCode);
 }

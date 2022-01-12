@@ -9,6 +9,8 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author wendy
  * @date 2020/12/10
@@ -102,6 +104,17 @@ public class AppOpenController {
     @GetMapping("/subscribe")
     public R<ApplicationSubscribe> queryAppCodeBySubscribeCode(@RequestParam String subscribeCode) {
         return applicationService.queryAppCodeBySubscribeCode(subscribeCode);
+    }
+
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    @GetMapping("/auth-plugin/name/list")
+    public R<List<String>> queryAppAuthPluginNameList(@RequestParam String appCode) {
+        return applicationService.queryAppAuthPluginNameList(appCode);
     }
 
 }

@@ -70,13 +70,19 @@ public class BeforeGlobalFilter extends BaseGlobalFilter {
         // 通过uri获取调用的service code
         String code = StringUtil.splitToList(path, "/").get(0);
         String serviceCode = code;
+        String sysClientId = "0";
         try {
             Future<R<JSONObject>> future = executorService.submit(() ->
                     SpringContextHolder.getBean(ApplicationServiceFeign.class).queryAppCodeBySubscribeCode(code));
             R<JSONObject> result = future.get();
             log.info("result:{}", result);
+            // 外部接口才会查到结果
             if (result.isSuccess() && null != result.getData()) {
                 serviceCode = result.getData().getString("appSubscribedCode");
+                sysClientId = result.getData().getInteger("subscribeClientId").toString();
+
+                // 处理外部接口时，将鉴权过滤器链写入缓存
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,6 +97,7 @@ public class BeforeGlobalFilter extends BaseGlobalFilter {
                 .header(HeaderConstant.THREAD, Thread.currentThread().getName())
                 .header(GatewayConstants.PATH, path)
                 .header(GatewayConstants.SERVICE_CODE, serviceCode)
+                .header(GatewayConstants.SYS_CLIENT_ID, sysClientId)
                 .build();
         if (log.isDebugEnabled()) {
             log.debug("BaseGlobalFilter headers:{}", JSON.toJSONString(req.getHeaders()));

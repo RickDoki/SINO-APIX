@@ -50,6 +50,8 @@ public class Constants {
     public static final String THREAD_CONTEXT_CLIENT_ID = "clientId";
     public static final String THREAD_CONTEXT_TOKEN = "token";
 
+    public static final String REDIS_PREFIX_APP_PLUGIN = "app_plugin_";
+
     /**
      * 中文正则
      */

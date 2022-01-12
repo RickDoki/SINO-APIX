@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author wendy
@@ -1344,11 +1345,11 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
         }
 
-        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(userId);
-        Map<String, String> oAuthInfo = applicationLeaseMapper.queryOAuthInfo(appCode, userIdList);
-        if (null == oAuthInfo) {
-            return R.fail(ResultCodeEnum.APP_DEVELOPER_IS_NOT_EXIST);
-        }
+//        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(userId);
+//        Map<String, String> oAuthInfo = applicationLeaseMapper.queryOAuthInfo(appCode, userIdList);
+//        if (null == oAuthInfo) {
+//            return R.fail(ResultCodeEnum.APP_DEVELOPER_IS_NOT_EXIST);
+//        }
         SysClient sysClient = sysUserService.queryClientByUserId(userId).getData();
         // 加入插件信息
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
@@ -1463,6 +1464,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationPlugin.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         applicationPlugin.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         applicationPluginMapper.insert(applicationPlugin);
+
+        redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
         return R.success();
     }
 
@@ -1482,6 +1485,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationPlugin.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         applicationPlugin.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         applicationPluginMapper.updateById(applicationPlugin);
+
+        if (applicationPlugin.getEnabled() == 0) {
+            redisService.setRemove(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
+        } else if (applicationPlugin.getEnabled() == 1) {
+            redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
+        }
 
         return R.success();
     }
@@ -1650,6 +1659,22 @@ public class ApplicationServiceImpl implements ApplicationService {
         ApplicationSubscribe appSubscribe = applicationSubscribeMapper.selectOne(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppClientCode, subscribeCode));
         return R.success(appSubscribe);
+    }
+
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    @Override
+    public R<List<String>> queryAppAuthPluginNameList(String appCode) {
+        List<ApplicationPlugin> pluginList = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppCode, appCode)
+                .eq(ApplicationPlugin::getEnabled, 1));
+        List<String> pluginNameList = new ArrayList<>();
+        pluginList.forEach((plugin) -> pluginNameList.add(plugin.getPluginType()));
+        return R.success(pluginNameList);
     }
 
 }
