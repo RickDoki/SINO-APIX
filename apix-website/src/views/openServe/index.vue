@@ -27,11 +27,13 @@
                  @click="goDetail(item)">
               <div class="list_item_title">{{ item.appName }}</div>
               <div class="list_item_content">{{ item.description }}</div>
-              <div>
+              <div style="width: 50px">
                 <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
                 <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
               </div>
-              <div class="list_item_v">{{ item.appVersions[0] }}</div>
+              <div style="width: 100px;text-align: center">
+                <div class="list_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
+              </div>
               <div class="list_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
               <div class="list_item_button_dis" v-else>已订阅</div>
             </div>
@@ -49,7 +51,10 @@
                 <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
                 <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
               </div>
-              <div class="cards_item_v">{{ item.appVersions[0] }}</div>
+              <div>
+                <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
+                <div v-else style="width: 20px;height: 20px"></div>
+              </div>
             </div>
           </div>
         </transition>
@@ -219,6 +224,7 @@ export default {
         width: 100%;
         height: 84px;
         background: #FFFFFF;
+        border: 1px solid #FFFFFF;
         box-shadow: 0px 0px 8px 1px rgba(29, 28, 53, 0.2);
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
@@ -251,15 +257,17 @@ export default {
         }
 
         .list_item_v {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 44px;
+          display: inline-block;
+          padding: 5px;
+          //display: flex;
+          //justify-content: center;
+          //align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
           color: #2650FF;
           height: 20px;
+          line-height: 10px;
           background: #E0E6FF;
           border-radius: 4px 4px 4px 4px;
         }
@@ -350,10 +358,11 @@ export default {
         }
 
         .list_item_v {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 44px;
+          display: inline-block;
+          padding: 5px;
+          //display: flex;
+          //justify-content: center;
+          //align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
@@ -498,15 +507,17 @@ export default {
         }
 
         .cards_item_v {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 44px;
+          padding: 5px;
+          display: inline-block;
+          //display: flex;
+          //justify-content: center;
+          //align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
           color: #2650FF;
           height: 20px;
+          line-height: 10px;
           background: #E0E6FF;
           border-radius: 4px 4px 4px 4px;
         }
