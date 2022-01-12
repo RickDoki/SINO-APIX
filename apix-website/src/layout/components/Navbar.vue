@@ -14,20 +14,16 @@
         </el-dropdown>
       </div>
     </div>
-    <div class="breadcrumb">
+    <div class="breadcrumb" v-if="routerList[0].path === '/dashboard' ? false : true">
       <el-breadcrumb
         class="brea-div"
         separator=">"
       >
-        <!-- <el-breadcrumb-item 
-          v-if="routerList[0].path === '/dashboard' ? false : true"
-          :to="{ path: '/dashboard/index' }">控制台</el-breadcrumb-item> -->
         <template v-for="(item, index) in routerList">
           <el-breadcrumb-item
             :key="index"
-            v-if="item.meta.title ? true : false"
-            >{{ item.meta.title }}</el-breadcrumb-item
-          >
+            v-if="(item.meta.title ? true : false)">{{ item.meta.title }}</el-breadcrumb-item>
+            <!-- <a :href="item.path">{{ item.meta.title }}</a></el-breadcrumb-item> -->
         </template>
       </el-breadcrumb>
     </div>
