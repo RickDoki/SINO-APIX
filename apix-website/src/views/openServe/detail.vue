@@ -1,20 +1,25 @@
 <template>
   <div class="main">
     <navbar></navbar>
-    <div style="padding: 30px;margin-top: 60px">
+    <div style="padding: 90px 30px 0 30px;position: relative;min-height:calc(100vh - 211px)">
       <div class="list_top">
         <div>
           <div class="list_top_title">{{ appName }}</div>
           <div class="introduction">{{ appDescription }}</div>
         </div>
         <div class="">
-          <el-button type="primary" size="small" style="width: 100px" @click="subscribe">订阅</el-button>
-          <el-button size="small" style="width: 100px" icon="el-icon-back" @click="$router.back()">返回</el-button>
+          <el-button type="primary" size="small" v-if="subscribed" :disabled="true" style="width: 100px"
+                     @click="subscribe">已订阅
+          </el-button>
+          <el-button type="primary" size="small" v-else style="width: 100px" @click="subscribe">订阅
+          </el-button>
+          <el-button size="small" style="width: 100px" icon="el-icon-back" @click="$router.push({name:'openServe'})">返回
+          </el-button>
         </div>
       </div>
       <div class="list_top2">
         <div style="display: flex">
-          <div class="service_providers">服务商：博冀科技</div>
+          <div class="service_providers">服务商：{{ appProvider }}</div>
           <!--          <div class="service_providers">发布时间：2021-10-05 08:05:00</div>-->
           <div class="service_providers" style="display: flex">
             已添加的插件：
@@ -28,7 +33,8 @@
         </div>
         <div class="release_time">发布时间： {{ appCreationDate }}</div>
       </div>
-      <div style="margin-top: 20px">
+      <div
+        style="margin-top: 20px;padding-left:30px;position: absolute;left: 0;right: 0;width: 100%;height: 100%;background: #FFFFFF">
         <api-detail :apiOptions="appVersion"></api-detail>
       </div>
     </div>
@@ -57,7 +63,9 @@ export default {
       appName: "",
       appDescription: "",
       appCreationDate: "",
-      appVersion: []
+      appVersion: [],
+      appProvider: "",
+      subscribed: true
     };
   },
   created() {
@@ -70,7 +78,9 @@ export default {
           this.appName = res.data.appName
           this.appDescription = res.data.appDescription
           this.appCreationDate = res.data.appCreationDate
+          this.appProvider = res.data.appProvider
           this.appVersion = res.data.appVersion
+          this.subscribed = res.data.subscribed
         }
       })
     },
@@ -83,14 +93,17 @@ export default {
           type: 'warning'
         }).then(() => {
           subscribe(this.$route.query.code).then(res => {
-
+            if (res.code === 200) {
+              this.$message.success('订阅成功')
+            }
           })
         })
       } else {
         this.$router.push({
           path: '/login',
           query: {
-            path: this.$route.path
+            path: this.$route.path,
+            code: this.$route.query.code
           }
         })
       }

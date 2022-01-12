@@ -154,7 +154,14 @@ export default {
               setToken("userId_api", res.data.userId);
               setToken("apiPhone", res.data.mobile);
               setToken("userName_api", res.data.username);
-              if (this.$route.query.path) {
+              if (this.$route.query.path && this.$route.query.code) {
+                this.$router.push({
+                  path: this.$route.query.path,
+                  query: {
+                    code: this.$route.query.code
+                  }
+                });
+              } else if (this.$route.query.path) {
                 this.$router.push(this.$route.query.path);
               } else {
                 this.$router.push("/dashboard/index");
@@ -179,7 +186,6 @@ export default {
     removeToken("userId_api");
     removeToken("userName_api");
     const ischecked = getToken("ischecked");
-    console.log(ischecked);
     if (ischecked === "true") {
       this.ruleForm = {
         username: getToken("name"),

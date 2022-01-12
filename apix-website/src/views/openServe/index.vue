@@ -32,7 +32,8 @@
                 <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
               </div>
               <div class="list_item_v">{{ item.appVersions[0] }}</div>
-              <div class="list_item_button" @click.stop="subscribe(item)">订阅</div>
+              <div class="list_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
+              <div class="list_item_button_dis" v-else>已订阅</div>
             </div>
           </div>
         </transition>
@@ -40,7 +41,8 @@
           <div class="open_service_cards" v-show="isshow===2">
             <div v-for="(item,index) in serviceList" :key='index' class="service_cards_item"
                  @click="goDetail(item)">
-              <div class="cards_item_button" @click.stop="subscribe(item)">订阅</div>
+              <div class="cards_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
+              <div class="cards_item_button_dis" v-else>已订阅</div>
               <div class="cards_item_title">{{ item.appName }}</div>
               <div class="cards_item_content">{{ item.description }}</div>
               <div>
@@ -108,7 +110,10 @@ export default {
           type: 'warning'
         }).then(() => {
           subscribe(item.appCode).then(res => {
-
+            if (res.code === 200) {
+              this.$message.success('订阅成功')
+              this.search()
+            }
           })
         })
       } else {
@@ -187,8 +192,7 @@ export default {
     }
 
     .input-with-select {
-      width: 55vh;
-      height: 48px;
+      width: 60vh;
     }
   }
 
@@ -277,6 +281,23 @@ export default {
 
         .list_item_button:hover {
           cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          background: #2650FF;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+        }
+
+        .list_item_button_dis {
+          cursor: default;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -417,7 +438,26 @@ export default {
         }
 
         .cards_item_button:hover {
+          margin-top: 10px;
           cursor: pointer;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          background: #2650FF;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+        }
+
+        .cards_item_button_dis {
+          margin-top: 10px;
+          cursor: default;
           display: flex;
           justify-content: center;
           align-items: center;
