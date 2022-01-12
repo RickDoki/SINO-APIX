@@ -218,7 +218,7 @@ export default {
 
     .input-with-select {
       display: flex;
-      width: 80vh;
+      width: 60vh;
       text-align: center;
       margin: 5vh auto;
     }
