@@ -59,9 +59,12 @@ public class GzipGatewayFilterFactory extends BaseGatewayFilter<Config> {
         if (!CollectionUtils.isEmpty(encoding) && encoding.contains(GZIP)) {
             ServerHttpResponse originalResponse = exchange.getResponse();
             DataBufferFactory bufferFactory = originalResponse.bufferFactory();
+            HttpHeaders responseHeaders = originalResponse.getHeaders();
+            responseHeaders.add(HttpHeaders.CONTENT_ENCODING,GZIP);
+            //response 请求头需设置 CONTENT_ENCODING
             ServerHttpResponseDecorator gzipResponse = new ServerHttpResponseDecorator(
                     originalResponse);
-            //TODO  response 请求头需设置 CONTENT_ENCODING
+
             gzipResponse.writeWith(body -> {
                 if (body instanceof Flux) {
                     Flux<? extends DataBuffer> fluxBody = (Flux<? extends DataBuffer>) body;
