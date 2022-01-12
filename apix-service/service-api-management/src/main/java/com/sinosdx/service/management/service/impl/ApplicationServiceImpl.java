@@ -18,6 +18,7 @@ import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.sentinel.SentinelProvider;
+import com.sinosdx.service.management.service.AppPluginService;
 import com.sinosdx.service.management.service.ApplicationService;
 import com.sinosdx.service.management.utils.MD5Util;
 import com.sinosdx.service.management.utils.ThreadContext;
@@ -103,11 +104,15 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private TokenServiceFeign tokenService;
 
+    @Autowired
+    private SentinelProvider sentinelProvider;
+
+    @Autowired
+    private AppPluginService appPluginService;
+
     @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
 
-    @Autowired
-    private SentinelProvider sentinelProvider;
 
     /**
      * 创建新应用
@@ -946,7 +951,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 paramJson.put("clientSecret", clientSecret);
                 secret.setSecretKey(clientSecret);
 
-                JSONObject oAuthConfigJson = queryPluginConfigs(PluginTypeEnum.OAUTH2.getType(), appPlugin.getAppCode()).getData();
+                JSONObject oAuthConfigJson = appPluginService.queryPluginConfigs(PluginTypeEnum.OAUTH2.getType(), appPlugin.getAppCode()).getData();
                 Integer tokenExpiration = oAuthConfigJson.getInteger("tokenExpiration");
                 Integer refreshTokenExpiration = oAuthConfigJson.getInteger("refreshTokenExpiration");
 
@@ -1439,94 +1444,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return R.success(applicationMapper.querySubscribeCurrentAppList(appCode, userIdList));
     }
 
-    /**
-     * 服务添加插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    @Override
-    @Transactional
-    public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
-        if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
-            return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
-        }
-        Long count = applicationPluginMapper.selectCount(new LambdaQueryWrapper<ApplicationPlugin>()
-                .eq(ApplicationPlugin::getDelFlag, 0)
-                .eq(ApplicationPlugin::getPluginType, applicationPlugin.getPluginType())
-                .eq(ApplicationPlugin::getAppCode, applicationPlugin.getAppCode()));
-        if(count>0){
-            return R.fail(ResultCodeEnum.APP_IS_ADD_PLUGIN);
-        }
-        Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
-        if (null == application) {
-            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
-        }
-        applicationPlugin.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        applicationPlugin.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        applicationPluginMapper.insert(applicationPlugin);
-
-        redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
-        return R.success();
-    }
-
-    /**
-     * 修改服务插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    @Override
-    public R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin) {
-        Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
-        if (null == application) {
-            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
-        }
-
-        applicationPlugin.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        applicationPlugin.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        applicationPluginMapper.updateById(applicationPlugin);
-
-        if (applicationPlugin.getEnabled() == 0) {
-            redisService.setRemove(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
-        } else if (applicationPlugin.getEnabled() == 1) {
-            redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
-        }
-
-        return R.success();
-    }
-
-    /**
-     * 获取服务插件
-     *
-     * @param pluginId
-     * @param appCode
-     * @return
-     */
-    @Override
-    public R<Object> getAppPlugin(String pluginId, String appCode) {
-        Application application = applicationMapper.queryAppByCode(appCode);
-        if (null == application) {
-            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
-        }
-        ApplicationPlugin applicationPlugin = applicationPluginMapper.selectOne(new LambdaQueryWrapper<ApplicationPlugin>()
-                .eq(ApplicationPlugin::getId, pluginId)
-                .eq(ApplicationPlugin::getAppCode, appCode)
-                .eq(ApplicationPlugin::getDelFlag, 0)
-                .last("LIMIT 1")
-        );
-        if (Objects.nonNull(applicationPlugin)) {
-            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.selectList(new LambdaQueryWrapper<ApplicationPluginClient>()
-                    .eq(ApplicationPluginClient::getAppPluginId,applicationPlugin.getId())
-                    .eq(ApplicationPluginClient::getDelFlag,0)
-            );
-            if (!CollectionUtils.isEmpty(applicationPluginClients)) {
-                applicationPlugin.setApplicationPluginClients(applicationPluginClients);
-            }
-        }
-        return R.success(applicationPlugin);
-    }
-
     @Override
     public List<Integer> changeUserIdsToClientIds(List<Integer> userIds) {
         // 根据userId 获取 对应的 clientIds
@@ -1627,26 +1544,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .in(!CollectionUtils.isEmpty(apiIds), Api::getId, apiIds));
         ApplicationVersionDto applicationVersionDto = new ApplicationVersionDto().setApplicationVersion(applicationVersion).setApiList(apis);
         return R.success(applicationVersionDto);
-    }
-
-    /**
-     * 查询服务插件的配置参数
-     *
-     * @param pluginType
-     * @param appCode
-     * @return
-     */
-    @Override
-    public R<JSONObject> queryPluginConfigs(String pluginType, String appCode) {
-        ApplicationPlugin appPlugin = applicationPluginMapper.selectOne(new LambdaQueryWrapper<ApplicationPlugin>()
-                .eq(ApplicationPlugin::getAppCode, appCode)
-                .eq(ApplicationPlugin::getPluginType, pluginType)
-                .eq(ApplicationPlugin::getDelFlag, 0));
-        if (null == appPlugin) {
-            return R.fail(ResultCodeEnum.RESULT_DATA_NONE);
-        }
-        JSONObject configJson = JSONObject.parseObject(appPlugin.getPluginParams());
-        return R.success(configJson);
     }
 
     /**
