@@ -1,53 +1,57 @@
 <template>
   <div class="main">
     <navbar></navbar>
-    <div class="apiMain_content">
-      <div class="welcome">欢迎访问我们的开放服务平台</div>
-      <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
-      <div style="width: 100%;text-align: center;margin-top: 5vh">
-        <el-input placeholder="请输入服务名称" v-model="searchKey" class="input-with-select">
-          <el-button type="primary" slot="append">搜一下</el-button>
-        </el-input>
-      </div>
-    </div>
-    <div class="open_service">
-      <div style="display: flex;justify-content: space-between">
-        <div class="open_service_title">开放服务</div>
-        <div>
-          <img src="../../../src/assets/img/icon_list.png"
-               style="width: 20px;height: 20px;margin-right: 10px;cursor: pointer" @click="isshow=1">
-          <img src="../../../src/assets/img/icon_cards.png" style="width: 20px;height: 20px;cursor: pointer"
-               @click="isshow=2">
+    <div style="min-height: calc(100vh - 238px - 60px)">
+      <div class="apiMain_content">
+        <div class="welcome">欢迎访问我们的开放服务平台</div>
+        <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
+        <div style="width: 100%;text-align: center;margin-top: 5vh">
+          <el-input placeholder="请输入服务名称" v-model="searchKey" class="input-with-select">
+            <el-button type="primary" slot="append" @click="search">搜一下</el-button>
+          </el-input>
         </div>
       </div>
-      <transition name="el-fade-in-linear">
-        <div class="open_service_list" v-show="isshow===1">
-          <div v-for="(item,index) in serviceList" :key='index' class="service_list_item" @click.self="goDetail">
-            <div class="list_item_title">{{ item.title }}</div>
-            <div class="list_item_content">{{ item.content }}</div>
-            <div>
-              <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-              <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
-            </div>
-            <div class="list_item_v">{{ item.verion }}</div>
-            <div class="list_item_button" @click="subscribe">订阅</div>
+      <div class="open_service">
+        <div style="display: flex;justify-content: space-between">
+          <div class="open_service_title">开放服务</div>
+          <div>
+            <img src="../../../src/assets/img/icon_list.png"
+                 style="width: 20px;height: 20px;margin-right: 10px;cursor: pointer" @click="isshow=1">
+            <img src="../../../src/assets/img/icon_cards.png" style="width: 20px;height: 20px;cursor: pointer"
+                 @click="isshow=2">
           </div>
         </div>
-      </transition>
-      <transition name="el-fade-in-linear">
-        <div class="open_service_cards" v-show="isshow===2">
-          <div v-for="(item,index) in serviceList" :key='index' class="service_cards_item">
-            <div class="cards_item_button">订阅</div>
-            <div class="cards_item_title">{{ item.title }}</div>
-            <div class="cards_item_content">{{ item.content }}</div>
-            <div>
-              <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-              <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+        <transition name="el-fade-in-linear">
+          <div class="open_service_list" v-show="isshow===1">
+            <div v-for="(item,index) in serviceList" :key='index' class="service_list_item"
+                 @click="goDetail(item)">
+              <div class="list_item_title">{{ item.appName }}</div>
+              <div class="list_item_content">{{ item.description }}</div>
+              <div>
+                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+              </div>
+              <div class="list_item_v">{{ item.appVersions[0] }}</div>
+              <div class="list_item_button" @click.stop="subscribe(item)">订阅</div>
             </div>
-            <div class="cards_item_v">{{ item.verion }}</div>
           </div>
-        </div>
-      </transition>
+        </transition>
+        <transition name="el-fade-in-linear">
+          <div class="open_service_cards" v-show="isshow===2">
+            <div v-for="(item,index) in serviceList" :key='index' class="service_cards_item"
+                 @click="goDetail(item)">
+              <div class="cards_item_button" @click.stop="subscribe(item)">订阅</div>
+              <div class="cards_item_title">{{ item.appName }}</div>
+              <div class="cards_item_content">{{ item.description }}</div>
+              <div>
+                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+              </div>
+              <div class="cards_item_v">{{ item.appVersions[0] }}</div>
+            </div>
+          </div>
+        </transition>
+      </div>
     </div>
     <div class="service_footer">
       <div>
@@ -63,7 +67,7 @@
 </template>
 
 <script>
-import {list} from "@/api/AboutApp";
+import {openList, subscribe} from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
 import {getToken} from "@/utils/auth";
 
@@ -74,135 +78,47 @@ export default {
       searchKey: "",
       items: [],
       isshow: 1,
-      serviceList: [
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        }
-      ]
+      serviceList: []
     };
   },
   created() {
-    // const query = "?market=true";
-    // list(query).then((res) => {
-    //   console.log(res);
-    //   this.items = res.data.appList;
-    //   if (res.data.appList.length === 0) {
-    //     this.isshow = false;
-    //   } else {
-    //     this.isshow = true;
-    //   }
-    // });
+    this.search()
   },
   methods: {
-    itemsClick(i) {
-      console.log(i);
-      this.$router.push({
-        path: "/apiDoor/detail?message=" + JSON.stringify(i),
-      });
-    },
     search() {
-      // console.log('搜索')
       const query = "?market=true&appName=" + this.searchKey;
-      list(query).then((res) => {
-        this.items = res.data.appList;
-        // if(res.data.appList)
-        // console.log(res.data.appList.length)
-        if (res.data.appList.length === 0) {
-          this.isshow = false;
-        } else {
-          this.isshow = true;
-        }
+      openList(query).then((res) => {
+        this.serviceList = res.data.appList
       });
     },
-    goDetail() {
+    goDetail(item) {
       this.$router.push({
-        name: 'openServeDetail'
+        name: 'openServeDetail',
+        query: {
+          code: item.appCode
+        }
       })
     },
-    subscribe() {
-      console.log('subscribe')
+    subscribe(item) {
+      if (getToken('token')) {
+        console.log(item)
+        this.$confirm('确认订阅：' + item.appName + '吗, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          subscribe(item.appCode).then(res => {
+
+          })
+        })
+      } else {
+        this.$router.push({
+          path: '/login',
+          query: {
+            path: this.$route.path
+          }
+        })
+      }
     }
   },
 };
@@ -211,6 +127,7 @@ export default {
 <style lang='scss' scoped>
 .main {
   margin: 0px;
+  min-height: calc(100vh - 60px);
 
   .apiMain_content {
     margin-top: 60px;
@@ -567,8 +484,9 @@ export default {
   }
 
   .service_footer {
+    padding: 20px 0;
     width: 100%;
-    min-height: 199px;
+    min-height: 238px;
     background: #1D1C35;
     opacity: 1;
     display: flex;
