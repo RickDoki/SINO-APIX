@@ -473,4 +473,18 @@ public class ApplicationController {
         return applicationService.queryAppVersion(appVersionId);
     }
 
+
+    /**
+     *  获取我的应用的所有appCodes
+     * @param developId
+     * @return
+     */
+    @GetMapping("/appList/{developId}")
+    public R<Object> getMyAppCodes (@PathVariable(name = "developId") Integer developId) {
+        return applicationService.getMyAppCodes(developId);
+    }
+
+
+
+
 }

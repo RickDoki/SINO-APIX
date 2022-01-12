@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Maps;
 import com.sinosdx.common.base.base.entity.Entity;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.*;
@@ -1650,6 +1651,21 @@ public class ApplicationServiceImpl implements ApplicationService {
         ApplicationSubscribe appSubscribe = applicationSubscribeMapper.selectOne(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppClientCode, subscribeCode));
         return R.success(appSubscribe);
+    }
+
+    @Override
+    public R<Object> getMyAppCodes(Integer developId) {
+        List<Map<String, Object>> list = applicationMapper.selectList(new LambdaQueryWrapper<Application>()
+                        .eq(Application::getCreationBy, developId)
+                        .eq(Application::getDelFlag, 0)
+                        .orderByDesc(Application::getId))
+                .stream().map(a -> {
+                    Map<String, Object> data = Maps.newHashMap();
+                    data.put("appName", a.getName());
+                    data.put("appCode", a.getCode());
+                    return data;
+                }).collect(Collectors.toList());
+        return R.success(list);
     }
 
 }

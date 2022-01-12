@@ -337,4 +337,6 @@ public interface ApplicationService {
      * @return
      */
     R<ApplicationSubscribe> queryAppCodeBySubscribeCode(String subscribeCode);
+
+    R<Object> getMyAppCodes(Integer developId);
 }
