@@ -289,16 +289,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         //            appDetailMap.put("usingAppList", usingAppList);
         //        }
         appDetailMap.put("subscribed",false);
-        Integer clientId = (sysUserService.queryClientByUserId(developerId).getData()).getId();
-        if (null != developerId) {
-            LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Objects.nonNull(clientId), ApplicationSubscribe::getSubscribeClientId, clientId)
-                    .eq(Objects.nonNull(appCode), ApplicationSubscribe::getAppSubscribedCode, appCode)
-                    .eq(ApplicationSubscribe::getDelFlag, 0);
-            List<ApplicationSubscribe> applicationSubscribes = applicationSubscribeMapper.selectList(wrapper);
-            appDetailMap.put("usingAppList", applicationSubscribes);
-        }
-        if(null != clientId){
+        Integer clientId = null;
+        Integer userId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
+        if(null != userId){
+            clientId = (sysUserService.queryClientByUserId(userId).getData()).getId();
             Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
                     .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
                     .eq(ApplicationSubscribe::getSubscribeClientId,clientId)
@@ -308,6 +302,15 @@ public class ApplicationServiceImpl implements ApplicationService {
                 appDetailMap.put("subscribed",true);
             }
         }
+        if (null != developerId) {
+            LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Objects.nonNull(clientId), ApplicationSubscribe::getSubscribeClientId, clientId)
+                    .eq(Objects.nonNull(appCode), ApplicationSubscribe::getAppSubscribedCode, appCode)
+                    .eq(ApplicationSubscribe::getDelFlag, 0);
+            List<ApplicationSubscribe> applicationSubscribes = applicationSubscribeMapper.selectList(wrapper);
+            appDetailMap.put("usingAppList", applicationSubscribes);
+        }
+
 
         // 加入插件信息
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
