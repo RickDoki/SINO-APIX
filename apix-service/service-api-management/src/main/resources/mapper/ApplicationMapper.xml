@@ -109,6 +109,7 @@
         app.markdown AS appMarkdown,
         app.icon_url AS iconUrl,
         app.is_published AS appIsPublished,
+        app.provider AS appProvider,
         date_format(app.publish_date, '%Y-%m-%d %H:%i:%S') AS appPublishDate,
         date_format(app.creation_date, '%Y-%m-%d %H:%i:%S') AS appCreationDate,
         app.creation_by AS appCreationBy,

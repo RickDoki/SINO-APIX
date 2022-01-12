@@ -35,6 +35,7 @@ public class Application extends Entity<Integer> {
     private String creationByUsername;
     private String lastUpdatedByUsername;
     private LocalDateTime publishDate;
+    private String provider;
 
     public Application(ApplicationVo applicationVo) {
         this.id = applicationVo.getAppId();
@@ -47,5 +48,7 @@ public class Application extends Entity<Integer> {
         this.iconUrl = applicationVo.getIconUrl();
         this.isPublished = applicationVo.getIsPublished();
         this.publishDate = applicationVo.getPublishDate();
+        this.publishDate = applicationVo.getPublishDate();
+        this.provider = applicationVo.getProvider();
     }
 }
