@@ -5,7 +5,7 @@
       <div class="apiMain_content">
         <div class="welcome">欢迎访问我们的开放服务平台</div>
         <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
-        <div  class="input-with-select">
+        <div class="input-with-select">
           <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
           <el-button type="primary" slot="append" @click="search">搜一下</el-button>
         </div>
@@ -40,21 +40,25 @@
         </transition>
         <transition name="el-fade-in-linear">
           <div class="open_service_cards" v-show="isshow===2">
-            <div v-for="(item,index) in serviceList" :key='index' class="service_cards_item"
-                 @click="goDetail(item)">
-              <div class="cards_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
-              <div class="cards_item_button_dis" v-else>已订阅</div>
-              <div class="cards_item_title">{{ item.appName }}</div>
-              <div class="cards_item_content">{{ item.description }}</div>
-              <div>
-                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
-              </div>
-              <div>
-                <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
-                <div v-else style="width: 20px;height: 20px"></div>
-              </div>
-            </div>
+            <el-row :gutter="10" style="width: 100%">
+              <el-col :span="6" v-for="(item,index) in serviceList">
+                <div :key='index' class="service_cards_item"
+                     @click="goDetail(item)">
+                  <div class="cards_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
+                  <div class="cards_item_button_dis" v-else>已订阅</div>
+                  <div class="cards_item_title">{{ item.appName }}</div>
+                  <div class="cards_item_content">{{ item.description }}</div>
+                  <div>
+                    <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+                    <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+                  </div>
+                  <div>
+                    <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
+                    <div v-else style="width: 20px;height: 20px"></div>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
           </div>
         </transition>
       </div>
@@ -73,13 +77,13 @@
 </template>
 
 <script>
-import { openList, subscribe } from "@/api/AboutApp";
+import {openList, subscribe} from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
-import { getToken } from "@/utils/auth";
+import {getToken} from "@/utils/auth";
 
 export default {
-  components: { navbar },
-  data () {
+  components: {navbar},
+  data() {
     return {
       searchKey: "",
       items: [],
@@ -87,17 +91,17 @@ export default {
       serviceList: []
     };
   },
-  created () {
+  created() {
     this.search()
   },
   methods: {
-    search () {
+    search() {
       const query = "?market=true&appName=" + this.searchKey;
       openList(query).then((res) => {
         this.serviceList = res.data.appList
       });
     },
-    goDetail (item) {
+    goDetail(item) {
       this.$router.push({
         name: 'openServeDetail',
         query: {
@@ -105,7 +109,7 @@ export default {
         }
       })
     },
-    subscribe (item) {
+    subscribe(item) {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + item.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -136,6 +140,7 @@ export default {
 .main_open {
   margin: 0px;
   min-height: calc(100vh - 60px);
+
   .apiMain_content {
     margin-top: 60px;
     background-image: url('../../../src/assets/img/img_bg.png');
@@ -154,14 +159,17 @@ export default {
         border-color: #f1f4fe;
         box-shadow: -3px 10px 10px #e2e7fe;
       }
+
       input::-webkit-input-placeholder {
         font-weight: 400;
         color: #494e6a;
       }
+
       input::-moz-input-placeholder {
         font-weight: 400;
         color: #494e6a;
       }
+
       input::-ms-input-placeholder {
         font-weight: 400;
         color: #494e6a;
@@ -219,6 +227,7 @@ export default {
     max-width: 1200px;
     padding: 2rem 3rem var(--bottom-padding);
     margin: 35px auto;
+
     .open_service_title {
       height: 25px;
       font-size: 20px;
@@ -322,6 +331,8 @@ export default {
         }
 
         .list_item_button_dis {
+          margin-right: 24px;
+          margin-left: 100px;
           cursor: default;
           display: flex;
           justify-content: center;
@@ -352,6 +363,7 @@ export default {
         align-items: center;
 
         .list_item_title {
+          margin-left: 24px;
           height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
@@ -363,7 +375,8 @@ export default {
         .list_item_content {
           overflow: hidden;
           white-space: nowrap; /*不换行*/
-          width: 60%;
+          width: 50%;
+          padding-right: 24px;
           text-overflow: ellipsis;
           height: 20px;
           font-size: 14px;
@@ -389,6 +402,8 @@ export default {
         }
 
         .list_item_button {
+          margin-right: 24px;
+          margin-left: 100px;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -425,20 +440,16 @@ export default {
 
     .open_service_cards {
       margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: row;
 
       .service_cards_item {
         cursor: pointer;
-        margin-right: 20px;
         box-sizing: border-box;
         margin-bottom: 20px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
         padding: 20px;
-        width: 250px;
+        //width: 250px;
         height: 300px;
         background: #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(29, 28, 53, 0.2);
@@ -540,7 +551,7 @@ export default {
       }
 
       .service_cards_item:hover {
-        width: 250px;
+        //width: 250px;
         height: 300px;
         background: #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
