@@ -198,6 +198,23 @@ export default {
   .api-info {
     margin-bottom: 24px;
 
+    .table_box {
+      padding: 15px 30px 30px 30px;
+      border: 1px solid #e1e6ee;
+      border-radius: 10px;
+
+      ::v-deep {
+        .el-table th.el-table__cell.is-leaf,
+        .el-table td.el-table__cell {
+          border: none;
+        }
+
+        .el-table::before {
+          height: 0px;
+        }
+      }
+    }
+
     .title {
       line-height: 22px;
       font-size: 16px;

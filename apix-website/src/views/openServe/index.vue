@@ -138,6 +138,7 @@ export default {
 
 <style lang='scss' scoped>
 .main_open {
+  background: #FFFFFF;
   margin: 0px;
   min-height: calc(100vh - 60px);
 
