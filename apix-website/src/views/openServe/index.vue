@@ -41,8 +41,8 @@
         <transition name="el-fade-in-linear">
           <div class="open_service_cards" v-show="isshow===2">
             <el-row :gutter="10" style="width: 100%">
-              <el-col :span="6" v-for="(item,index) in serviceList">
-                <div :key='index' class="service_cards_item"
+              <el-col :span="6" v-for="(item,index) in serviceList" :key='index'>
+                <div class="service_cards_item"
                      @click="goDetail(item)">
                   <div class="cards_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
                   <div class="cards_item_button_dis" v-else>已订阅</div>
