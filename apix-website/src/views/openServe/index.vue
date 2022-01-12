@@ -188,6 +188,7 @@ export default {
         background: #2650ff;
         border-color: #2650ff;
         color: #ffffff;
+        box-shadow: -3px 10px 10px #e2e7fe;
       }
     }
 
