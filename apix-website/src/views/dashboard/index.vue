@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <el-row :gutter="30">
+    <el-row :gutter="10">
       <el-col :span="16">
         <div class="introduction">
           <div class="introduction_title">快速入门</div>
@@ -21,24 +21,24 @@
           </div>
           <div class="introduction_steps">
             <div>
-              <span style="color: #2650FF; font-size: 16px">1.</span>
+              <span style="color: #2c66fb; font-size: 16px">1.</span>
               <span>创建API</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #2650FF; font-size: 16px">2.</span>
+              <span style="color: #2c66fb; font-size: 16px">2.</span>
               <div class="steps_line_left"></div>
               <span>发布API</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #2650FF; font-size: 16px">3.</span>
+              <span style="color: #2c66fb; font-size: 16px">3.</span>
               <div class="steps_line_left"></div>
               <span>创建应用</span>
               <div class="steps_line_right"></div>
             </div>
             <div>
-              <span style="color: #2650FF; font-size: 16px">4.</span>
+              <span style="color: #2c66fb; font-size: 16px">4.</span>
               <div class="steps_line_left"></div>
               <span>授权应用</span>
             </div>
@@ -122,25 +122,25 @@
           <div class="commonUse_title">常用入口</div>
           <div class="line"></div>
           <div class="commonUse_content">
-            <div @click="go_api_add">
+            <div v-if="createApi" @click="go_api_add">
               <div>
                 <img src="./../../assets/img/icon1_cjapi.png" alt="" />
                 <span style="margin-left: 20px">创建API</span>
               </div>
             </div>
-            <div @click="go_app_add">
+            <div v-if="createApp" @click="go_app_add">
               <div>
                 <img src="./../../assets/img/icon1_cjyy.png" alt="" />
                 <span style="margin-left: 20px">创建应用</span>
               </div>
             </div>
-            <div @clicl="go_data_Statistics">
+            <div v-if="ApiState" @click="go_data_Statistics">
               <div>
                 <img src="./../../assets/img/icon1_sjtj.png" alt="" />
                 <span style="margin-left: 20px">API数据统计</span>
               </div>
             </div>
-            <div @click="go_upstream_detail">
+            <div v-if="upstrem" @click="go_upstream_detail">
               <div>
                 <img src="./../../assets/img/icon1_cjsyfw.png" alt="" />
                 <span style="margin-left: 20px">创建上游服务</span>
@@ -168,15 +168,19 @@ export default {
   components: {
     charts,
   },
-  data () {
+  data() {
     return {
+      createApi:false,
+      upstrem:false,
+      ApiState:false,
+      createApp:false,
       myAppNum: "",
       subscribeNum: "",
       apiNum: "",
       optionsMy: [],
-      valueMy: "",
+      valueMy: "all",
       myApiQueryList: [],
-      subscribe: "",
+      subscribe: "all",
       optionsSubscribe: [],
       subscribeList: [],
       optionsSubscribeCharts: {
@@ -305,15 +309,23 @@ export default {
       },
     };
   },
-  created () {
-    this.developerId = getToken("userId");
+  created() {
+    this.developerId = getToken("userId_api");
     const query = "?developerId=" + this.developerId;
-    // this.getapplist(query);
-    // this.getlistSubscribe(query);
-    // this.getApiNums(query);
+    this.getapplist(query);
+    this.getlistSubscribe(query);
+    this.getApiNums(query);
+    
+    setTimeout(()=>{
+      // console.log(999999999999)
+      this.createApi = JSON.parse(sessionStorage.getItem('createApi'))
+    this.ApiState = JSON.parse(sessionStorage.getItem('ApiState'))
+    this.upstrem = JSON.parse(sessionStorage.getItem('upstrem'))
+    this.createApp = JSON.parse(sessionStorage.getItem('createApp'))
+    },2100)
   },
   methods: {
-    getapplist (query) {
+    getapplist(query) {
       list(query).then((res) => {
         if (res.code === 200) {
           this.optionsMy = res.data.appList;
@@ -324,12 +336,16 @@ export default {
           const query = {
             appCodes: this.myApiQueryList,
           };
+          this.optionsMy.push({
+            appName: "全部",
+            appCode: "all",
+          });
           this.getChartsOptions(query, "optionsMy");
         } else {
         }
       });
     },
-    getChartsOptions (query, optionsId) {
+    getChartsOptions(query, optionsId) {
       getStatistics(query).then((res) => {
         if (optionsId === "optionsMy") {
           console.log(111);
@@ -463,25 +479,38 @@ export default {
         }
       });
     },
-    changeMy () {
-      const query = {
-        appCodes: [this.subscribe],
-      };
+    changeMy() {
+      const query = {};
+      if (this.valueMy === "all") {
+        query.appCodes = this.myApiQueryList;
+      } else {
+        query.appCodes = [this.valueMy];
+      }
       this.getChartsOptions(query, "optionsMy");
     },
-    subscribeChange () {
-      const query = {
-        appCodes: [this.subscribe],
-      };
+    subscribeChange() {
+      // const query = {
+      //   appCodes: [this.subscribe],
+      // };
+      const query = {};
+      if (this.subscribe === "all") {
+        query.appCodes = this.subscribeList;
+      } else {
+        query.appCodes = [this.subscribe];
+      }
       this.getChartsOptions(query, "noOptions");
     },
-    getlistSubscribe (query) {
+    getlistSubscribe(query) {
       listSubscribe(query).then((res) => {
         this.optionsSubscribe = res.data.appList;
         this.subscribeNum = res.data.total;
         this.optionsSubscribe.forEach((item) => {
           this.subscribeList.push(item.appCode);
         });
+        this.optionsSubscribe.push({
+          appCode:'all',
+          appName:'全部'
+        })
         const query = {
           appCodes: this.subscribeList,
         };
@@ -489,23 +518,23 @@ export default {
       });
     },
     // 获取Api数量
-    getApiNums (query) {
+    getApiNums(query) {
       Apilistnums(query).then((res) => {
         this.apiNum = res.data.total;
       });
     },
-    go_api_add () {
+    go_api_add() {
       this.$router.push({ path: "/api/add" });
     },
-    go_app_add () {
+    go_app_add() {
       this.$router.push({ path: "/app/add" });
     },
-    go_data_Statistics () {
+    go_data_Statistics() {
       this.$router.push({ path: "/data/Statistics" });
     },
-    go_upstream_detail () {
-      this.$router.push({ path: "/upstream/detail" })
-    }
+    go_upstream_detail() {
+      this.$router.push({ path: "/upstream/create" });
+    },
   },
 };
 </script>
@@ -541,7 +570,8 @@ export default {
 }
 .dashboard-container {
   // margin-top: 20px;
-  padding: 20px;
+  padding: 10px;
+  // margin-top: -30px;
   .introduction {
     width: 100%;
     margin-bottom: 20px;
@@ -565,7 +595,7 @@ export default {
       justify-content: center;
       padding: 0px 20px;
       div {
-        border: 1px dashed #000;
+        // border: 1px dashed #000;
         width: 25%;
         text-align: center;
       }

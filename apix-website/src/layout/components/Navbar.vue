@@ -96,7 +96,7 @@ export default {
 
 <style lang="scss" scoped>
 .drop-div {
-  top: 32px !important;
+  top: 40px !important;
 }
 .el-dropdown-menu__item:focus,
 .el-dropdown-menu__item:not(.is-disabled) {
