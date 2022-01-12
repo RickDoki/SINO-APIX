@@ -1454,11 +1454,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .eq(ApplicationPlugin::getPluginType, applicationPlugin.getPluginType())
                 .eq(ApplicationPlugin::getAppCode, applicationPlugin.getAppCode()));
         if(count>0){
-            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
+            return R.fail(ResultCodeEnum.APP_IS_ADD_PLUGIN);
         }
         Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
         if (null == application) {
-            return R.fail(ResultCodeEnum.APP_IS_ADD_PLUGIN);
+            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
         }
         applicationPlugin.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         applicationPlugin.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
