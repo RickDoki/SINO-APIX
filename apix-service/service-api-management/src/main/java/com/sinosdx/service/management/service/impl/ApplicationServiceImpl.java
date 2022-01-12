@@ -524,7 +524,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, application.getCode())
-                .eq(ApplicationPlugin::getEnabled, 0));
+                .eq(ApplicationPlugin::getEnabled, 1));
 
         //单独查询是否包含sentinel 插件
         long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
@@ -814,7 +814,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
-                .eq(ApplicationPlugin::getEnabled, 0));
+                .eq(ApplicationPlugin::getEnabled, 1));
 
         //单独查询是否包含sentinel 插件
         long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
@@ -905,7 +905,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
-                .eq(ApplicationPlugin::getEnabled, 0));
+                .eq(ApplicationPlugin::getEnabled, 1));
 
         //单独查询是否包含sentinel 插件
         long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
@@ -1426,7 +1426,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, applicationVersion.getAppCode())
-                .eq(ApplicationPlugin::getEnabled, 0));
+                .eq(ApplicationPlugin::getEnabled, 1));
         //单独查询是否包含sentinel 插件
         List<ApplicationPlugin> applicationPlugins = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(applicationPlugins)) {
@@ -1443,7 +1443,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             // 查询服务插件
             List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                     .eq(ApplicationPlugin::getAppCode, applicationVersion.getAppCode())
-                    .eq(ApplicationPlugin::getEnabled, 0));
+                    .eq(ApplicationPlugin::getEnabled, 1));
             //单独查询是否包含sentinel 插件
             List<ApplicationPlugin> applicationPlugins = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(applicationPlugins)) {
