@@ -190,7 +190,7 @@ export default {
     }
   }
   .main_content {
-    height: 680px;
+    height: calc(100vh - 185px);
     padding: 24px 0px;
     /deep/ .el-tabs__item {
       padding-left: 0px;
