@@ -104,7 +104,7 @@ export function versionDetail (appvsersionId) {
   })
 }
 /*
-2020 1 11
+2022 1 11
 */
 // 请求日志
 export function log (query) {
@@ -125,5 +125,50 @@ export function apiMessage(query) {
   return request({
     url: '/app/api/' + query,
     method: 'get',
+  })
+}
+/*
+2022 1 12
+*/
+// 添加插件
+export function postPlugin(data) {
+  return request({
+    url: '/app/plugin',
+    method: 'post',
+    data
+  })
+}
+// 获取随机值
+export function randomKey() {
+  return request({
+    url: '/app/plugin/randomKey',
+    method: 'get',
+  })
+}
+// 保存限流规则
+export function save(data) {
+  return request({
+    url: '/sentinel/save',
+    method: 'post',
+    data
+  })
+}
+// 限流启用
+export function open(data) {
+  return request({
+    url: '/sentinel/open',
+    method: 'post',
+    data
+  })
+}
+/*
+2022 1 13
+*/
+// 更新插件
+export function putPlugin(data) {
+  return request({
+    url: '/app/plugin',
+    method: 'put',
+    data
   })
 }

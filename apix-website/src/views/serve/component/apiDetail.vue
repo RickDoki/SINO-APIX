@@ -36,7 +36,12 @@
           <div class="api-info">
             <span class="label-color">调用路径 : </span>
             <span class="conten-color">{{ apiMessageAll.domain }}</span>
-            <i class="el-icon-copy-document icon-color" />
+            <i
+              v-clipboard:copy="apiMessageAll.domain"
+              v-clipboard:success="onCopy"
+              v-clipboard:error="onError"
+              class="el-icon-copy-document icon-color"
+            />
           </div>
           <div class="api-info">
             <span class="label-color agrement">协议类型 : </span>
@@ -153,6 +158,13 @@ export default {
           this.$emit("changeVersion", res.data.apiList);
         }
       });
+    },
+    // 粘贴复制
+    onCopy() {
+      this.$message("复制成功");
+    },
+    onError() {
+      this.$message("复制失败");
     },
   },
   watch: {

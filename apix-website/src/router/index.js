@@ -111,6 +111,13 @@ export const asyncRoutes = [
             hidden: true,
             meta: { title: '插件中心', requiresAuth: true }
           },
+          {
+            path: '/serve/serveDetail/pluginConfig/:plugincode',
+            component: () => import('@/views/serve/plugInConfig'),
+            name: 'plugInConfig',
+            hidden: true,
+            meta: { title: '插件配置', requiresAuth: true }
+          }
         ]
       },
       {
