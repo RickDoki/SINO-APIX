@@ -55,6 +55,12 @@ http://localhost:8848/nacos
 
 Nacos控制台账号密码：nacos/nacos
 
+- docker方式
+```
+docker pull nacos/nacos-server
+docker run --name nacos -itd -p 8848:8848 -p 9848:9848 -p 9849:9849 --restart=always -e MODE=standalone nacos/nacos-server
+```
+
 ## 3. Sentinel 熔断/限流等
 下载Sentinel 1.7.2
 
@@ -71,3 +77,26 @@ java -Dserver.port=8600 -Dcsp.sentinel.dashboard.server=localhost:8600 -Dproject
 访问Sentinel控制台
 
 http://localhost:8600 Sentinel控制台账号密码：sentinel/sentinel
+
+## 4. Redis
+- docker方式
+```
+docker pull redis:latest
+docker run -itd --name redis -p 6379:6379 redis
+```
+
+## 5. Mysql
+- docker方式
+```
+docker pull mysql:latest
+docker run -itd --name mysql-test -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 mysql
+```
+## 6. 其他
+- 基础环境redis、mysql、nacos也可通过docker-compose编排方式
+
+文件：base-env-docker-compose.yml
+
+执行命令
+```
+docker-compose -f base-env-docker-compose.yml up -d
+```

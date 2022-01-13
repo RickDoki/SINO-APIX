@@ -41,12 +41,12 @@ mysql -uroot -p${PWD}
 
 # 进入到mysql命令行时，修改密码
 # 修改密码
-# ALTER USER 'root'@'localhost' IDENTIFIED BY 'Springbootplus666!';
+# ALTER USER 'root'@'localhost' IDENTIFIED BY 'apix123456!';
 
 # 使用新密码登陆
 # exit
-# mysql -uroot -pSpringbootplus666!
+# mysql -uroot -papix123456!
 
-# 导入spring-boot-plus数据库脚本
+# 导入apix_xxx四个数据库脚本
 # use mysql;
-# source /root/mysql_spring_boot_plus.sql;
+# source /root/apix_xxx.sql;

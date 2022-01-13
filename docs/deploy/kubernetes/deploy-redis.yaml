@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: sinosdx-api 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: sinosdx-api
+spec:
+  type: NodePort
+  ports:
+    - port: 6379 
+      targetPort: 6379
+      nodePort: 30379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: sinosdx-api
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      nodeSelector:
+        deployrole: redis 
+      containers:
+      - image: redis:3.2.8
+        command: ["/bin/sh","-c","/usr/local/bin/redis-server --appendonly yes --requirepass 'AKrymz6()g*C'"]
+        name: redis
+        ports:
+        - containerPort: 6379
+          name: redis
+        volumeMounts:
+        - name: redis-persistent-storage
+          mountPath: /data
+      volumes:
+      - name: redis-persistent-storage
+        hostPath:
+            path: /data/redis
+            type: Directory

@@ -127,7 +127,7 @@ cd website，将命令提示符跳转到front目录
 
 前端请求的服务器地址配置在`.env.development`文件中，默认是`http://localhost:8080`
 
-## 运行/部署
+## QuickStart
 - [基础环境搭建（参考）](docs/deploy/README.md)
 - [Jar部署说明](docs/deploy/jar/README.md)
 - [Docker部署说明](docs/deploy/docker/README.md)

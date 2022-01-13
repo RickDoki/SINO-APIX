@@ -22,7 +22,7 @@ then
     echo "Installing maven..."
 
     # 下载 maven aliyun mirror settings.xml
-    wget -O settings.xml https://raw.githubusercontent.com/geekidea/spring-boot-plus/master/docs/config/settings.xml
+    wget -O settings.xml https://gitee.com/sinosdx/sino-apix/tree/master/docs/maven/settings.xml
 
     yum install -y maven
 
