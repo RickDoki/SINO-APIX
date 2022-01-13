@@ -199,10 +199,11 @@ aside {
 
 
 .main {
-  margin: 24px 40px;
-  margin-bottom: 60px;
-  background-color: #fff;
-  min-height: calc(100vh - 185px);
+  min-height: calc(100vh - 150px);
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem 3rem var(--bottom-padding);
+  margin: 24px auto;
   // 列表页面样式
   .list_top {
     display: flex;

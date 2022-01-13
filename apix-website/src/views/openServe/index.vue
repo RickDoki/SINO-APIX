@@ -1,53 +1,67 @@
 <template>
-  <div class="main">
+  <div class="main_open">
     <navbar></navbar>
-    <div class="apiMain_content">
-      <div class="welcome">欢迎访问我们的开放服务平台</div>
-      <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
-      <div style="width: 100%;text-align: center;margin-top: 5vh">
-        <el-input placeholder="请输入服务名称" v-model="searchKey" class="input-with-select">
-          <el-button type="primary" slot="append">搜一下</el-button>
-        </el-input>
-      </div>
-    </div>
-    <div class="open_service">
-      <div style="display: flex;justify-content: space-between">
-        <div class="open_service_title">开放服务</div>
-        <div>
-          <img src="../../../src/assets/img/icon_list.png"
-               style="width: 20px;height: 20px;margin-right: 10px;cursor: pointer" @click="isshow=1">
-          <img src="../../../src/assets/img/icon_cards.png" style="width: 20px;height: 20px;cursor: pointer"
-               @click="isshow=2">
+    <div style="min-height: calc(100vh - 238px - 60px)">
+      <div class="apiMain_content">
+        <div class="welcome">欢迎访问我们的开放服务平台</div>
+        <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
+        <div class="input-with-select">
+          <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
+          <el-button type="primary" slot="append" @click="search">搜一下</el-button>
         </div>
       </div>
-      <transition name="el-fade-in-linear">
-        <div class="open_service_list" v-show="isshow===1">
-          <div v-for="(item,index) in serviceList" :key='index' class="service_list_item" @click.self="goDetail">
-            <div class="list_item_title">{{ item.title }}</div>
-            <div class="list_item_content">{{ item.content }}</div>
-            <div>
-              <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-              <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
-            </div>
-            <div class="list_item_v">{{ item.verion }}</div>
-            <div class="list_item_button" @click="subscribe">订阅</div>
+      <div class="open_service">
+        <div style="display: flex;justify-content: space-between">
+          <div class="open_service_title">开放服务</div>
+          <div>
+            <img src="../../../src/assets/img/icon_list.png"
+                 style="width: 20px;height: 20px;margin-right: 10px;cursor: pointer" @click="isshow=1">
+            <img src="../../../src/assets/img/icon_cards.png" style="width: 20px;height: 20px;cursor: pointer"
+                 @click="isshow=2">
           </div>
         </div>
-      </transition>
-      <transition name="el-fade-in-linear">
-        <div class="open_service_cards" v-show="isshow===2">
-          <div v-for="(item,index) in serviceList" :key='index' class="service_cards_item">
-            <div class="cards_item_button">订阅</div>
-            <div class="cards_item_title">{{ item.title }}</div>
-            <div class="cards_item_content">{{ item.content }}</div>
-            <div>
-              <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-              <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+        <transition name="el-fade-in-linear">
+          <div class="open_service_list" v-show="isshow===1">
+            <div v-for="(item,index) in serviceList" :key='index' class="service_list_item"
+                 @click="goDetail(item)">
+              <div class="list_item_title">{{ item.appName }}</div>
+              <div class="list_item_content">{{ item.description }}</div>
+              <div style="width: 50px">
+                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+              </div>
+              <div style="width: 100px;text-align: center">
+                <div class="list_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
+              </div>
+              <div class="list_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
+              <div class="list_item_button_dis" v-else>已订阅</div>
             </div>
-            <div class="cards_item_v">{{ item.verion }}</div>
           </div>
-        </div>
-      </transition>
+        </transition>
+        <transition name="el-fade-in-linear">
+          <div class="open_service_cards" v-show="isshow===2">
+            <el-row :gutter="10" style="width: 100%">
+              <el-col :span="6" v-for="(item,index) in serviceList" :key='index'>
+                <div class="service_cards_item"
+                     @click="goDetail(item)">
+                  <div class="cards_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
+                  <div class="cards_item_button_dis" v-else>已订阅</div>
+                  <div class="cards_item_title">{{ item.appName }}</div>
+                  <div class="cards_item_content">{{ item.description }}</div>
+                  <div>
+                    <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+                    <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+                  </div>
+                  <div>
+                    <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
+                    <div v-else style="width: 20px;height: 20px"></div>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+        </transition>
+      </div>
     </div>
     <div class="service_footer">
       <div>
@@ -63,7 +77,7 @@
 </template>
 
 <script>
-import {list} from "@/api/AboutApp";
+import {openList, subscribe} from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
 import {getToken} from "@/utils/auth";
 
@@ -74,147 +88,63 @@ export default {
       searchKey: "",
       items: [],
       isshow: 1,
-      serviceList: [
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        },
-        {
-          title: "测试服务",
-          content: "这是一段简洁的开放服务的 简介，希望你可以好好看看呀这是一段简洁的开放服务的...",
-          verion: "v1.0"
-        }
-      ]
+      serviceList: []
     };
   },
   created() {
-    // const query = "?market=true";
-    // list(query).then((res) => {
-    //   console.log(res);
-    //   this.items = res.data.appList;
-    //   if (res.data.appList.length === 0) {
-    //     this.isshow = false;
-    //   } else {
-    //     this.isshow = true;
-    //   }
-    // });
+    this.search()
   },
   methods: {
-    itemsClick(i) {
-      console.log(i);
-      this.$router.push({
-        path: "/apiDoor/detail?message=" + JSON.stringify(i),
-      });
-    },
     search() {
-      // console.log('搜索')
       const query = "?market=true&appName=" + this.searchKey;
-      list(query).then((res) => {
-        this.items = res.data.appList;
-        // if(res.data.appList)
-        // console.log(res.data.appList.length)
-        if (res.data.appList.length === 0) {
-          this.isshow = false;
-        } else {
-          this.isshow = true;
-        }
+      openList(query).then((res) => {
+        this.serviceList = res.data.appList
       });
     },
-    goDetail() {
+    goDetail(item) {
       this.$router.push({
-        name: 'openServeDetail'
+        name: 'openServeDetail',
+        query: {
+          code: item.appCode
+        }
       })
     },
-    subscribe() {
-      console.log('subscribe')
+    subscribe(item) {
+      if (getToken('token')) {
+        this.$confirm('确认订阅：' + item.appName + '吗, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          subscribe(item.appCode).then(res => {
+            if (res.code === 200) {
+              this.$message.success('订阅成功')
+              this.search()
+            }
+          })
+        })
+      } else {
+        this.$router.push({
+          path: '/login',
+          query: {
+            path: this.$route.path
+          }
+        })
+      }
     }
   },
 };
 </script>
 
 <style lang='scss' scoped>
-.main {
+.main_open {
+  background: #FFFFFF;
   margin: 0px;
+  min-height: calc(100vh - 60px);
 
   .apiMain_content {
     margin-top: 60px;
-    background-image: url("../../../src/assets/img/img_bg.png");
+    background-image: url('../../../src/assets/img/img_bg.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     height: 50vh;
@@ -224,25 +154,42 @@ export default {
 
     ::v-deep {
       .el-input--medium .el-input__inner {
-        height: 48px;
-        line-height: 48px;
-        background: #F1F4FE;
-        opacity: 1;
-        color: #494E6A;
+        height: 42px;
+        line-height: 42px;
+        background: #f1f4fe;
+        border-color: #f1f4fe;
+        box-shadow: -3px 10px 10px #e2e7fe;
       }
 
-      .el-button--primary:hover, .el-button--primary:focus {
-        height: 48px;
-        color: #FFFFFF;
+      input::-webkit-input-placeholder {
+        font-weight: 400;
+        color: #494e6a;
+      }
+
+      input::-moz-input-placeholder {
+        font-weight: 400;
+        color: #494e6a;
+      }
+
+      input::-ms-input-placeholder {
+        font-weight: 400;
+        color: #494e6a;
+      }
+
+      .el-button--primary:hover,
+      .el-button--primary:focus {
+        height: 42px;
+        color: #ffffff;
         background: #5173ff;
         border-color: #5173ff;
       }
 
       .el-button--primary {
-        height: 48px;
-        background: rgba(38, 80, 255, 0.85);
-        border-color: #2650FF;
-        color: #FFFFFF;
+        height: 42px;
+        background: #2650ff;
+        border-color: #2650ff;
+        color: #ffffff;
+        box-shadow: -3px 10px 10px #e2e7fe;
       }
     }
 
@@ -270,16 +217,18 @@ export default {
     }
 
     .input-with-select {
-      width: 55vh;
-      height: 48px;
+      display: flex;
+      width: 60vh;
+      text-align: center;
+      margin: 5vh auto;
     }
   }
 
   .open_service {
-    margin: 0 auto;
-    margin-top: 3vh;
-    width: 80%;
-    padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem 3rem var(--bottom-padding);
+    margin: 35px auto;
 
     .open_service_title {
       height: 25px;
@@ -297,7 +246,8 @@ export default {
         cursor: pointer;
         width: 100%;
         height: 84px;
-        background: #FFFFFF;
+        background: #ffffff;
+        border: 1px solid #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(29, 28, 53, 0.2);
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
@@ -307,6 +257,8 @@ export default {
         margin-bottom: 20px;
 
         .list_item_title {
+          margin-left: 24px;
+          width: 100px;
           height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
@@ -317,45 +269,50 @@ export default {
 
         .list_item_content {
           overflow: hidden;
-          width: 60%;
+          width: 50%;
+          padding-right: 24px;
           white-space: nowrap; /*不换行*/
           text-overflow: ellipsis;
           height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #494E6A;
+          color: #494e6a;
           line-height: 20px;
         }
 
         .list_item_v {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 44px;
+          display: inline-block;
+          padding: 5px;
+          //display: flex;
+          //justify-content: center;
+          //align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           height: 20px;
-          background: #E0E6FF;
+          line-height: 10px;
+          background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
 
         .list_item_button {
+          margin-right: 24px;
+          margin-left: 100px;
           display: flex;
           justify-content: center;
           align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           line-height: 20px;
           width: 74px;
           height: 36px;
           border-radius: 4px 4px 4px 4px;
           opacity: 1;
-          border: 1px solid #2650FF;
+          border: 1px solid #2650ff;
         }
 
         .list_item_button:hover {
@@ -364,10 +321,29 @@ export default {
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          background: #2650FF;
+          background: #2650ff;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #ffffff;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+        }
+
+        .list_item_button_dis {
+          margin-right: 24px;
+          margin-left: 100px;
+          cursor: default;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          background: #2650ff;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #ffffff;
           line-height: 20px;
           width: 74px;
           height: 36px;
@@ -379,9 +355,9 @@ export default {
       .service_list_item:hover {
         width: 100%;
         height: 84px;
-        background: #FFFFFF;
+        background: #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
-        border: 1px solid #2650FF;
+        border: 1px solid #2650ff;
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
         display: flex;
@@ -389,6 +365,7 @@ export default {
         align-items: center;
 
         .list_item_title {
+          margin-left: 24px;
           height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
@@ -400,44 +377,48 @@ export default {
         .list_item_content {
           overflow: hidden;
           white-space: nowrap; /*不换行*/
-          width: 60%;
+          width: 50%;
+          padding-right: 24px;
           text-overflow: ellipsis;
           height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #494E6A;
+          color: #494e6a;
           line-height: 20px;
         }
 
         .list_item_v {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 44px;
+          display: inline-block;
+          padding: 5px;
+          //display: flex;
+          //justify-content: center;
+          //align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           height: 20px;
-          background: #E0E6FF;
+          background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
 
         .list_item_button {
+          margin-right: 24px;
+          margin-left: 100px;
           display: flex;
           justify-content: center;
           align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           line-height: 20px;
           width: 74px;
           height: 36px;
           border-radius: 4px 4px 4px 4px;
           opacity: 1;
-          border: 1px solid #2650FF;
+          border: 1px solid #2650ff;
         }
 
         .list_item_button:hover {
@@ -446,10 +427,10 @@ export default {
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          background: #2650FF;
+          background: #2650ff;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #ffffff;
           line-height: 20px;
           width: 74px;
           height: 36px;
@@ -461,22 +442,18 @@ export default {
 
     .open_service_cards {
       margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      flex-direction: row;
 
       .service_cards_item {
         cursor: pointer;
-        margin-right: 20px;
         box-sizing: border-box;
         margin-bottom: 20px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
         padding: 20px;
-        width: 250px;
+        //width: 250px;
         height: 300px;
-        background: #FFFFFF;
+        background: #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(29, 28, 53, 0.2);
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
@@ -490,25 +467,44 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           line-height: 20px;
           width: 74px;
           height: 36px;
           border-radius: 4px 4px 4px 4px;
           opacity: 1;
-          border: 1px solid #2650FF;
+          border: 1px solid #2650ff;
         }
 
         .cards_item_button:hover {
+          margin-top: 10px;
           cursor: pointer;
           display: flex;
           justify-content: center;
           align-items: center;
           font-size: 14px;
-          background: #2650FF;
+          background: #2650ff;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #FFFFFF;
+          color: #ffffff;
+          line-height: 20px;
+          width: 74px;
+          height: 36px;
+          border-radius: 4px 4px 4px 4px;
+          opacity: 1;
+        }
+
+        .cards_item_button_dis {
+          margin-top: 10px;
+          cursor: default;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 14px;
+          background: #2650ff;
+          font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+          font-weight: 400;
+          color: #ffffff;
           line-height: 20px;
           width: 74px;
           height: 36px;
@@ -535,41 +531,44 @@ export default {
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #494E6A;
+          color: #494e6a;
           line-height: 20px;
         }
 
         .cards_item_v {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 44px;
+          padding: 5px;
+          display: inline-block;
+          //display: flex;
+          //justify-content: center;
+          //align-items: center;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
-          color: #2650FF;
+          color: #2650ff;
           height: 20px;
-          background: #E0E6FF;
+          line-height: 10px;
+          background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
       }
 
       .service_cards_item:hover {
-        width: 250px;
+        //width: 250px;
         height: 300px;
-        background: #FFFFFF;
+        background: #ffffff;
         box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
         border-radius: 8px 8px 8px 8px;
         opacity: 1;
-        border: 1px solid #2650FF;
+        border: 1px solid #2650ff;
       }
     }
   }
 
   .service_footer {
+    padding: 20px 0;
     width: 100%;
-    min-height: 199px;
-    background: #1D1C35;
+    min-height: 238px;
+    background: #1d1c35;
     opacity: 1;
     display: flex;
     flex-direction: column;
@@ -581,7 +580,7 @@ export default {
       font-size: 14px;
       font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
       font-weight: 400;
-      color: #FFFFFF;
+      color: #ffffff;
       line-height: 20px;
       display: flex;
     }
@@ -591,7 +590,7 @@ export default {
       font-size: 12px;
       font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
       font-weight: 400;
-      color: #FFFFFF;
+      color: #ffffff;
       line-height: 14px;
     }
   }

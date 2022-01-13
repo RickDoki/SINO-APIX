@@ -1,26 +1,10 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <!-- <div
-      v-if="device === 'mobile' && sidebar.opened"
-      class="drawer-bg"
-      @click="handleClickOutside"
-    /> -->
     <sidebar class="sidebar-container" />
     <div :class="{ hasTagsView: needTagsView }" class="main-container">
       <div :class="{ 'fixed-header': fixedHeader }">
         <navbar />
       </div>
-      <!-- <div class="breadcrumb">
-        <el-breadcrumb
-          v-if="routerList[0].path === '/dashboard' ? false : true"
-          style="height: 34px; line-height: 34px; color: #999999"
-          separator="/"
-        >
-          <el-breadcrumb-item :to="{ path: '/dashboard/index' }">控制台</el-breadcrumb-item>
-          <el-breadcrumb-item v-for="(item, index) in routerList" :key="index">{{item.meta.title}}</el-breadcrumb-item>
-        </el-breadcrumb>
-        <div class="dashboard">{{routerList[1].meta.title}}</div>
-      </div> -->
       <app-main />
     </div>
   </div>
@@ -42,12 +26,12 @@ export default {
     Sidebar,
     TagsView,
   },
-  data() {
+  data () {
     return {
-      routerList:[]
+      routerList: []
     }
   },
-  created() {
+  created () {
     // console.log(this.$route)
     this.routerList = this.$route.matched
   },
@@ -60,7 +44,7 @@ export default {
       needTagsView: (state) => state.settings.tagsView,
       fixedHeader: (state) => state.settings.fixedHeader,
     }),
-    classObj() {
+    classObj () {
       return {
         hideSidebar: !this.sidebar.opened,
         openSidebar: this.sidebar.opened,
@@ -70,7 +54,7 @@ export default {
     },
   },
   methods: {
-    handleClickOutside() {
+    handleClickOutside () {
       this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
     },
   },
@@ -88,11 +72,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "~@/styles/mixin.scss";
-@import "~@/styles/variables.scss";
+@import '~@/styles/mixin.scss';
+@import '~@/styles/variables.scss';
 .breadcrumb {
   padding-left: 32px;
-  border-left: 1px solid #E9E9E9;
+  border-left: 1px solid #e9e9e9;
   position: fixed;
   // overflow: hidden;
   width: 100%;
