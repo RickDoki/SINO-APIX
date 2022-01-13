@@ -3,6 +3,8 @@ package com.sinosdx.service.management.controller;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.sentinel.SentinelProvider;
 import com.sinosdx.service.management.sentinel.entity.LimitInfo;
+import com.sun.media.jfxmedia.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/sentinel")
+@Slf4j
 public class SentinelController {
 
     @Autowired
@@ -27,6 +30,7 @@ public class SentinelController {
      */
     @PostMapping("/save")
     public R save(@RequestBody List<LimitInfo> list){
+        log.info("保存限流规则规则:{}",list);
         String save = service.save(list);
         if(save.endsWith("ok")){
             return R.success();
