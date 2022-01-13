@@ -34,7 +34,7 @@
         <el-form-item label="关联API" prop="API">
           <el-select
             class="inputWidth"
-            multiple 
+            multiple
             v-model="ruleForm.API"
             placeholder="请选择"
           >
@@ -49,11 +49,11 @@
           <span @click="createdApi" class="show-but">还没有API?去创建 >> </span>
         </el-form-item>
         <div class="bottom_button_a">
-          <el-button size="small" type="primary" @click="submitForm('ruleForm')"
-            >立即创建</el-button
-          >
           <el-button size="small" @click="resetForm('ruleForm')"
-            >重置</el-button
+            >取消</el-button
+          >
+          <el-button size="small" type="primary" @click="submitForm('ruleForm')"
+            >创建</el-button
           >
         </div>
       </el-form>
@@ -79,7 +79,7 @@ export default {
     return {
       drawerIsshow: false,
       developerId: "",
-      appCode:'',
+      appCode: "",
       ruleForm: {
         name: "",
         describe: "",
@@ -102,6 +102,9 @@ export default {
     this.getApiList();
   },
   methods: {
+    resetForm() {
+      this.$router.go(-1);
+    },
     // 获取apilist
     getApiList() {
       apiList(this.developerId).then((res) => {
@@ -117,11 +120,11 @@ export default {
           const query = {
             appVersion: this.ruleForm.name,
             versionDesc: this.ruleForm.describe,
-            apiIds: this.ruleForm.API.toString()
-          }
+            apiIds: this.ruleForm.API.toString(),
+          };
           publish(this.appCode, query).then((res) => {
             if (res.code === 200) {
-              this.$router.push({path:'/serve/serveDetail/' + this.appCode})
+              this.$router.push({ path: "/serve/serveDetail/" + this.appCode });
             }
           });
         } else {
