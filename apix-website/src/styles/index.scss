@@ -1,0 +1,442 @@
+@import './variables.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+@import './btn.scss';
+
+body {
+  background: url('./../assets/img/img_login_bg.png') no-repeat center center fixed;
+  /*兼容浏览器版本*/
+  -webkit-background-size: cover;
+  -o-background-size: cover;                
+  background-size: cover;
+
+  // height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+  min-width: 1400px;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.padding-content {
+  padding: 4px 0;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+.fr {
+  float: right;
+}
+
+.fl {
+  float: left;
+}
+
+.pr-5 {
+  padding-right: 5px;
+}
+
+.pl-5 {
+  padding-left: 5px;
+}
+
+.block {
+  display: block;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.inlineBlock {
+  display: block;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+aside {
+  background: #eef1f6;
+  padding: 8px 24px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  display: block;
+  line-height: 32px;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  color: #2c3e50;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  a {
+    color: #337ab7;
+    cursor: pointer;
+
+    &:hover {
+      color: rgb(32, 160, 255);
+    }
+  }
+}
+
+//main-container全局样式
+.app-container {
+  padding: 20px;
+}
+
+.components-container {
+  margin: 30px 50px;
+  position: relative;
+}
+
+.pagination-container {
+  margin-top: 30px;
+}
+
+.text-center {
+  text-align: center
+}
+
+.sub-navbar {
+  height: 50px;
+  line-height: 50px;
+  position: relative;
+  width: 100%;
+  text-align: right;
+  padding-right: 20px;
+  transition: 600ms ease position;
+  background: linear-gradient(90deg, rgba(32, 182, 249, 1) 0%, rgba(32, 182, 249, 1) 0%, rgba(33, 120, 241, 1) 100%, rgba(33, 120, 241, 1) 100%);
+
+  .subtitle {
+    font-size: 20px;
+    color: #fff;
+  }
+
+  &.draft {
+    background: #d0d0d0;
+  }
+
+  &.deleted {
+    background: #d0d0d0;
+  }
+}
+
+.link-type,
+.link-type:focus {
+  color: #337ab7;
+  cursor: pointer;
+
+  &:hover {
+    color: rgb(32, 160, 255);
+  }
+}
+
+.filter-container {
+  padding-bottom: 10px;
+
+  .filter-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+  }
+}
+
+//refine vue-multiselect plugin
+.multiselect {
+  line-height: 16px;
+}
+
+.multiselect--active {
+  z-index: 1000 !important;
+}
+
+
+.main {
+  min-height: calc(100vh - 150px);
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem 3rem var(--bottom-padding);
+  margin: 24px auto;
+  // 列表页面样式
+  .list_top {
+    display: flex;
+    justify-content: space-between;
+    .list_title {
+      width: calc(100% - 330px);
+      line-height: 32px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #1D1C35;
+    }
+    .list_search {
+      display: flex;
+      .list_searchInput {
+        width: 200px;
+        margin-right: 16px;
+      }
+      .list_searchInput_date {
+        width: 370px;
+        margin-right: 16px;
+      }
+      .but-left {
+        margin-right: 27px;
+      }
+    }
+  }
+  .status {
+    display: flex;
+    justify-content: space-between;
+    .left-span {
+      display: flex;
+      margin-top: 24px;
+      font-size: 14px;
+      line-height: 20px;
+    }
+    .time {
+      width: calc(100% - 400px);
+      text-align: right;
+      line-height: 20px;
+    }
+  }
+  .list_top_bom {
+    margin-bottom: 24px;
+  }
+  .secondTitle {
+    margin-top: 6px;
+    color: #727491;
+  }
+  .table_box {
+    .tag {
+      width: 55px;
+    }
+    padding: 15px 30px 30px 30px;
+    border: 1px solid #e1e6ee;
+    border-radius: 10px;
+    ::v-deep {
+      .el-table th.el-table__cell.is-leaf,
+      .el-table td.el-table__cell {
+        border: none;
+      }
+      .el-table::before {
+        height: 0px;
+      }
+    }
+    .handle {
+      padding: 0 6px;
+      color: #d8d8d8;
+    }
+    .text_detail {
+      color: #264ffb;
+    }
+    .textBut-danger {
+      color: #f03063;
+    }
+    .list-pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+  }
+  // 表单样式
+  .bottom_button_a {
+    width: 48%;
+    text-align: center;
+    margin-top: 40px;
+  }
+  .bottom_button_b {
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+  }
+  .top {
+    padding: 0px 75px;
+  }
+  .formBox {
+    margin: 30px 0px;
+    .contentDiv {
+      display: flex;
+      .item-div {
+        margin-left: 20px;
+      }
+    }
+    .item {
+      position: absolute;
+      right: -15px;
+      top: 3px;
+    }
+    .addDiv {
+      margin-top: 10px;
+    }
+    .add_span {
+      color: #264ffb;
+    }
+    .inputWidth {
+      width: 48%;
+    }
+    .show-but {
+      margin-left: 16px;
+      height: 20px;
+      font-size: 14px;
+      font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+      font-weight: 400;
+      color: #2650ff;
+      line-height: 20px;
+      cursor: pointer;
+    }
+    .formBut {
+      text-align: right;
+    }
+    .numberWdith {
+      width: 180px;
+    }
+    .numberWdith2 {
+      width: 205px;
+    }
+    .divider {
+      display: flex;
+      line-height: 45px;
+      margin: 20px 0px;
+      .dividerTitle {
+        font-size: 16px;
+        font-weight: 500;
+        margin-right: 20px;
+        width: 90px;
+      }
+    }
+  }
+}
+.login-main {
+  .center-form {
+    .el-input__inner {
+      background-color: rgba(38, 80, 255, 0.05);
+      border: none;
+    }
+    .el-input__inner {
+      &::placeholder {
+        color: #494E6A;
+      }
+    }
+    .el-form-item__error {
+      position: absolute !important;
+      top: 3px;
+      right: 14px !important;
+      text-align: right;
+      filter: alpha(Opacity=40);
+      border-radius: 2px;
+      font-size: 14px;
+      color: #FA3458;
+      line-height: 22px;
+      z-index: -99;
+    }
+    .el-form-item__error:after {
+      margin-left: 5px;
+      display: inline-table;
+      vertical-align: text-top;
+      width: 14px;
+      content: url('./../assets/img/icon_tips.png');
+    }
+  }
+}
+
+.apiMessage {
+  padding-top: 24px;
+  .api-info {
+    margin-bottom: 24px;
+    span {
+      height: 20px;
+      font-size: 14px;
+      font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+      font-weight: 400;
+      line-height: 20px;
+    }
+    .label-color {
+      color: #494e6a;
+    }
+    .conten-color {
+      color: #373753;
+    }
+    .table_top {
+      margin-top: 10px;
+    }
+    .icon-color {
+      margin-left: 8px;
+      color: #264FFB;
+    }
+    .icon-color:hover {
+      color: #9BAEFF;
+    }
+  }
+}
+.el-table .cell {
+  white-space: nowrap;
+}
+.tag {
+  font-size: 13px;
+  height: 20px;
+  border-radius: 4px 4px 4px 4px;
+  font-weight: 400;
+  line-height: 20px;
+  padding: 0px 8px;
+  margin-left: 10px;
+}
+.success {
+  background: #E1F8DA;
+  color: #61B874;
+}
+.info {
+  background: #E1E6EE;
+  color: #6C757D;
+}
+.default{
+  background: #E9EEFF;
+  color: #2650FF;
+}
+.danger {
+
+}
