@@ -36,8 +36,8 @@ metadata:
   namespace: sinosdx-api
 spec:
   ports:
-    - port: 8093
-      targetPort: 8093
+    - port: 80
+      targetPort: 80
       protocol: TCP
   selector:
     app: api-web-api-management
@@ -50,8 +50,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - port: 8093
-      targetPort: 8093
+    - port: 80
+      targetPort: 80
       nodePort: 30138
   selector:
     app: api-web-api-management
