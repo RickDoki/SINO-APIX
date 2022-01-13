@@ -55,6 +55,10 @@
                 <div v-else style="width: 20px;height: 20px"></div>
               </div>
             </div>
+            <div v-if="serviceList.length%4===3 || serviceList.length%4===2" style="width: 270px;height: 300px">
+            </div>
+            <div v-if="serviceList.length%4===2" style="width: 270px;height: 300px">
+            </div>
           </div>
         </transition>
       </div>
@@ -446,7 +450,7 @@ export default {
         width: 270px;
         cursor: pointer;
         box-sizing: border-box;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
@@ -562,11 +566,6 @@ export default {
         border: 1px solid #2650ff;
       }
     }
-  }
-
-  .open_service_cards:after {
-    content: '';
-    width: 270px;
   }
 
   .service_footer {

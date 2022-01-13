@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div style="background: #FFFFFF;min-height: calc(100vh - 24px )">
     <navbar></navbar>
     <div class="main">
-      <div style="padding: 90px 30px 0 30px;position: relative;min-height:calc(100vh - 211px)">
+      <div style="padding: 90px 30px 0 30px;position: relative;height: 100%">
         <div class="list_top">
           <div>
             <div class="list_top_title">{{ appName }}</div>
@@ -10,7 +10,7 @@
           </div>
           <div class="">
             <el-button type="primary" size="small" v-if="subscribed" :disabled="true" style="width: 100px"
-                      @click="subscribe">已订阅
+                       @click="subscribe">已订阅
             </el-button>
             <el-button type="primary" size="small" v-else style="width: 100px" @click="subscribe">订阅
             </el-button>
@@ -31,8 +31,9 @@
             </div>
           </div>
           <div class="release_time">发布时间：2021-10-05 08:05:00</div>
-        </div> 
-        <div style="padding-left:30px;position: absolute;left: 0;right: 0;width: 100%;height: 100%;background: #FFFFFF">
+        </div>
+        <div
+          style="padding-left:30px;position: absolute;left: 0;right: 0;width: 100%;height: 55vh; background: #FFFFFF">
           <api-detail :apiOptions="appVersion"></api-detail>
         </div>
       </div>
@@ -44,8 +45,8 @@
 // import apidetail from "./detail/detail.vue";
 // import apiTest from "./detail/test.vue";
 // import help from "./detail/help.vue";
-import { appCodeDetail, subscribe } from "@/api/AboutApp";
-import { getToken } from "@/utils/auth"; // get token from cookie
+import {appCodeDetail, subscribe} from "@/api/AboutApp";
+import {getToken} from "@/utils/auth"; // get token from cookie
 import apiDetail from './component/apiDetail'
 import navbar from "@/views/openServe/component/Navbar";
 import plugin from "@/views/serve/plugin";
@@ -58,7 +59,7 @@ export default {
     // apiTest,
     // help,
   },
-  data () {
+  data() {
     return {
       appName: "",
       appDescription: "",
@@ -71,7 +72,7 @@ export default {
       subscribed: true
     };
   },
-  created () {
+  created() {
     this.query()
   },
   methods: {
@@ -96,7 +97,7 @@ export default {
       if (!value) return "";
       return nameFiter[value];
     },
-    query () {
+    query() {
       appCodeDetail(this.$route.query.code).then(res => {
         if (res.code === 200) {
           this.appName = res.data.appName
@@ -121,7 +122,7 @@ export default {
         }
       })
     },
-    subscribe () {
+    subscribe() {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + this.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -181,6 +182,7 @@ export default {
 .list_top2 {
   margin: 24px 0px;
   display: flex;
+
   .service_providers {
     height: 20px;
     font-size: 14px;
@@ -190,10 +192,12 @@ export default {
     line-height: 20px;
     margin-right: 40px;
   }
+
   .plug-in {
     width: 150px;
     margin-right: 10px;
     margin-bottom: 10px;
+
     .chajian_qian {
       margin-right: 10px;
       width: 20px;
@@ -203,6 +207,7 @@ export default {
       opacity: 1;
     }
   }
+
   .release_time {
     height: 20px;
     font-size: 12px;
