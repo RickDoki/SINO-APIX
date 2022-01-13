@@ -70,7 +70,7 @@ public class TokenController {
      * @param appCode
      * @return
      */
-    @GetMapping("/secret")
+    @GetMapping("/secret/list")
     public R<List<ClientAppSecret>> querySecretByAppCode(@RequestParam String appCode) {
         return tokenService.querySecretByAppCode(appCode);
     }

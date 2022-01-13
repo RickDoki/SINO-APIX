@@ -5,15 +5,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.google.common.collect.Lists;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
+import com.sinosdx.service.management.consumer.SysUserServiceFeign;
 import com.sinosdx.service.management.consumer.TokenServiceFeign;
 import com.sinosdx.service.management.dao.entity.*;
 import com.sinosdx.service.management.dao.mapper.ApplicationMapper;
 import com.sinosdx.service.management.dao.mapper.ApplicationPluginClientMapper;
 import com.sinosdx.service.management.dao.mapper.ApplicationPluginMapper;
+import com.sinosdx.service.management.dao.mapper.ApplicationSubscribeMapper;
 import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.AppPluginService;
+import com.sinosdx.service.management.service.ApplicationService;
 import com.sinosdx.service.management.utils.MD5Util;
 import com.sinosdx.service.management.utils.ThreadContext;
 import com.sinosdx.starter.redis.service.RedisService;
@@ -27,10 +30,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author wendy
@@ -58,6 +58,15 @@ public class AppPluginServiceImpl implements AppPluginService {
     @Autowired
     private TokenServiceFeign tokenService;
 
+    @Resource
+    private ApplicationSubscribeMapper applicationSubscribeMapper;
+
+    @Autowired
+    private SysUserServiceFeign sysUserService;
+
+    @Autowired
+    private ApplicationService applicationService;
+
     /**
      * 服务添加插件
      *
@@ -84,8 +93,23 @@ public class AppPluginServiceImpl implements AppPluginService {
         applicationPlugin.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         applicationPlugin.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         applicationPluginMapper.insert(applicationPlugin);
-
         redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
+
+        // 查询订阅该应用的所有用户，重新走订阅流程
+        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedId, applicationPlugin.getAppId()));
+        Set<Integer> sysClientIds = new HashSet<>();
+        appSubscribes.forEach((appSubscribe) -> {
+            sysClientIds.add(appSubscribe.getSubscribeClientId());
+        });
+        sysClientIds.forEach((clientId) -> {
+            JSONObject sysUser = sysUserService.queryUserByClientId(clientId).getData();
+            if (null != sysUser) {
+                Integer userId = sysUser.getInteger("id");
+                applicationService.appSubscribe(applicationPlugin.getAppCode(), userId);
+            }
+        });
+
         return R.success();
     }
 
