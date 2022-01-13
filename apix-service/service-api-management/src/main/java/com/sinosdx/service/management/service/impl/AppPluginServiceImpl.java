@@ -101,15 +101,34 @@ public class AppPluginServiceImpl implements AppPluginService {
         if (null == application) {
             return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
         }
+        ApplicationPlugin old = applicationPluginMapper.selectById(applicationPlugin.getId());
+        if(null == old){
+            return R.fail(ResultCodeEnum.APP_PLUGIN_NOT_EXIST);
+        }
+        if(Objects.nonNull(applicationPlugin.getAppId())){
+            old.setAppId(applicationPlugin.getAppId());
+        }
+        if(Objects.nonNull(applicationPlugin.getAppCode())){
+            old.setAppCode(applicationPlugin.getAppCode());
+        }
+        if(Objects.nonNull(applicationPlugin.getPluginType())){
+            old.setPluginType(applicationPlugin.getPluginType());
+        }
+        if(Objects.nonNull(applicationPlugin.getPluginParams())){
+            old.setPluginParams(applicationPlugin.getPluginParams());
+        }
+        if(Objects.nonNull(applicationPlugin.getEnabled())){
+            old.setEnabled(applicationPlugin.getEnabled());
+        }
 
-        applicationPlugin.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        applicationPlugin.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        applicationPluginMapper.updateById(applicationPlugin);
+        old.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        old.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        applicationPluginMapper.updateById(old);
 
-        if (applicationPlugin.getEnabled() == 0) {
-            redisService.setRemove(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
-        } else if (applicationPlugin.getEnabled() == 1) {
-            redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
+        if (old.getEnabled() == 0) {
+            redisService.setRemove(Constants.REDIS_PREFIX_APP_PLUGIN + old.getAppCode(), old.getPluginType());
+        } else if (old.getEnabled() == 1) {
+            redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + old.getAppCode(), old.getPluginType());
         }
 
         return R.success();

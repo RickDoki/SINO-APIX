@@ -92,6 +92,7 @@ public enum ResultCodeEnum implements BaseEnum {
     SERVER_ADDRESS_IS_WRONG(826037, "服务地址格式错误"),
     /*插件*/
     APP_IS_ADD_PLUGIN(826015, "已添加过此插件"),
+    APP_PLUGIN_NOT_EXIST(826015, "已添加过此插件"),
 
     /* 权限错误：70001-79999 */
     PERMISSION_NO_ACCESS(70001, "无访问权限"),
