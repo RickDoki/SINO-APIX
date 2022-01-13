@@ -19,7 +19,9 @@
               </el-dropdown-menu>
             </el-dropdown>
           </div>
-          <el-button type="primary" size="small" @click="docsEdit()">编辑文档</el-button>
+          <el-button type="primary" size="small" @click="docsEdit()"
+            >编辑文档</el-button
+          >
         </div>
       </div>
       <div class="secondTitle">创建服务来管理和代理现有API或发布到门户。</div>
@@ -112,7 +114,8 @@
           </el-button>
         </div>
         <el-table
-          :data="table"
+          :data="pluginsTable"
+          v-loading="versionLoading"
           empty-text="暂无数据"
           :row-style="{ height: '50px' }"
           highlight-current-row
@@ -122,10 +125,28 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="appName" label="应用名称" />
-          <el-table-column prop="appCode" label="APPCode" />
-          <el-table-column prop="appCode" label="启用状态" />
-          <el-table-column prop="appCode" label="描述" />
+          <el-table-column prop="appName" label="插件名称">
+            <template slot-scope="scope">
+              <div>
+                {{ scope.row.pluginType | plugName }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="appCode" label="启用状态">
+            <template slot-scope="scope">
+              <div>
+                <el-switch
+                  @change="enabledChange(scope.row)"
+                  v-model="scope.row.enabled"
+                  active-color="#6EE4A5"
+                  inactive-color="#E1E6EE"
+                  :active-value="1"
+                  :inactive-value="0"
+                >
+                </el-switch>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
               <el-button type="text" @click="getMessage(scope.row)"
@@ -133,7 +154,7 @@
               >
               <span class="handle">|</span>
               <el-button type="text" @click="getMessage(scope.row)"
-                >退订</el-button
+                >配置</el-button
               >
             </template>
           </el-table-column>
@@ -160,9 +181,9 @@
           <el-table-column prop="remoteIp" label="客户端IP" />
           <el-table-column prop="serverIp" label="服务端IP" />
           <el-table-column prop="consumingTime" label="耗时(ms)" />
-           <el-table-column label="调用时间" width="180px">
+          <el-table-column label="调用时间" width="180px">
             <template slot-scope="scope">
-              <span>{{scope.row.eventTime | formatDate}}</span>
+              <span>{{ scope.row.eventTime | formatDate }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作">
@@ -204,7 +225,7 @@
           <el-table-column prop="consumingTime" label="耗时(ms)" />
           <el-table-column label="调用时间" width="180px">
             <template slot-scope="scope">
-              <span>{{scope.row.eventTime | formatDate}}</span>
+              <span>{{ scope.row.eventTime | formatDate }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作">
@@ -238,17 +259,43 @@ import {
   serveDelete,
   delApiversion,
   log,
+  putPlugin,
 } from "@/api/AboutServe.js";
 
 export default {
-  data () {
+  filters: {
+    plugName: function (value) {
+      const nameFiter = {
+        jwt: "Jwt-auth",
+        base_auth: "basic_auth",
+        oauth2: "OAuth2.0",
+        black_list_ip: "IP 黑名单控制",
+        white_list_ip: "IP 白名单控制",
+        cors: "cors跨域",
+        sign: "防篡改签名",
+        replay_attacks: "防网络重放攻击",
+        error_log: "error log",
+        http_log: "http log",
+        sentinel: "sentinel",
+        gzip: "gzip",
+        proxy_cache: "proxy_cache",
+        real_ip: "real_ip",
+        response_rewrite: "response-rewrite",
+      };
+      if (!value) return "";
+      return nameFiter[value];
+    },
+  },
+  data() {
     return {
       routerView: false,
       table: [],
+      pluginsTable: [],
       dropdownItems: [],
       appCode: "",
       serveData: {},
       serveNum: {},
+      appId: "",
       versionLoading: false,
       // 请求日志分页
       currentPageRequest: 1,
@@ -262,32 +309,41 @@ export default {
       errorLoading: false,
     };
   },
-  created () {
+  created() {
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
+      // 获取appcode
+      this.appCode = this.$route.params.appcode;
+      this.getServeDeatil();
+      this.getAppNum();
+      this.getLog("request");
+      this.getLog("error");
     } else {
       this.routerView = true;
     }
-    // 获取appcode
-    console.log(this.$route);
-    this.appCode = this.$route.params.appcode;
-    this.getServeDeatil();
-    this.getAppNum();
-    this.getLog("request");
-    this.getLog("error");
   },
   methods: {
     // 编辑服务文档
-    docsEdit () {
-      this.$router.push('/docsEdit/' + 'serve?id=' + this.appCode + '&name=' + this.serveData.appName)
+    docsEdit() {
+      this.$router.push(
+        "/docsEdit/" +
+          "serve?id=" +
+          this.appCode +
+          "&name=" +
+          this.serveData.appName
+      );
     },
     // 通过appcode查询详情
-    getServeDeatil () {
+    getServeDeatil() {
       this.versionLoading = true;
       serveDetail(this.appCode).then((res) => {
         if (res.code === 200) {
           this.versionLoading = false;
           this.serveData = res.data;
+          this.appId = res.data.appId;
+
+          this.pluginsTable = res.data.plugins;
+          console.log(this.pluginsTable);
           if (res.data.isPublished === "60005") {
             this.dropdownItems = ["下架"];
           } else {
@@ -297,7 +353,7 @@ export default {
       });
     },
     // 内部详情
-    getAppNum () {
+    getAppNum() {
       appNum(this.appCode).then((res) => {
         // console.log(res);
         if (res.code === 200) {
@@ -306,7 +362,7 @@ export default {
       });
     },
     // 操作
-    handleCommand (command) {
+    handleCommand(command) {
       // console.log(command)
       if (command === "下架") {
         const query = {
@@ -335,7 +391,7 @@ export default {
       }
     },
     // 删除服务版本
-    delversion (e) {
+    delversion(e) {
       delApiversion(e.id).then((res) => {
         if (res.code === 200) {
           this.getServeDeatil();
@@ -343,7 +399,7 @@ export default {
       });
     },
     // 请求日志
-    getLog (e) {
+    getLog(e) {
       if (e === "request") {
         this.requestLoding = true;
         const query =
@@ -389,17 +445,38 @@ export default {
     gonewEdition() {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
-    goplugin () {
-      this.$router.push({ path: "/serve/serveDetail/plug-in" });
+    goplugin() {
+      this.$router.push({
+        path:
+          "/serve/serveDetail/plug-in?appcode=" +
+          this.appCode +
+          "&appid=" +
+          this.appId,
+      });
     },
     // 版本详情
-    edition (e) {
+    edition(e) {
       this.$router.push({
         path:
           "/serve/editionDetail?appCode=" +
           this.appCode +
           "&appVersionId=" +
           e.id,
+      });
+    },
+    // 插件切换状态
+    enabledChange(e) {
+      // console.log(e)
+      const query = {
+        appId: e.appId,
+        appCode: e.appCode,
+        pluginType: e.pluginType,
+        enabled: e.enabled,
+      };
+      putPlugin(query).then((res) => {
+        if (res.code === 200) {
+          this.getServeDeatil();
+        }
       });
     },
   },

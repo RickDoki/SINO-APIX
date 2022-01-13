@@ -15,7 +15,7 @@
         <div class="time">
           <div>
             <span>发布时间 : </span>
-            <span>2021-08-05 10:05:00</span>
+            <span>{{serveAllMeaasge.appPublishDate}}</span>
           </div>
           <div>
             <span>订阅时间 : </span>

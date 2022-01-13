@@ -189,7 +189,7 @@ export default {
           this.ruleForm.describe = res.data.applicationVersion.description;
           this.ruleForm.API = []
           for (let index = 0; index < res.data.apiList.length; index++) {
-            this.ruleForm.API.push(res.data.apiList[index].id);
+            this.ruleForm.API.push(res.data.apiList[index].apiId * 1);
           }
         }
       });

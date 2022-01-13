@@ -1,7 +1,7 @@
 <template>
   <div class="main_open">
     <navbar></navbar>
-    <div style="padding: 90px 30px 0 30px;position: relative;min-height:calc(100vh - 211px)">
+    <div style="padding: 90px 30px 0 30px;position: relative;min-height:calc(100vh - 261px)">
       <div class="list_top">
         <div>
           <div class="list_top_title">{{ appName }}</div>
@@ -24,11 +24,13 @@
           <!--          <div class="service_providers">发布时间：2021-10-05 08:05:00</div>-->
           <div class="service_providers" style="display: flex">
             已添加的插件：
-            <div class="plug-in" style="display: flex">
-              <el-tooltip class="item" effect="light" content="Left Bottom 提示文字" placement="bottom-start">
-                <div class="chajian_qian"></div>
-              </el-tooltip>
-              <div>jwt-auth</div>
+            <div style="width: 60vw;display: flex;flex-wrap: wrap;">
+              <div class="plug-in" style="display: flex" v-for="(item,index) in plugins" :key="index">
+                <el-tooltip class="item" effect="light" :content="item.msg" placement="bottom-start">
+                  <div class="chajian_qian"></div>
+                </el-tooltip>
+                <div>{{ item.pluginType }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -50,6 +52,7 @@ import {appCodeDetail, subscribe} from "@/api/AboutApp";
 import {getToken} from "@/utils/auth"; // get token from cookie
 import apiDetail from './component/apiDetail'
 import navbar from "@/views/openServe/component/Navbar";
+import plugin from "@/views/serve/plugin";
 
 export default {
   components: {
@@ -66,6 +69,9 @@ export default {
       appCreationDate: "",
       appVersion: [],
       appProvider: "",
+      plugins: [],
+      tooltipList: plugin,
+      subscribed: true,
       subscribed: true
     };
   },
@@ -73,6 +79,27 @@ export default {
     this.query()
   },
   methods: {
+    plugName: function (value) {
+      const nameFiter = {
+        jwt: "Jwt-auth",
+        base_auth: "basic_auth",
+        oauth2: "OAuth2.0",
+        black_list_ip: "IP 黑名单控制",
+        white_list_ip: "IP 白名单控制",
+        cors: "cors跨域",
+        sign: "防篡改签名",
+        replay_attacks: "防网络重放攻击",
+        error_log: "error log",
+        http_log: "http log",
+        sentinel: "sentinel",
+        gzip: "gzip",
+        proxy_cache: "proxy-cache",
+        real_ip: "real_ip",
+        response_rewrite: "response-rewrite",
+      };
+      if (!value) return "";
+      return nameFiter[value];
+    },
     query() {
       appCodeDetail(this.$route.query.code).then(res => {
         if (res.code === 200) {
@@ -82,6 +109,19 @@ export default {
           this.appProvider = res.data.appProvider
           this.appVersion = res.data.appVersion
           this.subscribed = res.data.subscribed
+          this.plugins = res.data.plugins
+          let arr = []
+          this.tooltipList.forEach(item => {
+            arr.push(...item.content)
+          })
+          this.plugins.map((item, index) => {
+            item.pluginType = this.plugName(item.pluginType)
+            arr.forEach((items, indexs) => {
+              if (item.pluginType === items.name) {
+                item.msg = items.message
+              }
+            })
+          })
         }
       })
     },
@@ -146,6 +186,7 @@ export default {
   margin-top: 30px;
   display: flex;
   justify-content: space-between;
+  height: 70px;
 
   .service_providers {
     height: 20px;
@@ -157,7 +198,9 @@ export default {
     margin-right: 40px;
 
     .plug-in {
+      width: 150px;
       margin-right: 10px;
+      margin-bottom: 10px;
 
       .chajian_qian {
         margin-right: 10px;

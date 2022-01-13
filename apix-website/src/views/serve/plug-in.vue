@@ -11,6 +11,7 @@
             suffix-icon="el-icon-search"
             v-model="name"
             class="list_searchInput"
+            @input="nameChange"
           >
           </el-input>
         </div>
@@ -22,24 +23,22 @@
           :key="index"
           @click="hitplugName(item, index)"
         >
-          {{ item }}
+          {{ item.type }}
         </div>
       </div>
       <div class="plugDetailRight">
-        <div
-          class="messageBox"
-          v-for="(item, index) in plugTypeList"
-          :key="index"
-        >
-          <div class="title">jwt-auth</div>
-          <div class="middle">
-            <div class="middle-img">
-              <img src="" alt="" />
-              <span>123456</span>
+        <template v-for="(item, index) in plugTypeList">
+          <div class="messageBox" :key="index" v-if="item.defaultShow">
+            <div class="title">{{ item.name }}</div>
+            <div class="middle">
+              <div class="middle-img">
+                <img src="" alt="" />
+                <span>{{ item.message }}</span>
+              </div>
             </div>
+            <div class="plug-bottom" @click="addPulgin(item)">添加</div>
           </div>
-          <div class="plug-bottom">添加</div>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -47,17 +46,13 @@
 
 <script>
 import "./../mainCss/index.scss";
+import plugs from "./plugin";
+import { postPlugin } from "@/api/AboutServe.js";
 export default {
   data() {
     return {
       name: "",
-      plugNameList: [
-        "身份认证",
-        "安全防护",
-        "流量控制",
-        "可观测性",
-        "其他插件",
-      ],
+      plugNameList: plugs,
       defaultCss: [
         "defaultCss hitCss",
         "defaultCss",
@@ -65,22 +60,82 @@ export default {
         "defaultCss",
         "defaultCss",
       ],
-      plugTypeList: ["", "", "", "", "", "", "", "", "", "", "", ""],
+      plugTypeList: plugs[0].content,
+      appCode: "",
+      appId: "",
     };
+  },
+  created() {
+    this.appCode = this.$route.query.appcode;
+    this.appId = this.$route.query.appid;
   },
   methods: {
     // 切换插件类型
     hitplugName(e, i) {
       const defaultCss = [];
       for (let index = 0; index < this.defaultCss.length; index++) {
-        console.log(index, i);
         if (index === i) {
           defaultCss.push("defaultCss hitCss");
+          this.plugTypeList = e.content;
         } else {
           defaultCss.push("defaultCss");
         }
       }
       this.defaultCss = defaultCss;
+    },
+    nameChange() {
+      for (let index in this.plugTypeList) {
+        if (this.plugTypeList[index].name.indexOf(this.name) > -1) {
+          this.plugTypeList[index].defaultShow = true;
+        } else {
+          this.plugTypeList[index].defaultShow = false;
+        }
+      }
+    },
+    addPulgin(e) {
+      // console.log(e)
+      if (e.configuration) {
+        this.$confirm(e.name + " 插件需要配置后才能添加", "提示", {
+          confirmButtonText: "去配置",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            this.$router.push({
+              path:
+                "/serve/serveDetail/pluginConfig/" +
+                e.code +
+                "?appcode=" +
+                this.appCode +
+                "&appid=" +
+                this.appId,
+            });
+          })
+          .catch(() => {});
+      } else {
+        this.$confirm("是否将 " + e.name + " 插件添加到当前服务?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "success",
+        })
+          .then(() => {
+            // 添加插件
+            console.log(e);
+            const query = {
+              pluginType: e.code,
+              appCode: this.appCode,
+              appId: this.appId,
+            };
+            postPlugin(query).then((res) => {
+              if (res.code === 200) {
+                this.$router.push({
+                  path: "/serve/serveDetail/" + this.appCode,
+                });
+              }
+            });
+          })
+          .catch(() => {});
+      }
     },
   },
 };
@@ -133,7 +188,7 @@ export default {
       left: 120px;
       border-top: 1px solid #e1e6ee;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       padding: 20px 0px 0px 20px;
       flex-wrap: wrap;
       overflow: auto;
@@ -141,6 +196,7 @@ export default {
       align-content: flex-start;
       .messageBox {
         width: 32%;
+        margin-left: 1%;
         height: 180px;
         border: 1px solid #e1e6eb;
         border-radius: 3px;
@@ -166,10 +222,16 @@ export default {
               height: 80px;
               background-color: #ccc;
               vertical-align: middle;
+              display: inline-block;
             }
             span {
+              width: calc(100% - 100px);
+              display: inline-block;
               vertical-align: middle;
-              padding: 0px 10px;
+              word-break: hyphenate;
+              text-align: center;
+              // padding: 0px 10px;
+              margin-left: 5px;
             }
           }
         }
