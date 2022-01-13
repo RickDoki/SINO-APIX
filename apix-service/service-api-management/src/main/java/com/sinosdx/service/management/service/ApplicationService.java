@@ -90,9 +90,10 @@ public interface ApplicationService {
      * 订阅服务
      *
      * @param appSubscribedCode
+     * @param sysUserId
      * @return
      */
-    R<Object> appSubscribe(String appSubscribedCode);
+    R<Object> appSubscribe(String appSubscribedCode, Integer sysUserId);
 
     /**
      * 解除订阅服务
@@ -269,31 +270,6 @@ public interface ApplicationService {
     R<Object> querySubscribedAppList(String appCode, Integer developerId);
 
     /**
-     * 服务添加插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    R<Object> addAppPlugin(ApplicationPlugin applicationPlugin);
-
-    /**
-     * 修改服务插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin);
-
-    /**
-     * 获取服务插件
-     *
-     * @param pluginId
-     * @param appCode
-     * @return
-     */
-    R<Object> getAppPlugin(String pluginId, String appCode);
-
-    /**
      * UserIds 转换为  ClientIds
      * @param userIds
      * @return
@@ -322,19 +298,20 @@ public interface ApplicationService {
     R<Object> queryAppVersion(Integer appVersionId);
 
     /**
-     * 查询服务插件的配置参数
-     *
-     * @param pluginType
-     * @param appCode
-     * @return
-     */
-    R<JSONObject> queryPluginConfigs(String pluginType, String appCode);
-
-    /**
      * 根据订阅编号查询订阅信息
      *
      * @param subscribeCode
      * @return
      */
     R<ApplicationSubscribe> queryAppCodeBySubscribeCode(String subscribeCode);
+
+    R<Object> getMyAppCodes(Integer developId);
+
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    R<List<String>> queryAppAuthPluginNameList(String appCode);
 }

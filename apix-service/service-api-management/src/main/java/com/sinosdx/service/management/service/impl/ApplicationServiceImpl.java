@@ -4,9 +4,12 @@ import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Maps;
 import com.sinosdx.common.base.base.entity.Entity;
 import com.sinosdx.service.management.constants.Constants;
-import com.sinosdx.service.management.consumer.*;
+import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
+import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.consumer.TokenServiceFeign;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.dto.ApplicationSubscribeDto;
 import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
@@ -17,6 +20,9 @@ import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.sentinel.SentinelProvider;
+import com.sinosdx.service.management.service.ApiService;
+import com.sinosdx.service.management.service.AppApiGatewayService;
+import com.sinosdx.service.management.service.AppPluginService;
 import com.sinosdx.service.management.service.ApplicationService;
 import com.sinosdx.service.management.utils.MD5Util;
 import com.sinosdx.service.management.utils.ThreadContext;
@@ -65,9 +71,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Resource
     private ApiMapper apiMapper;
 
-    //    @Resource
-    //    private ApiVersionMapper apiVersionMapper;
-
     @Autowired
     private OauthClientDetailsServiceFeign oauthClientDetailsService;
 
@@ -76,15 +79,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private RedisService redisService;
-
-    @Autowired
-    private GatewayServiceFeign gatewayService;
-
-    @Autowired
-    private OmpServiceFeign ompService;
-
-    @Resource
-    private ApplicationApiGatewayMapper appApiGatewayMapper;
 
     @Resource
     private ProductMapper productMapper;
@@ -99,13 +93,22 @@ public class ApplicationServiceImpl implements ApplicationService {
     private ApplicationPluginClientMapper applicationPluginClientMapper;
 
     @Autowired
-    private TokenServiceFeign tokenService;
+    private SentinelProvider sentinelProvider;
+
+    @Autowired
+    private AppPluginService appPluginService;
+
+    @Autowired
+    private AppApiGatewayService appApiGatewayService;
 
     @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
 
     @Autowired
-    private SentinelProvider sentinelProvider;
+    private ApiService apiService;
+
+    @Autowired
+    private TokenServiceFeign tokenService;
 
     /**
      * 创建新应用
@@ -150,16 +153,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         applicationMapper.insert(application);
 
-//        // 插入application_developer
-//        ApplicationDeveloper applicationDeveloper = new ApplicationDeveloper();
-//        applicationDeveloper.setAppId(application.getId());
-//        applicationDeveloper.setAppCode(application.getCode());
-//        applicationDeveloper.setIsCreator(true);
-//        applicationDeveloper.setUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-//        applicationDeveloper.setUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-//        applicationDeveloper.setPhone(ThreadContext.get(Constants.THREAD_CONTEXT_PHONE));
-//        applicationDeveloperMapper.insert(applicationDeveloper);
-
         return R.success(application);
     }
 
@@ -193,8 +186,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             statusList = null;
             userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         } else {
-//            statusList.add(Constants.APP_STATUS_IS_ADDED);
-//            statusList.add(Constants.APP_STATUS_ERROR);
+            //            statusList.add(Constants.APP_STATUS_IS_ADDED);
+            //            statusList.add(Constants.APP_STATUS_ERROR);
             statusList.add(Constants.APP_STATUS_IS_PUBLISHED);
         }
         List<Map<String, Object>> applicationVos = applicationMapper.queryAppVoList(developerId, appName, appCode,
@@ -202,9 +195,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 LocalDateTime.ofEpochSecond(endTime / 1000, 0, ZoneOffset.ofHours(8)),
                 limit, offset == null || limit == null ? null : limit * (offset - 1), statusList, userIdList);
         Integer clientId = null;
-        if(null !=market && market){
+        if (null != market && market) {
             Integer userId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
-            if(Objects.nonNull(userId)){
+            if (Objects.nonNull(userId)) {
                 SysClient sysClient = sysUserService.queryClientByUserId(userId).getData();
                 clientId = sysClient.getId();
             }
@@ -225,15 +218,15 @@ public class ApplicationServiceImpl implements ApplicationService {
                             .eq(ApplicationVersion::getDelFlag, 0))
                     .stream().map(ApplicationVersion::getVersion).collect(Collectors.toList());
             map.put("appVersions", appVersions);
-            map.put("subscribed",false);
-            if(market && Objects.nonNull(finalClientId)){
+            map.put("subscribed", false);
+            if (market && Objects.nonNull(finalClientId)) {
                 Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
                         .eq(ApplicationSubscribe::getAppSubscribedCode, map.get("appCode"))
-                        .eq(ApplicationSubscribe::getSubscribeClientId,finalClientId)
+                        .eq(ApplicationSubscribe::getSubscribeClientId, finalClientId)
                         .eq(ApplicationSubscribe::getDelFlag, 0)
                 );
-                if(count>0){
-                    map.put("subscribed",true);
+                if (count > 0) {
+                    map.put("subscribed", true);
                 }
             }
         });
@@ -288,9 +281,21 @@ public class ApplicationServiceImpl implements ApplicationService {
         //            List<Map<String, Object>> usingAppList = applicationMapper.queryUsingAppList(appCode);
         //            appDetailMap.put("usingAppList", usingAppList);
         //        }
+        appDetailMap.put("subscribed", false);
         Integer clientId = null;
+        Integer userId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
+        if (null != userId) {
+            clientId = (sysUserService.queryClientByUserId(userId).getData()).getId();
+            Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
+                    .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
+                    .eq(ApplicationSubscribe::getSubscribeClientId, clientId)
+                    .eq(ApplicationSubscribe::getDelFlag, 0)
+            );
+            if (count > 0) {
+                appDetailMap.put("subscribed", true);
+            }
+        }
         if (null != developerId) {
-            clientId = (sysUserService.queryClientByUserId(developerId).getData()).getId();
             LambdaQueryWrapper<ApplicationSubscribe> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(Objects.nonNull(clientId), ApplicationSubscribe::getSubscribeClientId, clientId)
                     .eq(Objects.nonNull(appCode), ApplicationSubscribe::getAppSubscribedCode, appCode)
@@ -350,6 +355,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                     if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_PUBLISHED)) {
                         oldApp.setIsPublished(applicationVo.getIsPublished());
                         msg = "下架成功";
+
+                        // 删除应用相关api路由
+                        List<Api> apiList = apiMapper.queryApiListByCondition(applicationVo.getAppCode(), null);
+                        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+                        appApiGatewayService.deleteApiGatewayConfig(applicationVo.getAppId(), orphanApiList, null);
                     } else {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
                     }
@@ -364,6 +374,21 @@ public class ApplicationServiceImpl implements ApplicationService {
                         oldApp.setIsPublished(applicationVo.getIsPublished());
                         oldApp.setPublishDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
                         msg = "上架成功";
+
+                        // 上架需要找出之前订阅过该应用的用户，重新走订阅流程
+                        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
+                                .eq(ApplicationSubscribe::getAppSubscribedId, applicationVo.getAppId()));
+                        Set<Integer> sysClientIds = new HashSet<>();
+                        appSubscribes.forEach((appSubscribe) -> {
+                            sysClientIds.add(appSubscribe.getSubscribeClientId());
+                        });
+                        sysClientIds.forEach((clientId) -> {
+                            JSONObject sysUser = sysUserService.queryUserByClientId(clientId).getData();
+                            if (null != sysUser) {
+                                Integer userId = sysUser.getInteger("id");
+                                this.appSubscribe(applicationVo.getAppCode(), userId);
+                            }
+                        });
                     } else {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
                     }
@@ -376,10 +401,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         oldApp.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
         applicationMapper.updateById(oldApp);
 
-        // 如果停用应用，需要注销对应客户端token
-        if (null != applicationVo.getIsPublished() && Constants.APP_STATUS_IS_NOT_PUBLISHED.equals(applicationVo.getIsPublished())) {
-            revokeClientToken(oldApp.getCode());
-        }
+//        // 如果停用应用，需要注销对应客户端token
+//        if (null != applicationVo.getIsPublished() && Constants.APP_STATUS_IS_NOT_PUBLISHED.equals(applicationVo.getIsPublished())) {
+//            revokeClientToken(oldApp.getCode());
+//        }
 
         return R.successDef(oldApp, msg);
     }
@@ -399,16 +424,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         //        if (count > 0) {
         //            return R.fail(ResultCodeEnum.APP_BE_USED_OR_USING_OTHER_APP);
         //        }
+        Application application = applicationMapper.queryAppByCode(appCode);
+        Integer appId = application.getId();
         // 删除应用
         applicationMapper.delete(new QueryWrapper<Application>().eq("code", appCode));
         // 删除应用版本
         applicationVersionMapper.delete(new QueryWrapper<ApplicationVersion>().eq("app_code", appCode));
+        // 删除api路由
+        List<Api> apiList = apiMapper.queryApiListByCondition(appCode, null);
+        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+        appApiGatewayService.deleteApiGatewayConfig(appId, orphanApiList, null);
         // 删除版本api关联
         applicationApiMapper.delete(new QueryWrapper<ApplicationApi>().eq("app_code", appCode));
-        //        // 删除所有开发者
-        //        applicationDeveloperMapper.delete(new QueryWrapper<ApplicationDeveloper>().eq("app_code", appCode));
-
-        // 刪除订阅关系 sms
+        // 刪除订阅关系
         applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
                 .eq(ApplicationSubscribe::getDelFlag, 0));
@@ -421,8 +449,12 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId, idList));
         }
         // 删除对应客户端认证信息
-        oauthClientDetailsService.deleteOAuthClientDetail(appCode);
-        revokeClientToken(appCode);
+        for (ClientAppSecret secret : tokenService.querySecretByAppCode(appCode).getData()) {
+            oauthClientDetailsService.deleteOAuthClientDetail(secret.getSecretKey());
+            redisService.del("client_id_to_access:" + secret.getSecretKey());
+        }
+        tokenService.deleteClientAppSecret(appCode);
+
         return R.success();
     }
 
@@ -486,18 +518,18 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         List<ApiVo> apiVoList = new ArrayList<>();
         for (Api api : apiList) {
-//            ApplicationApi applicationApi = applicationApiMapper.selectOne(new LambdaQueryWrapper<ApplicationApi>()
-//                    .eq(ApplicationApi::getAppId, application.getId())
-//                    .eq(ApplicationApi::getApiId, api.getId())
-//                    .eq(ApplicationApi::getDelFlag, 0));
-//            if (null == applicationApi) {
+            //            ApplicationApi applicationApi = applicationApiMapper.selectOne(new LambdaQueryWrapper<ApplicationApi>()
+            //                    .eq(ApplicationApi::getAppId, application.getId())
+            //                    .eq(ApplicationApi::getApiId, api.getId())
+            //                    .eq(ApplicationApi::getDelFlag, 0));
+            //            if (null == applicationApi) {
             ApplicationApi applicationApi = new ApplicationApi();
             applicationApi.setAppId(application.getId());
             applicationApi.setAppVersionId(applicationVersion.getId());
             applicationApi.setAppCode(application.getCode());
             applicationApi.setApiId(api.getId());
             applicationApiMapper.insert(applicationApi);
-//            }
+            //            }
 
             apiVoList.add(new ApiVo(api));
         }
@@ -505,162 +537,15 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, application.getCode())
-                .eq(ApplicationPlugin::getEnabled, 0));
+                .eq(ApplicationPlugin::getEnabled, 1));
 
         //单独查询是否包含sentinel 插件
         long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
         if (sentinel > 0) {
             sentinelProvider.addOrRefreshApiGroup(application.getId() + "");
         }
-        // 插入网关数据库
-        //        updateGatewayConfig(application, apiList);
 
         return R.success(new ApplicationVersionVo(applicationVersion, apiVoList));
-    }
-
-    /**
-     * api发布到网关
-     *
-     * @param applicationId
-     * @param apiList
-     */
-    private void updateGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode) {
-        //        String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
-
-        // 先将所有新增的路由入库（应用方）
-        Set<String> addGatewayIdSet = new HashSet<>();
-        Set<String> updateGatewayIdSet = new HashSet<>();
-        for (Api api : apiList) {
-            String uri = "/" + appClientCode + api.getUrl();
-            while (uri.contains("{")) {
-                String bracket = uri.substring(uri.indexOf("{"), uri.indexOf("}") + 1);
-                uri = uri.replace(bracket, "*");
-            }
-
-            // 查询网关当前应用服务地址的路由列表
-            List<ApplicationApiGateway> gatewayList = appApiGatewayMapper.selectList(new QueryWrapper<ApplicationApiGateway>()
-                    .eq("url_code", appClientCode).eq("domain", api.getDomain())
-                    .eq("is_internal", api.getIsInternal()).eq("prefix_path", api.getPrefixPath()));
-            String gatewayId = "";
-            // 区分是新增的路由还是更新的路由
-            if (CollectionUtils.isEmpty(gatewayList)) {
-                gatewayId = appClientCode + "_" + UUID.randomUUID().toString().split("-")[0];
-                addGatewayIdSet.add(gatewayId);
-            } else {
-                gatewayId = gatewayList.get(0).getGatewayId();
-                updateGatewayIdSet.add(gatewayId);
-            }
-            // 查询网关是否有对应路由
-            ApplicationApiGateway appApiGateway = appApiGatewayMapper.selectOne(new QueryWrapper<ApplicationApiGateway>()
-                    .eq("url_code", appClientCode).eq("domain", api.getDomain())
-                    .eq("app_id", applicationId).eq("api_url", api.getUrl())
-                    .eq("is_internal", api.getIsInternal()).eq("prefix_path", api.getPrefixPath()));
-            if (null == appApiGateway) {
-                ApplicationApiGateway gateway = ApplicationApiGateway.builder()
-                        .urlCode(appClientCode)
-                        .appId(applicationId)
-                        .apiId(api.getId())
-                        .apiUrl(api.getUrl())
-                        .prefixPath(api.getPrefixPath())
-                        .domain(api.getDomain())
-                        .gatewayId(gatewayId)
-                        .isInternal(api.getIsInternal())
-                        .build();
-                appApiGatewayMapper.insert(gateway);
-            }
-        }
-
-        // 整合需要新增和更新的网关路由，发布到网关
-        for (String gatewayId : addGatewayIdSet) {
-            JSONObject gatewayConfig = createGatewayConfig(gatewayId);
-            log.info("create gateway config: " + gatewayConfig.toJSONString());
-            gatewayService.create(gatewayConfig);
-        }
-        for (String gatewayId : updateGatewayIdSet) {
-            JSONObject gatewayConfig = createGatewayConfig(gatewayId);
-            log.info("update gateway config: " + gatewayConfig.toJSONString());
-            gatewayService.update(gatewayConfig);
-        }
-    }
-
-    private JSONObject createGatewayConfig(String gatewayId) {
-        List<ApplicationApiGateway> gatewayList = appApiGatewayMapper.selectList(new QueryWrapper<ApplicationApiGateway>()
-                .eq("gateway_id", gatewayId));
-        JSONObject gatewayConfig = new JSONObject();
-        gatewayConfig.put("id", gatewayId);
-        gatewayConfig.put("uri", gatewayList.get(0).getDomain());
-        Map<String, Object> predicate = new HashMap<>();
-        predicate.put("name", "Path");
-        Map<String, String> argsMap = new LinkedHashMap<>();
-        for (int i = 0; i < gatewayList.size(); i++) {
-            ApplicationApiGateway gateway = gatewayList.get(i);
-            argsMap.put("_genkey_" + i, "/" + gateway.getUrlCode() + gateway.getApiUrl());
-        }
-        predicate.put("args", argsMap);
-        gatewayConfig.put("predicates", Collections.singletonList(predicate));
-
-        List<Object> filterList = new LinkedList<>();
-        // 配置是否需要截取路径第一段
-        Integer isInternal = gatewayList.get(0).getIsInternal();
-        if (isInternal == 0) {
-            filterList.add(JSONObject.parseObject("{\n" +
-                    "            \"name\": \"StripPrefix\",\n" +
-                    "            \"args\": {\n" +
-                    "                \"_genkey_0\": \"1\"\n" +
-                    "            }\n" +
-                    "        }\n"));
-        }
-
-        // 配置是否需要拼装前置路径
-        String prefixPath = gatewayList.get(0).getPrefixPath();
-        if (null != prefixPath) {
-            filterList.add(JSONObject.parseObject("{\n" +
-                    "            \"name\": \"PrefixPath\",\n" +
-                    "            \"args\": {\n" +
-                    "                \"_genkey_0\": \"" + prefixPath + "\"\n" +
-                    "            }\n" +
-                    "        }"));
-        }
-
-        // 查询服务插件配置
-        List<ApplicationPluginClient> appPluginClients = applicationPluginClientMapper.queryByAppSubscribe(gatewayList.get(0).getUrlCode());
-
-        // 配置过滤器
-        if (!appPluginClients.isEmpty()) {
-            for (ApplicationPluginClient appPluginClient : appPluginClients) {
-                Map<String, Object> gatewayFilter = new HashMap<>();
-                Map<String, Object> filterArgs = new HashMap<>();
-                JSONObject pluginParams = JSONObject.parseObject(appPluginClient.getPluginParams());
-                // jwt插件
-                if (appPluginClient.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
-                    gatewayFilter.put("name", PluginTypeEnum.JWT.getFilterName());
-                    filterArgs.put("_genkey_0", pluginParams.getString("keyName"));
-                    filterArgs.put("_genkey_1", pluginParams.getString("secretKey"));
-                    filterArgs.put("_genkey_2", pluginParams.getLong("expirationTime"));
-                    gatewayFilter.put("args", filterArgs);
-                }
-                // oauth2插件
-                else if (appPluginClient.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
-                    gatewayFilter.put("name", PluginTypeEnum.OAUTH2.getFilterName());
-                    filterArgs.put("_genkey_0", pluginParams.getString("clientId"));
-                    filterArgs.put("_genkey_1", pluginParams.getString("clientSecret"));
-                    gatewayFilter.put("args", filterArgs);
-                }
-                // base_auth插件
-                else if (appPluginClient.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
-                    gatewayFilter.put("name", PluginTypeEnum.BASE_AUTH.getFilterName());
-                    filterArgs.put("_genkey_0", pluginParams.getString("username"));
-                    filterArgs.put("_genkey_1", pluginParams.getString("password"));
-                    gatewayFilter.put("args", filterArgs);
-                } else {
-                    continue;
-                }
-                filterList.add(gatewayFilter);
-            }
-        }
-        gatewayConfig.put("filters", filterList);
-
-        return gatewayConfig;
     }
 
     /**
@@ -747,15 +632,11 @@ public class ApplicationServiceImpl implements ApplicationService {
      * 订阅服务
      *
      * @param appSubscribedCode
+     * @param sysUserId
      * @return
      */
     @Override
-    public R<Object> appSubscribe(String appSubscribedCode) {
-        // 判断是否登录
-        if (Objects.isNull(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID))) {
-            return R.fail("请先登录,再订阅");
-        }
-
+    public R<Object> appSubscribe(String appSubscribedCode, Integer sysUserId) {
         Application subscribedApp = applicationMapper.queryAppByStatus(appSubscribedCode,
                 Arrays.asList(Constants.APP_STATUS_IS_PUBLISHED, Constants.APP_STATUS_ERROR, Constants.APP_STATUS_IS_ADDED));
         if (null == subscribedApp) {
@@ -768,34 +649,33 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.NONE_APP_VERSION);
         }
 
-        SysClient sysClient = sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
+        SysClient sysClient = sysUserService.queryClientByUserId(sysUserId).getData();
         if (null == sysClient) {
             return R.fail(ResultCodeEnum.RESOURCE_NOT_EXISTED);
         }
 
-        Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
+        ApplicationSubscribe applicationSubscribe = applicationSubscribeMapper.selectOne(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
                 .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
                 .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
                 .eq(ApplicationSubscribe::getDelFlag, 0));
-        if (count > 0) {
-            return R.fail(ResultCodeEnum.APP_LEASE_IS_EXIST);
-        }
 
-        String appClientCode = UUID.randomUUID().toString().split("-")[0];
-        ApplicationSubscribe applicationSubscribe = new ApplicationSubscribe();
-        applicationSubscribe.setAppSubscribedId(subscribedApp.getId());
-        applicationSubscribe.setAppSubscribedCode(subscribedApp.getCode());
-        applicationSubscribe.setSubscribeClientId(sysClient.getId());
-        applicationSubscribe.setAppClientCode(appClientCode);
-        applicationSubscribe.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        applicationSubscribe.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        applicationSubscribeMapper.insert(applicationSubscribe);
+        if (null == applicationSubscribe) {
+            String appClientCode = UUID.randomUUID().toString().split("-")[0];
+            applicationSubscribe = new ApplicationSubscribe();
+            applicationSubscribe.setAppSubscribedId(subscribedApp.getId());
+            applicationSubscribe.setAppSubscribedCode(subscribedApp.getCode());
+            applicationSubscribe.setSubscribeClientId(sysClient.getId());
+            applicationSubscribe.setAppClientCode(appClientCode);
+            applicationSubscribe.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+            applicationSubscribe.setCreationBy(sysUserId);
+            applicationSubscribeMapper.insert(applicationSubscribe);
+        }
 
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
-                .eq(ApplicationPlugin::getEnabled, 0));
+                .eq(ApplicationPlugin::getEnabled, 1));
 
         //单独查询是否包含sentinel 插件
         long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
@@ -804,49 +684,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         // 生成订阅用户调用信息
-        processPlugin(plugins, sysClient);
+        appPluginService.processPlugin(plugins, sysClient);
 
         // 查询服务所有关联api
-        List<Api> apiList = apiMapper.queryApiListByAppCode(subscribedApp.getCode());
+        List<Api> apiList = apiMapper.queryApiListByCondition(subscribedApp.getCode(), null);
 
         // 发布到网关
-        updateGatewayConfig(subscribedApp.getId(), apiList, appClientCode);
-
-        //        String clientSecret = MD5Util.getMD5(appLessorCode);
-        //
-        //        // 插入OAuth2认证客户端信息
-        //        String clientId = appLesseeCode + "-" + appLessorCode;
-        //        log.info("clientId: " + clientId);
-        //        OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(clientId).getData();
-        //        if (null == oldClient) {
-        //            OauthClientDetails oauthClientDetails = new OauthClientDetails();
-        //            oauthClientDetails.setClientId(clientId);
-        //            oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
-        //            oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
-        //            oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
-        //            oauthClientDetails.setAccessTokenValidity(Constants.ACCESS_TOKEN_VALIDITY);
-        //            oauthClientDetails.setRefreshTokenValidity(Constants.REFRESH_TOKEN_VALIDITY);
-        //            Map<String, String> map = new HashMap<>();
-        //            map.put("lessorCode", appLessorCode);
-        //            map.put("lesseeCode", appLesseeCode);
-        //            oauthClientDetails.setAdditionalInformation(JSONObject.toJSONString(map));
-        //            log.info(oauthClientDetails.toString());
-        //            oauthClientDetailsService.createOauthClientDetail(oauthClientDetails);
-        //        }
-        //
-        //        ApplicationLease applicationLease = new ApplicationLease();
-        //        applicationLease.setAppLesseeId(lesseeApp.getId());
-        //        applicationLease.setAppLesseeCode(appLesseeCode);
-        //        applicationLease.setAppLesseeName(lesseeApp.getName());
-        //        applicationLease.setAppLessorId(lessorApp.getId());
-        //        applicationLease.setAppLessorCode(appLessorCode);
-        //        applicationLease.setAppLessorName(lessorApp.getName());
-        //        applicationLease.setClientId(clientId);
-        //        applicationLease.setClientSecret(clientSecret);
-        //        applicationLease.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        //        applicationLease.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        //        applicationLease.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-        //        applicationLeaseMapper.insert(applicationLease);
+        appApiGatewayService.updateApiGatewayConfig(subscribedApp.getId(), apiList, applicationSubscribe.getAppClientCode());
 
         return R.success(applicationSubscribe);
     }
@@ -872,6 +716,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         // 进行解绑
         // 1.删除 applicationSubscribe
+        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
+                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
+                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
+                .eq(ApplicationSubscribe::getDelFlag, 0));
+        String appClientCode = appSubscribes.get(0).getAppClientCode();
         applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
                 .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
@@ -886,7 +736,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
-                .eq(ApplicationPlugin::getEnabled, 0));
+                .eq(ApplicationPlugin::getEnabled, 1));
 
         //单独查询是否包含sentinel 插件
         long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
@@ -894,84 +744,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             sentinelProvider.addOrRefreshApiGroup(subscribedApp.getId() + "");
         }
 
-        // 3.删除对应路由 TODO
+        // 3.删除对应路由
+        List<Api> apiList = apiMapper.queryApiListByCondition(subscribedApp.getCode(), null);
+        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+        appApiGatewayService.deleteApiGatewayConfig(subscribedApp.getId(), orphanApiList, appClientCode);
 
         return R.success();
     }
 
-
-    /**
-     * 订阅时处理各服务插件及绑定关系
-     *
-     * @param appPlugins
-     */
-    private void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient) {
-        for (ApplicationPlugin appPlugin : appPlugins) {
-            JSONObject paramJson = new JSONObject();
-            // 服务发布方设置的配置项
-            if (StringUtils.isNotEmpty(appPlugin.getPluginParams())) {
-                paramJson = JSONObject.parseObject(appPlugin.getPluginParams());
-            }
-            String secretKey = UUID.randomUUID().toString().split("-")[0];
-            ClientAppSecret secret = ClientAppSecret.builder()
-                    .appCode(appPlugin.getAppCode())
-                    .clientId(sysClient.getId())
-                    .build();
-            if ("user".equals(sysClient.getResourceType())) {
-                secret.setUserId(sysClient.getResourceId());
-            }
-            // jwt插件
-            if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
-                paramJson.put("secretKey", secretKey);
-                secret.setSecretKey(secretKey);
-            }
-            // oauth2插件
-            else if (appPlugin.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
-                String clientSecret = MD5Util.getMD5(secretKey);
-                paramJson.put("clientId", secretKey);
-                paramJson.put("clientSecret", clientSecret);
-                secret.setSecretKey(clientSecret);
-
-                JSONObject oAuthConfigJson = queryPluginConfigs(PluginTypeEnum.OAUTH2.getType(), appPlugin.getAppCode()).getData();
-                Integer tokenExpiration = oAuthConfigJson.getInteger("tokenExpiration");
-                Integer refreshTokenExpiration = oAuthConfigJson.getInteger("refreshTokenExpiration");
-
-                // 插入OAuth2认证客户端信息
-                OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(secretKey).getData();
-                if (null == oldClient) {
-                    OauthClientDetails oauthClientDetails = new OauthClientDetails();
-                    oauthClientDetails.setClientId(secretKey);
-                    oauthClientDetails.setClientSecret(new BCryptPasswordEncoder().encode(clientSecret));
-                    oauthClientDetails.setScope(Constants.OAUTH_SCOPE);
-                    oauthClientDetails.setAuthorizedGrantTypes(Constants.AUTHORIZED_GRANT_TYPES);
-                    oauthClientDetails.setAccessTokenValidity(tokenExpiration);
-                    oauthClientDetails.setRefreshTokenValidity(refreshTokenExpiration);
-                    oauthClientDetailsService.createOauthClientDetail(oauthClientDetails);
-                }
-            }
-            // base_auth插件
-            else if (appPlugin.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
-                String md5 = MD5Util.getMD5(secretKey);
-                paramJson.put("username", secretKey);
-                paramJson.put("password", md5);
-                secret.setSecretKey(md5);
-            } else {
-                continue;
-            }
-
-            // 保存客户端获取token的secretKey
-            tokenService.saveClientAppSecretKey(secret);
-
-            ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
-            appPluginClient.setAppPluginId(appPlugin.getId());
-            appPluginClient.setSysClientId(sysClient.getId());
-            appPluginClient.setPluginType(appPlugin.getPluginType());
-            appPluginClient.setPluginParams(paramJson.toJSONString());
-            appPluginClient.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-            appPluginClient.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-            applicationPluginClientMapper.insert(appPluginClient);
-        }
-    }
 
     /**
      * 添加应用开发者
@@ -1332,11 +1112,11 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
         }
 
-        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(userId);
-        Map<String, String> oAuthInfo = applicationLeaseMapper.queryOAuthInfo(appCode, userIdList);
-        if (null == oAuthInfo) {
-            return R.fail(ResultCodeEnum.APP_DEVELOPER_IS_NOT_EXIST);
-        }
+        //        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(userId);
+        //        Map<String, String> oAuthInfo = applicationLeaseMapper.queryOAuthInfo(appCode, userIdList);
+        //        if (null == oAuthInfo) {
+        //            return R.fail(ResultCodeEnum.APP_DEVELOPER_IS_NOT_EXIST);
+        //        }
         SysClient sysClient = sysUserService.queryClientByUserId(userId).getData();
         // 加入插件信息
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
@@ -1345,17 +1125,17 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .eq(ApplicationPlugin::getDelFlag, 0));
         // 添加订阅时间
         Integer clientId = sysClient.getId();
-        ApplicationSubscribeDto applicationSubscribe = applicationSubscribeMapper.querySubscribeDate(clientId,appCode);
+        ApplicationSubscribeDto applicationSubscribe = applicationSubscribeMapper.querySubscribeDate(clientId, appCode);
         appDetailMap.put("subscribeDate", "");
-        if(Objects.nonNull(applicationSubscribe)){
+        if (Objects.nonNull(applicationSubscribe)) {
             appDetailMap.put("subscribeDate", applicationSubscribe.getSubscribeDate());
         }
         // 遍历查询Client 相关信息
         applicationPlugins.forEach(a -> {
-//            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.queryByAppSubscribe(appCode);
+            //            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.queryByAppSubscribe(appCode);
             List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.selectList(new LambdaQueryWrapper<ApplicationPluginClient>()
-                    .eq(ApplicationPluginClient::getAppPluginId,a.getId())
-                    .eq(ApplicationPluginClient::getDelFlag,0)
+                    .eq(ApplicationPluginClient::getAppPluginId, a.getId())
+                    .eq(ApplicationPluginClient::getDelFlag, 0)
             );
             if (!CollectionUtils.isEmpty(applicationPluginClients)) {
                 a.setApplicationPluginClients(applicationPluginClients);
@@ -1425,81 +1205,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return R.success(applicationMapper.querySubscribeCurrentAppList(appCode, userIdList));
     }
 
-    /**
-     * 服务添加插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    @Override
-    @Transactional
-    public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
-        if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
-            return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
-        }
-
-        Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
-        if (null == application) {
-            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
-        }
-
-        applicationPlugin.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        applicationPlugin.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        applicationPluginMapper.insert(applicationPlugin);
-        return R.success();
-    }
-
-    /**
-     * 修改服务插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    @Override
-    public R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin) {
-        Application application = applicationMapper.queryAppByCode(applicationPlugin.getAppCode());
-        if (null == application) {
-            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
-        }
-
-        applicationPlugin.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        applicationPlugin.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        applicationPluginMapper.updateById(applicationPlugin);
-
-        return R.success();
-    }
-
-    /**
-     * 获取服务插件
-     *
-     * @param pluginId
-     * @param appCode
-     * @return
-     */
-    @Override
-    public R<Object> getAppPlugin(String pluginId, String appCode) {
-        Application application = applicationMapper.queryAppByCode(appCode);
-        if (null == application) {
-            return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
-        }
-        ApplicationPlugin applicationPlugin = applicationPluginMapper.selectOne(new LambdaQueryWrapper<ApplicationPlugin>()
-                .eq(ApplicationPlugin::getId, pluginId)
-                .eq(ApplicationPlugin::getAppCode, appCode)
-                .eq(ApplicationPlugin::getDelFlag, 0)
-                .last("LIMIT 1")
-        );
-        if (Objects.nonNull(applicationPlugin)) {
-            List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.selectList(new LambdaQueryWrapper<ApplicationPluginClient>()
-                    .eq(ApplicationPluginClient::getAppPluginId,applicationPlugin.getId())
-                    .eq(ApplicationPluginClient::getDelFlag,0)
-            );
-            if (!CollectionUtils.isEmpty(applicationPluginClients)) {
-                applicationPlugin.setApplicationPluginClients(applicationPluginClients);
-            }
-        }
-        return R.success(applicationPlugin);
-    }
-
     @Override
     public List<Integer> changeUserIdsToClientIds(List<Integer> userIds) {
         // 根据userId 获取 对应的 clientIds
@@ -1548,14 +1253,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (StringUtils.isNotEmpty(applicationVersionVo.getAppVersion())) {
             applicationVersion.setVersion(applicationVersionVo.getAppVersion());
         }
-        if(StringUtils.isNotEmpty(applicationVersionVo.getMarkdown())){
+        if (StringUtils.isNotEmpty(applicationVersionVo.getMarkdown())) {
             applicationVersion.setMarkdown(applicationVersionVo.getMarkdown());
         }
         applicationVersionMapper.updateById(applicationVersion);
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, applicationVersion.getAppCode())
-                .eq(ApplicationPlugin::getEnabled, 0));
+                .eq(ApplicationPlugin::getEnabled, 1));
         //单独查询是否包含sentinel 插件
         List<ApplicationPlugin> applicationPlugins = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(applicationPlugins)) {
@@ -1568,17 +1273,20 @@ public class ApplicationServiceImpl implements ApplicationService {
     public R<Object> deleteAppVersion(Integer appVersionId) {
         ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
         if (Objects.nonNull(applicationVersion)) {
-            int i = applicationVersionMapper.deleteById(appVersionId);
+            applicationVersionMapper.deleteById(appVersionId);
             // 查询服务插件
             List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                     .eq(ApplicationPlugin::getAppCode, applicationVersion.getAppCode())
-                    .eq(ApplicationPlugin::getEnabled, 0));
+                    .eq(ApplicationPlugin::getEnabled, 1));
             //单独查询是否包含sentinel 插件
             List<ApplicationPlugin> applicationPlugins = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(applicationPlugins)) {
                 sentinelProvider.addOrRefreshApiGroup(applicationPlugins.get(0).getId() + "");
             }
-            // TODO 是否需要删除路由？
+            // 删除api路由
+            List<Api> apiList = apiMapper.queryApiListByCondition(applicationVersion.getAppCode(), appVersionId);
+            List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+            appApiGatewayService.deleteApiGatewayConfig(applicationVersion.getAppId(), orphanApiList, null);
 
         }
         return R.success();
@@ -1603,26 +1311,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     /**
-     * 查询服务插件的配置参数
-     *
-     * @param pluginType
-     * @param appCode
-     * @return
-     */
-    @Override
-    public R<JSONObject> queryPluginConfigs(String pluginType, String appCode) {
-        ApplicationPlugin appPlugin = applicationPluginMapper.selectOne(new LambdaQueryWrapper<ApplicationPlugin>()
-                .eq(ApplicationPlugin::getAppCode, appCode)
-                .eq(ApplicationPlugin::getPluginType, pluginType)
-                .eq(ApplicationPlugin::getDelFlag, 0));
-        if (null == appPlugin) {
-            return R.fail(ResultCodeEnum.RESULT_DATA_NONE);
-        }
-        JSONObject configJson = JSONObject.parseObject(appPlugin.getPluginParams());
-        return R.success(configJson);
-    }
-
-    /**
      * 根据订阅编号查询订阅信息
      *
      * @param subscribeCode
@@ -1633,6 +1321,37 @@ public class ApplicationServiceImpl implements ApplicationService {
         ApplicationSubscribe appSubscribe = applicationSubscribeMapper.selectOne(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppClientCode, subscribeCode));
         return R.success(appSubscribe);
+    }
+
+    @Override
+    public R<Object> getMyAppCodes(Integer developId) {
+        List<Map<String, Object>> list = applicationMapper.selectList(new LambdaQueryWrapper<Application>()
+                        .eq(Application::getCreationBy, developId)
+                        .eq(Application::getDelFlag, 0)
+                        .orderByDesc(Application::getId))
+                .stream().map(a -> {
+                    Map<String, Object> data = Maps.newHashMap();
+                    data.put("appName", a.getName());
+                    data.put("appCode", a.getCode());
+                    return data;
+                }).collect(Collectors.toList());
+        return R.success(list);
+    }
+
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    @Override
+    public R<List<String>> queryAppAuthPluginNameList(String appCode) {
+        List<ApplicationPlugin> pluginList = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppCode, appCode)
+                .eq(ApplicationPlugin::getEnabled, 1));
+        List<String> pluginNameList = new ArrayList<>();
+        pluginList.forEach((plugin) -> pluginNameList.add(plugin.getPluginType()));
+        return R.success(pluginNameList);
     }
 
 }

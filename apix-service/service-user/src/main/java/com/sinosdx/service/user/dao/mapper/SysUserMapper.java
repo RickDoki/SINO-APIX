@@ -46,4 +46,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
     List<Integer> queryAllUserIdList();
 
     SysUser queryByUserId(@Param("userId") Integer userId);
+
+    SysUser queryByClientId(@Param("sysClientId") Integer sysClientId);
 }

@@ -6,6 +6,8 @@ import com.sinosdx.service.management.dao.entity.Api;
 import com.sinosdx.service.management.dao.entity.ApiVersion;
 import com.sinosdx.service.management.result.R;
 
+import java.util.List;
+
 /**
  * @author wendy
  * @date 2020/12/10
@@ -105,5 +107,13 @@ public interface ApiService {
      * @return
      */
     R<Object> queryApiListByAppVersionId(String appCode,Integer appVersionId);
+
+    /**
+     * 查询api列表中未被其他服务或服务版本使用的api
+     *
+     * @param apiList
+     * @return
+     */
+    R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList);
 
 }

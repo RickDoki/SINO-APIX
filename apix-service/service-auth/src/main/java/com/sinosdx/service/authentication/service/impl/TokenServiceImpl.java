@@ -17,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author wendy
@@ -128,4 +125,31 @@ public class TokenServiceImpl implements TokenService {
                                 .getBytes(StandardCharsets.UTF_8)));
         return R.success(Collections.singletonMap("token", token));
     }
+
+    /**
+     * 查询客户端的secret
+     *
+     * @param appCode
+     * @return
+     */
+    @Override
+    public R<List<ClientAppSecret>> querySecretByAppCode(String appCode) {
+        List<ClientAppSecret> clientAppSecrets = clientAppSecretMapper.selectList(new LambdaQueryWrapper<ClientAppSecret>()
+                .eq(ClientAppSecret::getAppCode, appCode));
+        return R.success(clientAppSecrets);
+    }
+
+    /**
+     * 删除secret
+     *
+     * @param appCode
+     * @return
+     */
+    @Override
+    public R<Object> deleteClientAppSecret(String appCode) {
+        clientAppSecretMapper.delete(new LambdaQueryWrapper<ClientAppSecret>()
+                .eq(ClientAppSecret::getAppCode, appCode));
+        return R.success();
+    }
+
 }

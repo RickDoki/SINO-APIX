@@ -2,12 +2,17 @@ package com.sinosdx.service.management.controller;
 
 
 import com.sinosdx.common.base.annotation.AuditLog;
+import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.dao.entity.ApplicationSubscribe;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApplicationService;
+import com.sinosdx.service.management.utils.ThreadContext;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author wendy
@@ -90,7 +95,12 @@ public class AppOpenController {
      */
     @GetMapping("/subscribe/{appSubscribedCode}")
     public R<Object> appSubscribe(@PathVariable("appSubscribedCode") String appSubscribedCode) {
-        return applicationService.appSubscribe(appSubscribedCode);
+        Integer sysUserId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
+        // 判断是否登录
+        if (Objects.isNull(sysUserId)) {
+            return R.fail("请先登录,再订阅");
+        }
+        return applicationService.appSubscribe(appSubscribedCode, sysUserId);
     }
 
     /**
@@ -102,6 +112,17 @@ public class AppOpenController {
     @GetMapping("/subscribe")
     public R<ApplicationSubscribe> queryAppCodeBySubscribeCode(@RequestParam String subscribeCode) {
         return applicationService.queryAppCodeBySubscribeCode(subscribeCode);
+    }
+
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    @GetMapping("/auth-plugin/name/list")
+    public R<List<String>> queryAppAuthPluginNameList(@RequestParam String appCode) {
+        return applicationService.queryAppAuthPluginNameList(appCode);
     }
 
 }

@@ -6,6 +6,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * @author wendy
  * @date 2020/12/4
@@ -22,4 +24,12 @@ public interface ApplicationServiceFeign {
     @GetMapping("/app/open/subscribe")
     R<JSONObject> queryAppCodeBySubscribeCode(@RequestParam String subscribeCode);
 
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    @GetMapping("/app/open/auth-plugin/name/list")
+    R<List<String>> queryAppAuthPluginNameList(@RequestParam String appCode);
 }

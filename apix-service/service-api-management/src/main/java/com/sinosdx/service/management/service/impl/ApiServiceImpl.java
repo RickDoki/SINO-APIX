@@ -402,4 +402,24 @@ public class ApiServiceImpl implements ApiService {
         data.put("apiList",apiList);
         return R.success(data);
     }
+
+    /**
+     * 查询api列表中未被其他服务或服务版本使用的api
+     *
+     * @param apiList
+     * @return
+     */
+    @Override
+    public R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList) {
+        List<Api> orphanApiList = new ArrayList<>();
+        for (Api api : apiList) {
+            Long count = applicationApiMapper.selectCount(new LambdaQueryWrapper<ApplicationApi>()
+                    .eq(ApplicationApi::getApiId, api.getId()));
+            // 如果是孤儿api应该只能查到一条
+            if (count == 1) {
+                orphanApiList.add(api);
+            }
+        }
+        return R.success(orphanApiList);
+    }
 }

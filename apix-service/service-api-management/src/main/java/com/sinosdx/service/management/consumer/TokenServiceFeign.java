@@ -3,9 +3,9 @@ package com.sinosdx.service.management.consumer;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.management.dao.entity.ClientAppSecret;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author wendy
@@ -23,4 +23,22 @@ public interface TokenServiceFeign {
      */
     @PostMapping("/secretKey")
     R<Object> saveClientAppSecretKey(@RequestBody ClientAppSecret secret);
+
+    /**
+     * 查询客户端的secret
+     *
+     * @param appCode
+     * @return
+     */
+    @GetMapping("/secret")
+    R<List<ClientAppSecret>> querySecretByAppCode(@RequestParam String appCode);
+
+    /**
+     * 删除secret
+     *
+     * @param appCode
+     * @return
+     */
+    @DeleteMapping("/secret")
+    R<Object> deleteClientAppSecret(@RequestParam String appCode);
 }

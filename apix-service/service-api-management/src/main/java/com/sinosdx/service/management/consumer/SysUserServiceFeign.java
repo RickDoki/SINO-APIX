@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.consumer;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.service.management.dao.entity.SysClient;
 import com.sinosdx.service.management.result.R;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -63,4 +64,13 @@ public interface SysUserServiceFeign {
      */
     @GetMapping("/user/sys/client")
     R<SysClient> queryClientByUserId(@RequestParam("sysUserId") Integer sysUserId);
+
+    /**
+     * 根据clientId查询user
+     *
+     * @param sysClientId
+     * @return
+     */
+    @GetMapping("/user/sys")
+    R<JSONObject> queryUserByClientId(@RequestParam Integer sysClientId);
 }

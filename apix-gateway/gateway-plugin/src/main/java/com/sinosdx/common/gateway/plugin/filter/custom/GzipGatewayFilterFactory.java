@@ -55,12 +55,16 @@ public class GzipGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         HttpHeaders headers = req.getHeaders();
-        List<String> encoding = headers.get(HttpHeaders.CONTENT_ENCODING);
+        List<String> encoding = headers.get(HttpHeaders.ACCEPT_ENCODING);
         if (!CollectionUtils.isEmpty(encoding) && encoding.contains(GZIP)) {
             ServerHttpResponse originalResponse = exchange.getResponse();
             DataBufferFactory bufferFactory = originalResponse.bufferFactory();
+            HttpHeaders responseHeaders = originalResponse.getHeaders();
+            responseHeaders.add(HttpHeaders.CONTENT_ENCODING,GZIP);
+            //response 请求头需设置 CONTENT_ENCODING
             ServerHttpResponseDecorator gzipResponse = new ServerHttpResponseDecorator(
                     originalResponse);
+
             gzipResponse.writeWith(body -> {
                 if (body instanceof Flux) {
                     Flux<? extends DataBuffer> fluxBody = (Flux<? extends DataBuffer>) body;

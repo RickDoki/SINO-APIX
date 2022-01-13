@@ -4,10 +4,12 @@ package com.sinosdx.service.management.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.result.R;
-import com.sinosdx.service.management.service.ApplicationService;
+import com.sinosdx.service.management.service.AppPluginService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 /**
  * @author wendy
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class AppPluginController {
 
     @Autowired
-    private ApplicationService applicationService;
+    private AppPluginService appPluginService;
 
     /**
      * 服务添加插件
@@ -29,7 +31,7 @@ public class AppPluginController {
      */
     @PostMapping()
     public R<Object> addAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
-        return applicationService.addAppPlugin(applicationPlugin);
+        return appPluginService.addAppPlugin(applicationPlugin);
     }
 
     /**
@@ -40,7 +42,7 @@ public class AppPluginController {
      */
     @PutMapping()
     public R<Object> updateAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
-        return applicationService.updateAppPlugin(applicationPlugin);
+        return appPluginService.updateAppPlugin(applicationPlugin);
     }
 
     /**
@@ -52,7 +54,7 @@ public class AppPluginController {
      */
     @GetMapping("/{pluginId}/{appCode}")
     public R<Object> getAppPlugin(@PathVariable(value = "pluginId") String pluginId, @PathVariable(value = "appCode") String appCode) {
-        return applicationService.getAppPlugin(pluginId,appCode);
+        return appPluginService.getAppPlugin(pluginId, appCode);
     }
 
     /**
@@ -62,9 +64,15 @@ public class AppPluginController {
      * @param appCode
      * @return
      */
-    @GetMapping("/plugin/configs")
+    @GetMapping("/configs")
     public R<JSONObject> queryPluginConfigs(@RequestParam String pluginType,
                                             @RequestParam String appCode) {
-        return applicationService.queryPluginConfigs(pluginType, appCode);
+        return appPluginService.queryPluginConfigs(pluginType, appCode);
+    }
+
+
+    @GetMapping("/randomKey")
+    public R<Object> get() {
+        return R.success(UUID.randomUUID().toString().split("-")[0]);
     }
 }

@@ -5,6 +5,8 @@ import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.authentication.controller.dto.GenerateTokenDto;
 import com.sinosdx.service.authentication.dao.entity.ClientAppSecret;
 
+import java.util.List;
+
 /**
  * @author wendy
  * @date 2022/1/5
@@ -42,4 +44,20 @@ public interface TokenService {
      * @return
      */
     R<Object> generateBasicToken(GenerateTokenDto generateTokenDto);
+
+    /**
+     * 查询客户端的secret
+     *
+     * @param appCode
+     * @return
+     */
+    R<List<ClientAppSecret>> querySecretByAppCode(String appCode);
+
+    /**
+     * 删除secret
+     *
+     * @param appCode
+     * @return
+     */
+    R<Object> deleteClientAppSecret(String appCode);
 }

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -41,6 +42,7 @@ public class SentinelProvider {
      * 刷新内存中的保存信息
      * 直接从 nacos 修改限流信息后，需要调用这个方法刷新内存中的数据
      */
+    @PostConstruct
     public void refresh(){
         apiProcess.initApi();
         ruleProcess.initRule();
