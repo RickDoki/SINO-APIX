@@ -193,7 +193,6 @@ export default {
   padding: 24px;
   margin-left: 16px;
   height: 100%;
-  padding-bottom: 150px;
   // margin-bottom: 20px;
   .api-info {
     margin-bottom: 24px;
