@@ -116,7 +116,7 @@ export default {
         .then(() => {
           gounSubscribe(this.appCode).then((res) => {
             if (res.code === 200) {
-              this.$router.push({path:'/serve/subscribe'})
+              this.$router.push({ path: "/serve/subscribe" });
             }
           });
         })
