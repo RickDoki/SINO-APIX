@@ -3,8 +3,8 @@
     <navbar></navbar>
     <div style="min-height: calc(100vh - 238px - 60px)">
       <div class="apiMain_content">
-        <div class="welcome">{{pageInfo.title}}</div>
-        <div class="all_services">{{pageInfo.description}}</div>
+        <div class="welcome">{{ pageInfo.title || '欢迎访问我们的开放服务平台' }}</div>
+        <div class="all_services">{{ pageInfo.description || '您可以在我们所有的服务中找到需要的那一个' }}</div>
         <div class="input-with-select">
           <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
           <el-button type="primary" slot="append" @click="search">搜一下</el-button>
@@ -60,6 +60,9 @@
             <div v-if="serviceList.length%4===2" style="width: 270px;height: 300px">
             </div>
           </div>
+        </transition>
+        <transition name="el-fade-in-linear" v-if="serviceList.length===0">
+          <el-empty description="暂无开放服务"></el-empty>
         </transition>
       </div>
     </div>
