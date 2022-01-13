@@ -226,7 +226,7 @@ export default {
 
     .input-with-select {
       display: flex;
-      width: 65vh;
+      width: 500px;
       text-align: center;
       margin: 5vh auto;
     }
