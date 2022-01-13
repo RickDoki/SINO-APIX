@@ -3,7 +3,7 @@
     <div class="list_top">
       <div class="list_title">个人信息</div>
     </div>
-    <el-tabs tab-position="left" class="main_content">
+    <el-tabs tab-position="left" class="main_content" @tab-click="tabChange">
       <el-tab-pane label="基本信息">
         <div class="formBox">
           <el-form
@@ -21,9 +21,9 @@
                 disabled
               />
             </el-form-item>
-            <el-form-item label="用户名" prop="userName">
+            <el-form-item label="用户名" prop="username">
               <el-input
-                v-model="userForm.userName"
+                v-model="userForm.username"
                 maxlength="20"
                 class="inputWidth"
                 show-word-limit
@@ -51,20 +51,21 @@
           >
             <el-form-item label="原密码" prop="oldPass">
               <el-input
+                show-password
                 v-model="paswForm.oldPass"
                 class="inputWidth"
               />
             </el-form-item>
             <el-form-item label="新密码" prop="newPass">
               <el-input
+                show-password
                 v-model="paswForm.newPass"
-                maxlength="20"
                 class="inputWidth"
-                show-word-limit
               />
             </el-form-item>
             <el-form-item label="确认密码" prop="surePass">
               <el-input
+                show-password
                 v-model="paswForm.surePass"
                 class="inputWidth"
               />
@@ -79,12 +80,27 @@
 
 <script>
 import { getuser, updateUser, updateorg, changePass } from "@/api/user";
-import { getToken } from "@/utils/auth"; // get token from cookie
+import { getToken, setToken } from "@/utils/auth"; // get token from cookie
 
 export default {
   data () {
+    const equalToPassword = (rule, value, callback) => {
+      if (this.paswForm.newPass !== value) {
+        callback(new Error("两次输入的密码不一致！"));
+      } else {
+        callback();
+      }
+    };
+    const equalToOldPassword = (rule, value, callback) => {
+      if (this.paswForm.oldPass === value) {
+        callback(new Error("新密码不能与旧密码相同！"));
+      } else {
+        callback();
+      }
+    };
     return {
-      userId: "",
+      mobile: "",
+      userId: '',
       paswForm: {
         oldPass: "",
         newPass: "",
@@ -92,13 +108,16 @@ export default {
       },
       pasw_rules: {
         oldPass: [
-          { required: true, message: "请输入用户名", trigger: "change" },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'change' }
+          { required: true, message: "请输入原密码", trigger: "blur" }
         ],
-        newPass: { required: true, message: "请输入手机号", trigger: "change" },
+        newPass: [
+          { required: true, message: "新密码不能为空", trigger: "blur" },
+          { min: 8, max: 12, message: "长度在 8 到 12个字符", trigger: "change" },
+          { required: true, validator: equalToOldPassword, trigger: "blur" }
+        ],
         surePass: [
-          { required: true, message: "请输入邮箱", trigger: "change" },
-          { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] },
+          { required: true, message: "确认密码不能为空", trigger: "blur" },
+          { required: true, validator: equalToPassword, trigger: "blur" }
         ]
       },
       userForm: {
@@ -109,83 +128,55 @@ export default {
       },
       user_rules: {
         username: [
-          { required: true, message: "请输入用户名", trigger: "change" },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'change' }
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'change' }
         ],
-        mobile: { required: true, message: "请输入手机号", trigger: "change" },
+        mobile: { required: true, message: "请输入手机号", trigger: "blur" },
         email: [
-          { required: true, message: "请输入邮箱", trigger: "change" },
-          { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] },
+          { required: true, message: "请输入邮箱", trigger: "blur" },
+          { type: "email", message: "请输入正确的邮箱地址", trigger: "change" },
         ]
       },
     };
   },
   created () {
-    // getToken('userId')
-    const userId = getToken("userId_api");
-    this.userId = userId;
-    getuser(userId).then((res) => {
-      console.log(res);
-      this.userName = res.data.userName;
-      this.email = res.data.email;
-      this.mobile = res.data.mobile;
-    });
+    this.mobile = getToken("apiPhone");
+    this.userId = getToken("userId_api");
+    this.getUserInfo()
   },
   methods: {
-    baseSure () {
-      const data = {
-        email: this.email,
-        // mobile: this.mobile,
-      };
-      updateUser(this.userId, data).then((res) => {
-        // console.log(res)
-        if (res.code === 200) {
-          this.isLogin = true;
-          this.$message({
-            message: res.msg,
-            type: "success",
-          });
-        } else {
-          this.$message({
-            message: res.msg,
-            type: "error",
-          });
-        }
+    getUserInfo () {
+      getuser(this.mobile).then((res) => {
+        console.log(res);
+        this.userForm = res.data
       });
-      getuser(this.userId).then((res) => {
-        this.userName = res.data.userName;
-        this.email = res.data.email;
-        this.mobile = res.data.mobile;
+    },
+    tabChange (tab, event) {
+      // console.log(tab.label);
+      if (tab.label === '基本信息') {
+        this.getUserInfo()
+      }
+    },
+    baseSure () {
+      updateUser(this.userId, this.userForm).then((res) => {
+        if (res.code === 200) {
+          setToken("userName_api", this.userForm.username);
+          this.$message('保存成功');
+          // location.reload()
+        }
       });
     },
     changePass () {
-      if (this.newPass === this.surePass) {
-        const data = {
-          oldPwd: btoa(this.oldPass),
-          newPwd: btoa(this.newPass),
-        };
-        changePass(data).then((res) => {
-          // console.log(res)
-          if (res.code === 200) {
-            this.isLogin = true;
-            this.$message({
-              message: res.msg,
-              type: "success",
-            });
-          } else {
-            this.$message({
-              message: res.msg,
-              type: "error",
-            });
-          }
-        });
-      } else {
-        this.$message({
-          message: "两次密码输入不一致,请核对后再提交",
-          type: "error",
-        });
-      }
-    },
+      const params = {
+        oldPwd: btoa(this.paswForm.oldPass),
+        newPwd: btoa(this.paswForm.newPass),
+      };
+      changePass(params).then((res) => {
+        if (res.code === 200) {
+          this.$message('修改成功');
+        }
+      });
+    }
   },
 };
 </script>

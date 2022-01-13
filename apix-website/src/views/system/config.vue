@@ -8,22 +8,19 @@
     </div>
     <div class="formBox">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
-        <el-form-item label="门户标题" prop="name">
-          <el-input v-model="ruleForm.name" class="inputWidth"></el-input>
+        <el-form-item label="门户标题" prop="title">
+          <el-input maxlength="15" show-word-limit v-model="ruleForm.title" class="inputWidth"></el-input>
         </el-form-item>
-        <el-form-item label="门户简介" prop="describe">
+        <el-form-item label="门户简介" prop="description">
           <el-input 
-            v-model="ruleForm.describe" 
-            type="textarea"
+            v-model="ruleForm.description" 
             class="inputWidth"
-            :autosize="{ minRows: 4, maxRows: 10 }"
-            maxlength="500"
+            maxlength="22"
             show-word-limit>
           </el-input>
         </el-form-item>
       </el-form>
       <div class="bottom_button_a">
-        <el-button size="small" @click="resetForm('ruleForm')">取消</el-button>
         <el-button size="small" type="primary" @click="submitForm('ruleForm')">保存</el-button>
       </div>
     </div>
@@ -31,40 +28,42 @@
 </template>
 
 <script>
+import { getDoorConfig, updateDoorConfig } from "@/api/user"
 import "./../mainCss/index.scss";
 export default {
   data () {
     return {
       ruleForm: {
-        name: "",
-        describe: "",
-        API: ""
+        title: "",
+        description: ""
       },
-      options: [{ label: "111", value: "111" }],
       rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
+        title: [
+          { required: true, message: "请输入门户标题", trigger: "blur" }
         ],
-        describe: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
-        API: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
-        ],
+        description: [
+          { required: true, message: "请输入门户简介", trigger: "blur" }
+        ]
       },
     };
   },
+  mounted () {
+    this.getPageInfo()
+  },
   methods: {
+    getPageInfo () {
+      getDoorConfig().then((res) => {
+        this.ruleForm = res.data
+      });
+    },
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
+          updateDoorConfig(this.ruleForm).then((res) => {
+            if (res.code === 200) {
+              this.$message('保存成功');
+            }
+          });
         }
       });
     },

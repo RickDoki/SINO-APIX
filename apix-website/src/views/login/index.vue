@@ -71,8 +71,8 @@ export default {
         password: "",
       },
       rules: {
-        username: { required: true, message: "请输入账号", trigger: "change" },
-        password: { required: true, message: "请输入密码", trigger: "change" },
+        username: { required: true, message: "请输入账号", trigger: "blur" },
+        password: { required: true, message: "请输入密码", trigger: "blur" },
       },
       re_ruleForm: {
         mobile: "",
@@ -82,15 +82,15 @@ export default {
       },
       re_rules: {
         username: [
-          { required: true, message: "请输入用户名", trigger: "change" },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'change' }
+          { required: true, message: "请输入用户名", trigger: "blur" },
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'change' }
         ],
-        mobile: { required: true, message: "请输入手机号", trigger: "change" },
+        mobile: { required: true, message: "请输入手机号", trigger: "blur" },
         email: [
-          { required: true, message: "请输入邮箱", trigger: "change" },
-          { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] },
+          { required: true, message: "请输入邮箱", trigger: "blur" },
+          { type: "email", message: "请输入正确的邮箱地址", trigger: "change" },
         ],
-        password: { required: true, message: "请输入密码", trigger: "change" },
+        password: { required: true, message: "请输入密码", trigger: "blur" },
       },
       checked: false,
       isLogin: true,
