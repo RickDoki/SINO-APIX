@@ -7,6 +7,8 @@ import com.sinosdx.service.authentication.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author wendy
  * @date 2022/1/6
@@ -60,5 +62,27 @@ public class TokenController {
     @PostMapping("/basic")
     public R<Object> generateBasicToken(@RequestBody GenerateTokenDto generateTokenDto) {
         return tokenService.generateBasicToken(generateTokenDto);
+    }
+
+    /**
+     * 查询客户端的secret
+     *
+     * @param appCode
+     * @return
+     */
+    @GetMapping("/secret")
+    public R<List<ClientAppSecret>> querySecretByAppCode(@RequestParam String appCode) {
+        return tokenService.querySecretByAppCode(appCode);
+    }
+
+    /**
+     * 删除secret
+     *
+     * @param appCode
+     * @return
+     */
+    @DeleteMapping("/secret")
+    public R<Object> deleteClientAppSecret(@RequestParam String appCode) {
+        return tokenService.deleteClientAppSecret(appCode);
     }
 }

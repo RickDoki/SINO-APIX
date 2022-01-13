@@ -9,6 +9,7 @@ import com.sinosdx.common.base.base.entity.Entity;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.consumer.TokenServiceFeign;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.dto.ApplicationSubscribeDto;
 import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
@@ -105,6 +106,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private ApiService apiService;
+
+    @Autowired
+    private TokenServiceFeign tokenService;
 
     /**
      * 创建新应用
@@ -420,16 +424,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         //        if (count > 0) {
         //            return R.fail(ResultCodeEnum.APP_BE_USED_OR_USING_OTHER_APP);
         //        }
+        Application application = applicationMapper.queryAppByCode(appCode);
+        Integer appId = application.getId();
         // 删除应用
         applicationMapper.delete(new QueryWrapper<Application>().eq("code", appCode));
         // 删除应用版本
         applicationVersionMapper.delete(new QueryWrapper<ApplicationVersion>().eq("app_code", appCode));
+        // 删除api路由
+        List<Api> apiList = apiMapper.queryApiListByCondition(appCode, null);
+        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+        appApiGatewayService.deleteApiGatewayConfig(appId, orphanApiList, null);
         // 删除版本api关联
         applicationApiMapper.delete(new QueryWrapper<ApplicationApi>().eq("app_code", appCode));
-        //        // 删除所有开发者
-        //        applicationDeveloperMapper.delete(new QueryWrapper<ApplicationDeveloper>().eq("app_code", appCode));
-
-        // 刪除订阅关系 sms
+        // 刪除订阅关系
         applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppSubscribedCode, appCode)
                 .eq(ApplicationSubscribe::getDelFlag, 0));
@@ -442,8 +449,12 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId, idList));
         }
         // 删除对应客户端认证信息
-        oauthClientDetailsService.deleteOAuthClientDetail(appCode);
-        revokeClientToken(appCode);
+        for (ClientAppSecret secret : tokenService.querySecretByAppCode(appCode).getData()) {
+            oauthClientDetailsService.deleteOAuthClientDetail(secret.getSecretKey());
+            redisService.del("client_id_to_access:" + secret.getSecretKey());
+        }
+        tokenService.deleteClientAppSecret(appCode);
+
         return R.success();
     }
 
@@ -1262,7 +1273,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     public R<Object> deleteAppVersion(Integer appVersionId) {
         ApplicationVersion applicationVersion = applicationVersionMapper.selectById(appVersionId);
         if (Objects.nonNull(applicationVersion)) {
-            int i = applicationVersionMapper.deleteById(appVersionId);
+            applicationVersionMapper.deleteById(appVersionId);
             // 查询服务插件
             List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                     .eq(ApplicationPlugin::getAppCode, applicationVersion.getAppCode())
