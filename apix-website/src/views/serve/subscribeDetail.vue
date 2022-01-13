@@ -39,6 +39,7 @@
             <api-detail
               :list="versionList"
               :defaultApiList="apiList"
+              :gatewayDomain="serveAllMeaasge.gatewayDomain"
               @changeVersion="changeVersion"
             ></api-detail>
           </el-tab-pane>
@@ -58,7 +59,7 @@ import plugIn from "./component/plug-in.vue";
 import { subscribed, gounSubscribe } from "@/api/AboutServe.js";
 
 export default {
-  data() {
+  data () {
     return {
       activeName: "first",
       appCode: "",
@@ -68,7 +69,7 @@ export default {
       apiList: [],
     };
   },
-  created() {
+  created () {
     this.appCode = this.$route.params.appCode;
     this.getSubscribed();
   },
@@ -78,9 +79,9 @@ export default {
   },
   methods: {
     // 切换tab
-    handleClick() {},
+    handleClick () { },
     // 查询订阅详情
-    getSubscribed() {
+    getSubscribed () {
       this.loading = true;
       subscribed(this.appCode).then((res) => {
         if (res.code === 200) {
@@ -98,11 +99,11 @@ export default {
       });
     },
     // 选择服务版本
-    changeVersion(e) {
+    changeVersion (e) {
       this.apiList = e;
     },
     // 退订
-    unSubscribe() {
+    unSubscribe () {
       // console.log(e)
       this.$confirm(
         "确认退订服务" + this.serveAllMeaasge.appName + "?",
@@ -120,7 +121,7 @@ export default {
             }
           });
         })
-        .catch(() => {});
+        .catch(() => { });
     },
   },
 };

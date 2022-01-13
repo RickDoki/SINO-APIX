@@ -35,9 +35,9 @@
           </div>
           <div class="api-info">
             <span class="label-color">调用路径 : </span>
-            <span class="conten-color">{{ apiMessageAll.domain }}</span>
+            <span class="conten-color">{{ gatewayDomain + apiMessageAll.url }}</span>
             <i
-              v-clipboard:copy="apiMessageAll.domain"
+              v-clipboard:copy="gatewayDomain + apiMessageAll.url"
               v-clipboard:success="onCopy"
               v-clipboard:error="onError"
               class="el-icon-copy-document icon-color"
@@ -98,7 +98,7 @@
 import { queryApiList, apiMessage } from "@/api/AboutServe.js";
 
 export default {
-  data() {
+  data () {
     return {
       table: [],
       apiOptions: [],
@@ -118,13 +118,13 @@ export default {
       ],
     };
   },
-  props: ["list", "defaultApiList"],
-  created() {
+  props: ["list", "defaultApiList", "gatewayDomain"],
+  created () {
     this.appCode = this.$route.params.appCode;
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    choseApi(e, i) {
+    choseApi (e, i) {
       this.classList = [];
       for (let index = 0; index < this.defaultApiList.length; index++) {
         if (index === i) {
@@ -138,7 +138,7 @@ export default {
       const query = e.apiId;
       this.getapiMessage(query);
     },
-    getapiMessage(e) {
+    getapiMessage (e) {
       apiMessage(e).then((res) => {
         if (res.code === 200) {
           // console.log(res)
@@ -148,7 +148,7 @@ export default {
         }
       });
     },
-    apiValueChange() {
+    apiValueChange () {
       const query = {
         appCode: this.appCode,
         appVersionId: this.apiValue,
@@ -160,18 +160,18 @@ export default {
       });
     },
     // 粘贴复制
-    onCopy() {
+    onCopy () {
       this.$message("复制成功");
     },
-    onError() {
+    onError () {
       this.$message("复制失败");
     },
   },
   watch: {
-    list() {
+    list () {
       this.apiValue = this.list[0].value;
     },
-    defaultApiList() {
+    defaultApiList () {
       this.classList = [];
       for (let index = 0; index < this.defaultApiList.length; index++) {
         // this.classList.push('hitClass')

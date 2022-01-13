@@ -75,7 +75,7 @@
                 >发布到门户</el-button
               >
               <span class="handle">|</span>
-              <el-button type="text" @click="del(scope.row)">删除</el-button>
+              <el-button type="text" style="color: #f03063" @click="del(scope.row)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -214,7 +214,7 @@ export default {
 .version {
   display: inline-block;
   padding: 0px 5px;
-  color: #2650FF;
+  color: #2650ff;
   margin: 2px 5px 0px 0px;
   background-color: #d4dcff;
   border-radius: 3px;
