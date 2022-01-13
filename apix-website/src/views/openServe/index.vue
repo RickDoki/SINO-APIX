@@ -40,25 +40,21 @@
         </transition>
         <transition name="el-fade-in-linear">
           <div class="open_service_cards" v-show="isshow===2">
-            <el-row :gutter="10" style="width: 100%">
-              <el-col :span="6" v-for="(item,index) in serviceList" :key='index'>
-                <div class="service_cards_item"
-                     @click="goDetail(item)">
-                  <div class="cards_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
-                  <div class="cards_item_button_dis" v-else>已订阅</div>
-                  <div class="cards_item_title">{{ item.appName }}</div>
-                  <div class="cards_item_content">{{ item.description }}</div>
-                  <div>
-                    <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-                    <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
-                  </div>
-                  <div>
-                    <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
-                    <div v-else style="width: 20px;height: 20px"></div>
-                  </div>
-                </div>
-              </el-col>
-            </el-row>
+            <div class="service_cards_item"
+                 @click="goDetail(item)" v-for="(item,index) in serviceList" :key='index'>
+              <div class="cards_item_button" v-if="!item.subscribed" @click.stop="subscribe(item)">订阅</div>
+              <div class="cards_item_button_dis" v-else>已订阅</div>
+              <div class="cards_item_title">{{ item.appName }}</div>
+              <div class="cards_item_content">{{ item.description }}</div>
+              <div>
+                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
+                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+              </div>
+              <div>
+                <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
+                <div v-else style="width: 20px;height: 20px"></div>
+              </div>
+            </div>
           </div>
         </transition>
       </div>
@@ -442,8 +438,12 @@ export default {
 
     .open_service_cards {
       margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
 
       .service_cards_item {
+        width: 270px;
         cursor: pointer;
         box-sizing: border-box;
         margin-bottom: 20px;
@@ -562,6 +562,11 @@ export default {
         border: 1px solid #2650ff;
       }
     }
+  }
+
+  .open_service_cards:after {
+    content: '';
+    width: 270px;
   }
 
   .service_footer {
