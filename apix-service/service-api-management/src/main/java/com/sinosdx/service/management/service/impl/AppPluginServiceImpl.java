@@ -209,8 +209,8 @@ public class AppPluginServiceImpl implements AppPluginService {
                 secret.setSecretKey(clientSecret);
 
                 JSONObject oAuthConfigJson = this.queryPluginConfigs(PluginTypeEnum.OAUTH2.getType(), appPlugin.getAppCode()).getData();
-                Integer tokenExpiration = oAuthConfigJson.getInteger("tokenExpiration");
-                Integer refreshTokenExpiration = oAuthConfigJson.getInteger("refreshTokenExpiration");
+                Integer tokenExpiration = oAuthConfigJson.getInteger("TokenExpiration");
+                Integer refreshTokenExpiration = oAuthConfigJson.getInteger("RefreshTokenExpiration");
 
                 // 插入OAuth2认证客户端信息
                 OauthClientDetails oldClient = oauthClientDetailsService.queryByClientId(secretKey).getData();

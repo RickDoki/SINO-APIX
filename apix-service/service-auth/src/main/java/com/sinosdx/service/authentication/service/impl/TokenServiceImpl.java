@@ -59,8 +59,8 @@ public class TokenServiceImpl implements TokenService {
             return R.fail(ResultCodeEnum.DATA_IS_WRONG);
         }
         JSONObject configJson = objectR.getData();
-        Long expiration = configJson.getLong("expiration");
-        String claimKey = configJson.getString("claimKey");
+        Long expiration = configJson.getLong("TokenExpiration");
+        String claimKey = configJson.getString("keyClaimName");
         claimMap.put(claimKey, generateTokenDto.getClaimValue());
 
         try {

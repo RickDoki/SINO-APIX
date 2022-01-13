@@ -43,8 +43,6 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
      */
     @Override
     public void updateApiGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode) {
-        //        String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
-
         // 先将所有新增的路由入库（应用方）
         Set<String> addGatewayIdSet = new HashSet<>();
         Set<String> updateGatewayIdSet = new HashSet<>();
@@ -177,8 +175,12 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
                     filterArgs.put("_genkey_0", pluginParams.getString("username"));
                     filterArgs.put("_genkey_1", pluginParams.getString("password"));
                     gatewayFilter.put("args", filterArgs);
-                } else {
+                } else if (appPluginClient.getPluginType().equals(PluginTypeEnum.SENTINEL.getType())) {
+                    // sentinel是特殊的过滤器
                     continue;
+                } else {
+                    // 无生成参数的过滤器
+                    gatewayFilter.put("name", PluginTypeEnum.getPluginTypeEnum(appPluginClient.getPluginType()).getFilterName());
                 }
                 filterList.add(gatewayFilter);
             }
