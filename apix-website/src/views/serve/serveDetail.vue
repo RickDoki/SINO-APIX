@@ -268,7 +268,7 @@ import {
   open,
   close,
 } from "@/api/AboutServe.js";
-
+import jsonView from "./json-view/index.vue";
 export default {
   filters: {
     plugName: function (value) {
