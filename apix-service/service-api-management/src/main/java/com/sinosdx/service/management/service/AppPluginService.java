@@ -54,4 +54,11 @@ public interface AppPluginService {
      * @param sysClient
      */
     void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient);
+
+    /**
+     * 后台重新给用户订阅服务（用于服务上架、插件变更操作）
+     *
+     * @param appCode
+     */
+    void reSubscribeApp(String appCode);
 }

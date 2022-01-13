@@ -95,20 +95,8 @@ public class AppPluginServiceImpl implements AppPluginService {
         applicationPluginMapper.insert(applicationPlugin);
         redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
 
-        // 查询订阅该应用的所有用户，重新走订阅流程
-        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
-                .eq(ApplicationSubscribe::getAppSubscribedId, applicationPlugin.getAppId()));
-        Set<Integer> sysClientIds = new HashSet<>();
-        appSubscribes.forEach((appSubscribe) -> {
-            sysClientIds.add(appSubscribe.getSubscribeClientId());
-        });
-        sysClientIds.forEach((clientId) -> {
-            JSONObject sysUser = sysUserService.queryUserByClientId(clientId).getData();
-            if (null != sysUser) {
-                Integer userId = sysUser.getInteger("id");
-                applicationService.appSubscribe(applicationPlugin.getAppCode(), userId);
-            }
-        });
+        // 重新发布订阅相关路由
+        this.reSubscribeApp(applicationPlugin.getAppCode());
 
         return R.success();
     }
@@ -126,14 +114,26 @@ public class AppPluginServiceImpl implements AppPluginService {
             return R.fail(ResultCodeEnum.APP_IS_NOT_EXIST);
         }
 
+        ApplicationPlugin oldPlugin = applicationPluginMapper.selectById(applicationPlugin.getId());
+
         applicationPlugin.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         applicationPlugin.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         applicationPluginMapper.updateById(applicationPlugin);
 
-        if (applicationPlugin.getEnabled() == 0) {
-            redisService.setRemove(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
-        } else if (applicationPlugin.getEnabled() == 1) {
-            redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
+        if (!Objects.equals(applicationPlugin.getEnabled(), oldPlugin.getEnabled())) {
+            // 停用插件
+            if (applicationPlugin.getEnabled() == 0) {
+                redisService.setRemove(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
+            }
+
+            // 启用插件
+            if (applicationPlugin.getEnabled() == 1) {
+                redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
+            }
+
+            // 重新发布订阅相关路由
+            this.reSubscribeApp(applicationPlugin.getAppCode());
+
         }
 
         return R.success();
@@ -271,5 +271,28 @@ public class AppPluginServiceImpl implements AppPluginService {
             appPluginClient.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
             applicationPluginClientMapper.insert(appPluginClient);
         }
+    }
+
+    /**
+     * 后台重新给用户订阅服务（用于服务上架、插件变更操作）
+     *
+     * @param appCode
+     */
+    @Override
+    public void reSubscribeApp(String appCode) {
+        // 查询订阅该应用的所有用户，重新走订阅流程
+        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appCode));
+        Set<Integer> sysClientIds = new HashSet<>();
+        appSubscribes.forEach((appSubscribe) -> {
+            sysClientIds.add(appSubscribe.getSubscribeClientId());
+        });
+        sysClientIds.forEach((clientId) -> {
+            JSONObject sysUser = sysUserService.queryUserByClientId(clientId).getData();
+            if (null != sysUser) {
+                Integer userId = sysUser.getInteger("id");
+                applicationService.appSubscribe(appCode, userId);
+            }
+        });
     }
 }

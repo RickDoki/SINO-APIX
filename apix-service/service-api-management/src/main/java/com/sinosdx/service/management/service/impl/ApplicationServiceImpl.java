@@ -375,20 +375,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                         oldApp.setPublishDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
                         msg = "上架成功";
 
-                        // 上架需要找出之前订阅过该应用的用户，重新走订阅流程
-                        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
-                                .eq(ApplicationSubscribe::getAppSubscribedId, applicationVo.getAppId()));
-                        Set<Integer> sysClientIds = new HashSet<>();
-                        appSubscribes.forEach((appSubscribe) -> {
-                            sysClientIds.add(appSubscribe.getSubscribeClientId());
-                        });
-                        sysClientIds.forEach((clientId) -> {
-                            JSONObject sysUser = sysUserService.queryUserByClientId(clientId).getData();
-                            if (null != sysUser) {
-                                Integer userId = sysUser.getInteger("id");
-                                this.appSubscribe(applicationVo.getAppCode(), userId);
-                            }
-                        });
+                        // 重新发布订阅相关路由
+                        appPluginService.reSubscribeApp(applicationVo.getAppCode());
                     } else {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
                     }
