@@ -50,7 +50,7 @@
               >查看</el-button
             >
             <span class="handle">|</span>
-            <el-button type="text" @click="goserveDteail(scope.row)"
+            <el-button type="text" @click="unSubscribe(scope.row)"
               >退订</el-button
             >
           </template>
@@ -70,7 +70,7 @@
 
 <script>
 import "./../mainCss/index.scss";
-import { Mysubscribed } from "@/api/AboutServe.js";
+import { Mysubscribed, gounSubscribe } from "@/api/AboutServe.js";
 export default {
   data() {
     return {
@@ -82,7 +82,7 @@ export default {
       total: 0,
       currentPage: 1,
       name: "",
-      loading:false
+      loading: false,
     };
   },
   created() {
@@ -90,11 +90,11 @@ export default {
   },
   methods: {
     nameSerach() {
-      this.currentPage = 1
-      this.getMysubscribed()
+      this.currentPage = 1;
+      this.getMysubscribed();
     },
     getMysubscribed() {
-      this.loading = true
+      this.loading = true;
       const query =
         "limit=10" +
         "&" +
@@ -105,21 +105,37 @@ export default {
         this.name;
       Mysubscribed(query).then((res) => {
         // console.log(res);
-        if(res.code === 200) {
-          this.table = res.data.appList
-          this.total = res.data.total
-          this.total = 100
-          this.loading = false
+        if (res.code === 200) {
+          this.table = res.data.appList;
+          this.total = res.data.total;
+          this.loading = false;
         }
       });
     },
     handleCurrentChange(val) {
-      this.currentPage = val
-      this.getMysubscribed()
+      this.currentPage = val;
+      this.getMysubscribed();
     },
     // 跳转api详情
     goserveDteail(e) {
       this.$router.push({ path: "/serve/subscribeDetail/" + e.appCode });
+    },
+    // 退订
+    unSubscribe(e) {
+      // console.log(e)
+      this.$confirm("确认退订服务" + e.appName + "?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          gounSubscribe(e.appCode).then(res=>{
+            if(res.code ===200) {
+              this.getMysubscribed()
+            }
+          })
+        })
+        .catch(() => {});
     },
   },
 };

@@ -1,4 +1,4 @@
-FROM registry.sxc.sh/public/nginx:latest 
+FROM registry-vpc.cn-shanghai.aliyuncs.com/sinosdx/nginx:latest 
 
 # COPY ./nginx.conf /etc/nginx/nginx.conf
 

@@ -152,8 +152,13 @@
               <el-button type="text" @click="getMessage(scope.row)"
                 >查看</el-button
               >
-              <span class="handle">|</span>
-              <el-button type="text" @click="getMessage(scope.row)"
+              <span class="handle" v-if="goConfig(scope.row.pluginType)"
+                >|</span
+              >
+              <el-button
+                type="text"
+                v-if="goConfig(scope.row.pluginType)"
+                @click="pluginConfig(scope.row)"
                 >配置</el-button
               >
             </template>
@@ -260,6 +265,8 @@ import {
   delApiversion,
   log,
   putPlugin,
+  open,
+  close,
 } from "@/api/AboutServe.js";
 
 export default {
@@ -466,18 +473,87 @@ export default {
     },
     // 插件切换状态
     enabledChange(e) {
-      // console.log(e)
-      const query = {
-        appId: e.appId,
-        appCode: e.appCode,
-        pluginType: e.pluginType,
-        enabled: e.enabled,
-      };
-      putPlugin(query).then((res) => {
-        if (res.code === 200) {
-          this.getServeDeatil();
+      if (e.pluginType === "sentinel") {
+        if (e.enabled === 0) {
+          open(e.appId).then((res) => {
+            if (res.code === 200) {
+              const query = {
+                appId: e.appId,
+                appCode: e.appCode,
+                pluginType: e.pluginType,
+                enabled: e.enabled,
+                id: e.id,
+              };
+              putPlugin(query).then((res) => {
+                if (res.code === 200) {
+                  this.getServeDeatil();
+                }
+              });
+            }
+          });
+        } else {
+          close(e.appId).then((res) => {
+            if (res.code === 200) {
+              const query = {
+                appId: e.appId,
+                appCode: e.appCode,
+                pluginType: e.pluginType,
+                enabled: e.enabled,
+                id: e.id,
+              };
+              putPlugin(query).then((res) => {
+                if (res.code === 200) {
+                  this.getServeDeatil();
+                }
+              });
+            }
+          });
         }
-      });
+      } else {
+        const query = {
+          appId: e.appId,
+          appCode: e.appCode,
+          pluginType: e.pluginType,
+          enabled: e.enabled,
+          id: e.id,
+        };
+        putPlugin(query).then((res) => {
+          if (res.code === 200) {
+            this.getServeDeatil();
+          }
+        });
+      }
+    },
+    // 跳转修改插件配置
+    pluginConfig(e) {
+      console.log(e);
+      this.$router.push(
+        "/serve/serveDetail/pluginConfig/" +
+          e.pluginType +
+          "?appcode=" +
+          e.appCode +
+          "&appid=" +
+          e.appId +
+          "&id=" +
+          e.id +
+          "&pluginParams=true"
+      );
+    },
+    // 控制配置显示
+    goConfig(value) {
+      if (
+        value === "jwt" ||
+        value === "oauth2" ||
+        value === "black_list_ip" ||
+        value === "white_list_ip" ||
+        value === "cors" ||
+        value === "sign" ||
+        value === "sentinel"
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };

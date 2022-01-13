@@ -4,14 +4,14 @@ import request from '@/utils/request'
 2022 1 8
  */
 // 服务列表
-export function serveList (query) {
+export function serveList(query) {
   return request({
     url: '/app/list?' + query,
     method: 'get',
   })
 }
 // 创建服务
-export function createServe (data) {
+export function createServe(data) {
   return request({
     url: '/app/create',
     method: 'post',
@@ -19,7 +19,7 @@ export function createServe (data) {
   })
 }
 // 服务更新
-export function serveupdate (appcode, data) {
+export function serveupdate(appcode, data) {
   return request({
     url: '/app/' + appcode,
     method: 'put',
@@ -27,35 +27,35 @@ export function serveupdate (appcode, data) {
   })
 }
 // 服务删除
-export function serveDelete (appcode) {
+export function serveDelete(appcode) {
   return request({
     url: '/app/' + appcode,
     method: 'delete',
   })
 }
 // 服务详情
-export function serveDetail (appcode) {
+export function serveDetail(appcode) {
   return request({
     url: '/app/' + appcode,
     method: 'get',
   })
 }
 // 服务详情-内部统计
-export function appNum (appcode) {
+export function appNum(appcode) {
   return request({
     url: '/app/data/' + appcode + '/appNum',
     method: 'post',
   })
 }
 // 添加新版本查询api
-export function apiList (id) {
+export function apiList(id) {
   return request({
     url: '/app/api/list?developerId=' + id,
     method: 'get',
   })
 }
 // 创建新版本
-export function publish (appcode, data) {
+export function publish(appcode, data) {
   return request({
     url: '/app/' + appcode + '/publish',
     method: 'post',
@@ -67,21 +67,21 @@ export function publish (appcode, data) {
 2022 1 10
 */
 // 服务版本删除
-export function delApiversion (query) {
+export function delApiversion(query) {
   return request({
     url: '/app/appVersion/' + query,
     method: 'delete',
   })
 }
 // 我的订阅列表
-export function Mysubscribed (query) {
+export function Mysubscribed(query) {
   return request({
     url: '/app/subscribed/list?' + query,
     method: 'get',
   })
 }
 // 根据appcode 和 appversionId 查询API合集
-export function queryApiList (data) {
+export function queryApiList(data) {
   return request({
     url: '/app/api/queryApiList',
     method: 'post',
@@ -89,7 +89,7 @@ export function queryApiList (data) {
   })
 }
 // app版本修改
-export function changeAppversion (appvsersionId, data) {
+export function changeAppversion(appvsersionId, data) {
   return request({
     url: '/app/appVersion/' + appvsersionId,
     method: 'post',
@@ -97,7 +97,7 @@ export function changeAppversion (appvsersionId, data) {
   })
 }
 // 版本详情
-export function versionDetail (appvsersionId) {
+export function versionDetail(appvsersionId) {
   return request({
     url: '/app/appVersion/' + appvsersionId,
     method: 'get',
@@ -107,7 +107,7 @@ export function versionDetail (appvsersionId) {
 2022 1 11
 */
 // 请求日志
-export function log (query) {
+export function log(query) {
   return request({
     url: '/gateway/log?' + query,
     method: 'get',
@@ -148,19 +148,12 @@ export function randomKey() {
 // 保存限流规则
 export function save(data) {
   return request({
-    url: '/sentinel/save',
+    url: '/app/rateLimit/save',
     method: 'post',
     data
   })
 }
-// 限流启用
-export function open(data) {
-  return request({
-    url: '/sentinel/open',
-    method: 'post',
-    data
-  })
-}
+
 /*
 2022 1 13
 */
@@ -170,5 +163,34 @@ export function putPlugin(data) {
     url: '/app/plugin',
     method: 'put',
     data
+  })
+}
+// 退订服务
+export function gounSubscribe(appcode) {
+  return request({
+    url: '/app/unSubscribe/' + appcode,
+    method: 'post',
+  })
+}
+// 查询插件详情
+export function getPlugin(id, code) {
+  return request({
+    url: '/app/plugin/' + id + '/' + code,
+    method: 'get',
+  })
+}
+// 限流启用
+export function open(appId) {
+  return request({
+    url: '/app/rateLimit/open?appId=' + appId,
+    method: 'post',
+  })
+}
+// 限流停用
+// 限流启用
+export function close(appId) {
+  return request({
+    url: '/app/rateLimit/close?appId=' + appId,
+    method: 'post',
   })
 }
