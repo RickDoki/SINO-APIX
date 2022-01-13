@@ -1,8 +1,8 @@
 <template>
-  <div style="background: #FFFFFF;">
+  <div style="background: #FFFFFF;min-height: calc(100vh - 24px )">
     <navbar></navbar>
     <div class="main">
-      <div style="padding: 90px 30px 0 30px; min-height:inherit;position: relative;overflow: hidden">
+      <div style="padding: 90px 30px 0 30px;position: relative;height: 100%">
         <div class="list_top">
           <div>
             <div class="list_top_title">{{ appName }}</div>
@@ -32,8 +32,6 @@
           </div>
           <div class="release_time">发布时间：2021-10-05 08:05:00</div>
         </div>
-        <div
-          style="padding-left:30px;position: absolute;left: 0;right: 0;width: 100%;height: 100%; background: #FFFFFF">
         <div class="list_content">
           <api-detail :apiOptions="appVersion"></api-detail>
         </div>
@@ -152,10 +150,6 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.main {
-  min-height: calc(100vh - 25px);
-}
-
 .main_open {
   background: #ffffff;
 }
