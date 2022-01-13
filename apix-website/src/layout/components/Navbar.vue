@@ -124,7 +124,11 @@ export default {
   width: calc(100% - 210px);
 }
 .breadcrumb {
-  padding: 24px 0px 0px 40px;
+  width: 100%;
+  max-width: 1200px;
+  /* padding: 2rem 3rem var(--bottom-padding); */
+  margin: 24px auto;
+  // padding: 24px 0px 0px 40px;
   background-color: #ffffff;
   .dashboard {
     margin-top: 24px;

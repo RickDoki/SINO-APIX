@@ -1,60 +1,76 @@
 <template>
-  <div class="user">
-    <el-tabs tab-position="left" style="height: 100%">
+  <div class="main">
+    <div class="list_top">
+      <div class="list_title">个人信息</div>
+    </div>
+    <el-tabs tab-position="left" class="main_content">
       <el-tab-pane label="基本信息">
-        <div class="content">
-          <div class="title">
-            <p>基本信息</p>
-          </div>
-          <div class="flexDiv">
-            <div class="left">组织名称:</div>
-            <div class="right">
-              <el-input v-model="orgName" disabled size="mini"></el-input>
-            </div>
-          </div>
-          <div class="flexDiv">
-            <div class="left">手机号:</div>
-            <div class="right">
-              <el-input v-model="mobile" disabled size="mini"></el-input>
-            </div>
-          </div>
-          <div class="flexDiv">
-            <div class="left">邮箱:</div>
-            <div class="right">
-              <el-input v-model="email" size="mini"></el-input>
-            </div>
-          </div>
-          <div class="flexDiv">
-            <div @click="baseSure" class="sure">确认</div>
-          </div>
+        <div class="formBox">
+          <el-form
+            :model="userForm"
+            :rules="user_rules"
+            ref="userForm"
+            label-width="150px"
+            label-position="top"
+            size="small"
+          >
+            <el-form-item label="手机号" prop="mobile">
+              <el-input
+                v-model="userForm.mobile"
+                class="inputWidth"
+                disabled
+              />
+            </el-form-item>
+            <el-form-item label="用户名" prop="userName">
+              <el-input
+                v-model="userForm.userName"
+                maxlength="20"
+                class="inputWidth"
+                show-word-limit
+              />
+            </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+              <el-input
+                v-model="userForm.email"
+                class="inputWidth"
+              />
+            </el-form-item>
+          </el-form>
+          <el-button type="primary" size="small" @click="baseSure" class="save_but">保存</el-button>
         </div>
       </el-tab-pane>
       <el-tab-pane label="修改密码">
-        <div class="content">
-          <div class="title">
-            <p>修改密码</p>
-          </div>
-          <div class="flexDiv">
-            <div class="left">原密码:</div>
-            <div class="right">
-              <el-input v-model="yuanPass" size="mini"></el-input>
-            </div>
-          </div>
-          <div class="flexDiv">
-            <div class="left">新密码:</div>
-            <div class="right">
-              <el-input v-model="newPass" size="mini"></el-input>
-            </div>
-          </div>
-          <div class="flexDiv">
-            <div class="left">确认新密码:</div>
-            <div class="right">
-              <el-input v-model="surePass" size="mini"></el-input>
-            </div>
-          </div>
-          <div class="flexDiv">
-            <div class="sure" @click="changePass">确认</div>
-          </div>
+         <div class="formBox">
+          <el-form
+            :model="paswForm"
+            :rules="pasw_rules"
+            ref="paswForm"
+            label-width="150px"
+            label-position="top"
+            size="small"
+          >
+            <el-form-item label="原密码" prop="oldPass">
+              <el-input
+                v-model="paswForm.oldPass"
+                class="inputWidth"
+              />
+            </el-form-item>
+            <el-form-item label="新密码" prop="newPass">
+              <el-input
+                v-model="paswForm.newPass"
+                maxlength="20"
+                class="inputWidth"
+                show-word-limit
+              />
+            </el-form-item>
+            <el-form-item label="确认密码" prop="surePass">
+              <el-input
+                v-model="paswForm.surePass"
+                class="inputWidth"
+              />
+            </el-form-item>
+          </el-form>
+          <el-button type="primary" size="small" @click="changePass" class="save_but">修改</el-button>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -68,14 +84,40 @@ import { getToken } from "@/utils/auth"; // get token from cookie
 export default {
   data () {
     return {
-      name: "",
-      orgName: "",
-      mobile: "",
-      email: "",
       userId: "",
-      yuanPass: "",
-      newPass: "",
-      surePass: "",
+      paswForm: {
+        oldPass: "",
+        newPass: "",
+        surePass: "",
+      },
+      pasw_rules: {
+        oldPass: [
+          { required: true, message: "请输入用户名", trigger: "change" },
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'change' }
+        ],
+        newPass: { required: true, message: "请输入手机号", trigger: "change" },
+        surePass: [
+          { required: true, message: "请输入邮箱", trigger: "change" },
+          { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] },
+        ]
+      },
+      userForm: {
+        mobile: "",
+        password: "",
+        email: "",
+        username: "",
+      },
+      user_rules: {
+        username: [
+          { required: true, message: "请输入用户名", trigger: "change" },
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'change' }
+        ],
+        mobile: { required: true, message: "请输入手机号", trigger: "change" },
+        email: [
+          { required: true, message: "请输入邮箱", trigger: "change" },
+          { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] },
+        ]
+      },
     };
   },
   created () {
@@ -84,7 +126,7 @@ export default {
     this.userId = userId;
     getuser(userId).then((res) => {
       console.log(res);
-      this.orgName = res.data.orgName;
+      this.userName = res.data.userName;
       this.email = res.data.email;
       this.mobile = res.data.mobile;
     });
@@ -111,32 +153,15 @@ export default {
         }
       });
       getuser(this.userId).then((res) => {
-        this.orgName = res.data.orgName;
+        this.userName = res.data.userName;
         this.email = res.data.email;
         this.mobile = res.data.mobile;
       });
-      // const orgData = {
-      //   name: this.orgName,
-      // };
-      // updateorg(this.userId, orgData).then((res) => {
-      //   if (res.code === 200) {
-      //     this.isLogin = true;
-      //     this.$message({
-      //       message: res.msg,
-      //       type: "success",
-      //     });
-      //   } else {
-      //     this.$message({
-      //       message: res.msg,
-      //       type: "error",
-      //     });
-      //   }
-      // });
     },
     changePass () {
       if (this.newPass === this.surePass) {
         const data = {
-          oldPwd: btoa(this.yuanPass),
+          oldPwd: btoa(this.oldPass),
           newPwd: btoa(this.newPass),
         };
         changePass(data).then((res) => {
@@ -166,42 +191,18 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.user {
-  margin: 10px;
-  background-color: #fff;
-  min-height: calc(100vh - 185px);
-  padding: 24px;
-  .content {
-    // height: 100px;
-    padding-left: 24px;
-    .title {
-    }
-    .flexDiv {
-      display: flex;
-      vertical-align: middle;
+.main {
+  .formBox {
+    margin: 0px 30px;
+    .save_but {
       margin-top: 20px;
-      .left {
-        width: 100px;
-        vertical-align: middle;
-        line-height: 28px;
-        font-size: 14px;
-      }
-      .right {
-        width: 300px;
-        vertical-align: middle;
-      }
-      .sure {
-        width: 65px;
-        height: 32px;
-        background-color: #2c66fb;
-        color: #fff;
-        line-height: 32px;
-        border-radius: 2px;
-        text-align: center;
-        font-size: 14px;
-        margin-left: 100px;
-        cursor: pointer;
-      }
+    }
+  }
+  .main_content {
+    height: 680px;
+    padding: 24px 0px;
+    /deep/ .el-tabs__item {
+      padding-left: 0px;
     }
   }
 }

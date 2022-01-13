@@ -81,7 +81,10 @@ export default {
         username: "",
       },
       re_rules: {
-        username: { required: true, message: "请输入用户名", trigger: "change" },
+        username: [
+          { required: true, message: "请输入用户名", trigger: "change" },
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'change' }
+        ],
         mobile: { required: true, message: "请输入手机号", trigger: "change" },
         email: [
           { required: true, message: "请输入邮箱", trigger: "change" },
