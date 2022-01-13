@@ -28,7 +28,8 @@ public interface ApiMapper extends BaseMapper<Api> {
                                            @Param(value = "developerId") Integer developerId,
                                            @Param("userIdList") List<Integer> userIdList);
 
-    List<Api> queryApiListByAppCode(@Param("appCode") String appCode);
+    List<Api> queryApiListByCondition(@Param("appCode") String appCode,
+                                      @Param("appVersionId") Integer appVersionId);
 
     ApiDto getApiDetail(@Param("apiId") Integer apiId);
 }

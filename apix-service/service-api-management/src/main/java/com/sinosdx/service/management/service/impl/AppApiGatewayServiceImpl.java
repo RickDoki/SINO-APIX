@@ -42,7 +42,7 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
      * @param apiList
      */
     @Override
-    public void updateGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode) {
+    public void updateApiGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode) {
         //        String urlCode = StringUtils.isEmpty(application.getProductId()) ? application.getCode() : application.getProductId();
 
         // 先将所有新增的路由入库（应用方）
@@ -91,19 +91,26 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         // 整合需要新增和更新的网关路由，发布到网关
         for (String gatewayId : addGatewayIdSet) {
             JSONObject gatewayConfig = createGatewayConfig(gatewayId);
-            log.info("create gateway config: " + gatewayConfig.toJSONString());
-            gatewayService.create(gatewayConfig);
+            if (null != gatewayConfig) {
+                log.info("create gateway config: " + gatewayConfig.toJSONString());
+                gatewayService.create(gatewayConfig);
+            }
         }
         for (String gatewayId : updateGatewayIdSet) {
             JSONObject gatewayConfig = createGatewayConfig(gatewayId);
-            log.info("update gateway config: " + gatewayConfig.toJSONString());
-            gatewayService.update(gatewayConfig);
+            if (null != gatewayConfig) {
+                log.info("update gateway config: " + gatewayConfig.toJSONString());
+                gatewayService.update(gatewayConfig);
+            }
         }
     }
 
     private JSONObject createGatewayConfig(String gatewayId) {
         List<ApplicationApiGateway> gatewayList = appApiGatewayMapper.selectList(new QueryWrapper<ApplicationApiGateway>()
                 .eq("gateway_id", gatewayId));
+        if (CollectionUtils.isEmpty(gatewayList)) {
+            return null;
+        }
         JSONObject gatewayConfig = new JSONObject();
         gatewayConfig.put("id", gatewayId);
         gatewayConfig.put("uri", gatewayList.get(0).getDomain());
@@ -179,5 +186,46 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         gatewayConfig.put("filters", filterList);
 
         return gatewayConfig;
+    }
+
+    /**
+     * 删除已发布的api网关
+     *
+     * @param applicationId
+     * @param apiList       此处api列表中的api应没有其他服务和服务版本绑定
+     * @param appClientCode
+     */
+    @Override
+    public void deleteApiGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode) {
+        Set<String> updateGatewayIdSet = new HashSet<>();
+        for (Api api : apiList) {
+            List<ApplicationApiGateway> gatewayList = appApiGatewayMapper.queryListByCondition(null, applicationId, api.getId(), appClientCode);
+            String gatewayId = gatewayList.get(0).getGatewayId();
+            for (ApplicationApiGateway apiGateway : gatewayList) {
+                appApiGatewayMapper.deleteById(apiGateway);
+            }
+
+            // 查询当前gatewayId下是否只有一个api
+            List<ApplicationApiGateway> oldGatewayList = appApiGatewayMapper.queryListByCondition(gatewayId, null, null, null);
+            int count = oldGatewayList.size();
+
+            // 只有一个api，删除整个gatewayId下的路由
+            if (count == 0) {
+                gatewayService.delete(gatewayId);
+            }
+            // 不止一个api，需要对路由做更新
+            else {
+                updateGatewayIdSet.add(gatewayId);
+            }
+        }
+
+        // 更新路由
+        for (String gatewayId : updateGatewayIdSet) {
+            JSONObject gatewayConfig = this.createGatewayConfig(gatewayId);
+            if (null != gatewayConfig) {
+                gatewayService.update(gatewayConfig);
+            }
+        }
+
     }
 }

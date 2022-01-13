@@ -19,6 +19,7 @@ import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.sentinel.SentinelProvider;
+import com.sinosdx.service.management.service.ApiService;
 import com.sinosdx.service.management.service.AppApiGatewayService;
 import com.sinosdx.service.management.service.AppPluginService;
 import com.sinosdx.service.management.service.ApplicationService;
@@ -101,6 +102,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Value("${domain.gateway:http://47.103.109.225:30000/api}")
     private String gatewayDomain;
+
+    @Autowired
+    private ApiService apiService;
 
     /**
      * 创建新应用
@@ -373,10 +377,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         oldApp.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
         applicationMapper.updateById(oldApp);
 
-        // 如果停用应用，需要注销对应客户端token
-        if (null != applicationVo.getIsPublished() && Constants.APP_STATUS_IS_NOT_PUBLISHED.equals(applicationVo.getIsPublished())) {
-            revokeClientToken(oldApp.getCode());
-        }
+//        // 如果停用应用，需要注销对应客户端token
+//        if (null != applicationVo.getIsPublished() && Constants.APP_STATUS_IS_NOT_PUBLISHED.equals(applicationVo.getIsPublished())) {
+//            revokeClientToken(oldApp.getCode());
+//        }
 
         return R.successDef(oldApp, msg);
     }
@@ -657,10 +661,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         appPluginService.processPlugin(plugins, sysClient);
 
         // 查询服务所有关联api
-        List<Api> apiList = apiMapper.queryApiListByAppCode(subscribedApp.getCode());
+        List<Api> apiList = apiMapper.queryApiListByCondition(subscribedApp.getCode(), null);
 
         // 发布到网关
-        appApiGatewayService.updateGatewayConfig(subscribedApp.getId(), apiList, appClientCode);
+        appApiGatewayService.updateApiGatewayConfig(subscribedApp.getId(), apiList, appClientCode);
 
         return R.success(applicationSubscribe);
     }
@@ -686,6 +690,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         // 进行解绑
         // 1.删除 applicationSubscribe
+        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
+                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
+                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
+                .eq(ApplicationSubscribe::getDelFlag, 0));
+        String appClientCode = appSubscribes.get(0).getAppClientCode();
         applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
                 .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
@@ -708,7 +718,10 @@ public class ApplicationServiceImpl implements ApplicationService {
             sentinelProvider.addOrRefreshApiGroup(subscribedApp.getId() + "");
         }
 
-        // 3.删除对应路由 TODO
+        // 3.删除对应路由
+        List<Api> apiList = apiMapper.queryApiListByCondition(subscribedApp.getCode(), null);
+        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+        appApiGatewayService.deleteApiGatewayConfig(subscribedApp.getId(), orphanApiList, appClientCode);
 
         return R.success();
     }
@@ -1244,7 +1257,10 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!CollectionUtils.isEmpty(applicationPlugins)) {
                 sentinelProvider.addOrRefreshApiGroup(applicationPlugins.get(0).getId() + "");
             }
-            // TODO 是否需要删除路由？
+            // 删除api路由
+            List<Api> apiList = apiMapper.queryApiListByCondition(applicationVersion.getAppCode(), appVersionId);
+            List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+            appApiGatewayService.deleteApiGatewayConfig(applicationVersion.getAppId(), orphanApiList, null);
 
         }
         return R.success();

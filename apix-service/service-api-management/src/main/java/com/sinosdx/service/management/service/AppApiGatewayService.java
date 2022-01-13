@@ -15,6 +15,16 @@ public interface AppApiGatewayService {
      *
      * @param applicationId
      * @param apiList
+     * @param appClientCode
      */
-    void updateGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode);
+    void updateApiGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode);
+
+    /**
+     * 删除已发布的api网关
+     *
+     * @param applicationId
+     * @param apiList
+     * @param appClientCode
+     */
+    void deleteApiGatewayConfig(Integer applicationId, List<Api> apiList, String appClientCode);
 }
