@@ -6,7 +6,7 @@
     :before-close="handleClose"
     size="50%"
   >
-  <span>查看</span>
+  <span>查看详情</span>
   </el-drawer>
 </template>
 
