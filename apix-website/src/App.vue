@@ -29,5 +29,8 @@ export default {
 .main .el-card__body {
   padding: 24px;
 }
+.vxe-select--panel  {
+  z-index: 9997 !important;
+}
 </style>
 

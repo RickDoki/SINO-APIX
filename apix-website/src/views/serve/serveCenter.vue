@@ -55,8 +55,12 @@
         </el-table-column>
         <el-table-column min-width="250px" label="版本">
           <template slot-scope="scope">
-            <div v-for="(item,index) in scope.row.appVersions" :key=index class="version">
-              {{item}}
+            <div
+              v-for="(item, index) in scope.row.appVersions"
+              :key="index"
+              class="version"
+            >
+              {{ item }}
             </div>
           </template>
         </el-table-column>
@@ -98,7 +102,7 @@ import { serveList, serveupdate, serveDelete } from "@/api/AboutServe.js";
 import { getToken } from "@/utils/auth"; // get token from cookie
 
 export default {
-  data () {
+  data() {
     return {
       table: [
         {
@@ -113,13 +117,13 @@ export default {
       loading: false,
     };
   },
-  created () {
+  created() {
     this.developerId = getToken("userId_api");
     this.getServeList();
   },
   methods: {
     // 获取列表
-    getServeList () {
+    getServeList() {
       this.loading = true;
       const query =
         "developerId=" +
@@ -143,25 +147,25 @@ export default {
       });
     },
     // 页面跳转
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val;
       this.getServeList();
     },
     // 查看详情
-    goserveDteail (e) {
+    goserveDteail(e) {
       this.$router.push({ path: "/serve/serveDetail/" + e.row.appCode });
     },
     //创建新服务
-    goCreatdServe () {
+    goCreatdServe() {
       this.$router.push({ path: "/serve/create" });
     },
     // 搜索
-    nameSerach () {
+    nameSerach() {
       this.currentPage = 1;
       this.getServeList();
     },
     // 下架服务
-    undercarriage (e) {
+    undercarriage(e) {
       const query = {
         isPublished: "60001",
       };
@@ -172,7 +176,7 @@ export default {
       });
     },
     // 发布到门户
-    Published (e) {
+    Published(e) {
       const query = {
         isPublished: "60005",
       };
@@ -183,11 +187,17 @@ export default {
       });
     },
     // 删除
-    del (e) {
-      serveDelete(e.appCode).then((res) => {
-        if (res.code === 200) {
-          this.getServeList();
-        }
+    del(e) {
+      this.$confirm("确认删除服务：" + e.appName + ", 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        serveDelete(e.appCode).then((res) => {
+          if (res.code === 200) {
+            this.getServeList();
+          }
+        });
       });
     },
   },
@@ -214,7 +224,7 @@ export default {
 .version {
   display: inline-block;
   padding: 0px 5px;
-  color: #2650FF;
+  color: #2650ff;
   margin: 2px 5px 0px 0px;
   background-color: #d4dcff;
   border-radius: 3px;

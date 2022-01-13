@@ -163,7 +163,7 @@
           </el-table-column>
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)"
+              <el-button type="text" @click="getPluginMessage(scope.row)"
                 >查看</el-button
               >
               <span class="handle" v-if="goConfig(scope.row.pluginType)"
@@ -266,6 +266,10 @@
       </div>
     </div>
     <router-view v-if="routerView"></router-view>
+    <plugins-message
+      :drawerProps="drawerIsshow"
+      @showChange="showChange"
+    ></plugins-message>
   </div>
 </template>
 
@@ -283,9 +287,11 @@ import {
   close,
 } from "@/api/AboutServe.js";
 import jsonView from "./json-view/index.vue";
+import pluginsMessage from "./plugins/pluginsMessage.vue";
 export default {
   components: {
     jsonView,
+    pluginsMessage,
   },
   filters: {
     plugName: function (value) {
@@ -312,6 +318,7 @@ export default {
   },
   data() {
     return {
+      drawerIsshow: false,
       routerView: false,
       drawer: false,
       historylist: {},
@@ -350,6 +357,12 @@ export default {
     }
   },
   methods: {
+    showChange() {
+      this.drawerIsshow = false;
+    },
+    getPluginMessage() {
+      this.drawerIsshow = true;
+    },
     //操作抽屉
     handleClose(done) {
       done();
@@ -428,10 +441,16 @@ export default {
     },
     // 删除服务版本
     delversion(e) {
-      delApiversion(e.id).then((res) => {
-        if (res.code === 200) {
-          this.getServeDeatil();
-        }
+      this.$confirm("确认删除版本：" + e.version + ", 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        delApiversion(e.id).then((res) => {
+          if (res.code === 200) {
+            this.getServeDeatil();
+          }
+        });
       });
     },
     // 请求日志

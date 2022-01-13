@@ -6,7 +6,7 @@
     :before-close="handleClose"
     size="80%"
   >
-    <div class="main" style="margin-left:30px;width:95%">
+    <div class="main" style="margin-left: 30px; width: 95%">
       <div class="top">
         <elx-steps-horizontal
           v-model="active"
@@ -174,261 +174,261 @@
         </div>
         <div v-if="active === 1" class="formBox">
           <div>
-          <el-form
-            ref="ruleForm"
-            :model="ruleForm"
-            :rules="rulesapi"
-            label-width="150px"
-            label-position="top"
-            size="small"
-          >
-            <el-form-item label="API名称" prop="apiName">
-              <el-input
-                v-model="ruleForm.apiName"
-                maxlength="20"
-                class="inputWidth"
-                show-word-limit
-              />
-            </el-form-item>
-            <el-form-item label="API路径" prop="apiUrl">
-              <el-input
-                v-model="ruleForm.apiUrl"
-                class="inputWidth"
-                maxlength="500"
-                show-word-limit
-              />
-            </el-form-item>
-            <el-form-item label="请求方式" prop="requestMethod">
-              <el-select
-                v-model="ruleForm.requestMethod"
-                class="inputWidth"
-                placeholder=""
-              >
-                <el-option label="GET" value="GET" />
-                <el-option label="POST" value="POST" />
-                <el-option label="PUT" value="PUT" />
-                <el-option label="DELETE" value="DELETE" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="API前置路径" prop="prefixPath">
-              <el-input
-                v-model="ruleForm.prefixPath"
-                maxlength="500"
-                class="inputWidth"
-                show-word-limit
-              />
-            </el-form-item>
-            <el-form-item label="是否为中台接口">
-              <el-select
-                v-model="ruleForm.isInternal"
-                class="inputWidth"
-                placeholder=""
-              >
-                <el-option label="是" value="1" />
-                <el-option label="否" value="0" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="API描述">
-              <el-input
-                v-model="ruleForm.description"
-                type="textarea"
-                class="inputWidth"
-                :autosize="{ minRows: 8, maxRows: 15 }"
-                maxlength="500"
-                show-word-limit
-              />
-            </el-form-item>
-            <el-form-item label="请求参数">
-              <div @contextmenu="showMenu" class="content-boder">
-                <vxe-table
-                  :header-cell-style="{
-                    backgroundColor: '#fff',
-                    color: '#494E6A',
-                  }"
-                  ref="xTable"
-                  border="none"
-                  max-height="280"
-                  show-overflow
-                  stripe
-                  :row-config="{ isCurrent: true, isHover: true }"
-                  :data="requestParams"
-                  :edit-config="{
-                    trigger: 'click',
-                    mode: 'cell',
-                    showIcon: false,
-                  }"
+            <el-form
+              ref="ruleForm"
+              :model="ruleForm"
+              :rules="rulesapi"
+              label-width="150px"
+              label-position="top"
+              size="small"
+            >
+              <el-form-item label="API名称" prop="apiName">
+                <el-input
+                  v-model="ruleForm.apiName"
+                  maxlength="20"
+                  class="inputWidth"
+                  show-word-limit
+                />
+              </el-form-item>
+              <el-form-item label="API路径" prop="apiUrl">
+                <el-input
+                  v-model="ruleForm.apiUrl"
+                  class="inputWidth"
+                  maxlength="500"
+                  show-word-limit
+                />
+              </el-form-item>
+              <el-form-item label="请求方式" prop="requestMethod">
+                <el-select
+                  v-model="ruleForm.requestMethod"
+                  class="inputWidth"
+                  placeholder=""
                 >
-                  <vxe-table-column type="checkbox" width="60" />
-                  <vxe-table-column
-                    field="parame"
-                    title="参数"
-                    :edit-render="{ name: 'input' }"
-                  />
-                  <vxe-table-column
-                    field="type"
-                    title="类型"
-                    :edit-render="{
-                      name: '$select',
-                      options: [
-                        { value: 'Integer', label: 'Num' },
-                        { value: 'String', label: 'String' },
-                        { value: 'Object', label: 'Object' },
-                        { value: 'Float', label: 'Float' },
-                        { value: 'List', label: 'List' },
-                        { value: 'Long', label: 'Long' },
-                        { value: 'Boolean', label: 'Boolean' },
-                        { value: 'Integer', label: 'Integer' },
-                      ],
-                    }"
-                  />
-                  <vxe-table-column
-                    field="isHaveto"
-                    title="是否必选"
-                    :edit-render="{
-                      name: '$select',
-                      options: [
-                        { value: '是', label: '是' },
-                        { value: '否', label: '否' },
-                      ],
-                    }"
-                  />
-                  <vxe-table-column
-                    field="describe"
-                    title="描述"
-                    :edit-render="{ name: 'input' }"
-                  />
-                  <vxe-table-column
-                    field="default"
-                    title="默认值"
-                    :edit-render="{ name: 'input' }"
-                  />
-                </vxe-table>
-                <div class="table-button">
-                  <el-button
-                    plain
-                    type="primary"
-                    size="mini"
-                    @click="savedata"
-                    class="add-but"
-                  >
-                    新增
-                  </el-button>
-                  <el-button
-                    plain
-                    type="danger"
-                    size="mini"
-                    @click="newdata"
-                    class="del-but"
-                  >
-                    删除
-                  </el-button>
-                </div>
-              </div>
-            </el-form-item>
-            <el-form-item label="请求示例">
-              <prism-editor
-                v-model="requestExample"
-                class="my-editor height-300"
-                :highlight="highlighter"
-                :line-numbers="lineNumbers"
-              />
-            </el-form-item>
-            <el-form-item label="返回参数">
-              <div @contextmenu="showMenu" class="content-boder">
-                <vxe-table
-                  :header-cell-style="{
-                    backgroundColor: '#fff',
-                    color: '#494E6A',
-                  }"
-                  ref="xTableres"
-                  border="none"
-                  max-height="280"
-                  show-overflow
-                  stripe
-                  :row-config="{ isCurrent: true, isHover: true }"
-                  :data="responseParams"
-                  :edit-config="{
-                    trigger: 'click',
-                    mode: 'cell',
-                    showIcon: false,
-                  }"
+                  <el-option label="GET" value="GET" />
+                  <el-option label="POST" value="POST" />
+                  <el-option label="PUT" value="PUT" />
+                  <el-option label="DELETE" value="DELETE" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="API前置路径" prop="prefixPath">
+                <el-input
+                  v-model="ruleForm.prefixPath"
+                  maxlength="500"
+                  class="inputWidth"
+                  show-word-limit
+                />
+              </el-form-item>
+              <el-form-item label="是否为中台接口">
+                <el-select
+                  v-model="ruleForm.isInternal"
+                  class="inputWidth"
+                  placeholder=""
                 >
-                  <vxe-table-column type="checkbox" width="60" />
-                  <vxe-table-column
-                    field="parame"
-                    title="参数"
-                    :edit-render="{ name: 'input' }"
-                  />
-                  <vxe-table-column
-                    field="type"
-                    title="类型"
-                    :edit-render="{
-                      name: '$select',
-                      options: [
-                        { value: 'Integer', label: 'Num' },
-                        { value: 'String', label: 'String' },
-                        { value: 'Object', label: 'Object' },
-                        { value: 'Float', label: 'Float' },
-                        { value: 'List', label: 'List' },
-                        { value: 'Long', label: 'Long' },
-                        { value: 'Boolean', label: 'Boolean' },
-                        { value: 'Integer', label: 'Integer' },
-                      ],
+                  <el-option label="是" value="1" />
+                  <el-option label="否" value="0" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="API描述">
+                <el-input
+                  v-model="ruleForm.description"
+                  type="textarea"
+                  class="inputWidth"
+                  :autosize="{ minRows: 8, maxRows: 15 }"
+                  maxlength="500"
+                  show-word-limit
+                />
+              </el-form-item>
+              <el-form-item label="请求参数">
+                <div @contextmenu="showMenu" class="content-boder">
+                  <vxe-table
+                    :header-cell-style="{
+                      backgroundColor: '#fff',
+                      color: '#494E6A',
                     }"
-                  />
-                  <vxe-table-column
-                    field="isHaveto"
-                    title="是否必选"
-                    :edit-render="{
-                      name: '$select',
-                      options: [
-                        { value: '是', label: '是' },
-                        { value: '否', label: '否' },
-                      ],
+                    ref="xTable"
+                    border="none"
+                    max-height="280"
+                    show-overflow
+                    stripe
+                    :row-config="{ isCurrent: true, isHover: true }"
+                    :data="requestParams"
+                    :edit-config="{
+                      trigger: 'click',
+                      mode: 'cell',
+                      showIcon: false,
                     }"
-                  />
-                  <vxe-table-column
-                    field="describe"
-                    title="描述"
-                    :edit-render="{ name: 'input' }"
-                  />
-                  <vxe-table-column
-                    field="default"
-                    title="默认值"
-                    :edit-render="{ name: 'input' }"
-                  />
-                </vxe-table>
-                <div class="table-button">
-                  <el-button
-                    plain
-                    type="primary"
-                    size="mini"
-                    @click="savedatares"
-                    class="add-but"
                   >
-                    新增
-                  </el-button>
-                  <el-button
-                    plain
-                    type="danger"
-                    size="mini"
-                    @click="newdatares"
-                    class="del-but"
-                  >
-                    删除
-                  </el-button>
+                    <vxe-table-column type="checkbox" width="60" />
+                    <vxe-table-column
+                      field="parame"
+                      title="参数"
+                      :edit-render="{ name: 'input' }"
+                    />
+                    <vxe-table-column
+                      field="type"
+                      title="类型"
+                      :edit-render="{
+                        name: '$select',
+                        options: [
+                          { value: 'Integer', label: 'Num' },
+                          { value: 'String', label: 'String' },
+                          { value: 'Object', label: 'Object' },
+                          { value: 'Float', label: 'Float' },
+                          { value: 'List', label: 'List' },
+                          { value: 'Long', label: 'Long' },
+                          { value: 'Boolean', label: 'Boolean' },
+                          { value: 'Integer', label: 'Integer' },
+                        ],
+                      }"
+                    />
+                    <vxe-table-column
+                      field="isHaveto"
+                      title="是否必选"
+                      :edit-render="{
+                        name: '$select',
+                        options: [
+                          { value: '是', label: '是' },
+                          { value: '否', label: '否' },
+                        ],
+                      }"
+                    />
+                    <vxe-table-column
+                      field="describe"
+                      title="描述"
+                      :edit-render="{ name: 'input' }"
+                    />
+                    <vxe-table-column
+                      field="default"
+                      title="默认值"
+                      :edit-render="{ name: 'input' }"
+                    />
+                  </vxe-table>
+                  <div class="table-button">
+                    <el-button
+                      plain
+                      type="primary"
+                      size="mini"
+                      @click="savedata"
+                      class="add-but"
+                    >
+                      新增
+                    </el-button>
+                    <el-button
+                      plain
+                      type="danger"
+                      size="mini"
+                      @click="newdata"
+                      class="del-but"
+                    >
+                      删除
+                    </el-button>
+                  </div>
                 </div>
-              </div>
-            </el-form-item>
-            <el-form-item label="返回示例">
-              <prism-editor
-                v-model="responseExample"
-                class="my-editor height-300"
-                :highlight="highlighter"
-                :line-numbers="lineNumbers"
-              />
-            </el-form-item>
-          </el-form>
+              </el-form-item>
+              <el-form-item label="请求示例">
+                <prism-editor
+                  v-model="requestExample"
+                  class="my-editor height-300"
+                  :highlight="highlighter"
+                  :line-numbers="lineNumbers"
+                />
+              </el-form-item>
+              <el-form-item label="返回参数">
+                <div @contextmenu="showMenu" class="content-boder">
+                  <vxe-table
+                    :header-cell-style="{
+                      backgroundColor: '#fff',
+                      color: '#494E6A',
+                    }"
+                    ref="xTableres"
+                    border="none"
+                    max-height="280"
+                    show-overflow
+                    stripe
+                    :row-config="{ isCurrent: true, isHover: true }"
+                    :data="responseParams"
+                    :edit-config="{
+                      trigger: 'click',
+                      mode: 'cell',
+                      showIcon: false,
+                    }"
+                  >
+                    <vxe-table-column type="checkbox" width="60" />
+                    <vxe-table-column
+                      field="parame"
+                      title="参数"
+                      :edit-render="{ name: 'input' }"
+                    />
+                    <vxe-table-column
+                      field="type"
+                      title="类型"
+                      :edit-render="{
+                        name: '$select',
+                        options: [
+                          { value: 'Integer', label: 'Num' },
+                          { value: 'String', label: 'String' },
+                          { value: 'Object', label: 'Object' },
+                          { value: 'Float', label: 'Float' },
+                          { value: 'List', label: 'List' },
+                          { value: 'Long', label: 'Long' },
+                          { value: 'Boolean', label: 'Boolean' },
+                          { value: 'Integer', label: 'Integer' },
+                        ],
+                      }"
+                    />
+                    <vxe-table-column
+                      field="isHaveto"
+                      title="是否必选"
+                      :edit-render="{
+                        name: '$select',
+                        options: [
+                          { value: '是', label: '是' },
+                          { value: '否', label: '否' },
+                        ],
+                      }"
+                    />
+                    <vxe-table-column
+                      field="describe"
+                      title="描述"
+                      :edit-render="{ name: 'input' }"
+                    />
+                    <vxe-table-column
+                      field="default"
+                      title="默认值"
+                      :edit-render="{ name: 'input' }"
+                    />
+                  </vxe-table>
+                  <div class="table-button">
+                    <el-button
+                      plain
+                      type="primary"
+                      size="mini"
+                      @click="savedatares"
+                      class="add-but"
+                    >
+                      新增
+                    </el-button>
+                    <el-button
+                      plain
+                      type="danger"
+                      size="mini"
+                      @click="newdatares"
+                      class="del-but"
+                    >
+                      删除
+                    </el-button>
+                  </div>
+                </div>
+              </el-form-item>
+              <el-form-item label="返回示例">
+                <prism-editor
+                  v-model="responseExample"
+                  class="my-editor height-300"
+                  :highlight="highlighter"
+                  :line-numbers="lineNumbers"
+                />
+              </el-form-item>
+            </el-form>
           </div>
         </div>
       </div>
@@ -637,7 +637,7 @@ export default {
     // 返回列表
     backList() {
       // this.$router.push("/api/list");
-      this.$emit('showChange')
+      this.$emit("showChange");
     },
     addSure(formName) {
       console.log(JSON.stringify(this.$refs.xTable.afterFullData));
@@ -673,7 +673,7 @@ export default {
                 type: "success",
               });
               // this.$router.push("/api/list");
-              this.$emit('showChange')
+              this.$emit("showChange");
             } else {
               this.ruleForm = {};
               this.$message({

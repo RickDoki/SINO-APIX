@@ -37,8 +37,9 @@
         </el-table-column>
         <el-table-column prop="appCode" label="启用状态">
           <template slot-scope="scope">
-            <div>
-              <el-switch
+            <div :class="scope.row.enabled === 0 ? 'noenable' : 'enabled'">
+              {{ scope.row.enabled === 0 ? "未启用" : "已启用" }}
+              <!-- <el-switch
                 @change="enabledChange(scope.row)"
                 v-model="scope.row.enabled"
                 active-color="#6EE4A5"
@@ -46,21 +47,14 @@
                 :active-value="1"
                 :inactive-value="0"
               >
-              </el-switch>
+              </el-switch> -->
             </div>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180px">
           <template slot-scope="scope">
-            <el-button type="text" @click="getMessage(scope.row)"
+            <el-button type="text" @click="getPluginMessage(scope.row)"
               >查看</el-button
-            >
-            <span class="handle" v-if="goConfig(scope.row.pluginType)">|</span>
-            <el-button
-              type="text"
-              v-if="goConfig(scope.row.pluginType)"
-              @click="pluginConfig(scope.row)"
-              >配置</el-button
             >
           </template>
         </el-table-column>
@@ -134,9 +128,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="getlogs(scope.row)"
-              >查看</el-button
-            >
+            <el-button type="text" @click="getlogs(scope.row)">查看</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -149,15 +141,22 @@
         @current-change="handleCurrentChangeError"
       />
     </div>
+    <plugins-message
+      :drawerProps="drawerIsshow"
+      @showChange="showChange"
+    ></plugins-message>
   </div>
 </template>
 
 <script>
 import { serveDetail, log, putPlugin, open, close } from "@/api/AboutServe.js";
 import jsonView from "./../json-view/index.vue";
+import pluginsMessage from "./../plugins/pluginsMessage.vue";
+
 export default {
   components: {
     jsonView,
+    pluginsMessage,
   },
   filters: {
     plugName: function (value) {
@@ -184,6 +183,7 @@ export default {
   },
   data() {
     return {
+      drawerIsshow: false,
       historylist: {},
       direction: "rtl",
       drawer: false,
@@ -208,6 +208,12 @@ export default {
     this.getLog("error");
   },
   methods: {
+    getPluginMessage() {
+      this.drawerIsshow = true;
+    },
+    showChange() {
+      this.drawerIsshow = false;
+    },
     //操作抽屉
     handleClose(done) {
       done();
@@ -388,10 +394,30 @@ export default {
 .auto::-webkit-scrollbar {
   display: none;
 }
- ::v-deep .el-drawer__body::-webkit-scrollbar {
+::v-deep .el-drawer__body::-webkit-scrollbar {
   display: none;
 }
- ::v-deep .el-drawer__body {
-   margin-right: 20px;
- }
+::v-deep .el-drawer__body {
+  margin-right: 20px;
+}
+.noenable {
+  width: 58px;
+  height: 20px;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  background-color: #e8eefe;
+  color: #888;
+  border-radius: 4px 4px 4px 4px;
+}
+.enabled {
+  width: 58px;
+  height: 20px;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  background-color: #e8eefe;
+  border-radius: 4px 4px 4px 4px;
+  color: #2650ff;
+}
 </style>
