@@ -16,7 +16,7 @@ import java.util.List;
  * @Description
  */
 @RestController
-@RequestMapping("/sentinel")
+@RequestMapping("/app/rateLimit")
 @Slf4j
 public class SentinelController {
 
