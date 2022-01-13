@@ -103,6 +103,9 @@ export default {
     };
   },
   methods: {
+    resetForm() {
+      this.$router.go(-1);
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -116,8 +119,8 @@ export default {
           };
           createServe(query).then((res) => {
             // console.log(res);
-            if(res.code === 200) {
-              this.$router.push('/serve/center')
+            if (res.code === 200) {
+              this.$router.push("/serve/center");
             }
           });
         } else {

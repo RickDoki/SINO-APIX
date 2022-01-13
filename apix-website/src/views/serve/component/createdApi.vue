@@ -6,7 +6,7 @@
     :before-close="handleClose"
     size="80%"
   >
-    <div class="main">
+    <div class="main" style="margin-left:30px;width:95%">
       <div class="top">
         <elx-steps-horizontal
           v-model="active"
