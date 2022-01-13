@@ -3,8 +3,8 @@
     <navbar></navbar>
     <div style="min-height: calc(100vh - 238px - 60px)">
       <div class="apiMain_content">
-        <div class="welcome">{{pageInfo.title}}</div>
-        <div class="all_services">{{pageInfo.description}}</div>
+        <div class="welcome">{{ pageInfo.title }}</div>
+        <div class="all_services">{{ pageInfo.description }}</div>
         <div class="input-with-select">
           <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
           <el-button type="primary" slot="append" @click="search">搜一下</el-button>
@@ -61,6 +61,9 @@
             </div>
           </div>
         </transition>
+        <transition name="el-fade-in-linear" v-if="serviceList.length===0">
+          <el-empty description="暂无开放服务"></el-empty>
+        </transition>
       </div>
     </div>
     <div class="service_footer">
@@ -77,14 +80,14 @@
 </template>
 
 <script>
-import { getDoorConfig, updateDoorConfig } from "@/api/user"
-import { openList, subscribe } from "@/api/AboutApp";
+import {getDoorConfig, updateDoorConfig} from "@/api/user"
+import {openList, subscribe} from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
-import { getToken } from "@/utils/auth";
+import {getToken} from "@/utils/auth";
 
 export default {
-  components: { navbar },
-  data () {
+  components: {navbar},
+  data() {
     return {
       searchKey: "",
       items: [],
@@ -93,23 +96,23 @@ export default {
       pageInfo: {}
     };
   },
-  created () {
+  created() {
     this.search()
     this.getPageInfo()
   },
   methods: {
-    getPageInfo () {
+    getPageInfo() {
       getDoorConfig().then((res) => {
         this.pageInfo = res.data
       });
     },
-    search () {
+    search() {
       const query = "?market=true&appName=" + this.searchKey;
       openList(query).then((res) => {
         this.serviceList = res.data.appList
       });
     },
-    goDetail (item) {
+    goDetail(item) {
       this.$router.push({
         name: 'openServeDetail',
         query: {
@@ -117,7 +120,7 @@ export default {
         }
       })
     },
-    subscribe (item) {
+    subscribe(item) {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + item.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
