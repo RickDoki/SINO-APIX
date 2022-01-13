@@ -138,6 +138,7 @@ export default {
     showChange() {
       // console.log('change')
       this.drawerIsshow = false;
+      this.getApiList();
     },
   },
 };

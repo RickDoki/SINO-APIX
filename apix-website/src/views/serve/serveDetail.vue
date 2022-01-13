@@ -352,7 +352,7 @@ export default {
   methods: {
     //操作抽屉
     handleClose(done) {
-      done()
+      done();
     },
     getlogs(e) {
       // console.log('查看日志')
@@ -627,5 +627,11 @@ export default {
   .table-tilelong {
     line-height: 30px;
   }
+}
+::v-deep .el-drawer__body::-webkit-scrollbar {
+  display: none;
+}
+::v-deep .el-drawer__body {
+  margin-right: 20px;
 }
 </style>

@@ -173,6 +173,7 @@
           </el-form>
         </div>
         <div v-if="active === 1" class="formBox">
+          <div>
           <el-form
             ref="ruleForm"
             :model="ruleForm"
@@ -209,14 +210,6 @@
                 <el-option label="DELETE" value="DELETE" />
               </el-select>
             </el-form-item>
-            <!-- <el-form-item label="API版本号" prop="apiVersion">
-            <el-input
-              v-model="ruleForm.apiVersion"
-              maxlength="20"
-              class="inputWidth"
-              show-word-limit
-            />
-          </el-form-item> -->
             <el-form-item label="API前置路径" prop="prefixPath">
               <el-input
                 v-model="ruleForm.prefixPath"
@@ -436,6 +429,7 @@
               />
             </el-form-item>
           </el-form>
+          </div>
         </div>
       </div>
       <div class="bottom">
@@ -642,7 +636,8 @@ export default {
     },
     // 返回列表
     backList() {
-      this.$router.push("/api/list");
+      // this.$router.push("/api/list");
+      this.$emit('showChange')
     },
     addSure(formName) {
       console.log(JSON.stringify(this.$refs.xTable.afterFullData));
@@ -677,7 +672,8 @@ export default {
                 message: res.msg,
                 type: "success",
               });
-              this.$router.push("/api/list");
+              // this.$router.push("/api/list");
+              this.$emit('showChange')
             } else {
               this.ruleForm = {};
               this.$message({

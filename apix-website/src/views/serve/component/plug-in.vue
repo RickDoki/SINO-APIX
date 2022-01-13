@@ -1,5 +1,19 @@
 <template>
   <div class="plug-in auto">
+    <el-drawer
+      title="日志详情"
+      :visible.sync="drawer"
+      :direction="direction"
+      :before-close="handleClose"
+      size="50%"
+    >
+      <json-view
+        :data="this.historylist"
+        theme="index"
+        :deep="2"
+        :fontSize="12"
+      />
+    </el-drawer>
     <div class="table_box mode-margin">
       <p>已添加插件</p>
       <el-table
@@ -80,9 +94,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="getMessage(scope.row)"
-              >查看</el-button
-            >
+            <el-button type="text" @click="getlogs(scope.row)">查看</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -122,7 +134,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="getMessage(scope.row)"
+            <el-button type="text" @click="getlogs(scope.row)"
               >查看</el-button
             >
           </template>
@@ -142,7 +154,11 @@
 
 <script>
 import { serveDetail, log, putPlugin, open, close } from "@/api/AboutServe.js";
+import jsonView from "./../json-view/index.vue";
 export default {
+  components: {
+    jsonView,
+  },
   filters: {
     plugName: function (value) {
       const nameFiter = {
@@ -168,6 +184,9 @@ export default {
   },
   data() {
     return {
+      historylist: {},
+      direction: "rtl",
+      drawer: false,
       ErrorTable: [],
       pluginsTable: [],
       appCode: "",
@@ -189,6 +208,15 @@ export default {
     this.getLog("error");
   },
   methods: {
+    //操作抽屉
+    handleClose(done) {
+      done();
+    },
+    //
+    getlogs(e) {
+      this.drawer = true;
+      this.historylist = e;
+    },
     // 通过appcode查询详情
     getServeDeatil() {
       this.versionLoading = true;
@@ -360,4 +388,10 @@ export default {
 .auto::-webkit-scrollbar {
   display: none;
 }
+ ::v-deep .el-drawer__body::-webkit-scrollbar {
+  display: none;
+}
+ ::v-deep .el-drawer__body {
+   margin-right: 20px;
+ }
 </style>
