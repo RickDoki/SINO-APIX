@@ -83,4 +83,12 @@
              JOIN sys_org so ON so.id = suo.org_id
         WHERE su.del_flag = 0 AND su.id = #{userId}
     </select>
+
+    <select id="queryByClientId" resultType="com.sinosdx.service.user.dao.entity.SysUser">
+        SELECT su.* FROM sys_user su
+                             JOIN sys_client sc ON sc.resource_id = su.id
+        <where>
+            sc.resource_type = 'user' AND su.del_flag = 0 and sc.del_flag = 0 AND sc.id = #{sysClientId}
+        </where>
+    </select>
 </mapper>

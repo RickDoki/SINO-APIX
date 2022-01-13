@@ -19,7 +19,6 @@ import com.sinosdx.service.management.utils.ThreadContext;
 import com.sinosdx.starter.redis.service.RedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,10 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.TimeZone;
+import java.util.UUID;
 
 /**
  * @author wendy
@@ -132,7 +134,7 @@ public class AppPluginServiceImpl implements AppPluginService {
                 .eq(ApplicationPlugin::getDelFlag, 0)
                 .last("LIMIT 1")
         );
-        List<String> type = Lists.newArrayList(PluginTypeEnum.OAUTH2.getType(),PluginTypeEnum.JWT.getType());
+        List<String> type = Lists.newArrayList(PluginTypeEnum.OAUTH2.getType(), PluginTypeEnum.JWT.getType());
         if (Objects.nonNull(applicationPlugin) && type.contains(applicationPlugin.getPluginType())) {
             List<ApplicationPluginClient> applicationPluginClients = applicationPluginClientMapper.selectList(new LambdaQueryWrapper<ApplicationPluginClient>()
                     .eq(ApplicationPluginClient::getAppPluginId, applicationPlugin.getId())
@@ -173,6 +175,14 @@ public class AppPluginServiceImpl implements AppPluginService {
     @Override
     public void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient) {
         for (ApplicationPlugin appPlugin : appPlugins) {
+            // 判断用户是否之前已订阅，生成过插件数据
+            ApplicationPluginClient appPluginClient = applicationPluginClientMapper.selectOne(new LambdaQueryWrapper<ApplicationPluginClient>()
+                    .eq(ApplicationPluginClient::getSysClientId, sysClient.getId())
+                    .eq(ApplicationPluginClient::getAppPluginId, appPlugin.getId()));
+            if (null != appPluginClient) {
+                continue;
+            }
+
             JSONObject paramJson = new JSONObject();
             // 服务发布方设置的配置项
             if (StringUtils.isNotEmpty(appPlugin.getPluginParams())) {
@@ -228,7 +238,7 @@ public class AppPluginServiceImpl implements AppPluginService {
             // 保存客户端获取token的secretKey
             tokenService.saveClientAppSecretKey(secret);
 
-            ApplicationPluginClient appPluginClient = new ApplicationPluginClient();
+            appPluginClient = new ApplicationPluginClient();
             appPluginClient.setAppPluginId(appPlugin.getId());
             appPluginClient.setSysClientId(sysClient.getId());
             appPluginClient.setPluginType(appPlugin.getPluginType());

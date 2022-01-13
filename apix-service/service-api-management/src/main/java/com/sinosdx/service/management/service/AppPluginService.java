@@ -51,6 +51,7 @@ public interface AppPluginService {
      * 订阅时处理各服务插件及绑定关系
      *
      * @param appPlugins
+     * @param sysClient
      */
     void processPlugin(List<ApplicationPlugin> appPlugins, SysClient sysClient);
 }

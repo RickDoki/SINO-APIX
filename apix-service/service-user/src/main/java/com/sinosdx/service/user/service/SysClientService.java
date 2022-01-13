@@ -1,6 +1,8 @@
 package com.sinosdx.service.user.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.common.base.result.R;
+import com.sinosdx.service.user.dao.entity.SysUser;
 
 /**
  * @author wendy
@@ -15,4 +17,12 @@ public interface SysClientService {
      * @return
      */
     R<Object> queryClientByUserId(Integer sysUserId);
+
+    /**
+     * 根据clientId查询user
+     *
+     * @param sysClientId
+     * @return
+     */
+    R<SysUser> queryUserByClientId(Integer sysClientId);
 }

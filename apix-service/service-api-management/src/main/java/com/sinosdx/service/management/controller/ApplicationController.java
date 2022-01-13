@@ -215,17 +215,6 @@ public class ApplicationController {
     }
 
     /**
-     * 订阅应用服务（使用资源市场应用服务）
-     *
-     * @param appSubscribedCode
-     * @return
-     */
-    @PostMapping("/subscribe/{appSubscribedCode}")
-    public R<Object> appSubscribe(@PathVariable("appSubscribedCode") String appSubscribedCode) {
-        return applicationService.appSubscribe(appSubscribedCode);
-    }
-
-    /**
      * 解绑应用服务
      *
      * @param appCode

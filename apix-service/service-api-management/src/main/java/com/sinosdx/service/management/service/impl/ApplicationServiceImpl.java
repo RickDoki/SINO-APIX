@@ -351,6 +351,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                     if (oldApp.getIsPublished().equals(Constants.APP_STATUS_IS_PUBLISHED)) {
                         oldApp.setIsPublished(applicationVo.getIsPublished());
                         msg = "下架成功";
+
+                        // 删除应用相关api路由
+                        List<Api> apiList = apiMapper.queryApiListByCondition(applicationVo.getAppCode(), null);
+                        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+                        appApiGatewayService.deleteApiGatewayConfig(applicationVo.getAppId(), orphanApiList, null);
                     } else {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
                     }
@@ -365,6 +370,21 @@ public class ApplicationServiceImpl implements ApplicationService {
                         oldApp.setIsPublished(applicationVo.getIsPublished());
                         oldApp.setPublishDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
                         msg = "上架成功";
+
+                        // 上架需要找出之前订阅过该应用的用户，重新走订阅流程
+                        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
+                                .eq(ApplicationSubscribe::getAppSubscribedId, applicationVo.getAppId()));
+                        Set<Integer> sysClientIds = new HashSet<>();
+                        appSubscribes.forEach((appSubscribe) -> {
+                            sysClientIds.add(appSubscribe.getSubscribeClientId());
+                        });
+                        sysClientIds.forEach((clientId) -> {
+                            JSONObject sysUser = sysUserService.queryUserByClientId(clientId).getData();
+                            if (null != sysUser) {
+                                Integer userId = sysUser.getInteger("id");
+                                this.appSubscribe(applicationVo.getAppCode(), userId);
+                            }
+                        });
                     } else {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
                     }
@@ -601,15 +621,11 @@ public class ApplicationServiceImpl implements ApplicationService {
      * 订阅服务
      *
      * @param appSubscribedCode
+     * @param sysUserId
      * @return
      */
     @Override
-    public R<Object> appSubscribe(String appSubscribedCode) {
-        // 判断是否登录
-        if (Objects.isNull(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID))) {
-            return R.fail("请先登录,再订阅");
-        }
-
+    public R<Object> appSubscribe(String appSubscribedCode, Integer sysUserId) {
         Application subscribedApp = applicationMapper.queryAppByStatus(appSubscribedCode,
                 Arrays.asList(Constants.APP_STATUS_IS_PUBLISHED, Constants.APP_STATUS_ERROR, Constants.APP_STATUS_IS_ADDED));
         if (null == subscribedApp) {
@@ -622,29 +638,28 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.NONE_APP_VERSION);
         }
 
-        SysClient sysClient = sysUserService.queryClientByUserId(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID)).getData();
+        SysClient sysClient = sysUserService.queryClientByUserId(sysUserId).getData();
         if (null == sysClient) {
             return R.fail(ResultCodeEnum.RESOURCE_NOT_EXISTED);
         }
 
-        Long count = applicationSubscribeMapper.selectCount(new LambdaQueryWrapper<ApplicationSubscribe>()
+        ApplicationSubscribe applicationSubscribe = applicationSubscribeMapper.selectOne(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
                 .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
                 .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
                 .eq(ApplicationSubscribe::getDelFlag, 0));
-        if (count > 0) {
-            return R.fail(ResultCodeEnum.APP_LEASE_IS_EXIST);
-        }
 
-        String appClientCode = UUID.randomUUID().toString().split("-")[0];
-        ApplicationSubscribe applicationSubscribe = new ApplicationSubscribe();
-        applicationSubscribe.setAppSubscribedId(subscribedApp.getId());
-        applicationSubscribe.setAppSubscribedCode(subscribedApp.getCode());
-        applicationSubscribe.setSubscribeClientId(sysClient.getId());
-        applicationSubscribe.setAppClientCode(appClientCode);
-        applicationSubscribe.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-        applicationSubscribe.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        applicationSubscribeMapper.insert(applicationSubscribe);
+        if (null == applicationSubscribe) {
+            String appClientCode = UUID.randomUUID().toString().split("-")[0];
+            applicationSubscribe = new ApplicationSubscribe();
+            applicationSubscribe.setAppSubscribedId(subscribedApp.getId());
+            applicationSubscribe.setAppSubscribedCode(subscribedApp.getCode());
+            applicationSubscribe.setSubscribeClientId(sysClient.getId());
+            applicationSubscribe.setAppClientCode(appClientCode);
+            applicationSubscribe.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+            applicationSubscribe.setCreationBy(sysUserId);
+            applicationSubscribeMapper.insert(applicationSubscribe);
+        }
 
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
@@ -664,7 +679,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<Api> apiList = apiMapper.queryApiListByCondition(subscribedApp.getCode(), null);
 
         // 发布到网关
-        appApiGatewayService.updateApiGatewayConfig(subscribedApp.getId(), apiList, appClientCode);
+        appApiGatewayService.updateApiGatewayConfig(subscribedApp.getId(), apiList, applicationSubscribe.getAppClientCode());
 
         return R.success(applicationSubscribe);
     }

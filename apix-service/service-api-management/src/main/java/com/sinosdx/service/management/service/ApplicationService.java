@@ -90,9 +90,10 @@ public interface ApplicationService {
      * 订阅服务
      *
      * @param appSubscribedCode
+     * @param sysUserId
      * @return
      */
-    R<Object> appSubscribe(String appSubscribedCode);
+    R<Object> appSubscribe(String appSubscribedCode, Integer sysUserId);
 
     /**
      * 解除订阅服务
