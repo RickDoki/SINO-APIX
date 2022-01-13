@@ -68,7 +68,6 @@ export default {
       plugins: [],
       tooltipList: plugin,
       subscribed: true,
-      subscribed: true
     };
   },
   created() {
