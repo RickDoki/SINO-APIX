@@ -51,7 +51,7 @@
               </el-select>
             </div>
           </div>
-          <div id="myChart" :style="{width: '100%', height: '555px'}"></div>
+          <div id="myChart" class="box_chart"></div>
         </div>
       </el-col>
       <el-col :span="8">
@@ -312,7 +312,7 @@ export default {
       background: #ffffff;
       border-radius: 16px 16px 16px 16px;
       box-shadow: #f3f3f3 0px 0px 10px;
-      min-height: 652px;
+      min-height: calc(100vh - 320px);
       padding-bottom: 24px;
       .box-top {
         width: 100%;
@@ -335,8 +335,8 @@ export default {
           padding-top: 22px;
         }
       }
-      .box-chart {
-        height: 600px;
+      .box_chart {
+        height: calc(100vh - 420px);
         width: 100%;
       }
     }
@@ -345,7 +345,7 @@ export default {
       background: #ffffff;
       border-radius: 16px 16px 16px 16px;
       box-shadow: #f3f3f3 0px 0px 10px;
-      min-height: 652px;
+      min-height: calc(100vh - 320px);
       .commonUse_title {
         height: 70px;
         line-height: 70px;

@@ -3,8 +3,8 @@
     <navbar></navbar>
     <div style="min-height: calc(100vh - 238px - 60px)">
       <div class="apiMain_content">
-        <div class="welcome">欢迎访问我们的开放服务平台</div>
-        <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
+        <div class="welcome">{{pageInfo.title}}</div>
+        <div class="all_services">{{pageInfo.description}}</div>
         <div class="input-with-select">
           <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
           <el-button type="primary" slot="append" @click="search">搜一下</el-button>
@@ -77,31 +77,39 @@
 </template>
 
 <script>
-import {openList, subscribe} from "@/api/AboutApp";
+import { getDoorConfig, updateDoorConfig } from "@/api/user"
+import { openList, subscribe } from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
-import {getToken} from "@/utils/auth";
+import { getToken } from "@/utils/auth";
 
 export default {
-  components: {navbar},
-  data() {
+  components: { navbar },
+  data () {
     return {
       searchKey: "",
       items: [],
       isshow: 1,
-      serviceList: []
+      serviceList: [],
+      pageInfo: {}
     };
   },
-  created() {
+  created () {
     this.search()
+    this.getPageInfo()
   },
   methods: {
-    search() {
+    getPageInfo () {
+      getDoorConfig().then((res) => {
+        this.pageInfo = res.data
+      });
+    },
+    search () {
       const query = "?market=true&appName=" + this.searchKey;
       openList(query).then((res) => {
         this.serviceList = res.data.appList
       });
     },
-    goDetail(item) {
+    goDetail (item) {
       this.$router.push({
         name: 'openServeDetail',
         query: {
@@ -109,7 +117,7 @@ export default {
         }
       })
     },
-    subscribe(item) {
+    subscribe (item) {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + item.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -138,7 +146,7 @@ export default {
 
 <style lang='scss' scoped>
 .main_open {
-  background: #FFFFFF;
+  background: #ffffff;
   margin: 0px;
   min-height: calc(100vh - 60px);
 
@@ -218,7 +226,7 @@ export default {
 
     .input-with-select {
       display: flex;
-      width: 60vh;
+      width: 65vh;
       text-align: center;
       margin: 5vh auto;
     }
