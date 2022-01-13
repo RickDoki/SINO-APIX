@@ -107,7 +107,7 @@ export default {
           this.appDescription = res.data.appDescription
           this.appCreationDate = res.data.appCreationDate
           this.appProvider = res.data.appProvider
-          this.appVersion = res.data.appVersion
+          this.appVersion = res.data.appVersion || []
           this.subscribed = res.data.subscribed
           this.plugins = res.data.plugins
           let arr = []
