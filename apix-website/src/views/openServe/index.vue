@@ -450,7 +450,7 @@ export default {
         width: 270px;
         cursor: pointer;
         box-sizing: border-box;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
