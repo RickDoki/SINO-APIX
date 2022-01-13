@@ -1,5 +1,19 @@
 <template>
   <div class="main">
+    <el-drawer
+      title="日志详情"
+      :visible.sync="drawer"
+      :direction="direction"
+      :before-close="handleClose"
+      size="50%"
+    >
+      <json-view
+        :data="this.historylist"
+        theme="index"
+        :deep="2"
+        :fontSize="12"
+      />
+    </el-drawer>
     <div v-if="!routerView">
       <div class="list_top">
         <div class="list_title">{{ serveData.appName }}</div>
@@ -193,7 +207,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)"
+              <el-button type="text" @click="getlogs(scope.row)"
                 >查看</el-button
               >
             </template>
@@ -235,7 +249,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)"
+              <el-button type="text" @click="getlogs(scope.row)"
                 >查看</el-button
               >
             </template>
@@ -268,8 +282,11 @@ import {
   open,
   close,
 } from "@/api/AboutServe.js";
-
+import jsonView from "./json-view/index.vue";
 export default {
+  components: {
+    jsonView,
+  },
   filters: {
     plugName: function (value) {
       const nameFiter = {
@@ -296,6 +313,9 @@ export default {
   data() {
     return {
       routerView: false,
+      drawer: false,
+      historylist: {},
+      direction: "rtl",
       table: [],
       pluginsTable: [],
       dropdownItems: [],
@@ -330,6 +350,15 @@ export default {
     }
   },
   methods: {
+    //操作抽屉
+    handleClose(done) {
+      done()
+    },
+    getlogs(e) {
+      // console.log('查看日志')
+      this.drawer = true;
+      this.historylist = e;
+    },
     // 编辑服务文档
     docsEdit() {
       this.$router.push(
