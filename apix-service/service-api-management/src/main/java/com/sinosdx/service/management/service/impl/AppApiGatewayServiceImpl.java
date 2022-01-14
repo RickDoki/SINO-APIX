@@ -7,7 +7,6 @@ import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.dao.entity.Api;
 import com.sinosdx.service.management.dao.entity.ApplicationApiGateway;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
-import com.sinosdx.service.management.dao.entity.ApplicationPluginClient;
 import com.sinosdx.service.management.dao.mapper.ApplicationApiGatewayMapper;
 import com.sinosdx.service.management.dao.mapper.ApplicationPluginClientMapper;
 import com.sinosdx.service.management.dao.mapper.ApplicationPluginMapper;
@@ -152,7 +151,7 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         }
 
         // 查询服务插件配置
-//        List<ApplicationPluginClient> appPluginClients = applicationPluginClientMapper.queryByAppSubscribe(gatewayList.get(0).getUrlCode());
+        //        List<ApplicationPluginClient> appPluginClients = applicationPluginClientMapper.queryByAppSubscribe(gatewayList.get(0).getUrlCode());
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppId, gatewayList.get(0).getAppId()));
 
@@ -161,28 +160,40 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
             for (ApplicationPlugin appPlugin : applicationPlugins) {
                 Map<String, Object> gatewayFilter = new HashMap<>();
                 Map<String, Object> filterArgs = new HashMap<>();
-//                JSONObject pluginParams = JSONObject.parseObject(appPluginClient.getPluginParams());
+                JSONObject pluginParams = JSONObject.parseObject(appPlugin.getPluginParams());
                 // jwt插件
                 if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.JWT.getFilterName());
-//                    filterArgs.put("_genkey_0", pluginParams.getString("keyName"));
-//                    filterArgs.put("_genkey_1", pluginParams.getString("secretKey"));
-//                    filterArgs.put("_genkey_2", pluginParams.getLong("expirationTime"));
-//                    gatewayFilter.put("args", filterArgs);
+                    //                    filterArgs.put("_genkey_0", pluginParams.getString("keyName"));
+                    //                    filterArgs.put("_genkey_1", pluginParams.getString("secretKey"));
+                    //                    filterArgs.put("_genkey_2", pluginParams.getLong("expirationTime"));
+                    //                    gatewayFilter.put("args", filterArgs);
                 }
                 // oauth2插件
                 else if (appPlugin.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.OAUTH2.getFilterName());
-//                    filterArgs.put("_genkey_0", pluginParams.getString("clientId"));
-//                    filterArgs.put("_genkey_1", pluginParams.getString("clientSecret"));
-//                    gatewayFilter.put("args", filterArgs);
+                    //                    filterArgs.put("_genkey_0", pluginParams.getString("clientId"));
+                    //                    filterArgs.put("_genkey_1", pluginParams.getString("clientSecret"));
+                    //                    gatewayFilter.put("args", filterArgs);
                 }
                 // base_auth插件
                 else if (appPlugin.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.BASE_AUTH.getFilterName());
-//                    filterArgs.put("_genkey_0", pluginParams.getString("username"));
-//                    filterArgs.put("_genkey_1", pluginParams.getString("password"));
-//                    gatewayFilter.put("args", filterArgs);
+                    //                    filterArgs.put("_genkey_0", pluginParams.getString("username"));
+                    //                    filterArgs.put("_genkey_1", pluginParams.getString("password"));
+                    //                    gatewayFilter.put("args", filterArgs);
+                }
+                // 黑名单插件
+                else if (appPlugin.getPluginType().equals(PluginTypeEnum.BLACK_LIST_IP.getType())) {
+                    gatewayFilter.put("name", PluginTypeEnum.BLACK_LIST_IP.getFilterName());
+                    filterArgs.put("_genkey_0", pluginParams.getString("black_list_ip"));
+                    gatewayFilter.put("args", filterArgs);
+                }
+                // 白名单插件
+                else if (appPlugin.getPluginType().equals(PluginTypeEnum.WHITE_LIST_IP.getType())) {
+                    gatewayFilter.put("name", PluginTypeEnum.WHITE_LIST_IP.getFilterName());
+                    filterArgs.put("_genkey_0", pluginParams.getString("white_list_ip"));
+                    gatewayFilter.put("args", filterArgs);
                 } else if (appPlugin.getPluginType().equals(PluginTypeEnum.SENTINEL.getType())) {
                     // sentinel是特殊的过滤器
                     continue;
