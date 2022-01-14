@@ -337,7 +337,7 @@ export default {
         }
       }
       .box_chart {
-        height: calc(100vh - 387px);
+        height: calc(100vh - 386px);
         width: 100%;
       }
     }
