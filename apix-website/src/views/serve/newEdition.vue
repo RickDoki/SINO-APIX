@@ -138,7 +138,9 @@ export default {
     showChange() {
       // console.log('change')
       this.drawerIsshow = false;
-      this.getApiList();
+      setTimeout(() => {
+        this.getApiList();
+      }, 100);
     },
   },
 };
