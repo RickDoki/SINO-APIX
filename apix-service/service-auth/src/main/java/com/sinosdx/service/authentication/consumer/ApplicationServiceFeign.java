@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author wendy
  * @date 2020/12/4
  */
-@FeignClient(value = "service-application")
+@FeignClient(value = "service-api-management")
 public interface ApplicationServiceFeign {
 
     /**
