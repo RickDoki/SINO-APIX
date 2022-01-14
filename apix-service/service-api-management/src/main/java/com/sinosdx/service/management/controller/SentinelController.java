@@ -68,4 +68,14 @@ public class SentinelController {
         service.close(appId);
         return R.success();
     }
+
+    /**
+     * 刷新内存中限流规则
+     * @return
+     */
+    @GetMapping("/refresh")
+    public R refresh(){
+        service.refresh();
+        return R.success();
+    }
 }
