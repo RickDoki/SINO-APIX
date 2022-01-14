@@ -270,6 +270,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .main {
+  margin-top: 0px;
   /deep/ .el-input__inner {
     border-radius: 25px 25px 25px 25px;
     border: 1px solid #f3f3f3;
@@ -336,7 +337,7 @@ export default {
         }
       }
       .box_chart {
-        height: calc(100vh - 420px);
+        height: calc(100vh - 387px);
         width: 100%;
       }
     }

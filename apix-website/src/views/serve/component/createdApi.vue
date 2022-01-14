@@ -24,7 +24,7 @@
             label-position="top"
             size="small"
           >
-            <el-form-item label="已有模板" prop="name">
+            <el-form-item label="上游服务模板" prop="name">
               <el-select
                 v-model="form.name"
                 placeholder="请选择上游服务"
@@ -218,7 +218,7 @@
                   show-word-limit
                 />
               </el-form-item>
-              <el-form-item label="是否为中台接口">
+              <!-- <el-form-item label="是否为中台接口">
                 <el-select
                   v-model="ruleForm.isInternal"
                   class="inputWidth"
@@ -227,7 +227,7 @@
                   <el-option label="是" value="1" />
                   <el-option label="否" value="0" />
                 </el-select>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item label="API描述">
                 <el-input
                   v-model="ruleForm.description"
@@ -477,7 +477,7 @@ export default {
     PrismEditor,
     ElxStepsHorizontal,
   },
-  data() {
+  data () {
     const checkMobile = (rule, value, callback) => {
       // 验证手机号的正则表达式
       const regMobile =
@@ -610,20 +610,20 @@ export default {
   },
   props: ["drawerProps"],
   watch: {
-    drawerProps() {
+    drawerProps () {
       this.drawer = this.drawerProps;
     },
   },
-  created() {
+  created () {
     this.getList();
   },
   methods: {
-    handleClose(done) {
+    handleClose (done) {
       done();
       this.$emit("showChange", false);
     },
     // 点击步骤条切换
-    stepChange() {
+    stepChange () {
       if (this.active === 1) {
         this.active = 0;
       } else {
@@ -631,15 +631,15 @@ export default {
       }
     },
     // 展开剩余配置
-    changeShow() {
+    changeShow () {
       this.showTimeFlag = !this.showTimeFlag;
     },
     // 返回列表
-    backList() {
+    backList () {
       // this.$router.push("/api/list");
       this.$emit("showChange");
     },
-    addSure(formName) {
+    addSure (formName) {
       console.log(JSON.stringify(this.$refs.xTable.afterFullData));
       console.log(JSON.stringify(this.$refs.xTableres.afterFullData));
 
@@ -685,15 +685,15 @@ export default {
         }
       });
     },
-    goBACK() {
+    goBACK () {
       this.active = 0;
       this.$refs["ruleForm"].resetFields();
     },
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
     // 新增行
-    async insertEvent() {
+    async insertEvent () {
       const row = -1;
       const $table = this.$refs.xTable;
       const record = {
@@ -706,7 +706,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    async insertEventres() {
+    async insertEventres () {
       const row = -1;
       const $table = this.$refs.xTableres;
       const record = {
@@ -719,7 +719,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    showMenu() {
+    showMenu () {
       event.preventDefault();
       var x = event.clientX;
       var y = event.clientY;
@@ -728,35 +728,35 @@ export default {
         y,
       };
     },
-    savedata() {
+    savedata () {
       // 新增一列
       this.insertEvent();
     },
-    savedatares() {
+    savedatares () {
       // 新增一列
       this.insertEventres();
     },
-    newdata() {
+    newdata () {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
-    newdatares() {
+    newdatares () {
       // 删除一列
       this.$refs.xTableres.removeCheckboxRow();
     },
     // 校验ip
-    isValidIP(ip) {
+    isValidIP (ip) {
       var reg =
         /^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/;
       return reg.test(ip);
     },
     // 校验域名
-    isValidWeb(web) {
+    isValidWeb (web) {
       var reg =
         /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/;
       return reg.test(web);
     },
-    getList() {
+    getList () {
       getUpstreamList("").then((res) => {
         if (res.code === 200) {
           const array = res.data.upstreamList;
@@ -770,7 +770,7 @@ export default {
         }
       });
     },
-    upstreamChange() {
+    upstreamChange () {
       console.log("change");
       console.log(this.form.name);
       if (this.form.name === "") {
@@ -800,7 +800,7 @@ export default {
         }
       }
     },
-    goNext(formName) {
+    goNext (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const ipTest = this.isValidIP(this.form.serverAddress);

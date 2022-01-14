@@ -20,7 +20,7 @@
           label-position="top"
           size="small"
         >
-          <el-form-item label="已有模板" prop="name">
+          <el-form-item label="上游服务模板" prop="name">
             <el-select
               v-model="form.name"
               placeholder="请选择上游服务"
@@ -212,7 +212,7 @@
               show-word-limit
             />
           </el-form-item>
-          <el-form-item label="是否为中台接口">
+          <!-- <el-form-item label="是否为中台接口">
             <el-select
               v-model="ruleForm.isInternal"
               class="inputWidth"
@@ -221,7 +221,7 @@
               <el-option label="是" value="1" />
               <el-option label="否" value="0" />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="API描述">
             <el-input
               v-model="ruleForm.description"
