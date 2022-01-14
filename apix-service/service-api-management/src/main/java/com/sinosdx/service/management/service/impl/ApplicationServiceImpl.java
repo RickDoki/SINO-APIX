@@ -1131,7 +1131,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
         appDetailMap.put("plugins", applicationPlugins);
 
-        String urlCode = StringUtils.isEmpty(appDetailMap.get("productId").toString()) ? appDetailMap.get("appCode").toString() : appDetailMap.get("productId").toString();
+        String urlCode = applicationSubscribe.getAppClientCode();
         appDetailMap.put("gatewayDomain", gatewayDomain + "/" + urlCode);
         //        appDetailMap.put("clientId", oAuthInfo.get("clientId"));
         //        appDetailMap.put("clientSecret", oAuthInfo.get("clientSecret"));

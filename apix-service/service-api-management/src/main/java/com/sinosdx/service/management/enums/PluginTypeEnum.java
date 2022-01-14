@@ -18,7 +18,7 @@ public enum PluginTypeEnum {
      * 插件类型
      */
     JWT("jwt", "Jwt"),
-    BASE_AUTH("base_auth", "BaseAuth"),
+    BASE_AUTH("base_auth", "BasicAuth"),
     OAUTH2("oauth2", "OAuth"),
 
     BLACK_LIST_IP("black_list_ip", "BlacklistIp"),
