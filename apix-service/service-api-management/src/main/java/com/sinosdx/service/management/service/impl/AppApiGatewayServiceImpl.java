@@ -1,13 +1,16 @@
 package com.sinosdx.service.management.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.dao.entity.Api;
 import com.sinosdx.service.management.dao.entity.ApplicationApiGateway;
+import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.dao.entity.ApplicationPluginClient;
 import com.sinosdx.service.management.dao.mapper.ApplicationApiGatewayMapper;
 import com.sinosdx.service.management.dao.mapper.ApplicationPluginClientMapper;
+import com.sinosdx.service.management.dao.mapper.ApplicationPluginMapper;
 import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.service.AppApiGatewayService;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +37,9 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
 
     @Resource
     private ApplicationPluginClientMapper applicationPluginClientMapper;
+
+    @Resource
+    private ApplicationPluginMapper applicationPluginMapper;
 
     /**
      * api发布到网关
@@ -146,41 +152,43 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         }
 
         // 查询服务插件配置
-        List<ApplicationPluginClient> appPluginClients = applicationPluginClientMapper.queryByAppSubscribe(gatewayList.get(0).getUrlCode());
+//        List<ApplicationPluginClient> appPluginClients = applicationPluginClientMapper.queryByAppSubscribe(gatewayList.get(0).getUrlCode());
+        List<ApplicationPlugin> applicationPlugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                .eq(ApplicationPlugin::getAppId, gatewayList.get(0).getAppId()));
 
         // 配置过滤器
-        if (!appPluginClients.isEmpty()) {
-            for (ApplicationPluginClient appPluginClient : appPluginClients) {
+        if (!applicationPlugins.isEmpty()) {
+            for (ApplicationPlugin appPlugin : applicationPlugins) {
                 Map<String, Object> gatewayFilter = new HashMap<>();
                 Map<String, Object> filterArgs = new HashMap<>();
-                JSONObject pluginParams = JSONObject.parseObject(appPluginClient.getPluginParams());
+//                JSONObject pluginParams = JSONObject.parseObject(appPluginClient.getPluginParams());
                 // jwt插件
-                if (appPluginClient.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
+                if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.JWT.getFilterName());
-                    filterArgs.put("_genkey_0", pluginParams.getString("keyName"));
-                    filterArgs.put("_genkey_1", pluginParams.getString("secretKey"));
-                    filterArgs.put("_genkey_2", pluginParams.getLong("expirationTime"));
-                    gatewayFilter.put("args", filterArgs);
+//                    filterArgs.put("_genkey_0", pluginParams.getString("keyName"));
+//                    filterArgs.put("_genkey_1", pluginParams.getString("secretKey"));
+//                    filterArgs.put("_genkey_2", pluginParams.getLong("expirationTime"));
+//                    gatewayFilter.put("args", filterArgs);
                 }
                 // oauth2插件
-                else if (appPluginClient.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
+                else if (appPlugin.getPluginType().equals(PluginTypeEnum.OAUTH2.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.OAUTH2.getFilterName());
-                    filterArgs.put("_genkey_0", pluginParams.getString("clientId"));
-                    filterArgs.put("_genkey_1", pluginParams.getString("clientSecret"));
-                    gatewayFilter.put("args", filterArgs);
+//                    filterArgs.put("_genkey_0", pluginParams.getString("clientId"));
+//                    filterArgs.put("_genkey_1", pluginParams.getString("clientSecret"));
+//                    gatewayFilter.put("args", filterArgs);
                 }
                 // base_auth插件
-                else if (appPluginClient.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
+                else if (appPlugin.getPluginType().equals(PluginTypeEnum.BASE_AUTH.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.BASE_AUTH.getFilterName());
-                    filterArgs.put("_genkey_0", pluginParams.getString("username"));
-                    filterArgs.put("_genkey_1", pluginParams.getString("password"));
-                    gatewayFilter.put("args", filterArgs);
-                } else if (appPluginClient.getPluginType().equals(PluginTypeEnum.SENTINEL.getType())) {
+//                    filterArgs.put("_genkey_0", pluginParams.getString("username"));
+//                    filterArgs.put("_genkey_1", pluginParams.getString("password"));
+//                    gatewayFilter.put("args", filterArgs);
+                } else if (appPlugin.getPluginType().equals(PluginTypeEnum.SENTINEL.getType())) {
                     // sentinel是特殊的过滤器
                     continue;
                 } else {
                     // 无生成参数的过滤器
-                    gatewayFilter.put("name", PluginTypeEnum.getPluginTypeEnum(appPluginClient.getPluginType()).getFilterName());
+                    gatewayFilter.put("name", PluginTypeEnum.getPluginTypeEnum(appPlugin.getPluginType()).getFilterName());
                 }
                 filterList.add(gatewayFilter);
             }
