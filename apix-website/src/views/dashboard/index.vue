@@ -337,7 +337,7 @@ export default {
         }
       }
       .box_chart {
-        height: calc(100vh - 386px);
+        min-height: calc(100vh - 386px);
         width: 100%;
       }
     }
@@ -346,7 +346,7 @@ export default {
       background: #ffffff;
       border-radius: 16px 16px 16px 16px;
       box-shadow: #f3f3f3 0px 0px 10px;
-      min-height: calc(100vh - 320px);
+      min-height: calc(100vh - 292px);
       .commonUse_title {
         height: 70px;
         line-height: 70px;
