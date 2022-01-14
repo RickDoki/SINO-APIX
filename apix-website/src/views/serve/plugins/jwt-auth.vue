@@ -85,7 +85,7 @@ export default {
       //查询当前插件详情
       getPlugin(this.id, this.appCode).then((res) => {
         if (res.code === 200) {
-          this.enabled = res.data.enabled
+          this.enabled = res.data.enabled;
           const data = JSON.parse(res.data.pluginParams);
           this.ruleForm = {
             header: data.HeaderNames,
@@ -130,13 +130,13 @@ export default {
             };
             const query = {
               pluginType: "jwt",
-              id:this.id,
+              id: this.id,
               appCode: this.appCode,
               appId: this.appId,
-              enabled:this.enabled,
+              enabled: this.enabled,
               pluginParams: JSON.stringify(pluginParams),
             };
-            console.log(query)
+            console.log(query);
             putPlugin(query).then((res) => {
               if (res.code === 200) {
                 this.$router.push({
@@ -151,7 +151,14 @@ export default {
       });
     },
     resetForm() {
-      this.$router.push({ path: "/serve/serveDetail/" + this.appCode });
+      this.$router.push({
+        path:
+          "/serve/serveDetail/plug-in?" +
+          "appcode=" +
+          this.appCode +
+          "&appid=" +
+          this.appId,
+      });
     },
     handleChange(value) {
       console.log(value);

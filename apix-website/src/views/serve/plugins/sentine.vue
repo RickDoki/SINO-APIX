@@ -135,7 +135,7 @@ import {
 import { getToken } from "@/utils/auth"; // get token from cookie
 
 export default {
-  data () {
+  data() {
     return {
       // api列表
       options: [],
@@ -182,7 +182,7 @@ export default {
       buttonFont: "添加",
     };
   },
-  created () {
+  created() {
     this.developerId = getToken("userId_api");
     this.appCode = this.$route.query.appcode;
     this.appId = this.$route.query.appid;
@@ -222,7 +222,7 @@ export default {
   },
   methods: {
     // 获取apilist
-    getApiList () {
+    getApiList() {
       apiList(this.developerId).then((res) => {
         if (res.code === 200) {
           // console.log(res)
@@ -231,10 +231,10 @@ export default {
       });
     },
     // 获取api
-    apiChose (i) {
+    apiChose(i) {
       console.log(this.apivalueList);
     },
-    submitForm () {
+    submitForm() {
       if (this.buttonFont === "添加") {
         const plugQuery = [
           {
@@ -352,20 +352,25 @@ export default {
       }
     },
     // 取消
-    resetForm () {
+    resetForm() {
       this.$router.push({
-        path: "/serve/serveDetail/" + this.appCode,
+        path:
+          "/serve/serveDetail/plug-in?" +
+          "appcode=" +
+          this.appCode +
+          "&appid=" +
+          this.appId,
       });
     },
-    handleChange () { },
-    apiConfigAdd () {
+    handleChange() {},
+    apiConfigAdd() {
       this.apiConfigList.push("");
       this.apivalueList.push("");
       this.apitime.push("0");
       this.apitimeValue.push("0");
       this.apiNum.push("0");
     },
-    apiConfigDel (i) {
+    apiConfigDel(i) {
       this.apiConfigList.splice(i, 1);
     },
   },

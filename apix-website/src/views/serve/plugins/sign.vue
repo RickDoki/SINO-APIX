@@ -161,7 +161,14 @@ export default {
       });
     },
     resetForm() {
-      this.$router.push({ path: "/serve/serveDetail/" + this.appCode });
+      this.$router.push({
+        path:
+          "/serve/serveDetail/plug-in?" +
+          "appcode=" +
+          this.appCode +
+          "&appid=" +
+          this.appId,
+      });
     },
     // 获取随机值
     getrandomKey() {
