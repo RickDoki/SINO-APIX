@@ -210,6 +210,9 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         Set<String> updateGatewayIdSet = new HashSet<>();
         for (Api api : apiList) {
             List<ApplicationApiGateway> gatewayList = appApiGatewayMapper.queryListByCondition(null, applicationId, api.getId(), appClientCode);
+            if (CollectionUtils.isEmpty(gatewayList)) {
+                continue;
+            }
             String gatewayId = gatewayList.get(0).getGatewayId();
             for (ApplicationApiGateway apiGateway : gatewayList) {
                 appApiGatewayMapper.deleteById(apiGateway);
