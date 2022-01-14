@@ -158,6 +158,11 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         // 配置过滤器
         if (!applicationPlugins.isEmpty()) {
             for (ApplicationPlugin appPlugin : applicationPlugins) {
+                if (appPlugin.getPluginType().equals(PluginTypeEnum.SENTINEL.getType())) {
+                    // sentinel是特殊的过滤器
+                    continue;
+                }
+
                 Map<String, Object> gatewayFilter = new HashMap<>();
                 Map<String, Object> filterArgs = new HashMap<>();
                 JSONObject pluginParams = JSONObject.parseObject(appPlugin.getPluginParams());
@@ -194,9 +199,6 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
                     gatewayFilter.put("name", PluginTypeEnum.WHITE_LIST_IP.getFilterName());
                     filterArgs.put("_genkey_0", pluginParams.getString("white_list_ip"));
                     gatewayFilter.put("args", filterArgs);
-                } else if (appPlugin.getPluginType().equals(PluginTypeEnum.SENTINEL.getType())) {
-                    // sentinel是特殊的过滤器
-                    continue;
                 } else {
                     // 无生成参数的过滤器
                     gatewayFilter.put("name", PluginTypeEnum.getPluginTypeEnum(appPlugin.getPluginType()).getFilterName());
