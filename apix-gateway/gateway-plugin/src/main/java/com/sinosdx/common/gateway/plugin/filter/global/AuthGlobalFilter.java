@@ -53,11 +53,6 @@ public class AuthGlobalFilter extends BaseGlobalFilter {
                     R.fail(ResultCodeEnum.JWT_SIGNATURE));
         }
 
-        if (StringUtils.isEmpty(token)) {
-            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
-                    R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
-        }
-
         redisTemplate.delete(GatewayConstants.REDIS_PREFIX_AUTH + req.getId());
         return chain.filter(exchange);
     }
