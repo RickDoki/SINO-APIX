@@ -5,7 +5,8 @@
       <div class="list_top">
         <div>
           <div class="list_top_title">{{ appName }}</div>
-          <div class="introduction">{{ appDescription }}</div>
+          <div class="introduction">{{ appDescription }}
+          </div>
           <div class="service_providers" style="margin-top: 30px">发布者：
             <span style="display: inline-block;margin-left: 40px">{{ appProvider }}</span>
           </div>
@@ -48,8 +49,8 @@
 // import apidetail from "./detail/detail.vue";
 // import apiTest from "./detail/test.vue";
 // import help from "./detail/help.vue";
-import { appCodeDetail, subscribe } from "@/api/AboutApp";
-import { getToken } from "@/utils/auth"; // get token from cookie
+import {appCodeDetail, subscribe} from "@/api/AboutApp";
+import {getToken} from "@/utils/auth"; // get token from cookie
 import apiDetail from './component/apiDetail'
 import navbar from "@/views/openServe/component/Navbar";
 import plugin from "@/views/serve/plugin";
@@ -62,7 +63,7 @@ export default {
     // apiTest,
     // help,
   },
-  data () {
+  data() {
     return {
       appName: "",
       appDescription: "",
@@ -74,7 +75,7 @@ export default {
       subscribed: true,
     };
   },
-  created () {
+  created() {
     this.query()
   },
   methods: {
@@ -99,7 +100,7 @@ export default {
       if (!value) return "";
       return nameFiter[value];
     },
-    query () {
+    query() {
       appCodeDetail(this.$route.query.code).then(res => {
         if (res.code === 200) {
           this.appName = res.data.appName
@@ -125,7 +126,7 @@ export default {
         }
       })
     },
-    subscribe () {
+    subscribe() {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + this.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -181,8 +182,8 @@ export default {
   }
 
   .introduction {
+    width: 720px;
     margin-top: 5px;
-    height: 20px;
     font-size: 14px;
     font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
     font-weight: 400;
