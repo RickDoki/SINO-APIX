@@ -91,10 +91,10 @@ export default {
       rules: {
         name: [{ required: true, message: "请输入服务名称", trigger: "blur" }],
         describe: [
-          { required: true, message: "请输入服务标签", trigger: "blur" },
+          { required: true, message: "请输入服务描述", trigger: "blur" },
         ],
         dynamicTags: [
-          { required: true, message: "请输入服务描述", trigger: "blur" },
+          { required: true, message: "请输入服务标签", trigger: "blur" },
         ],
       },
 
