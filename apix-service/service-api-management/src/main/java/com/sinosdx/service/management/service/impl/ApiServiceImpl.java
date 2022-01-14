@@ -85,7 +85,7 @@ public class ApiServiceImpl implements ApiService {
         if (!url.startsWith("/")) {
             api.setUrl("/" + url);
         }
-
+        Integer userId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
         // 判断api是否已存在
         Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
                 .eq("url", api.getUrl())
@@ -93,6 +93,8 @@ public class ApiServiceImpl implements ApiService {
                 .eq("prefix_path", api.getPrefixPath())
                 .eq("domain", domain)
                 .eq("version", api.getVersion())
+                //新增 创建人条件
+                .eq("creation_by",userId)
                 .eq("del_flag", 0));
         if (count1 > 0) {
             return R.fail(ResultCodeEnum.API_IS_EXIST);
