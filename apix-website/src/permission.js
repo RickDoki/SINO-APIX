@@ -1,5 +1,5 @@
-import NProgress from 'nprogress' // progress bar
-import 'nprogress/nprogress.css' // progress bar style
+// import NProgress from 'nprogress' // progress bar
+// import 'nprogress/nprogress.css' // progress bar style
 import { getToken, removeToken, setToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 import router from '@/router'
@@ -8,7 +8,7 @@ import Layout from '@/layout'
 import { asyncRoutes, baseRoutes } from '@/router'
 
 
-NProgress.configure({ showSpinner: false }) // NProgress Configuration
+// NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 router.beforeEach(async (to, from, next) => {
@@ -27,7 +27,7 @@ router.beforeEach(async (to, from, next) => {
     console.log("不需要登录");
     next()
   }
-  NProgress.start()
+  // NProgress.start()
 
   // set page title
   document.title = getPageTitle(to.meta.title)
@@ -37,5 +37,5 @@ router.beforeEach(async (to, from, next) => {
 
 router.afterEach(() => {
   // finish progress bar
-  NProgress.done()
+  // NProgress.done()
 })
