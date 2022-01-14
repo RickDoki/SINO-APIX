@@ -56,7 +56,7 @@ import { postPlugin, getPlugin, putPlugin } from "@/api/AboutServe.js";
 export default {
   data() {
     return {
-      id:'',
+      id: "",
       appCode: "",
       appId: "",
       buttonFont: "添加",
@@ -130,8 +130,8 @@ export default {
               pluginType: "oauth2",
               appCode: this.appCode,
               appId: this.appId,
-              id:this.id,
-              enabled:this.enabled,
+              id: this.id,
+              enabled: this.enabled,
               pluginParams: JSON.stringify(this.ruleForm),
             };
             putPlugin(query).then((res) => {
@@ -148,7 +148,14 @@ export default {
       });
     },
     resetForm() {
-      this.$router.push({ path: "/serve/serveDetail/" + this.appCode });
+      this.$router.push({
+        path:
+          "/serve/serveDetail/plug-in?" +
+          "appcode=" +
+          this.appCode +
+          "&appid=" +
+          this.appId,
+      });
     },
     handleChange(value) {
       console.log(value);

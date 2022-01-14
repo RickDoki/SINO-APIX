@@ -16,7 +16,7 @@
       <div class="secondTitle">{{ serveAllMeaasge.appDescription }}</div>
       <div class="status">
         <div class="left-span">
-          <span>服务商 : </span> <span> 博冀信息</span>
+          <span>发布者 : </span> <span> 博冀信息</span>
         </div>
         <div class="time">
           <div>
