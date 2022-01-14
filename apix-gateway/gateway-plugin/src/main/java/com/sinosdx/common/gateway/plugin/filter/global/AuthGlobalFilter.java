@@ -48,7 +48,8 @@ public class AuthGlobalFilter extends BaseGlobalFilter {
             gatewayAuth = (boolean) o;
         }
         Set<String> pluginNameList = redisTemplate.opsForSet().members(GatewayConstants.REDIS_PREFIX_APP_PLUGIN + appCode);
-        if (!CollectionUtils.isEmpty(pluginNameList) && !gatewayAuth) {
+        if ((pluginNameList.contains("jwt") || pluginNameList.contains("base_auth") || pluginNameList.contains("oauth2"))
+                && !gatewayAuth) {
             return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
                     R.fail(ResultCodeEnum.JWT_SIGNATURE));
         }
