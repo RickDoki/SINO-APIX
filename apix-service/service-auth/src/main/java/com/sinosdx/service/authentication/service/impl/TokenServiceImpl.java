@@ -114,7 +114,7 @@ public class TokenServiceImpl implements TokenService {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
         }
 
-        ClientAppSecret clientAppSecret = this.queryBySecret(generateTokenDto.getClaimValue()).getData();
+        ClientAppSecret clientAppSecret = this.queryBySecret(generateTokenDto.getPassword()).getData();
         if (null == clientAppSecret) {
             return R.fail(ResultCodeEnum.PARAM_IS_INVALID);
         }
