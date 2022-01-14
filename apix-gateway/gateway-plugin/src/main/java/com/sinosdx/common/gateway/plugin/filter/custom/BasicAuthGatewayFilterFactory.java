@@ -56,8 +56,7 @@ public class BasicAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
         ServerHttpRequest req = exchange.getRequest();
         log.info("reqId: " + req.getId());
         String basicAuth = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);
-        if (StringUtils.isEmpty(basicAuth)
-                || (StringUtils.isNotEmpty(basicAuth) && !basicAuth.startsWith(AuthConstant.BASIC_HEADER_PREFIX))) {
+        if (StringUtils.isEmpty(basicAuth)) {
             return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
                     R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
         }
@@ -73,6 +72,9 @@ public class BasicAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
         if (StringUtils.isNotEmpty(basicAuth)) {
             try {
                 String realToken = basicAuth.substring(AuthConstant.BASIC_HEADER_PREFIX.length());
+                if (StringUtils.isEmpty(realToken)) {
+                    return chain.filter(exchange);
+                }
                 String usernameAndPwd = new String(Base64.getDecoder().decode(realToken));
                 String pwd = usernameAndPwd.split(":")[1];
 
