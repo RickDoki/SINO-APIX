@@ -66,8 +66,8 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
                     R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
         }
 
-        boolean gatewayAuth = (Boolean) redisTemplate.opsForValue().get(GatewayConstants.REDIS_PREFIX_AUTH + req.getId());
-        if (gatewayAuth) {
+        Object o = redisTemplate.opsForValue().get(GatewayConstants.REDIS_PREFIX_AUTH + req.getId());
+        if (null != o && (Boolean) o) {
             log.info("其他鉴权插件通过，直接放行");
             return chain.filter(exchange);
         }
