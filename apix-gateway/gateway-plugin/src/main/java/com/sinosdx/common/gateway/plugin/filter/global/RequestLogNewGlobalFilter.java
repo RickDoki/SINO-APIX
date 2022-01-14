@@ -31,8 +31,8 @@ public class RequestLogNewGlobalFilter extends BaseGlobalFilter {
     private static final String WEBSOCKET = "websocket";
     private static final List<String> STRING_LIST = Arrays.asList("http", "https");
 
-//    @Autowired
-//    private IMessageService messageService;
+    @Autowired
+    private IMessageService messageService;
 
     @Autowired
     private ExecutorService executorService;
@@ -63,7 +63,8 @@ public class RequestLogNewGlobalFilter extends BaseGlobalFilter {
         String appCode = request.getHeaders().getFirst(GatewayConstants.SERVICE_CODE);
         gatewayLog.setAppCode(appCode);
         gatewayLog.setStatusCode(statusCode);
-        SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
+//        SpringContextHolder.getBean(IMessageService.class).saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
+        messageService.saveAnalysisLog(exchange,gatewayLog.getType(),gatewayLog);
         return chain.filter(exchange);
     }
 }
