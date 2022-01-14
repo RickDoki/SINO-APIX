@@ -144,6 +144,7 @@
     <plugins-message
       :drawerProps="drawerIsshow"
       @showChange="showChange"
+      :pluginId="pluginId"
     ></plugins-message>
   </div>
 </template>
@@ -199,6 +200,7 @@ export default {
       errorLoading: false,
       currentPageError: 1,
       totalError: 0,
+      pluginId:''
     };
   },
   created() {
@@ -208,7 +210,8 @@ export default {
     this.getLog("error");
   },
   methods: {
-    getPluginMessage() {
+    getPluginMessage(e) {
+      this.pluginId = e.id;
       this.drawerIsshow = true;
     },
     showChange() {

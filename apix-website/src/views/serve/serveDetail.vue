@@ -268,6 +268,7 @@
     <router-view v-if="routerView"></router-view>
     <plugins-message
       :drawerProps="drawerIsshow"
+      :pluginId="pluginId"
       @showChange="showChange"
     ></plugins-message>
   </div>
@@ -320,6 +321,7 @@ export default {
     return {
       drawerIsshow: false,
       routerView: false,
+      pluginId: "",
       drawer: false,
       historylist: {},
       direction: "rtl",
@@ -360,8 +362,10 @@ export default {
     showChange() {
       this.drawerIsshow = false;
     },
-    getPluginMessage() {
+    getPluginMessage(e) {
       this.drawerIsshow = true;
+      this.pluginId = e.id;
+      console.log(e);
     },
     //操作抽屉
     handleClose(done) {
