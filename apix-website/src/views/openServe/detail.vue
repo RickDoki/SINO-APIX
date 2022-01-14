@@ -21,7 +21,7 @@
         </div>
         <div class="list_top2">
           <div class="service_providers">服务商：{{ appProvider }}</div>
-          <div class="service_providers" v-if="plugins.length>0">已添加的插件：</div>
+          <div class="service_providers" style="margin-right: 0" v-if="plugins.length>0">已添加的插件：</div>
           <div style="width: 669px;display: flex;flex-wrap: wrap;">
             <div class="plug-in service_providers" style="display: flex" v-for="(item,index) in plugins" :key="index">
               <el-tooltip class="item" effect="light" :content="item.msg" placement="bottom-start">
@@ -215,6 +215,7 @@ export default {
     font-weight: 400;
     color: #727491;
     line-height: 20px;
+    margin-left: 40px;
   }
 }
 
