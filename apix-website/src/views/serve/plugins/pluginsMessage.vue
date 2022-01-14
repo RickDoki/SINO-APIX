@@ -334,6 +334,7 @@ export default {
     .right {
       width: calc(100% - 150px);
       font-size: 14px;
+      line-height: 20px;
     }
     .button_plug {
       // width: 50px;
