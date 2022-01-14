@@ -48,8 +48,8 @@
 // import apidetail from "./detail/detail.vue";
 // import apiTest from "./detail/test.vue";
 // import help from "./detail/help.vue";
-import {appCodeDetail, subscribe} from "@/api/AboutApp";
-import {getToken} from "@/utils/auth"; // get token from cookie
+import { appCodeDetail, subscribe } from "@/api/AboutApp";
+import { getToken } from "@/utils/auth"; // get token from cookie
 import apiDetail from './component/apiDetail'
 import navbar from "@/views/openServe/component/Navbar";
 import plugin from "@/views/serve/plugin";
@@ -62,7 +62,7 @@ export default {
     // apiTest,
     // help,
   },
-  data() {
+  data () {
     return {
       appName: "",
       appDescription: "",
@@ -74,7 +74,7 @@ export default {
       subscribed: true,
     };
   },
-  created() {
+  created () {
     this.query()
   },
   methods: {
@@ -99,7 +99,7 @@ export default {
       if (!value) return "";
       return nameFiter[value];
     },
-    query() {
+    query () {
       appCodeDetail(this.$route.query.code).then(res => {
         if (res.code === 200) {
           this.appName = res.data.appName
@@ -125,7 +125,7 @@ export default {
         }
       })
     },
-    subscribe() {
+    subscribe () {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + this.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -157,7 +157,7 @@ export default {
 .main_open {
   min-height: calc(100vh);
   width: 100%;
-  background: #FFFFFF;
+  background: #ffffff;
 }
 
 .content {
@@ -222,6 +222,7 @@ export default {
     font-weight: 400;
     color: #727491;
     line-height: 20px;
+    text-align: right;
   }
 }
 
