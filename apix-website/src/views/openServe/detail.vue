@@ -8,7 +8,7 @@
           <div class="introduction">{{ appDescription }}
           </div>
           <div class="service_providers" style="margin-top: 30px">发布者：
-            <span style="display: inline-block;margin-left: 40px">{{ appProvider }}</span>
+            <span style="display: inline-block;margin-left: 40px">{{ appProvider || '--' }}</span>
           </div>
           <div style="display:flex;margin-top: 10px">
             <div class="service_providers" style="margin-right: 0" v-if="plugins.length>0">已添加的插件：</div>
