@@ -255,7 +255,7 @@ export default {
           },
         ];
         for (let index = 0; index < this.apiConfigList.length; index++) {
-          if (apivalueList[index] === "") {
+          if (this.apivalueList[index] === "") {
           } else {
             query.push({
               appId: this.appId,
