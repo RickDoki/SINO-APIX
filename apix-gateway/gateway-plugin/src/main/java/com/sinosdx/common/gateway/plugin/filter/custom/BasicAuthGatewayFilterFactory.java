@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
+import com.sinosdx.common.gateway.constants.GatewayConstants;
 import com.sinosdx.common.gateway.entity.BaseConfig;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -42,6 +44,9 @@ public class BasicAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     @Autowired
     private ExecutorService executorService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     public BasicAuthGatewayFilterFactory() {
         super(Config.class);
     }
@@ -49,11 +54,18 @@ public class BasicAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     @Override
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
+        log.info("reqId: " + req.getId());
         String basicAuth = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);
         if (StringUtils.isEmpty(basicAuth)
                 || (StringUtils.isNotEmpty(basicAuth) && !basicAuth.startsWith(AuthConstant.BASIC_HEADER_PREFIX))) {
             return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
                     R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
+        }
+
+        boolean gatewayAuth = (Boolean) redisTemplate.opsForValue().get(GatewayConstants.REDIS_PREFIX_AUTH + req.getId());
+        if (gatewayAuth) {
+            log.info("其他鉴权插件通过，直接放行");
+            return chain.filter(exchange);
         }
 
         R<JSONObject> result;
@@ -69,20 +81,26 @@ public class BasicAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
                 result = future.get();
                 log.info("result:{}", result);
                 if (!result.isSuccess() || null == result.getData()) {
-                    result = R.fail(ResultCodeEnum.TOKEN_ERROR);
-                    return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+                    return chain.filter(exchange);
+                    //                    result = R.fail(ResultCodeEnum.TOKEN_ERROR);
+//                    return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("验证token错误", e);
-                result = R.fail(ResultCodeEnum.TOKEN_ERROR);
-                return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+//                result = R.fail(ResultCodeEnum.TOKEN_ERROR);
+//                return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+                return chain.filter(exchange);
             }
         } else {
             log.error("token为空");
-            result = R.fail(ResultCodeEnum.TOKEN_ERROR);
-            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+//            result = R.fail(ResultCodeEnum.TOKEN_ERROR);
+//            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+            return chain.filter(exchange);
+
         }
+
+        redisTemplate.opsForValue().set(GatewayConstants.REDIS_PREFIX_AUTH + req.getId(), true);
         return chain.filter(exchange);
     }
 

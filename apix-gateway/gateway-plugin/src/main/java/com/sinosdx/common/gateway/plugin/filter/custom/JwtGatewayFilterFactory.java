@@ -49,53 +49,61 @@ public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
     @Override
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
+        log.info("reqId: " + req.getId());
         String jwt = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);
         if (StringUtils.isEmpty(jwt)) {
             return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
                     R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
         }
 
-        // 查询服务是否启用OAuth2插件，如果添加但jwt校验不通过，jwt过滤器让请求通过，在OAuth做二次校验
-        String appCode = req.getHeaders().getFirst(GatewayConstants.SERVICE_CODE);
-        boolean oAuth = false;
-        boolean basicAuth = false;
-        Set<String> pluginNameList = redisTemplate.opsForSet().members(GatewayConstants.REDIS_PREFIX_APP_PLUGIN + appCode);
-        if (null == pluginNameList) {
-            log.error("插件数据有误");
-            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR));
-        }
-        if (pluginNameList.contains("oauth2")) {
-            oAuth = true;
-        }
-        if (pluginNameList.contains("base_auth")) {
-            basicAuth = true;
+        boolean gatewayAuth = (Boolean) redisTemplate.opsForValue().get(GatewayConstants.REDIS_PREFIX_AUTH + req.getId());
+        if (gatewayAuth) {
+            log.info("其他鉴权插件通过，直接放行");
+            return chain.filter(exchange);
         }
 
-        // 如果不存在basic-auth过滤器，basic开头直接报错
-        if (!basicAuth && jwt.startsWith(AuthConstant.BASIC_HEADER_PREFIX)) {
-            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
-                    R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
-        }
+//        // 查询服务是否启用OAuth2插件，如果添加但jwt校验不通过，jwt过滤器让请求通过，在OAuth做二次校验
+//        String appCode = req.getHeaders().getFirst(GatewayConstants.SERVICE_CODE);
+//        boolean oAuth = false;
+//        boolean basicAuth = false;
+//        Set<String> pluginNameList = redisTemplate.opsForSet().members(GatewayConstants.REDIS_PREFIX_APP_PLUGIN + appCode);
+//        if (null == pluginNameList) {
+//            log.error("插件数据有误");
+//            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR));
+//        }
+//        if (pluginNameList.contains("oauth2")) {
+//            oAuth = true;
+//        }
+//        if (pluginNameList.contains("base_auth")) {
+//            basicAuth = true;
+//        }
+
+//        // 如果不存在basic-auth过滤器，basic开头直接报错
+//        if (!basicAuth && jwt.startsWith(AuthConstant.BASIC_HEADER_PREFIX)) {
+//            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
+//                    R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
+//        }
 
         R<Object> result;
 
         // jwt校验
         try {
             Map<String, Claim> verifyJwt = JwtUtil.verifyJwt(null, jwt);
-            if (null == verifyJwt && !oAuth) {
+            if (null == verifyJwt) {
                 log.error("jwt解析错误");
-                result = R.fail(ResultCodeEnum.TOKEN_ERROR);
-                return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+                return chain.filter(exchange);
+//                result = R.fail(ResultCodeEnum.TOKEN_ERROR);
+//                return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
             }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("验证token错误", e);
-            if (oAuth) {
-                return chain.filter(exchange);
-            }
-            result = R.fail(ResultCodeEnum.TOKEN_ERROR);
-            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+//            result = R.fail(ResultCodeEnum.TOKEN_ERROR);
+//            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+            return chain.filter(exchange);
         }
+
+        redisTemplate.opsForValue().set(GatewayConstants.REDIS_PREFIX_AUTH + req.getId(), true);
         return chain.filter(exchange);
     }
 
