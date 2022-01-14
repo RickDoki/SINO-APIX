@@ -19,7 +19,7 @@ services:
     ports:
       - 3306:3306
   redis:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/nacos:3.2.8
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/redis:3.2.8
     container_name: apix-redis
     restart: always
     ports:
@@ -44,6 +44,10 @@ services:
       - JAVA_OPTS=-server -XX:+PrintGCDetails -XX:+PrintHeapAtGC -Xloggc:gc.log \
         -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xms1024m -Xmx1024m -Xmn512m -Xss256k -XX:SurvivorRatio=8 \
         -XX:+UseConcMarkSweepGC
+    depends_on:
+      - nacos
+      - mysql
+      - redis
   service-user:
     image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-user:latest
     container_name: apix-service-user
@@ -52,6 +56,10 @@ services:
       - 8093:8093
     environment:
       - JAVA_OPTS=-server -Xmx512m -Xms512m
+    depends_on:
+      - nacos
+      - mysql
+      - redis
   service-auth:
     image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-auth:latest
     container_name: apix-service-auth
@@ -60,6 +68,10 @@ services:
       - 8094:8094
     environment:
       - JAVA_OPTS=-server -Xmx512m -Xms512m
+    depends_on:
+      - nacos
+      - mysql
+      - redis
   service-api-management:
     image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-api-management:latest
     container_name: apix-service-api-management
@@ -68,6 +80,10 @@ services:
       - 8095:8095
     environment:
       - JAVA_OPTS=-server -Xmx512m -Xms512m
+    depends_on:
+      - nacos
+      - mysql
+      - redis
   service-support-log:
     image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-support-log:latest
     container_name: apix-service-support-log
@@ -76,8 +92,12 @@ services:
       - 9021:9021
     environment:
       - JAVA_OPTS=-server -Xmx512m -Xms512m
+    depends_on:
+      - nacos
+      - mysql
+      - redis
   web:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-web-api-management:prod
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-web-api-management:latest
     container_name: apix-web
     restart: always
     ports:

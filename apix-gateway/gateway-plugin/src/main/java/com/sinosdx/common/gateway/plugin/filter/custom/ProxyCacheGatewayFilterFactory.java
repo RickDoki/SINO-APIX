@@ -63,10 +63,10 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         HttpHeaders headers = req.getHeaders();
+        ServerHttpResponse response = exchange.getResponse();
         String cacheKey = CACHE_KEY + headers.getFirst(GatewayConstants.PATH);
         if (redisUtil.hasKey(cacheKey)) {
             LogUtil.debug(log, "cacheKey:{} hit cache", cacheKey);
-            ServerHttpResponse response = exchange.getResponse();
             response.getHeaders().add(CACHE_STATUS_HEAD, HitStatusEnum.HIT.name());
             exchange.mutate().response(response).build();
             return HttpUtil.response(exchange, redisUtil.get(cacheKey));
@@ -80,6 +80,7 @@ public class ProxyCacheGatewayFilterFactory extends BaseGatewayFilter<Config> {
             }
             redisUtil.set(cacheKey, x.getResult(), (long) expire);
         };
+        response.getHeaders().add(CACHE_STATUS_HEAD, HitStatusEnum.MISS.name());
         return chain.filter(exchange.mutate().response(HttpUtil.getResponse(exchange, consumer)).build());
     }
 
