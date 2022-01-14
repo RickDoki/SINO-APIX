@@ -21,11 +21,13 @@
         </div>
         <div class="list_top2">
           <div class="service_providers">服务商：{{ appProvider }}</div>
-          <div class="service_providers">已添加的插件：</div>
+          <div class="service_providers" v-if="plugins.length>0">已添加的插件：</div>
           <div style="width: 669px;display: flex;flex-wrap: wrap;">
             <div class="plug-in service_providers" style="display: flex" v-for="(item,index) in plugins" :key="index">
               <el-tooltip class="item" effect="light" :content="item.msg" placement="bottom-start">
-                <div class="chajian_qian"></div>
+                <div class="chajian_qian">
+                  <img :src="item.icon" style="width: 100%;height: 100%">
+                </div>
               </el-tooltip>
               <div>{{ item.pluginType }}</div>
             </div>
@@ -114,6 +116,7 @@ export default {
             arr.forEach((items, indexs) => {
               if (item.pluginType === items.name) {
                 item.msg = items.message
+                item.icon = items.icon
               }
             })
           })
