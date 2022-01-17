@@ -56,7 +56,8 @@
         date_format(a.creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,
         a.creation_by_username AS creationByUsername,
         date_format(a.last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate,
-        a.last_updated_by_username AS lastUpdatedByUsername
+        a.last_updated_by_username AS lastUpdatedByUsername,
+        a.creationDate AS creation_date
         from application a
         <!--        INNER JOIN application_developer ad on a.id = ad.app_id-->
         <where>
