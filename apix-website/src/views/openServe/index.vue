@@ -26,9 +26,10 @@
                  @click="goDetail(item)">
               <div class="list_item_title">{{ item.appName }}</div>
               <div class="list_item_content">{{ item.description }}</div>
-              <div style="width: 50px">
-                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+              <div style="width: 140px">
+                <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
+                     width="20px" height="20px" style="margin-right: 5px">
+                <span v-if="item.plugins.length>5">...</span>
               </div>
               <div style="width: 100px;text-align: center">
                 <div class="list_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
@@ -46,9 +47,10 @@
               <div class="cards_item_button_dis" v-else>已订阅</div>
               <div class="cards_item_title">{{ item.appName }}</div>
               <div class="cards_item_content">{{ item.description }}</div>
-              <div>
-                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+              <div style="display: flex;width: 100%">
+                <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
+                     width="20px" height="20px" style="margin-right: 5px">
+                <span v-if="item.plugins.length>5">...</span>
               </div>
               <div>
                 <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
@@ -80,39 +82,77 @@
 </template>
 
 <script>
-import { getDoorConfig, updateDoorConfig } from "@/api/user"
-import { openList, subscribe } from "@/api/AboutApp";
+import {getDoorConfig, updateDoorConfig} from "@/api/user"
+import {openList, subscribe} from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
-import { getToken } from "@/utils/auth";
+import {getToken} from "@/utils/auth";
+import plugin from "@/views/serve/plugin";
 
 export default {
-  components: { navbar },
-  data () {
+  components: {navbar},
+  data() {
     return {
       searchKey: "",
       items: [],
       isshow: 1,
       serviceList: [],
-      pageInfo: {}
+      pageInfo: {},
+      plugin: plugin
     };
   },
-  created () {
+  created() {
     this.search()
     this.getPageInfo()
   },
   methods: {
-    getPageInfo () {
+    getPageInfo() {
       getDoorConfig().then((res) => {
         this.pageInfo = res.data
       });
     },
-    search () {
+    plugName: function (value) {
+      const nameFiter = {
+        jwt: "Jwt-auth",
+        base_auth: "basic_auth",
+        oauth2: "OAuth2.0",
+        black_list_ip: "IP 黑名单控制",
+        white_list_ip: "IP 白名单控制",
+        cors: "cors跨域",
+        sign: "防篡改签名",
+        replay_attacks: "防网络重放攻击",
+        error_log: "error log",
+        http_log: "http log",
+        sentinel: "sentinel",
+        gzip: "gzip",
+        proxy_cache: "proxy-cache",
+        real_ip: "real_ip",
+        response_rewrite: "response-rewrite",
+      };
+      if (!value) return "";
+      return nameFiter[value];
+    },
+    search() {
       const query = "?market=true&appName=" + this.searchKey;
       openList(query).then((res) => {
         this.serviceList = res.data.appList
+        let arr = []
+        this.plugin.forEach(item => {
+          arr.push(...item.content)
+        })
+        this.serviceList.map((item, index) => {
+          item.plugins.map((items, indexs) => {
+            items.pluginType = this.plugName(items.pluginType)
+            arr.forEach((itemss, indexss) => {
+              if (items.pluginType === itemss.name) {
+                items.icon = itemss.icon
+              }
+            })
+          })
+        })
+        console.log(this.serviceList)
       });
     },
-    goDetail (item) {
+    goDetail(item) {
       this.$router.push({
         name: 'openServeDetail',
         query: {
@@ -120,7 +160,7 @@ export default {
         }
       })
     },
-    subscribe (item) {
+    subscribe(item) {
       if (getToken('token')) {
         this.$confirm('确认订阅：' + item.appName + '吗, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -553,9 +593,7 @@ export default {
         .cards_item_v {
           padding: 5px;
           display: inline-block;
-          //display: flex;
-          //justify-content: center;
-          //align-items: center;
+          margin-top: 5px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
