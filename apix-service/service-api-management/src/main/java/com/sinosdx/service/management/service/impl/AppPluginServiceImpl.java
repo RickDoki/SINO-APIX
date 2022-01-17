@@ -209,7 +209,7 @@ public class AppPluginServiceImpl implements AppPluginService {
 
             JSONObject paramJson = new JSONObject();
             // 服务发布方设置的配置项
-            if (StringUtils.isNotEmpty(appPlugin.getPluginParams())) {
+            if (StringUtils.isNotEmpty(appPlugin.getPluginParams()) && !appPlugin.getPluginType().equals(PluginTypeEnum.SENTINEL.getType())) {
                 paramJson = JSONObject.parseObject(appPlugin.getPluginParams());
             }
             String secretKey = UUID.randomUUID().toString().split("-")[0];

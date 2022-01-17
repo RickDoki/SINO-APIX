@@ -58,6 +58,7 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     @Override
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
+        log.info("reqId: " + req.getId());
         final String requestUri = req.getURI().getPath();
         String token = req.getHeaders().getFirst(AuthConstant.AUTH_HEADER);
         if (StringUtils.isEmpty(token)) {
@@ -65,27 +66,33 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
                     R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
         }
 
-        // 如果Bearer开头，验证不通过，请求不通过；
-        // 如果Basic开头，存在Basic Auth插件，请求通过
-        String appCode = req.getHeaders().getFirst(GatewayConstants.SERVICE_CODE);
-        boolean basicAuth = false;
-        Set<String> pluginNameList = redisTemplate.opsForSet().members(GatewayConstants.REDIS_PREFIX_APP_PLUGIN + appCode);
-        if (null == pluginNameList) {
-            log.error("插件数据有误");
-            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR));
-        }
-        if (pluginNameList.contains("base_auth")) {
-            basicAuth = true;
-        }
-        if (basicAuth && token.startsWith(AuthConstant.BASIC_HEADER_PREFIX)) {
+        Object o = redisTemplate.opsForValue().get(GatewayConstants.REDIS_PREFIX_AUTH + req.getId());
+        if (null != o && (Boolean) o) {
+            log.info("其他鉴权插件通过，直接放行");
             return chain.filter(exchange);
         }
 
-        // 如果不存在basic-auth过滤器，basic开头直接报错
-        if (!basicAuth && token.startsWith(AuthConstant.BASIC_HEADER_PREFIX)) {
-            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
-                    R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
-        }
+//        // 如果Bearer开头，验证不通过，请求不通过；
+//        // 如果Basic开头，存在Basic Auth插件，请求通过
+//        String appCode = req.getHeaders().getFirst(GatewayConstants.SERVICE_CODE);
+//        boolean basicAuth = false;
+//        Set<String> pluginNameList = redisTemplate.opsForSet().members(GatewayConstants.REDIS_PREFIX_APP_PLUGIN + appCode);
+//        if (null == pluginNameList) {
+//            log.error("插件数据有误");
+//            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, R.fail(ResultCodeEnum.INTERFACE_INNER_INVOKE_ERROR));
+//        }
+//        if (pluginNameList.contains("base_auth")) {
+//            basicAuth = true;
+//        }
+//        if (basicAuth && token.startsWith(AuthConstant.BASIC_HEADER_PREFIX)) {
+//            return chain.filter(exchange);
+//        }
+//
+//        // 如果不存在basic-auth过滤器，basic开头直接报错
+//        if (!basicAuth && token.startsWith(AuthConstant.BASIC_HEADER_PREFIX)) {
+//            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED,
+//                    R.fail(ResultCodeEnum.JWT_ILLEGAL_ARGUMENT));
+//        }
 
         R<Object> result;
 
@@ -100,15 +107,18 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
             result = future.get();
             log.info("result:{}", result);
             if (!result.isSuccess()) {
-                return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+//                return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+                return chain.filter(exchange);
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             log.error("验证token错误", e);
-            result = R.fail(ResultCodeEnum.TOKEN_ERROR);
-            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+//            result = R.fail(ResultCodeEnum.TOKEN_ERROR);
+//            return HttpUtil.response(exchange, HttpStatus.UNAUTHORIZED, result);
+            return chain.filter(exchange);
         }
 
+        redisTemplate.opsForValue().set(GatewayConstants.REDIS_PREFIX_AUTH + req.getId(), true);
         return chain.filter(exchange);
     }
 

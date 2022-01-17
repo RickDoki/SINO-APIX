@@ -331,7 +331,7 @@
     </select>
 
     <select id="querySubscribeCodeByAppId" resultType="java.lang.String">
-        select a.app_subscribed_code
+        select a.app_client_code
         from application_subscribe a
         where a.app_subscribed_id=#{appId}
     </select>
