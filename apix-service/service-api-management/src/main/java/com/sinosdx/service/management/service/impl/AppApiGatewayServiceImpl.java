@@ -208,7 +208,7 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
                     filterArgs.put("_genkey_2", pluginParams.getString("allowHeaders"));
                     filterArgs.put("_genkey_3", pluginParams.getString("exposeHeaders"));
                     filterArgs.put("_genkey_4", pluginParams.getInteger("maxAge"));
-                    filterArgs.put("_genkey_5", pluginParams.getInteger("allowCredentials"));
+                    filterArgs.put("_genkey_5", pluginParams.getBoolean("allowCredentials"));
                     gatewayFilter.put("args", filterArgs);
                 }
                 // 签名插件
