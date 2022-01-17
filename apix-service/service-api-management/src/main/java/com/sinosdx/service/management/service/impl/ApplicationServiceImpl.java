@@ -230,6 +230,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                     map.put("subscribed", true);
                 }
             }
+            // 加入插件信息
+            List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
+                    .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                            .eq(ApplicationPlugin::getAppCode, map.get("appCode"))
+                            .orderByDesc(ApplicationPlugin::getCreationDate)
+                            .eq(ApplicationPlugin::getDelFlag, 0));
+            map.put("plugins", applicationPlugins);
         });
         Map<String, Object> appListMap = new HashMap<>();
         List<Map<String, Object>> applicationVoList = applicationMapper.queryAppVoList(developerId, appName, appCode,
