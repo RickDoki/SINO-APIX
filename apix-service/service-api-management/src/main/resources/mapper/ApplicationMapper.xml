@@ -93,11 +93,12 @@
             <if test="startTime != null and endTime != null">
                 and a.creation_date BETWEEN #{startTime} and #{endTime}
             </if>
+            order by a.creation_date desc
             <if test="limit != null and offset !=null">
                 limit #{offset},#{limit}
             </if>
         </where>
-        order by a.creation_date desc
+
     </select>
 
     <select id="queryAppDetails" resultMap="appDetails">
