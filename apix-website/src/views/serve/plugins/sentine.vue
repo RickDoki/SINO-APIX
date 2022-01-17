@@ -204,6 +204,12 @@ export default {
           this.apitime = [];
           this.apiNum = [];
           this.apitimeValue = [];
+          if (data.length === 1) {
+            this.apiConfigList = ["1"];
+            this.apitime = ["1"];
+            this.apiNum = ["1"];
+            this.apitimeValue = ["1"];
+          }
           for (let index = 1; index < data.length; index++) {
             this.apiConfigList.push("");
             this.apivalueList.push(data[index].apiId);
