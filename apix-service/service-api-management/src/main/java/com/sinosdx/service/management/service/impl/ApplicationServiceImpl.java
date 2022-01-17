@@ -664,6 +664,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
                 .eq(ApplicationPlugin::getEnabled, 1));
+        log.info(subscribedApp.getCode()+" plugins size : "+plugins.size());
 
         //单独查询是否包含sentinel 插件
         long sentinel = plugins.stream().filter(a -> PluginTypeEnum.SENTINEL.getType().equals(a.getPluginType())).count();
