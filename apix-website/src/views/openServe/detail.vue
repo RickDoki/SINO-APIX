@@ -118,7 +118,7 @@ export default {
             item.pluginType = this.plugName(item.pluginType)
             arr.forEach((items, indexs) => {
               if (item.pluginType === items.name) {
-                item.msg = items.message
+                item.msg = items.bigMessage
                 item.icon = items.icon
               }
             })
