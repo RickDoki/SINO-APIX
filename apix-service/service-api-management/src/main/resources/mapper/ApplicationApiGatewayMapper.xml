@@ -11,10 +11,10 @@
                 and gateway_id = #{gatewayId}
             </if>
             <if test="apiId != null">
-                AND app_id = #{apiId}
+                AND api_id = #{apiId}
             </if>
             <if test="appId != null">
-                and api_id = #{apiId}
+                and app_id = #{appId}
             </if>
             <if test="urlCode != null">
                 and url_code = #{urlCode}

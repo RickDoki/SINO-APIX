@@ -52,6 +52,7 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         Set<String> addGatewayIdSet = new HashSet<>();
         Set<String> updateGatewayIdSet = new HashSet<>();
         for (Api api : apiList) {
+            log.info("update api {} gateway config", api.getId());
             String uri = "/" + appClientCode + api.getUrl();
             while (uri.contains("{")) {
                 String bracket = uri.substring(uri.indexOf("{"), uri.indexOf("}") + 1);
@@ -198,6 +199,23 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
                 else if (appPlugin.getPluginType().equals(PluginTypeEnum.WHITE_LIST_IP.getType())) {
                     gatewayFilter.put("name", PluginTypeEnum.WHITE_LIST_IP.getFilterName());
                     filterArgs.put("_genkey_0", pluginParams.getString("white_list_ip"));
+                    gatewayFilter.put("args", filterArgs);
+                }
+                // cors插件
+                else if (appPlugin.getPluginType().equals(PluginTypeEnum.CORS.getType())) {
+                    gatewayFilter.put("name", PluginTypeEnum.CORS.getFilterName());
+                    filterArgs.put("_genkey_0", pluginParams.getString("allowOrigins"));
+                    filterArgs.put("_genkey_1", pluginParams.getString("allowMethods"));
+                    filterArgs.put("_genkey_2", pluginParams.getString("allowHeaders"));
+                    filterArgs.put("_genkey_3", pluginParams.getString("exposeHeaders"));
+                    filterArgs.put("_genkey_4", pluginParams.getInteger("maxAge"));
+                    filterArgs.put("_genkey_5", pluginParams.getBoolean("allowCredentials"));
+                    gatewayFilter.put("args", filterArgs);
+                }
+                // 签名插件
+                else if (appPlugin.getPluginType().equals(PluginTypeEnum.SIGN.getType())) {
+                    gatewayFilter.put("name", PluginTypeEnum.SIGN.getFilterName());
+                    filterArgs.put("_genkey_0", pluginParams.getString("appKey") + pluginParams.getString("appSecret"));
                     gatewayFilter.put("args", filterArgs);
                 } else {
                     // 无生成参数的过滤器

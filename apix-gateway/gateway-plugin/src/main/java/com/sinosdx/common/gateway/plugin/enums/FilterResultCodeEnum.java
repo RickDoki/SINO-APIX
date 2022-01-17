@@ -14,7 +14,7 @@ public enum FilterResultCodeEnum implements BaseEnum<Integer,String> {
     TIMESTAMP_EMPTY(100001, "时间戳（timestamp）不存在"),
     NONCE_EMPTY(100002, "随机数（nonce）不存在"),
     INTERFACE_LIMITED(100003, "接口访问受限"),
-    SIGN_EMPTY(100004, "签名（sign）不存在"),
+    SIGN_EMPTY(100004, "签名（sign或timestamp）不存在"),
     SIGN_KEY_EMPTY(100005, "签名（appKey）不存在"),
     ;
 

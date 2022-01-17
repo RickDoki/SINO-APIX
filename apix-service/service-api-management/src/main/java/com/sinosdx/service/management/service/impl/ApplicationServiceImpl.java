@@ -143,6 +143,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         application.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         application.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+        application.setProvider(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
         application.setPublishDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         Long existApp = applicationMapper.selectCount(new QueryWrapper<Application>()
                 .eq("name", application.getName())
@@ -229,6 +230,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                     map.put("subscribed", true);
                 }
             }
+            // 加入插件信息
+            List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
+                    .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
+                            .eq(ApplicationPlugin::getAppCode, map.get("appCode"))
+                            .orderByDesc(ApplicationPlugin::getCreationDate)
+                            .eq(ApplicationPlugin::getDelFlag, 0));
+            map.put("plugins", applicationPlugins);
         });
         Map<String, Object> appListMap = new HashMap<>();
         List<Map<String, Object>> applicationVoList = applicationMapper.queryAppVoList(developerId, appName, appCode,
@@ -309,6 +317,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
                 .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                         .eq(ApplicationPlugin::getAppCode, appCode)
+                        .orderByDesc(ApplicationPlugin::getCreationDate)
                         .eq(ApplicationPlugin::getDelFlag, 0));
         appDetailMap.put("plugins", applicationPlugins);
 

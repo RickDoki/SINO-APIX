@@ -56,7 +56,8 @@
         date_format(a.creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,
         a.creation_by_username AS creationByUsername,
         date_format(a.last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate,
-        a.last_updated_by_username AS lastUpdatedByUsername
+        a.last_updated_by_username AS lastUpdatedByUsername,
+        a.creation_date AS creationDate
         from application a
         <!--        INNER JOIN application_developer ad on a.id = ad.app_id-->
         <where>
@@ -92,10 +93,12 @@
             <if test="startTime != null and endTime != null">
                 and a.creation_date BETWEEN #{startTime} and #{endTime}
             </if>
+            order by a.creation_date desc
             <if test="limit != null and offset !=null">
                 limit #{offset},#{limit}
             </if>
         </where>
+
     </select>
 
     <select id="queryAppDetails" resultMap="appDetails">
