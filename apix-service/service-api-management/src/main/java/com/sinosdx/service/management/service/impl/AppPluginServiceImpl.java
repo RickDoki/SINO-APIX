@@ -1,6 +1,9 @@
 package com.sinosdx.service.management.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.google.common.collect.Lists;
 import com.sinosdx.service.management.constants.Constants;
@@ -15,6 +18,8 @@ import com.sinosdx.service.management.dao.mapper.ApplicationSubscribeMapper;
 import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
+import com.sinosdx.service.management.sentinel.SentinelProvider;
+import com.sinosdx.service.management.sentinel.entity.LimitInfo;
 import com.sinosdx.service.management.service.AppPluginService;
 import com.sinosdx.service.management.service.ApplicationService;
 import com.sinosdx.service.management.utils.MD5Util;
@@ -67,6 +72,9 @@ public class AppPluginServiceImpl implements AppPluginService {
     @Autowired
     private ApplicationService applicationService;
 
+    @Autowired
+    private SentinelProvider service;
+
     /**
      * 服务添加插件
      *
@@ -78,6 +86,14 @@ public class AppPluginServiceImpl implements AppPluginService {
     public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
         if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
+        }
+        if(PluginTypeEnum.SENTINEL.getType().equals(applicationPlugin.getPluginType())){
+            String json = applicationPlugin.getPluginParams();
+            List<LimitInfo> list = JSON.parseObject(json,new TypeReference<List<LimitInfo>>(){});
+            String save = service.save(list);
+            if(!save.endsWith("ok")){
+                return R.fail();
+            }
         }
         Long count = applicationPluginMapper.selectCount(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getDelFlag, 0)
