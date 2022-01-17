@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.common.base.result.enums.ResultCodeEnum;
 import com.sinosdx.common.gateway.entity.BaseConfig;
+import com.sinosdx.common.gateway.plugin.configuration.APIXGatewayProperties;
 import com.sinosdx.common.gateway.plugin.enums.FilterOrderEnum;
 import com.sinosdx.common.gateway.plugin.enums.FilterResultCodeEnum;
 import com.sinosdx.common.gateway.plugin.filter.BaseGatewayFilter;
@@ -22,6 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -53,6 +55,9 @@ public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public SignAuthGatewayFilterFactory() {
         super(Config.class);
     }
+
+    @Autowired
+    private APIXGatewayProperties APIXGatewayProperties;
 
     @Override
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
@@ -127,6 +132,12 @@ public class SignAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
     private Mono<Void> verifySign(ServerWebExchange exchange, HashMap<String, String> hashMap, String sign,
             String timestamp, Config c) {
         hashMap.put(AuthConstant.AUTH_SIGN, sign);
+        if (APIXGatewayProperties.isHelp()) {
+            String time = String.valueOf(System.currentTimeMillis());
+            ((Map<String, String>) hashMap).put("timestamp", time);
+            log.debug("help, SignAuth check paramMap:{}", JSON.toJSONString(hashMap));
+            log.debug("help, SignAuth time:{},sign:{}", time, SignUtil.sign(hashMap, sign));
+        }
         hashMap.put(AuthConstant.TIMESTAMP, timestamp);
         String result = SignUtil.verify(hashMap, c.getAppKey());
         LogUtil.debug(log, "sign auth,param：{},key：{},result：{}", hashMap, c.getAppKey(), result);
