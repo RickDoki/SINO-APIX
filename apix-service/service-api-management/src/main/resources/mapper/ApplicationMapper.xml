@@ -120,6 +120,7 @@
         <where>
             app.code = #{appCode} and app.del_flag = 0
         </where>
+        order by creation_date desc
     </select>
 
     <!--    <select id="queryAppVersionDetails" resultMap="appVersion">-->

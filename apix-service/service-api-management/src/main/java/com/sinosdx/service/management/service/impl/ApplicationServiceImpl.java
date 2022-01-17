@@ -143,6 +143,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         application.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         application.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+        application.setProvider(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
         application.setPublishDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         Long existApp = applicationMapper.selectCount(new QueryWrapper<Application>()
                 .eq("name", application.getName())
@@ -309,6 +310,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper
                 .selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                         .eq(ApplicationPlugin::getAppCode, appCode)
+                        .orderByDesc(ApplicationPlugin::getCreationDate)
                         .eq(ApplicationPlugin::getDelFlag, 0));
         appDetailMap.put("plugins", applicationPlugins);
 
