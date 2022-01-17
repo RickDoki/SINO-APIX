@@ -1,7 +1,9 @@
 <template>
   <div class="login-main">
     <div class="main-top">
-      <img src="./../../assets/img/sdx_logo.png" alt=""/>
+      <router-link key="collapse" class="sidebar-logo-link" to="/openServe">
+        <img src="./../../assets/img/sdx_logo.png" alt=""/>
+      </router-link>
     </div>
     <div class="main-center">
       <div class="center-logo">

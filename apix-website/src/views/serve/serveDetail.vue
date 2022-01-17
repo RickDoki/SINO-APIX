@@ -195,7 +195,7 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="requestUri" label="请求地址" width="280px" />
+          <el-table-column prop="requestUri" label="请求地址" width="280px" show-overflow-tooltip />
           <el-table-column prop="httpMethod" label="请求方式" />
           <el-table-column prop="remoteIp" label="客户端IP" />
           <el-table-column prop="serverIp" label="服务端IP" />
@@ -237,7 +237,7 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="requestUri" label="请求地址" width="280px" />
+          <el-table-column prop="requestUri" label="请求地址" width="280px" show-overflow-tooltip />
           <el-table-column prop="httpMethod" label="请求方式" />
           <el-table-column prop="remoteIp" label="客户端IP" />
           <el-table-column prop="serverIp" label="服务端IP" />
@@ -317,7 +317,7 @@ export default {
       return nameFiter[value];
     },
   },
-  data() {
+  data () {
     return {
       drawerIsshow: false,
       routerView: false,
@@ -345,7 +345,7 @@ export default {
       errorLoading: false,
     };
   },
-  created() {
+  created () {
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
       // 获取appcode
@@ -359,35 +359,35 @@ export default {
     }
   },
   methods: {
-    showChange() {
+    showChange () {
       this.drawerIsshow = false;
     },
-    getPluginMessage(e) {
+    getPluginMessage (e) {
       this.drawerIsshow = true;
       this.pluginId = e.id;
       console.log(e);
     },
     //操作抽屉
-    handleClose(done) {
+    handleClose (done) {
       done();
     },
-    getlogs(e) {
+    getlogs (e) {
       // console.log('查看日志')
       this.drawer = true;
       this.historylist = e;
     },
     // 编辑服务文档
-    docsEdit() {
+    docsEdit () {
       this.$router.push(
         "/docsEdit/" +
-          "serve?id=" +
-          this.appCode +
-          "&name=" +
-          this.serveData.appName
+        "serve?id=" +
+        this.appCode +
+        "&name=" +
+        this.serveData.appName
       );
     },
     // 通过appcode查询详情
-    getServeDeatil() {
+    getServeDeatil () {
       this.versionLoading = true;
       serveDetail(this.appCode).then((res) => {
         if (res.code === 200) {
@@ -406,7 +406,7 @@ export default {
       });
     },
     // 内部详情
-    getAppNum() {
+    getAppNum () {
       appNum(this.appCode).then((res) => {
         // console.log(res);
         if (res.code === 200) {
@@ -415,7 +415,7 @@ export default {
       });
     },
     // 操作
-    handleCommand(command) {
+    handleCommand (command) {
       // console.log(command)
       if (command === "下架") {
         const query = {
@@ -444,7 +444,7 @@ export default {
       }
     },
     // 删除服务版本
-    delversion(e) {
+    delversion (e) {
       this.$confirm("确认删除版本：" + e.version + ", 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -458,7 +458,7 @@ export default {
       });
     },
     // 请求日志
-    getLog(e) {
+    getLog (e) {
       if (e === "request") {
         this.requestLoding = true;
         const query =
@@ -494,17 +494,17 @@ export default {
       }
     },
     // 请求日志页面跳转
-    handleCurrentChangeRequest(val) {
+    handleCurrentChangeRequest (val) {
       this.getLog("request");
     },
     // 错误日志页面跳转
-    handleCurrentChangeError(val) {
+    handleCurrentChangeError (val) {
       this.getLog("error");
     },
-    gonewEdition() {
+    gonewEdition () {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
-    goplugin() {
+    goplugin () {
       this.$router.push({
         path:
           "/serve/serveDetail/plug-in?appcode=" +
@@ -514,7 +514,7 @@ export default {
       });
     },
     // 版本详情
-    edition(e) {
+    edition (e) {
       this.$router.push({
         path:
           "/serve/editionDetail?appCode=" +
@@ -524,7 +524,7 @@ export default {
       });
     },
     // 插件切换状态
-    enabledChange(e) {
+    enabledChange (e) {
       if (e.pluginType === "sentinel") {
         if (e.enabled === 0) {
           open(e.appId).then((res) => {
@@ -577,22 +577,22 @@ export default {
       }
     },
     // 跳转修改插件配置
-    pluginConfig(e) {
+    pluginConfig (e) {
       console.log(e);
       this.$router.push(
         "/serve/serveDetail/pluginConfig/" +
-          e.pluginType +
-          "?appcode=" +
-          e.appCode +
-          "&appid=" +
-          e.appId +
-          "&id=" +
-          e.id +
-          "&pluginParams=true"
+        e.pluginType +
+        "?appcode=" +
+        e.appCode +
+        "&appid=" +
+        e.appId +
+        "&id=" +
+        e.id +
+        "&pluginParams=true"
       );
     },
     // 控制配置显示
-    goConfig(value) {
+    goConfig (value) {
       if (
         value === "jwt" ||
         value === "oauth2" ||

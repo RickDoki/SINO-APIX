@@ -371,6 +371,7 @@ export default {
       .commonUse_content:hover {
         box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
         border: 1px solid #2650ff;
+        cursor: pointer;
       }
     }
   }
