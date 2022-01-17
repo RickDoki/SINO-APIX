@@ -67,6 +67,7 @@
       <div class="one">
         <el-select
           style="width: 200px"
+          filterable
           @change="apiChose(index)"
           value-key="apiName"
           v-model="apivalueList[index]"
@@ -76,6 +77,7 @@
             :key="item.apiId"
             :label="item.apiName"
             :value="item"
+            :disabled="item.disabled"
           >
           </el-option>
         </el-select>
@@ -133,6 +135,7 @@ import {
   putPlugin,
 } from "@/api/AboutServe";
 import { getToken } from "@/utils/auth"; // get token from cookie
+import { options } from "dropzone";
 
 export default {
   data() {
@@ -216,6 +219,16 @@ export default {
             this.apitime.push(data[index].interval);
             this.apiNum.push(data[index].count);
             this.apitimeValue.push(data[index].intervalUnit);
+            for (
+              let choseindex = 0;
+              choseindex < this.options.length;
+              choseindex++
+            ) {
+              if (this.options[choseindex].apiId === data[index].apiId.apiId) {
+                console.log("|||||||||||||||||");
+                this.options[choseindex].disabled = true;
+              }
+            }
           }
           // data.allowMethods = data.allowMethods.split(",");
           // this.ruleForm = data;
@@ -238,7 +251,46 @@ export default {
     },
     // 获取api
     apiChose(i) {
-      console.log(this.apivalueList);
+      for (let index = 0; index < this.options.length; index++) {
+        this.options[index].disabled = false;
+      }
+      for (let index = 0; index < this.apivalueList.length; index++) {
+        for (let index1 = 0; index1 < this.options.length; index1++) {
+          // console.log(this.options[index1])
+          if (this.apivalueList[index].apiId === this.options[index1].apiId) {
+            this.options[index1].disabled = true;
+          } else {
+            if (this.options[index1].disabled === true) {
+              this.options[index1].disabled = true;
+            } else {
+              this.options[index1].disabled = false;
+            }
+          }
+        }
+      }
+      // for (let index = 0; index < this.options.length; index++) {
+      //   console.log(this.apivalueList)
+      //   console.log(this.options[index])
+      //   // for (let choseindex = 0; index < this.apivalueList.length; choseindex++) {
+      //   // console.log(this.apivalueList[choseindex])
+
+      //   // }
+      //   // const element = array[index];
+      //   // for (let choseindex = 0; choseindex < this.apivalueList.length; choseindex++) {
+      //   //   console.log(this.apivalueList[choseindex])
+      //   //     // if(this.apivalueList[choseindex].apiId === this.options[index].apiId) {
+      //   //     //   this.options[index].disabled = true
+      //   //     // }
+      //   // }
+
+      // }
+      // const id = this.apivalueList[i].apiId;
+      // for (let index = 0; index < this.options.length; index++) {
+      //   if (this.options[index].apiId === id) {
+      //     this.options[index].disabled = true;
+      //   }
+      // }
+      // this.apivalueList[i];
     },
     submitForm() {
       if (this.buttonFont === "添加") {
@@ -317,7 +369,7 @@ export default {
           },
         ];
         for (let index = 0; index < this.apiConfigList.length; index++) {
-          if (apivalueList[index] === "") {
+          if (this.apivalueList[index] === "") {
           } else {
             query.push({
               appId: this.appId,
@@ -378,6 +430,26 @@ export default {
     },
     apiConfigDel(i) {
       this.apiConfigList.splice(i, 1);
+      this.apitime.splice(i, 1);
+      this.apitimeValue.splice(i, 1);
+      this.apivalueList.splice(i, 1);
+      for (let index = 0; index < this.options.length; index++) {
+        this.options[index].disabled = false;
+      }
+      for (let index = 0; index < this.apivalueList.length; index++) {
+        for (let index1 = 0; index1 < this.options.length; index1++) {
+          // console.log(this.options[index1])
+          if (this.apivalueList[index].apiId === this.options[index1].apiId) {
+            this.options[index1].disabled = true;
+          } else {
+            if (this.options[index1].disabled === true) {
+              this.options[index1].disabled = true;
+            } else {
+              this.options[index1].disabled = false;
+            }
+          }
+        }
+      }
     },
   },
 };

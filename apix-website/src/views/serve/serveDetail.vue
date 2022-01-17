@@ -179,7 +179,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="table_box mode-margin">
+      <div v-if="ishttplogShow" class="table_box mode-margin">
         <div class="serve-table">
           <div class="table-tilelong">请求日志</div>
         </div>
@@ -222,7 +222,7 @@
           @current-change="handleCurrentChangeRequest"
         />
       </div>
-      <div class="table_box mode-margin">
+      <div v-if="iserrlogShow" class="table_box mode-margin">
         <div class="serve-table">
           <div class="table-tilelong">错误日志</div>
         </div>
@@ -319,6 +319,8 @@ export default {
   },
   data () {
     return {
+      iserrlogShow:false,
+      ishttplogShow:false,
       drawerIsshow: false,
       routerView: false,
       pluginId: "",
@@ -396,7 +398,24 @@ export default {
           this.appId = res.data.appId;
 
           this.pluginsTable = res.data.plugins;
-          console.log(this.pluginsTable);
+          this.iserrlogShow = false;
+          this.ishttplogShow = false
+          for (let index = 0; index < res.data.plugins.length; index++) {
+           if (res.data.plugins[index].pluginType === 'http_log') {
+             if (res.data.plugins[index].enabled === 1) {
+               this.ishttplogShow = true
+             }else {
+               this.ishttplogShow = false
+             }
+           }
+           if (res.data.plugins[index].pluginType === 'error_log') {
+             if (res.data.plugins[index].enabled === 1) {
+               this.iserrlogShow = true
+             } else {
+               this.iserrlogShow = false
+             }
+           }
+          }
           if (res.data.isPublished === "60005") {
             this.dropdownItems = ["下架"];
           } else {
