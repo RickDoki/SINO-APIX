@@ -149,7 +149,6 @@ export default {
             })
           })
         })
-        console.log(this.serviceList)
       });
     },
     goDetail(item) {
