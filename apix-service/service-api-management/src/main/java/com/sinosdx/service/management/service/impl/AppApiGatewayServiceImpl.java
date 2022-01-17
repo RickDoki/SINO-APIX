@@ -52,6 +52,7 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         Set<String> addGatewayIdSet = new HashSet<>();
         Set<String> updateGatewayIdSet = new HashSet<>();
         for (Api api : apiList) {
+            log.info("update api {} gateway config", api.getId());
             String uri = "/" + appClientCode + api.getUrl();
             while (uri.contains("{")) {
                 String bracket = uri.substring(uri.indexOf("{"), uri.indexOf("}") + 1);

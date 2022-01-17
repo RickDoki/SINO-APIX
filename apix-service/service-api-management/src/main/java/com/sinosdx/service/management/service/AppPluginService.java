@@ -61,4 +61,12 @@ public interface AppPluginService {
      * @param appCode
      */
     void reSubscribeApp(String appCode);
+
+    /**
+     * 查询已订阅应用插件详情
+     *
+     * @param pluginId
+     * @return
+     */
+    R<Object> getSubscribedAppPluginDetails(Integer pluginId);
 }

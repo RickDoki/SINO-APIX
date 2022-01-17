@@ -281,6 +281,7 @@ public class AppPluginServiceImpl implements AppPluginService {
     @Override
     public void reSubscribeApp(String appCode) {
         // 查询订阅该应用的所有用户，重新走订阅流程
+        log.info(appCode + "重新走订阅流程");
         List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
                 .eq(ApplicationSubscribe::getAppSubscribedCode, appCode));
         Set<Integer> sysClientIds = new HashSet<>();
@@ -291,8 +292,25 @@ public class AppPluginServiceImpl implements AppPluginService {
             JSONObject sysUser = sysUserService.queryUserByClientId(clientId).getData();
             if (null != sysUser) {
                 Integer userId = sysUser.getInteger("id");
+                log.info(userId + "用户重新走订阅流程");
                 applicationService.appSubscribe(appCode, userId);
             }
         });
+    }
+
+    /**
+     * 查询已订阅应用插件详情
+     *
+     * @param pluginId
+     * @return
+     */
+    @Override
+    public R<Object> getSubscribedAppPluginDetails(Integer pluginId) {
+        ApplicationPlugin appPlugin = applicationPluginMapper.selectById(pluginId);
+        if (null == appPlugin) {
+            return R.fail(ResultCodeEnum.RESULT_DATA_NONE);
+        }
+
+        return null;
     }
 }
