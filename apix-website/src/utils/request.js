@@ -9,7 +9,7 @@ const protocol = window.location.protocol
 console.log(curPath,protocol)
 // create an axios instance
 const service = axios.create({
-  baseURL: protocol + '//' + curPath, // url = base url + request url
+  baseURL: protocol + '//' + curPath +'/api', // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 50000 // request timeout
 })
