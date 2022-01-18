@@ -47,7 +47,7 @@ public interface GatewayConstants {
 
     String SYS_CLIENT_ID = "sys-client-id";
 
-    String REDIS_PREFIX_APP_PLUGIN = "app_plugin_";
+    String REDIS_PREFIX_APP_PLUGIN = "app_plugin:";
 
     String REDIS_PREFIX_AUTH = "gateway_auth_";
 }

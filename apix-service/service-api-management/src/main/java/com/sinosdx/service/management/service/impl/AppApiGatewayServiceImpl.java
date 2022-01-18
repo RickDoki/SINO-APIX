@@ -165,7 +165,7 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
                 }
 
                 Map<String, Object> gatewayFilter = new HashMap<>();
-                Map<String, Object> filterArgs = new HashMap<>();
+                Map<String, Object> filterArgs = new LinkedHashMap<>();
                 JSONObject pluginParams = JSONObject.parseObject(appPlugin.getPluginParams());
                 // jwt插件
                 if (appPlugin.getPluginType().equals(PluginTypeEnum.JWT.getType())) {
@@ -233,7 +233,7 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
      * 删除已发布的api网关
      *
      * @param applicationId
-     * @param apiList       此处api列表中的api应没有其他服务和服务版本绑定
+     * @param apiList
      * @param appClientCode
      */
     @Override

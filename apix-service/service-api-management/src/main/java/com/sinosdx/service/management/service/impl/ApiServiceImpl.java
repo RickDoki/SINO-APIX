@@ -412,7 +412,7 @@ public class ApiServiceImpl implements ApiService {
      * @return
      */
     @Override
-    public R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList) {
+    public R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList, Integer appVersionId) {
         List<Api> orphanApiList = new ArrayList<>();
         for (Api api : apiList) {
             Long count = applicationApiMapper.selectCount(new LambdaQueryWrapper<ApplicationApi>()
