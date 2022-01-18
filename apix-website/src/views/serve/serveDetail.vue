@@ -545,7 +545,7 @@ export default {
     // 插件切换状态
     enabledChange (e) {
       if (e.pluginType === "sentinel") {
-        if (e.enabled === 0) {
+        if (e.enabled === 1) {
           open(e.appId).then((res) => {
             if (res.code === 200) {
               const query = {
@@ -675,5 +675,6 @@ export default {
 }
 ::v-deep .el-drawer__body {
   margin-right: 20px;
+  margin-bottom: 40px;
 }
 </style>

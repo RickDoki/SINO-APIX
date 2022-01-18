@@ -133,6 +133,7 @@ import {
   postPlugin,
   getPlugin,
   putPlugin,
+  serveDetail,
 } from "@/api/AboutServe";
 import { getToken } from "@/utils/auth"; // get token from cookie
 import { options } from "dropzone";
@@ -190,62 +191,94 @@ export default {
     this.appCode = this.$route.query.appcode;
     this.appId = this.$route.query.appid;
     this.getApiList();
-    // 是否为配置插件
-    if (this.$route.query.pluginParams) {
-      this.id = this.$route.query.id;
-      //查询当前插件详情
-      getPlugin(this.id, this.appCode).then((res) => {
-        if (res.code === 200) {
-          this.enabled = res.data.enabled;
-          const data = JSON.parse(res.data.pluginParams);
-          console.log(data);
-          this.servetime = data[0].interval;
-          this.servenum = data[0].count;
-          this.servetimeValue = data[0].intervalUnit;
-          this.apivalueList = [];
-          this.apiConfigList = [];
-          this.apitime = [];
-          this.apiNum = [];
-          this.apitimeValue = [];
-          if (data.length === 1) {
-            this.apiConfigList = ["1"];
-            this.apitime = ["1"];
-            this.apiNum = ["1"];
-            this.apitimeValue = ["1"];
-          }
-          for (let index = 1; index < data.length; index++) {
-            this.apiConfigList.push("");
-            this.apivalueList.push(data[index].apiId);
-            this.apitime.push(data[index].interval);
-            this.apiNum.push(data[index].count);
-            this.apitimeValue.push(data[index].intervalUnit);
-            for (
-              let choseindex = 0;
-              choseindex < this.options.length;
-              choseindex++
-            ) {
-              if (this.options[choseindex].apiId === data[index].apiId.apiId) {
-                console.log("|||||||||||||||||");
-                this.options[choseindex].disabled = true;
+    setTimeout(() => {
+      // 是否为配置插件
+      if (this.$route.query.pluginParams) {
+        this.id = this.$route.query.id;
+        //查询当前插件详情
+        getPlugin(this.id, this.appCode).then((res) => {
+          if (res.code === 200) {
+            this.enabled = res.data.enabled;
+            const data = JSON.parse(res.data.pluginParams);
+            console.log(data);
+            this.servetime = data[0].interval;
+            this.servenum = data[0].count;
+            this.servetimeValue = data[0].intervalUnit;
+            this.apivalueList = [];
+            this.apiConfigList = [];
+            this.apitime = [];
+            this.apiNum = [];
+            this.apitimeValue = [];
+            if (data.length === 1) {
+              this.apiConfigList = ["1"];
+              this.apitime = ["1"];
+              this.apiNum = ["1"];
+              this.apitimeValue = ["1"];
+            }
+            for (let index = 1; index < data.length; index++) {
+              this.apiConfigList.push("");
+              this.apivalueList.push(data[index].apiId);
+              this.apitime.push(data[index].interval);
+              this.apiNum.push(data[index].count);
+              this.apitimeValue.push(data[index].intervalUnit);
+              for (
+                let choseindex = 0;
+                choseindex < this.options.length;
+                choseindex++
+              ) {
+                if (
+                  this.options[choseindex].apiId === data[index].apiId.apiId
+                ) {
+                  console.log("|||||||||||||||||");
+                  this.options[choseindex].disabled = true;
+                }
               }
             }
+            // data.allowMethods = data.allowMethods.split(",");
+            // this.ruleForm = data;
           }
-          // data.allowMethods = data.allowMethods.split(",");
-          // this.ruleForm = data;
-        }
-      });
-      this.buttonFont = "应用";
-    } else {
-      this.buttonFont = "添加";
-    }
+        });
+        this.buttonFont = "应用";
+      } else {
+        this.buttonFont = "添加";
+      }
+    }, 100);
   },
   methods: {
+    // 数组去重
+    unique(arr) {
+      var obj = {};
+      arr = arr.reduce(function (item, next) {
+        obj[next.apiId] ? "" : (obj[next.apiId] = true && item.push(next));
+        return item;
+      }, []);
+      return arr;
+    },
     // 获取apilist
     getApiList() {
-      apiList(this.developerId).then((res) => {
+      // apiList(this.developerId).then((res) => {
+      //   if (res.code === 200) {
+      //     // console.log(res)
+      //     this.options = res.data.apiList;
+      //   }
+      // });
+      serveDetail(this.appCode).then((res) => {
+        let options = [];
+
         if (res.code === 200) {
           // console.log(res)
-          this.options = res.data.apiList;
+          for (let index = 0; index < res.data.appVersion.length; index++) {
+            for (
+              let index1 = 0;
+              index1 < res.data.appVersion[index].apiList.length;
+              index1++
+            ) {
+              options.push(res.data.appVersion[index].apiList[index1]);
+            }
+          }
+          console.log(options);
+          console.log(this.unique(options));
+          this.options = this.unique(options);
         }
       });
     },
@@ -315,16 +348,17 @@ export default {
         for (let index = 0; index < this.apiConfigList.length; index++) {
           if (this.apivalueList[index] === "") {
           } else {
+            console.log(this.apivalueList[index]);
             query.push({
               appId: this.appId,
-              path: this.apivalueList[index].apiUrl,
+              path: this.apivalueList[index].url,
               count: this.apiNum[index],
               interval: this.apitime[index],
               intervalUnit: this.apitimeValue[index],
             });
             plugQuery.push({
               appId: this.appId,
-              path: this.apivalueList[index].apiUrl,
+              path: this.apivalueList[index].url,
               count: this.apiNum[index],
               interval: this.apitime[index],
               intervalUnit: this.apitimeValue[index],
@@ -373,14 +407,14 @@ export default {
           } else {
             query.push({
               appId: this.appId,
-              path: this.apivalueList[index].apiUrl,
+              path: this.apivalueList[index].url,
               count: this.apiNum[index],
               interval: this.apitime[index],
               intervalUnit: this.apitimeValue[index],
             });
             plugQuery.push({
               appId: this.appId,
-              path: this.apivalueList[index].apiUrl,
+              path: this.apivalueList[index].url,
               count: this.apiNum[index],
               interval: this.apitime[index],
               intervalUnit: this.apitimeValue[index],
