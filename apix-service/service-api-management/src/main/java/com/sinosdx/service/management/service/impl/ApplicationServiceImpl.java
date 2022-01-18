@@ -542,6 +542,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             sentinelProvider.addOrRefreshApiGroup(application.getId() + "");
         }
 
+        // 重新发布订阅相关路由
+        appPluginService.reSubscribeApp(applicationVersionVo.getAppCode());
+
         return R.success(new ApplicationVersionVo(applicationVersion, apiVoList));
     }
 
@@ -1228,6 +1231,11 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.APP_VERSION_IS_EXIST);
         }
         if (null != applicationVersionVo.getApiIds()) {
+            // 删除api路由
+            List<Api> apiList = apiMapper.queryApiListByCondition(applicationVersion.getAppCode(), appVersionId);
+            List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList, applicationVersion.getAppId()).getData();
+            appApiGatewayService.deleteApiGatewayConfig(applicationVersion.getAppId(), orphanApiList, null);
+
             // 删除之前的关联，重新添加
             LambdaQueryWrapper<ApplicationApi> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(ApplicationApi::getDelFlag, 0);
@@ -1244,6 +1252,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 applicationApi.setAppCode(applicationVersion.getAppCode());
                 applicationApiMapper.insert(applicationApi);
             });
+
+            // 重新发布订阅相关路由
+            appPluginService.reSubscribeApp(applicationVersionVo.getAppCode());
+
         }
         if (StringUtils.isNotEmpty(applicationVersionVo.getVersionDesc())) {
             applicationVersion.setDescription(applicationVersionVo.getVersionDesc());
@@ -1283,7 +1295,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
             // 删除api路由
             List<Api> apiList = apiMapper.queryApiListByCondition(applicationVersion.getAppCode(), appVersionId);
-            List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
+            List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList, applicationVersion.getAppId()).getData();
             appApiGatewayService.deleteApiGatewayConfig(applicationVersion.getAppId(), orphanApiList, null);
 
         }

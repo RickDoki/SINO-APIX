@@ -136,6 +136,7 @@ public class AppPluginServiceImpl implements AppPluginService {
         applicationPlugin.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         applicationPluginMapper.updateById(applicationPlugin);
 
+        // 启停插件
         if (!Objects.equals(applicationPlugin.getEnabled(), oldPlugin.getEnabled())) {
             // 停用插件
             if (applicationPlugin.getEnabled() == 0) {
@@ -149,7 +150,12 @@ public class AppPluginServiceImpl implements AppPluginService {
 
             // 重新发布订阅相关路由
             this.reSubscribeApp(applicationPlugin.getAppCode());
+        }
 
+        // 修改插件配置
+        if (!Objects.equals(applicationPlugin.getPluginParams(), oldPlugin.getPluginType())) {
+            // 重新发布订阅相关路由
+            this.reSubscribeApp(applicationPlugin.getAppCode());
         }
 
         return R.success();

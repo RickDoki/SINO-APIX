@@ -406,17 +406,19 @@ public class ApiServiceImpl implements ApiService {
     }
 
     /**
-     * 查询api列表中未被其他服务或服务版本使用的api
+     * 查询api列表中未被其他服务版本使用的api
      *
      * @param apiList
+     * @param appId
      * @return
      */
     @Override
-    public R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList) {
+    public R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList, Integer appId) {
         List<Api> orphanApiList = new ArrayList<>();
         for (Api api : apiList) {
             Long count = applicationApiMapper.selectCount(new LambdaQueryWrapper<ApplicationApi>()
-                    .eq(ApplicationApi::getApiId, api.getId()));
+                    .eq(ApplicationApi::getApiId, api.getId())
+                    .eq(ApplicationApi::getAppId, appId));
             // 如果是孤儿api应该只能查到一条
             if (count == 1) {
                 orphanApiList.add(api);

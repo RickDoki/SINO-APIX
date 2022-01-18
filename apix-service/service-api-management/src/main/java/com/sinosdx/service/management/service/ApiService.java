@@ -112,8 +112,9 @@ public interface ApiService {
      * 查询api列表中未被其他服务或服务版本使用的api
      *
      * @param apiList
+     * @param appId
      * @return
      */
-    R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList);
+    R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList, Integer appId);
 
 }
