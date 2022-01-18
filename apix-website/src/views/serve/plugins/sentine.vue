@@ -136,7 +136,6 @@ import {
   serveDetail,
 } from "@/api/AboutServe";
 import { getToken } from "@/utils/auth"; // get token from cookie
-import { options } from "dropzone";
 
 export default {
   data() {
@@ -242,7 +241,7 @@ export default {
       } else {
         this.buttonFont = "添加";
       }
-    }, 100);
+    }, 200);
   },
   methods: {
     // 数组去重
@@ -366,8 +365,8 @@ export default {
             });
           }
         }
-        save(query).then((res) => {
-          if (res.code === 200) {
+        // save(query).then((res) => {
+        //   if (res.code === 200) {
             const pluginquery = {
               pluginType: "sentinel",
               appCode: this.appCode,
@@ -381,8 +380,8 @@ export default {
                 });
               }
             });
-          }
-        });
+        //   }
+        // });
       } else {
         const plugQuery = [
           {
@@ -422,8 +421,8 @@ export default {
             });
           }
         }
-        save(query).then((res) => {
-          if (res.code === 200) {
+        // save(query).then((res) => {
+        //   if (res.code === 200) {
             const pluginquery = {
               pluginType: "sentinel",
               appCode: this.appCode,
@@ -439,8 +438,8 @@ export default {
                 });
               }
             });
-          }
-        });
+        //   }
+        // });
       }
     },
     // 取消
