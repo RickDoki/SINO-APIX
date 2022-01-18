@@ -30,7 +30,8 @@ import reactor.core.publisher.Mono;
  *
  * @author pengjiahu
  * @date 2021-06-18 00:43
- * @description 注意：自定义过滤器顺序是按照各服务配置的插件顺序，如
+ * @description 注意：
+ * 1、自定义过滤器顺序是按照各服务配置的插件顺序，如
  * filters:
  * - StripPrefix=1
  * - RealIp=
@@ -38,6 +39,7 @@ import reactor.core.publisher.Mono;
  * - Sign=
  * - ProxyCache=120
  * 以上会按照从上至下顺序，所以需在发布服务时排序。
+ * 2、Config配置的value类型必须是String类型，否则会有类型转换失败
  */
 @Slf4j
 @Setter

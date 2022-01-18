@@ -60,8 +60,8 @@ public class CorsGatewayFilterFactory extends BaseGatewayFilter<Config> {
                         .collect(Collectors.toList()));
         headers.setAccessControlAllowHeaders(ListUtil.toList(c.getAllowHeaders().split(REGEX)));
         headers.setAccessControlExposeHeaders(ListUtil.toList(c.getExposeHeaders().split(REGEX)));
-        headers.setAccessControlMaxAge(c.getMaxAge());
-        headers.setAccessControlAllowCredentials(c.allowCredentials);
+        headers.setAccessControlMaxAge(Integer.parseInt(c.getMaxAge()));
+        headers.setAccessControlAllowCredentials(!"false".equals(c.allowCredentials));
         exchange.mutate().response(rep).build();
         if (req.getMethod() == HttpMethod.OPTIONS) {
             rep.setStatusCode(HttpStatus.OK);
@@ -100,11 +100,11 @@ public class CorsGatewayFilterFactory extends BaseGatewayFilter<Config> {
         /**
          * 预检请求的有效期，单位为秒, 默认5
          */
-        private int maxAge = 5;
+        private String maxAge = "5";
         /**
          * 是否允许Cookie, 默认false
          */
-        private Boolean allowCredentials = false;
+        private String allowCredentials = "false";
 
     }
 
