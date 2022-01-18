@@ -130,7 +130,6 @@ cd website，将命令提示符跳转到front目录
 ## QuickStart
 - [基础环境搭建（参考）](docs/deploy/README.md)
 - [Jar部署说明](docs/deploy/jar/README.md)
-- [Docker部署说明](docs/deploy/docker/README.md)
 - [Docker-compose部署说明](docs/deploy/docker-compose/README.md)
 - [Kubernetes部署说明](docs/deploy/kubernetes/README.md)
 
