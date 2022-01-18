@@ -1,6 +1,7 @@
 <template>
   <div class="navbar_top">
     <div class="navbar">
+      <div class="openserve" @click="goOpenServe">开放服务</div>
       <div class="navber_userHandle">
         <img src="./../../assets/img/img_avatar.png" alt=""/>
         <el-dropdown trigger="click" @command="handleCommand">
@@ -20,11 +21,16 @@
         separator=">"
       >
         <template v-for="(item, index) in routerList">
+          <el-breadcrumb-item 
+            :key="index"
+            v-if="item.meta.mbxClick">
+            <a @click="goto(item)">{{ item.meta.title }}</a>
+          </el-breadcrumb-item>
           <el-breadcrumb-item
             :key="index"
-            v-if="(item.meta.title ? true : false)">{{ item.meta.title }}
+            v-else>
+            {{ item.meta.title }}
           </el-breadcrumb-item>
-          <!-- <a :href="item.path">{{ item.meta.title }}</a></el-breadcrumb-item> -->
         </template>
       </el-breadcrumb>
     </div>
@@ -32,25 +38,17 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import Breadcrumb from "@/components/Breadcrumb";
+import { mapGetters } from "vuex";
 import Hamburger from "@/components/Hamburger";
 import ErrorLog from "@/components/ErrorLog";
-import {getToken, removeToken} from "@/utils/auth";
-// import Screenfull from '@/components/Screenfull'
-// import SizeSelect from '@/components/SizeSelect'
-// import Search from '@/components/HeaderSearch'
+import { getToken, removeToken } from "@/utils/auth";
 
 export default {
   components: {
-    Breadcrumb,
     Hamburger,
-    ErrorLog,
-    // Screenfull,
-    // SizeSelect,
-    // Search
+    ErrorLog
   },
-  data() {
+  data () {
     return {
       logoMenu: ["right-menu", "widthTrue"],
       searchContent: "",
@@ -58,7 +56,7 @@ export default {
       userName: ''
     };
   },
-  created() {
+  created () {
     // console.log(this.$route)
     this.routerList = this.$route.matched;
     console.log(this.routerList[0].meta.title);
@@ -79,12 +77,24 @@ export default {
     ...mapGetters(["sidebar", "avatar", "device"]),
   },
   methods: {
-    handleCommand(command) {
+    goto (item) {
+      if (item.meta.golist) {
+        this.$router.push({ name: item.name })
+      } else {
+        this.$router.go(-1)
+      }
+    },
+    goOpenServe () {
+      this.$router.push({
+        name: 'openServe'
+      })
+    },
+    handleCommand (command) {
       // this.$message("click on item " + command);
       if (command == 'a') {
-        this.$router.push({path: '/system/index'})
+        this.$router.push({ path: '/system/index' })
       } else {
-        this.$router.push({path: '/login'})
+        this.$router.push({ path: '/login' })
       }
     },
   },
@@ -167,11 +177,13 @@ export default {
     margin-top: 17px;
     color: #f1f1f1;
   }
-
-  .navber_userHandle {
-    margin: 0px 50px 150px;
+  .openserve {
     line-height: 55px;
-
+    font-size: 14px;
+  }
+  .navber_userHandle {
+    margin: 0px 50px 150px 30px;
+    line-height: 55px;
     img {
       width: 34px;
       height: 34px;

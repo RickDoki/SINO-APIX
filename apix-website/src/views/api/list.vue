@@ -1,58 +1,61 @@
 <template>
   <div class="main">
-    <div class="list_top list_top_bom">
-      <div class="list_title">API列表</div>
-      <div class="list_search">
-        <el-input
-          suffix-icon="el-icon-search"
-          class="list_searchInput"
-          v-model="APIName"
-          size="small"
-          placeholder="请输入API名称"
-          @change="search()" />
-        <el-date-picker
-          v-model="value1"
-          type="datetimerange"
-          class="list_searchInput_date"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          size="small"
-          @change="search()"
-          value-format="timestamp"
-          :default-time="['00:00:00', '23:59:59']"
+    <div v-if="!routerView">
+      <div class="list_top list_top_bom">
+        <div class="list_title">API列表</div>
+        <div class="list_search">
+          <el-input
+            suffix-icon="el-icon-search"
+            class="list_searchInput"
+            v-model="APIName"
+            size="small"
+            placeholder="请输入API名称"
+            @change="search()" />
+          <el-date-picker
+            v-model="value1"
+            type="datetimerange"
+            class="list_searchInput_date"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            size="small"
+            @change="search()"
+            value-format="timestamp"
+            :default-time="['00:00:00', '23:59:59']"
+          />
+          <el-button type="primary" size="small" icon="el-icon-plus" @click="goApicreate">添加新API</el-button>
+        </div>
+      </div>
+      <div class="table_box">
+        <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
+          <el-table-column prop="apiName" label="API名称" show-overflow-tooltip min-width="120">
+            <template slot-scope="scope">
+              <span @click="gotoDteail(scope.row)" class="text_detail">{{scope.row.apiName}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="requestMethod" label="请求方式" align="center"></el-table-column>
+          <el-table-column prop="domain" label="域名" show-overflow-tooltip min-width="250"></el-table-column>
+          <el-table-column prop="apiUrl" label="路径" show-overflow-tooltip min-width="200"></el-table-column>
+          <el-table-column prop="description" label="API描述" show-overflow-tooltip min-width="200"></el-table-column>
+          <el-table-column label="操作" min-width="90">
+            <template slot-scope="scope">
+              <el-button type="text" @click="gotoDteail(scope.row)">查看</el-button>
+              <span class="handle">|</span>
+              <el-button type="text" @click="delAPI(scope.row)" class="textBut-danger">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          background
+          class="list-pagination"
+          :current-page.sync="page"
+          layout="prev, pager, next"
+          :total="total"
+          @current-change="handleCurrentChange"
         />
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="goApicreate">添加新API</el-button>
       </div>
     </div>
-    <div class="table_box">
-      <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="apiName" label="API名称" show-overflow-tooltip min-width="120">
-          <template slot-scope="scope">
-            <span @click="gotoDteail(scope.row)" class="text_detail">{{scope.row.apiName}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="requestMethod" label="请求方式" align="center"></el-table-column>
-        <el-table-column prop="domain" label="域名" show-overflow-tooltip min-width="250"></el-table-column>
-        <el-table-column prop="apiUrl" label="路径" show-overflow-tooltip min-width="200"></el-table-column>
-        <el-table-column prop="description" label="API描述" show-overflow-tooltip min-width="200"></el-table-column>
-        <el-table-column label="操作" min-width="90">
-          <template slot-scope="scope">
-            <el-button type="text" @click="gotoDteail(scope.row)">查看</el-button>
-            <span class="handle">|</span>
-            <el-button type="text" @click="delAPI(scope.row)" class="textBut-danger">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        class="list-pagination"
-        :current-page.sync="page"
-        layout="prev, pager, next"
-        :total="total"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <router-view v-if="routerView"></router-view>
   </div>
 </template>
 
@@ -65,6 +68,7 @@ export default {
   },
   data () {
     return {
+      routerView: false,
       APIName: "",
       value1: [],
       tableData: [],
@@ -75,9 +79,14 @@ export default {
     };
   },
   created () {
-    this.developerId = getToken("userId_api");
-    const query = "limit=" + this.size + "&offset=" + this.page + "&developerId=" + this.developerId;
-    this.getList(query);
+    if (this.$route.name === "ApiList") {
+      this.routerView = false
+      this.developerId = getToken("userId_api");
+      const query = "limit=" + this.size + "&offset=" + this.page + "&developerId=" + this.developerId;
+      this.getList(query);
+    } else {
+      this.routerView = true
+    }
   },
   methods: {
     gotoDteail (row) {
@@ -157,7 +166,9 @@ export default {
       this.getList(query);
     },
     goApicreate () {
-      this.$router.push('/api/add')
+      this.$router.push({
+        name: 'CreateApi'
+      })
     }
   },
 };

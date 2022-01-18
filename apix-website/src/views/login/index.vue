@@ -171,11 +171,6 @@ export default {
               } else {
                 this.$router.push("/dashboard/index");
               }
-            } else {
-              this.$message({
-                message: res.msg,
-                type: "error",
-              });
             }
           });
         } else {
@@ -278,9 +273,9 @@ export default {
 
       .handle_bom {
         margin-top: 20px;
-
         .goreg-col {
           color: #2650ff;
+          cursor: pointer;
         }
       }
     }

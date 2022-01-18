@@ -97,7 +97,11 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="version" label="版本名称" />
+          <el-table-column prop="version" label="版本名称">
+            <template slot-scope="scope">
+              <span @click="edition(scope.row)" class="text_detail">{{scope.row.version}}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="description" label="版本描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
@@ -319,8 +323,8 @@ export default {
   },
   data () {
     return {
-      iserrlogShow:false,
-      ishttplogShow:false,
+      iserrlogShow: false,
+      ishttplogShow: false,
       drawerIsshow: false,
       routerView: false,
       pluginId: "",
@@ -401,20 +405,20 @@ export default {
           this.iserrlogShow = false;
           this.ishttplogShow = false
           for (let index = 0; index < res.data.plugins.length; index++) {
-           if (res.data.plugins[index].pluginType === 'http_log') {
-             if (res.data.plugins[index].enabled === 1) {
-               this.ishttplogShow = true
-             }else {
-               this.ishttplogShow = false
-             }
-           }
-           if (res.data.plugins[index].pluginType === 'error_log') {
-             if (res.data.plugins[index].enabled === 1) {
-               this.iserrlogShow = true
-             } else {
-               this.iserrlogShow = false
-             }
-           }
+            if (res.data.plugins[index].pluginType === 'http_log') {
+              if (res.data.plugins[index].enabled === 1) {
+                this.ishttplogShow = true
+              } else {
+                this.ishttplogShow = false
+              }
+            }
+            if (res.data.plugins[index].pluginType === 'error_log') {
+              if (res.data.plugins[index].enabled === 1) {
+                this.iserrlogShow = true
+              } else {
+                this.iserrlogShow = false
+              }
+            }
           }
           if (res.data.isPublished === "60005") {
             this.dropdownItems = ["下架"];
@@ -536,7 +540,7 @@ export default {
     edition (e) {
       this.$router.push({
         path:
-          "/serve/editionDetail?appCode=" +
+          "/serve/serveDetail/editionDetail?appCode=" +
           this.appCode +
           "&appVersionId=" +
           e.id,

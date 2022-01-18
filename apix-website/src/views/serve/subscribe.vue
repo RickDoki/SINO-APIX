@@ -1,70 +1,73 @@
 <template>
   <div class="main">
-    <div class="list_top list_top_bom">
-      <div class="list_title">我的订阅</div>
-      <div class="list_search">
-        <el-input
-          size="small"
-          placeholder="搜索"
-          suffix-icon="el-icon-search"
-          v-model="name"
-          class="list_searchInput"
-          @input="nameSerach"
+    <div v-if="!routerView">
+      <div class="list_top list_top_bom">
+        <div class="list_title">我的订阅</div>
+        <div class="list_search">
+          <el-input
+            size="small"
+            placeholder="搜索"
+            suffix-icon="el-icon-search"
+            v-model="name"
+            class="list_searchInput"
+            @input="nameSerach"
+          >
+          </el-input>
+        </div>
+      </div>
+      <div class="table_box">
+        <el-table
+          :data="table"
+          v-loading="loading"
+          empty-text="暂无数据"
+          :row-style="{ height: '50px' }"
+          highlight-current-row
+          :header-cell-style="{
+            'font-weight': 400,
+            'font-size': '16px',
+            color: '#1D1C35',
+          }"
         >
-        </el-input>
+          <el-table-column prop="appName" label="服务名称">
+            <template slot-scope="scope">
+              <span @click="goserveDteail(scope.row)" class="linkcolor">{{
+                scope.row.appName
+              }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="appCode" label="APPCode" />
+          <el-table-column label="启用状态">
+            <template slot-scope="scope">
+              <div class="hasPublished" v-if="scope.row.isPublished === '60005'">
+                已发布
+              </div>
+              <div class="noPublished" v-else>未发布</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" label="描述" />
+          <el-table-column label="操作" width="180px">
+            <template slot-scope="scope">
+              <el-button type="text" @click="goserveDteail(scope.row)"
+                >查看</el-button
+              >
+              <span class="handle">|</span>
+              <el-button type="text" @click="unSubscribe(scope.row)"
+                >退订</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          background
+          class="list-pagination"
+          :current-page.sync="currentPage"
+          layout="prev, pager, next"
+          :total="total"
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
-    <div class="table_box">
-      <el-table
-        :data="table"
-        v-loading="loading"
-        empty-text="暂无数据"
-        :row-style="{ height: '50px' }"
-        highlight-current-row
-        :header-cell-style="{
-          'font-weight': 400,
-          'font-size': '16px',
-          color: '#1D1C35',
-        }"
-      >
-        <el-table-column prop="appName" label="服务名称">
-          <template slot-scope="scope">
-            <span @click="goserveDteail(scope.row)" class="linkcolor">{{
-              scope.row.appName
-            }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="appCode" label="APPCode" />
-        <el-table-column label="启用状态">
-          <template slot-scope="scope">
-            <div class="hasPublished" v-if="scope.row.isPublished === '60005'">
-              已发布
-            </div>
-            <div class="noPublished" v-else>未发布</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="description" label="描述" />
-        <el-table-column label="操作" width="180px">
-          <template slot-scope="scope">
-            <el-button type="text" @click="goserveDteail(scope.row)"
-              >查看</el-button
-            >
-            <span class="handle">|</span>
-            <el-button type="text" @click="unSubscribe(scope.row)"
-              >退订</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        class="list-pagination"
-        :current-page.sync="currentPage"
-        layout="prev, pager, next"
-        :total="total"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <router-view v-if="routerView"></router-view>
   </div>
 </template>
 
@@ -72,8 +75,9 @@
 import "./../mainCss/index.scss";
 import { Mysubscribed, gounSubscribe } from "@/api/AboutServe.js";
 export default {
-  data() {
+  data () {
     return {
+      routerView: false,
       table: [
         {
           appName: "测试数据",
@@ -85,15 +89,20 @@ export default {
       loading: false,
     };
   },
-  created() {
-    this.getMysubscribed();
+  created () {
+    if (this.$route.name === "subscribe") {
+      this.routerView = false
+      this.getMysubscribed();
+    } else {
+      this.routerView = true
+    }
   },
   methods: {
-    nameSerach() {
+    nameSerach () {
       this.currentPage = 1;
       this.getMysubscribed();
     },
-    getMysubscribed() {
+    getMysubscribed () {
       this.loading = true;
       const query =
         "limit=10" +
@@ -112,16 +121,16 @@ export default {
         }
       });
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val;
       this.getMysubscribed();
     },
     // 跳转api详情
-    goserveDteail(e) {
+    goserveDteail (e) {
       this.$router.push({ path: "/serve/subscribeDetail/" + e.appCode });
     },
     // 退订
-    unSubscribe(e) {
+    unSubscribe (e) {
       // console.log(e)
       this.$confirm("确认退订服务" + e.appName + "?", "提示", {
         confirmButtonText: "确定",
@@ -129,13 +138,13 @@ export default {
         type: "warning",
       })
         .then(() => {
-          gounSubscribe(e.appCode).then(res=>{
-            if(res.code ===200) {
+          gounSubscribe(e.appCode).then(res => {
+            if (res.code === 200) {
               this.getMysubscribed()
             }
           })
         })
-        .catch(() => {});
+        .catch(() => { });
     },
   },
 };
