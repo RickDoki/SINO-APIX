@@ -109,9 +109,6 @@ export default {
     return {
       routerView: false,
       table: [
-        {
-          appName: "我的服务",
-        },
       ],
       total: 100,
       currentPage: 1,

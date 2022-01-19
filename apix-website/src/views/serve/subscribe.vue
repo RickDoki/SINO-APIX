@@ -79,9 +79,6 @@ export default {
     return {
       routerView: false,
       table: [
-        {
-          appName: "测试数据",
-        },
       ],
       total: 0,
       currentPage: 1,
