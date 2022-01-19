@@ -71,10 +71,10 @@
         <div class="left">返回值:</div>
         <div class="right"> {{ pluginParams.response }} </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.EnableClientCredentials">
+      <div class="flexBox" v-if="pluginParams.clientCredential">
         <div class="left">客户端认证:</div>
         <div class="button_plug">
-          {{ pluginParams.EnableClientCredentials === true ? "开启" : "关闭" }}
+          {{ pluginParams.clientCredential === true ? "开启" : "关闭" }}
         </div>
       </div>
       <div class="flexBox" v-if="pluginParams.refreshTokenExpiration">
