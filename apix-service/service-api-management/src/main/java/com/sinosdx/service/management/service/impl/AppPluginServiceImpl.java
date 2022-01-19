@@ -345,7 +345,8 @@ public class AppPluginServiceImpl implements AppPluginService {
         }
 
         ApplicationPluginClient appPluginClient = applicationPluginClientMapper.selectOne(new LambdaQueryWrapper<ApplicationPluginClient>()
-                .eq(ApplicationPluginClient::getAppPluginId, appPlugin.getId()));
+                .eq(ApplicationPluginClient::getAppPluginId, appPlugin.getId())
+                .eq(ApplicationPluginClient::getSysClientId, sysClient.getId()));
         JSONObject pluginParamJson = new JSONObject();
         String pluginType = appPlugin.getPluginType();
         if (null != appPluginClient) {
