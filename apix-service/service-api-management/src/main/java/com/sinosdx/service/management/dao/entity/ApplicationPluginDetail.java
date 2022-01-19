@@ -35,7 +35,7 @@ public class ApplicationPluginDetail implements Serializable {
     /**
      * 插件介绍
      */
-    private String desc;
+    private String description;
     /**
      * token请求地址
      */
