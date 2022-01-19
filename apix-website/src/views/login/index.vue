@@ -56,7 +56,7 @@
       </div>
     </div>
     <div class="main-bottom">
-      <span>Copyright © 2021 上海博冀信息科技有限公司</span>
+      <span>Copyright © {{ year }} 上海博冀信息科技有限公司</span>
     </div>
   </div>
 </template>
@@ -68,6 +68,7 @@ import { Apiregister, Apilogin } from "@/api/user";
 export default {
   data () {
     return {
+      year: '',
       ruleForm: {
         username: "",
         password: "",
@@ -181,6 +182,7 @@ export default {
     },
   },
   created () {
+    this.year = (new Date()).getFullYear()
     removeToken("apiPhone");
     removeToken("token");
     removeToken("userId_api");
@@ -286,9 +288,11 @@ export default {
     font-size: 12px;
     width: 100%;
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 24px;
+    bottom: 0px;
+    line-height: 50px;
+    height: 70px;
+    background: url('./../../assets/img/img_login_bg.png') no-repeat center
+      center fixed;
   }
 }
 </style>
