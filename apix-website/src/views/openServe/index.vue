@@ -173,6 +173,9 @@ export default {
             }
           })
         })
+        .catch(()=>{
+          
+        })
       } else {
         this.$router.push({
           path: '/login',
