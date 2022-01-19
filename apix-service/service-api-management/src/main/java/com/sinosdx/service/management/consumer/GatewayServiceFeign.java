@@ -21,5 +21,5 @@ public interface GatewayServiceFeign {
     Boolean update(@RequestBody JSONObject entity);
 
     @DeleteMapping("/{id}")
-    Mono<ResponseEntity<Object>> delete(@PathVariable String id);
+    Mono<ResponseEntity<Object>> delete(@PathVariable("id") String id);
 }

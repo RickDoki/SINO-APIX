@@ -27,9 +27,9 @@ spring:
           - dataId: common-feign.yml
             group: COMMON_GROUP
             refresh: true
-          - dataId: common-rabbitmq.yml
-            group: COMMON_GROUP
-            refresh: true
+#          - dataId: common-rabbitmq.yml
+#            group: COMMON_GROUP
+#            refresh: true
           - dataId: common-log.yml
             group: COMMON_GROUP
             refresh: true
@@ -48,6 +48,12 @@ spring:
     allow-bean-definition-overriding: true
   profiles:
     active: '@profile.active@'
+  rabbitmq:
+    host: 113.31.117.19
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
 
 # 用于/actuator/info
 info:
