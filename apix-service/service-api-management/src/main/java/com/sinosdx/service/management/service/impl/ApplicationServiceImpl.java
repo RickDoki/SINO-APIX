@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Maps;
 import com.sinosdx.common.base.base.entity.Entity;
+import com.sinosdx.common.base.context.SpringContextHolder;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
@@ -42,6 +43,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -109,6 +111,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Autowired
     private TokenServiceFeign tokenService;
+
+    @Autowired
+    private ExecutorService executorService;
 
     /**
      * 创建新应用
@@ -690,8 +695,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 查询服务所有关联api
         List<Api> apiList = apiMapper.queryApiListByCondition(subscribedApp.getCode(), null);
 
-        // 发布到网关
-        appApiGatewayService.updateApiGatewayConfig(subscribedApp.getId(), apiList, applicationSubscribe.getAppClientCode());
+        // 异步发布到网关
+        String appClientCode = applicationSubscribe.getAppClientCode();
+        executorService.execute(() ->
+                appApiGatewayService.updateApiGatewayConfig(subscribedApp.getId(), apiList, appClientCode));
+//        appApiGatewayService.updateApiGatewayConfig(subscribedApp.getId(), apiList, appClientCode);
 
         return R.success(applicationSubscribe);
     }
@@ -752,7 +760,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 3.删除对应路由
         List<Api> apiList = apiMapper.queryApiListByCondition(subscribedApp.getCode(), null);
 //        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
-        appApiGatewayService.deleteApiGatewayConfig(subscribedApp.getId(), apiList, appClientCode);
+        executorService.execute(() ->
+                appApiGatewayService.deleteApiGatewayConfig(subscribedApp.getId(), apiList, appClientCode));
+//        appApiGatewayService.deleteApiGatewayConfig(subscribedApp.getId(), apiList, appClientCode);
 
         return R.success();
     }
