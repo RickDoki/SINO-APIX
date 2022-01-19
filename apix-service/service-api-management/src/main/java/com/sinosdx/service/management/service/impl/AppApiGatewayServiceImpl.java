@@ -255,7 +255,12 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
 
             // 只有一个api，删除整个gatewayId下的路由
             if (count == 0) {
-                gatewayService.delete(gatewayId);
+                try {
+                    gatewayService.delete(gatewayId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("删除路由出错", e);
+                }
             }
             // 不止一个api，需要对路由做更新
             else {
