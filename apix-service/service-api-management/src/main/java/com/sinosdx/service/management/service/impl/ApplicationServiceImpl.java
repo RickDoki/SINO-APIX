@@ -373,7 +373,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                         // 删除应用相关api路由
                         List<Api> apiList = apiMapper.queryApiListByCondition(applicationVo.getAppCode(), null);
 //                        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
-                        appApiGatewayService.deleteApiGatewayConfig(applicationVo.getAppId(), apiList, null);
+                        executorService.execute(() -> appApiGatewayService.deleteApiGatewayConfig(applicationVo.getAppId(), apiList, null));
+//                        appApiGatewayService.deleteApiGatewayConfig(applicationVo.getAppId(), apiList, null);
                     } else {
                         return R.fail(ResultCodeEnum.STATUS_MODIFY_ERROR);
                     }
@@ -435,7 +436,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         // 删除api路由
         List<Api> apiList = apiMapper.queryApiListByCondition(appCode, null);
 //        List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList).getData();
-        appApiGatewayService.deleteApiGatewayConfig(appId, apiList, null);
+        executorService.execute(() ->
+                appApiGatewayService.deleteApiGatewayConfig(appId, apiList, null));
         // 删除版本api关联
         applicationApiMapper.delete(new QueryWrapper<ApplicationApi>().eq("app_code", appCode));
         // 刪除订阅关系
@@ -1250,7 +1252,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             // 删除api路由
             List<Api> apiList = apiMapper.queryApiListByCondition(applicationVersion.getAppCode(), appVersionId);
             List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList, applicationVersion.getAppId()).getData();
-            appApiGatewayService.deleteApiGatewayConfig(applicationVersion.getAppId(), orphanApiList, null);
+            executorService.execute(() ->
+                    appApiGatewayService.deleteApiGatewayConfig(applicationVersion.getAppId(), orphanApiList, null));
 
             // 删除之前的关联，重新添加
             LambdaQueryWrapper<ApplicationApi> wrapper = new LambdaQueryWrapper<>();
@@ -1312,7 +1315,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             // 删除api路由
             List<Api> apiList = apiMapper.queryApiListByCondition(applicationVersion.getAppCode(), appVersionId);
             List<Api> orphanApiList = apiService.getApiListNotUsedByOtherAppOrAppVersion(apiList, applicationVersion.getAppId()).getData();
-            appApiGatewayService.deleteApiGatewayConfig(applicationVersion.getAppId(), orphanApiList, null);
+            executorService.execute(() ->
+                    appApiGatewayService.deleteApiGatewayConfig(applicationVersion.getAppId(), orphanApiList, null));
 
         }
         return R.success();
