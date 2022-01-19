@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
  * @author wendy
  * @date 2021/7/22
  */
-@FeignClient("spring-cloud-gateway")
+@FeignClient("service-gateway")
 @RequestMapping("/gateway/route")
 public interface GatewayServiceFeign {
 
