@@ -31,7 +31,7 @@ public interface TokenServiceFeign {
      * @return
      */
     @GetMapping("/secret")
-    R<List<ClientAppSecret>> querySecretByAppCode(@RequestParam String appCode);
+    R<List<ClientAppSecret>> querySecretByAppCode(@RequestParam("secretKey") String appCode);
 
     /**
      * 删除secret
