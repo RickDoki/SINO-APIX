@@ -87,15 +87,7 @@ public class AppPluginServiceImpl implements AppPluginService {
         if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
         }
-        if (PluginTypeEnum.SENTINEL.getType().equals(applicationPlugin.getPluginType())) {
-            String json = applicationPlugin.getPluginParams();
-            List<LimitInfo> list = JSON.parseObject(json, new TypeReference<List<LimitInfo>>() {
-            });
-            String save = service.save(list);
-            if (!save.endsWith("ok")) {
-                return R.fail();
-            }
-        }
+
         Long count = applicationPluginMapper.selectCount(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getDelFlag, 0)
                 .eq(ApplicationPlugin::getPluginType, applicationPlugin.getPluginType())
@@ -112,8 +104,19 @@ public class AppPluginServiceImpl implements AppPluginService {
         applicationPluginMapper.insert(applicationPlugin);
         redisService.sSet(Constants.REDIS_PREFIX_APP_PLUGIN + applicationPlugin.getAppCode(), applicationPlugin.getPluginType());
 
-        // 重新发布订阅相关路由
-        this.reSubscribeApp(applicationPlugin.getAppCode());
+        // sentinel特殊处理
+        if (PluginTypeEnum.SENTINEL.getType().equals(applicationPlugin.getPluginType())) {
+            String json = applicationPlugin.getPluginParams();
+            List<LimitInfo> list = JSON.parseObject(json, new TypeReference<List<LimitInfo>>() {
+            });
+            String save = service.save(list);
+            if (!save.endsWith("ok")) {
+                return R.fail();
+            }
+        } else {
+            // 重新发布订阅相关路由
+            this.reSubscribeApp(applicationPlugin.getAppCode());
+        }
 
         return R.success();
     }
