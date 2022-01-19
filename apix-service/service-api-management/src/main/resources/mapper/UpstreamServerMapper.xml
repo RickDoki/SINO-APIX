@@ -19,6 +19,9 @@
             <if test="name != null and name != '' ">
                 and name like concat('%',#{name},'%')
             </if>
+            <if test="userId != null">
+                and creation_by = #{userId}
+            </if>
             <if test="limit != null and offset != null">
                 LIMIT ${(offset -1)*limit},#{limit}
             </if>;

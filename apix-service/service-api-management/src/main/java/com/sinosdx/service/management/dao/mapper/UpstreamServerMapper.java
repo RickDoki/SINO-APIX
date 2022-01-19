@@ -15,6 +15,7 @@ import java.util.List;
 public interface UpstreamServerMapper extends BaseMapper<UpstreamServer> {
 
     List<Object> queryUpstreamServerList(@Param(value = "name") String name,
-                                        @Param(value = "limit") Integer limit,
-                                        @Param(value = "offset") Integer offset);
+                                         @Param(value = "userId") Integer userId,
+                                         @Param(value = "limit") Integer limit,
+                                         @Param(value = "offset") Integer offset);
 }
