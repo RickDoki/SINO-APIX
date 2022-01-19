@@ -38,7 +38,7 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="appName" label="服务名称">
+          <el-table-column prop="appName" label="服务名称" show-overflow-tooltip >
             <template slot-scope="scope">
               <span @click="goserveDteail(scope)" class="linkcolor">{{
                 scope.row.appName
