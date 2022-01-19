@@ -351,9 +351,11 @@ public class AppPluginServiceImpl implements AppPluginService {
         String pluginType = appPlugin.getPluginType();
         if (null != appPluginClient) {
             pluginParamJson = JSONObject.parseObject(appPluginClient.getPluginParams());
+            log.info("plugin client params: " + pluginParamJson.toJSONString());
         } else {
             if (!appPlugin.getPluginType().equals(PluginTypeEnum.SENTINEL.getType())) {
                 pluginParamJson = JSONObject.parseObject(appPlugin.getPluginParams());
+                log.info("plugin params: " + pluginParamJson.toJSONString());
             }
         }
         // 查询详情配置
