@@ -716,24 +716,11 @@ public class ApplicationServiceImpl implements ApplicationService {
             return R.fail(ResultCodeEnum.RESOURCE_NOT_EXISTED);
         }
         // 进行解绑
-        // 1.删除 applicationSubscribe
-        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
-                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
-                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
-                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
-                .eq(ApplicationSubscribe::getDelFlag, 0));
-        String appClientCode = appSubscribes.get(0).getAppClientCode();
-        applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
-                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
-                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
-                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
-                .eq(ApplicationSubscribe::getDelFlag, 0));
-        // 2.删除plugin相关数据
+        // 1.删除plugin相关数据
         applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>()
                 .eq(ApplicationPluginClient::getSysClientId, sysClient.getId())
                 .eq(ApplicationPluginClient::getDelFlag, 0)
         );
-
         // 查询服务插件
         List<ApplicationPlugin> plugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
                 .eq(ApplicationPlugin::getAppCode, subscribedApp.getCode())
@@ -744,6 +731,23 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (sentinel > 0) {
             sentinelProvider.addOrRefreshApiGroup(subscribedApp.getId() + "");
         }
+
+        // 2.删除 applicationSubscribe
+        List<ApplicationSubscribe> appSubscribes = applicationSubscribeMapper.selectList(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
+                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
+                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
+                .eq(ApplicationSubscribe::getDelFlag, 0));
+        if (CollectionUtils.isEmpty(appSubscribes)) {
+            log.error("订阅数据有误");
+            return R.success();
+        }
+        String appClientCode = appSubscribes.get(0).getAppClientCode();
+        applicationSubscribeMapper.delete(new LambdaQueryWrapper<ApplicationSubscribe>()
+                .eq(ApplicationSubscribe::getAppSubscribedCode, appSubscribedCode)
+                .eq(ApplicationSubscribe::getAppSubscribedId, subscribedApp.getId())
+                .eq(ApplicationSubscribe::getSubscribeClientId, sysClient.getId())
+                .eq(ApplicationSubscribe::getDelFlag, 0));
 
         // 3.删除对应路由
         List<Api> apiList = apiMapper.queryApiListByCondition(subscribedApp.getCode(), null);
