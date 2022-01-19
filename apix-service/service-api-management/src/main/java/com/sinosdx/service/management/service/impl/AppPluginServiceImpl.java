@@ -11,10 +11,7 @@ import com.sinosdx.service.management.consumer.OauthClientDetailsServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
 import com.sinosdx.service.management.consumer.TokenServiceFeign;
 import com.sinosdx.service.management.dao.entity.*;
-import com.sinosdx.service.management.dao.mapper.ApplicationMapper;
-import com.sinosdx.service.management.dao.mapper.ApplicationPluginClientMapper;
-import com.sinosdx.service.management.dao.mapper.ApplicationPluginMapper;
-import com.sinosdx.service.management.dao.mapper.ApplicationSubscribeMapper;
+import com.sinosdx.service.management.dao.mapper.*;
 import com.sinosdx.service.management.enums.PluginTypeEnum;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
@@ -75,6 +72,9 @@ public class AppPluginServiceImpl implements AppPluginService {
     @Autowired
     private SentinelProvider service;
 
+    @Resource
+    private ApplicationPluginDetailMapper applicationPluginDetailMapper;
+
     /**
      * 服务添加插件
      *
@@ -87,11 +87,12 @@ public class AppPluginServiceImpl implements AppPluginService {
         if (StringUtils.isAnyEmpty(applicationPlugin.getPluginType(), applicationPlugin.getAppCode())) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
         }
-        if(PluginTypeEnum.SENTINEL.getType().equals(applicationPlugin.getPluginType())){
+        if (PluginTypeEnum.SENTINEL.getType().equals(applicationPlugin.getPluginType())) {
             String json = applicationPlugin.getPluginParams();
-            List<LimitInfo> list = JSON.parseObject(json,new TypeReference<List<LimitInfo>>(){});
+            List<LimitInfo> list = JSON.parseObject(json, new TypeReference<List<LimitInfo>>() {
+            });
             String save = service.save(list);
-            if(!save.endsWith("ok")){
+            if (!save.endsWith("ok")) {
                 return R.fail();
             }
         }
@@ -333,6 +334,141 @@ public class AppPluginServiceImpl implements AppPluginService {
             return R.fail(ResultCodeEnum.RESULT_DATA_NONE);
         }
 
-        return null;
+        // 查询当前登录用户
+        Integer userId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
+        SysClient sysClient = sysUserService.queryClientByUserId(userId).getData();
+        if (null == sysClient) {
+            return R.fail(ResultCodeEnum.USER_NOT_EXIST);
+        }
+
+        ApplicationPluginClient appPluginClient = applicationPluginClientMapper.selectOne(new LambdaQueryWrapper<ApplicationPluginClient>()
+                .eq(ApplicationPluginClient::getAppPluginId, appPlugin.getId()));
+        JSONObject pluginParamJson = new JSONObject();
+        String pluginType = appPlugin.getPluginType();
+        if (null != appPluginClient) {
+            pluginParamJson = JSONObject.parseObject(appPluginClient.getPluginParams());
+        }
+        // 查询详情配置
+        ApplicationPluginDetail appPluginDetail = applicationPluginDetailMapper.selectOne(new LambdaQueryWrapper<ApplicationPluginDetail>()
+                .eq(ApplicationPluginDetail::getPluginType, pluginType));
+
+        switch (pluginType) {
+            case "oauth2":
+                appPluginDetail.setClientId(pluginParamJson.getString("clientId"));
+                appPluginDetail.setClientSecret(pluginParamJson.getString("clientSecret"));
+                appPluginDetail.setTokenExpiration(pluginParamJson.getString("TokenExpiration"));
+                appPluginDetail.setRefreshTokenExpiration(pluginParamJson.getString("RefreshTokenExpiration"));
+                appPluginDetail.setRequestUrl("http://47.103.109.225:30000/api/auth/login");
+                appPluginDetail.setRequestType("POST");
+                appPluginDetail.setRequestParam("{{\n" +
+                        "    \"clientId\": \"" + pluginParamJson.getString("clientId") + "\",\n" +
+                        "    \"clientSecret\": \"" + pluginParamJson.getString("clientSecret") + "\"\n" +
+                        "}");
+                appPluginDetail.setResponse("{\n" +
+                        "  \"code\": 200,\n" +
+                        "  \"data\": {\n" +
+                        "      \"jwt\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaW5vc2R4IiwiY2xpZW50SWQiOiIxNCIsImlzcyI6IjllMmJmMzhkIiwiYXBwQ29kZSI6IjdiNDA4MTk2IiwiZXhwIjoxNjQyMTM3MTIwLCJ1c2VySWQiOiI4In0.SBTVbVE13g2s1-MrlLp3aDih3FmRKObWcwXdK4-kIeg\"\n" +
+                        "  },\n" +
+                        "  \"msg\": \"提交成功\",\n" +
+                        "  \"path\": \"\",\n" +
+                        "  \"success\": true,\n" +
+                        "  \"timestamp\": 1642129920702\n" +
+                        "}");
+                break;
+            case "jwt":
+                appPluginDetail.setClaimValue(pluginParamJson.getString("secretKey"));
+                appPluginDetail.setHeader(pluginParamJson.getString("HeaderNames"));
+                appPluginDetail.setClaimKey(pluginParamJson.getString("keyClaimName"));
+                appPluginDetail.setTokenExpiration(pluginParamJson.getString("TokenExpiration"));
+                appPluginDetail.setRequestUrl("http://47.103.109.225:30000/api/auth/token/jwt");
+                appPluginDetail.setRequestType("POST");
+                appPluginDetail.setRequestParam("{\n" +
+                        "    \"claimValue\": \"" + pluginParamJson.getString("secretKey") + "\"\n" +
+                        "}");
+                appPluginDetail.setResponse("{\n" +
+                        "  \"code\": 200,\n" +
+                        "  \"data\": {\n" +
+                        "      \"jwt\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaW5vc2R4IiwiY2xpZW50SWQiOiIxNCIsImlzcyI6IjllMmJmMzhkIiwiYXBwQ29kZSI6IjdiNDA4MTk2IiwiZXhwIjoxNjQyMTM3MTIwLCJ1c2VySWQiOiI4In0.SBTVbVE13g2s1-MrlLp3aDih3FmRKObWcwXdK4-kIeg\"\n" +
+                        "  },\n" +
+                        "  \"msg\": \"提交成功\",\n" +
+                        "  \"path\": \"\",\n" +
+                        "  \"success\": true,\n" +
+                        "  \"timestamp\": 1642129920702\n" +
+                        "}");
+                break;
+            case "base_auth":
+                appPluginDetail.setUsername(pluginParamJson.getString("username"));
+                appPluginDetail.setPassword(pluginParamJson.getString("password"));
+                appPluginDetail.setRequestUrl("http://47.103.109.225:30000/api/auth/token/basic");
+                appPluginDetail.setRequestType("POST");
+                appPluginDetail.setRequestParam("{\n" +
+                        "    \"username\": \"" + pluginParamJson.getString("username") + "\",\n" +
+                        "    \"password\": \"" + pluginParamJson.getString("password") + "\"\n" +
+                        "}");
+                appPluginDetail.setResponse("{\n" +
+                        "  \"code\": 200,\n" +
+                        "  \"data\": {\n" +
+                        "      \"token\": \"YzYxNzY2YWE6MzkwMjllYTIyMWYyNGI3NDI1NWM1NGQ2N2RmNDNZDY=\"\n" +
+                        "  },\n" +
+                        "  \"msg\": \"提交成功\",\n" +
+                        "  \"path\": \"\",\n" +
+                        "  \"success\": true,\n" +
+                        "  \"timestamp\": 1642130058357\n" +
+                        "}");
+                break;
+            case "cors":
+                appPluginDetail.setAllowOrigins(pluginParamJson.getString("allowOrigins"));
+                appPluginDetail.setAllowHeaders(pluginParamJson.getString("allowHeaders"));
+                appPluginDetail.setExposeHeaders(pluginParamJson.getString("exposeHeaders"));
+                appPluginDetail.setAllowMethods(pluginParamJson.getString("allowMethods"));
+                appPluginDetail.setAllowCredentials(pluginParamJson.getString("allowCredentials"));
+                appPluginDetail.setMaxAge(pluginParamJson.getString("maxAge"));
+                break;
+            case "black_list_ip":
+                appPluginDetail.setBlackListIp(pluginParamJson.getString("black_list_ip"));
+                break;
+            case "white_list_ip":
+                appPluginDetail.setWhiteListIp(pluginParamJson.getString("white_list_ip"));
+                break;
+            case "sign":
+                appPluginDetail.setSecretKey(pluginParamJson.getString("appKey") + pluginParamJson.getString("appSecret"));
+                break;
+            case "sentinel":
+                JSONArray jsonArray = JSONObject.parseArray(appPlugin.getPluginParams());
+                List<JSONObject> apiConfigList = new ArrayList<>();
+                jsonArray.forEach((jsonObj) -> {
+                    JSONObject jsonObject = JSONObject.parseObject(jsonObj.toString());
+                    String path = jsonObject.getString("path");
+                    // 控流时长单位
+                    String unit = null;
+                    switch (jsonObject.getString("intervalUnit")) {
+                        case "0":
+                            unit = "秒";
+                            break;
+                        case "1":
+                            unit = "分钟";
+                            break;
+                        case "2":
+                            unit = "小时";
+                            break;
+                        default:
+                    }
+                    if (StringUtils.isBlank(path)) {
+                        appPluginDetail.setSentinelCount(jsonObject.getInteger("count"));
+                        appPluginDetail.setSentinelInterval(jsonObject.getInteger("interval") + unit);
+                    } else {
+                        JSONObject apiConfigJson = new JSONObject();
+                        apiConfigJson.put("apiName", jsonObject.getJSONObject("apiId").getString("apiName"));
+                        apiConfigJson.put("apiInterval", jsonObject.getInteger("interval") + unit);
+                        apiConfigJson.put("apiCount", jsonObject.getInteger("count"));
+                        apiConfigList.add(apiConfigJson);
+                    }
+                });
+                appPluginDetail.setSentinelApiConfig(apiConfigList);
+                break;
+            default:
+        }
+
+        return R.success(appPluginDetail);
     }
 }

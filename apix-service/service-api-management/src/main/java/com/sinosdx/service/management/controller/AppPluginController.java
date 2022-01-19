@@ -70,6 +70,17 @@ public class AppPluginController {
         return appPluginService.queryPluginConfigs(pluginType, appCode);
     }
 
+    /**
+     * 查询已订阅应用插件详情
+     *
+     * @param pluginId
+     * @return
+     */
+    @GetMapping("/detail")
+    public R<Object> getSubscribedAppPluginDetails(@RequestParam Integer pluginId) {
+        return appPluginService.getSubscribedAppPluginDetails(pluginId);
+    }
+
 
     @GetMapping("/randomKey")
     public R<Object> get() {
