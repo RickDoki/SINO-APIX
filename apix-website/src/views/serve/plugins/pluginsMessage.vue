@@ -160,8 +160,8 @@
           }"
         >
           <el-table-column prop="apiname" label="api名称" />
-          <el-table-column prop="apiTime" label="api控流时长" />
-          <el-table-column prop="apiNum" label="api控流值" />
+          <el-table-column prop="apiTime" label="api控流时长" align="center" />
+          <el-table-column prop="apiNum" label="api控流值" align="center" />
         </el-table>
       </div>
     </div>
@@ -237,15 +237,15 @@ export default {
   },
   props: ["drawerProps", "pluginId"],
   watch: {
-    drawerProps() {
+    drawerProps () {
       this.drawer = this.drawerProps;
     },
-    pluginId() {
+    pluginId () {
       console.log(this.pluginId);
       this.getDetail();
     },
   },
-  data() {
+  data () {
     return {
       drawer: false,
       direction: "rtl",
@@ -256,17 +256,17 @@ export default {
       apiTable: [],
     };
   },
-  created() {
+  created () {
     this.appCode = this.$route.params.appcode || this.$route.params.appCode;
     console.log(this.appCode)
   },
   methods: {
-    handleClose(done) {
+    handleClose (done) {
       done();
       this.$emit("showChange", false);
     },
     // 时间单位的filter
-    timeunit(value) {
+    timeunit (value) {
       if (value === "0") {
         return "秒";
       } else if (value === "1") {
@@ -278,7 +278,7 @@ export default {
       }
     },
     // 获取插件详情
-    getDetail() {
+    getDetail () {
       getPlugin(this.pluginId, this.appCode).then((res) => {
         if (res.code === 200) {
           // console.log(res);

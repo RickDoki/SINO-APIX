@@ -268,6 +268,15 @@ export default {
   components: {
   },
   data () {
+    const isIPorWEB = (rule, value, callback) => {
+      const ipTest = this.isValidIP(value)
+      const webTest = this.isValidWeb(value)
+      if (!ipTest && !webTest) {
+        callback(new Error("请输入合法的ip地址或域名, 域名不需要加http等前缀"));
+      } else {
+        callback();
+      }
+    };
     return {
       // 展示折叠配置
       showTimeFlag: false,
@@ -299,11 +308,12 @@ export default {
           { required: true, message: '请选择负载均衡算法', trigger: 'change' }
         ],
         serverAddress: [
-          { required: true, message: '请输入服务地址', trigger: 'blur' }
+          { required: true, message: '请输入服务地址', trigger: 'blur' },
+          { required: true, validator: isIPorWEB, trigger: "blur" }
         ],
         prefixPath: [
           // { pattern: /^\/(\w+\/?)+$/, message: '请输入合法的路径：以"/"开头，允许字母，数字，下划线' }
-          { pattern: /^\/(?!.*?-$)[a-zA-Z0-9-_/]*$/, message: '请输入合法的路径：以"/"开头，允许字母，数字，下划线，短横线' }
+          { pattern: /^\/(?!.*?-$)[a-zA-Z0-9-_/]*$/, message: '请输入合法的路径：以"/"开头，允许字母，数字，下划线，短横线', trigger: 'blur' }
         ],
         port: [
           { required: true, message: '请输入服务端口', trigger: 'blur' },
@@ -366,13 +376,6 @@ export default {
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const ipTest = this.isValidIP(this.form.serverAddress)
-          const webTest = this.isValidWeb(this.form.serverAddress)
-          if (!ipTest && !webTest) {
-            this.$message('请输入合法的ip地址或服务地址！')
-            this.addressFlag = true
-            return
-          }
           if (this.upstreamId === 0) {
             // 添加角色
             addUpstream(this.form).then(res => {
