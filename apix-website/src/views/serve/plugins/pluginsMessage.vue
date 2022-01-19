@@ -9,30 +9,30 @@
     <div class="plugin_main">
       <div class="flexBox">
         <div class="left">插件名称:</div>
-        <div class="right">{{ pluginsMessage.pluginType | plugName }}</div>
+        <div class="right">{{ pluginParams.name }}</div>
       </div>
       <div class="flexBox">
         <div class="left">插件介绍:</div>
         <div class="right">
-          {{ pluginsMessage.pluginType | pluginIntroduction }}
+          {{ pluginParams.description }}
         </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.HeaderNames">
+      <div class="flexBox" v-if="pluginParams.header">
         <div class="left">Header:</div>
-        <div class="right">{{ pluginParams.HeaderNames }}</div>
+        <div class="right">{{ pluginParams.header }}</div>
       </div>
-      <div class="flexBox" v-if="pluginParams.keyClaimName">
+      <div class="flexBox" v-if="pluginParams.claimKey">
         <div class="left">key:</div>
-        <div class="right">{{ pluginParams.keyClaimName }}</div>
+        <div class="right">{{ pluginParams.claimKey }}</div>
       </div>
       <div
         class="flexBox"
         v-if="
-          pluginParams.TokenExpiration && pluginsMessage.pluginType === 'jwt'
+          pluginParams.tokenExpiration && pluginParams.pluginType === 'jwt'
         "
       >
         <div class="left">过期时间:</div>
-        <div class="right">{{ pluginParams.TokenExpiration }}ms</div>
+        <div class="right">{{ pluginParams.tokenExpiration }} ms</div>
       </div>
       <div class="flexBox" v-if="pluginParams.ProvisionKey">
         <div class="left">Key:</div>
@@ -41,53 +41,53 @@
       <div
         class="flexBox"
         v-if="
-          pluginParams.TokenExpiration && pluginsMessage.pluginType === 'oauth2'
+          pluginParams.tokenExpiration && pluginParams.pluginType === 'oauth2'
         "
       >
         <div class="left">Token Expiration:</div>
-        <div class="right">{{ pluginParams.TokenExpiration }}</div>
+        <div class="right">{{ pluginParams.tokenExpiration }} ms</div>
       </div>
-      <div class="flexBox" v-if="pluginParams.RefreshTokenExpiration">
+      <div class="flexBox" v-if="pluginParams.pluginType === 'oauth2'">
         <div class="left">client id：</div>
-        <div class="right"> -- </div>
+        <div class="right"> {{ pluginParams.clientId || '--' }} </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.RefreshTokenExpiration">
+      <div class="flexBox" v-if="pluginParams.pluginType === 'oauth2'">
         <div class="left">client Secret：</div>
-        <div class="right"> -- </div>
+        <div class="right"> {{ pluginParams.clientSecret || '--' }} </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.RefreshTokenExpiration">
+      <div class="flexBox" v-if="pluginParams.requestUrl">
         <div class="left">请求地址:</div>
-        <div class="right"> -- </div>
+        <div class="right"> {{ pluginParams.requestUrl }} </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.RefreshTokenExpiration">
+      <div class="flexBox" v-if="pluginParams.requestType">
         <div class="left">请求方式:</div>
-        <div class="right"> -- </div>
+        <div class="right"> {{ pluginParams.requestType }} </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.RefreshTokenExpiration">
+      <div class="flexBox" v-if="pluginParams.requestParam">
         <div class="left">请求参数:</div>
-        <div class="right"> -- </div>
+        <div class="right"> {{ pluginParams.requestParam }} </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.RefreshTokenExpiration">
+      <div class="flexBox" v-if="pluginParams.response">
         <div class="left">返回值:</div>
-        <div class="right"> -- </div>
+        <div class="right"> {{ pluginParams.response }} </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.EnableClientCredentials">
+      <div class="flexBox" v-if="pluginParams.clientCredential">
         <div class="left">客户端认证:</div>
         <div class="button_plug">
-          {{ pluginParams.EnableClientCredentials === true ? "开启" : "关闭" }}
+          {{ pluginParams.clientCredential === true ? "开启" : "关闭" }}
         </div>
       </div>
-      <div class="flexBox" v-if="pluginParams.RefreshTokenExpiration">
+      <div class="flexBox" v-if="pluginParams.refreshTokenExpiration">
         <div class="left">Refresh Expiration:</div>
-        <div class="right">{{ pluginParams.RefreshTokenExpiration }}</div>
+        <div class="right">{{ pluginParams.refreshTokenExpiration }} ms</div>
       </div>
-      <div class="flexBox" v-if="pluginParams.black_list_ip">
+      <div class="flexBox" v-if="pluginParams.blackListIp">
         <div class="left">ip黑名单:</div>
-        <div class="right">{{ pluginParams.black_list_ip }}</div>
+        <div class="right">{{ pluginParams.blackListIp }}</div>
       </div>
-      <div class="flexBox" v-if="pluginParams.white_list_ip">
+      <div class="flexBox" v-if="pluginParams.whiteListIp">
         <div class="left">ip白名单:</div>
-        <div class="right">{{ pluginParams.white_list_ip }}</div>
+        <div class="right">{{ pluginParams.whiteListIp }}</div>
       </div>
       <div class="flexBox" v-if="pluginParams.allowOrigins">
         <div class="left">allowOrigins:</div>
@@ -126,24 +126,23 @@
         <div class="left">maxAge:</div>
         <div class="right">{{ pluginParams.maxAge }}</div>
       </div>
-      <div class="flexBox" v-if="pluginParams.appKey">
+      <!-- <div class="flexBox" v-if="pluginParams.appKey">
         <div class="left">appKey:</div>
         <div class="right">{{ pluginParams.appKey }}</div>
-      </div>
-      <div class="flexBox" v-if="pluginParams.appSecret">
+      </div> -->
+      <div class="flexBox" v-if="pluginParams.secretKey">
         <div class="left">appSecret:</div>
-        <div class="right">{{ pluginParams.appSecret }}</div>
+        <div class="right">{{ pluginParams.secretKey }}</div>
       </div>
-      <div class="flexBox" v-if="pluginParamslist[0].interval">
+      <div class="flexBox" v-if="pluginParams.sentinelInterval">
         <div class="left">服务控制时长:</div>
         <div class="right">
-          {{ pluginParamslist[0].interval }}
-          {{ pluginParamslist[0].intervalUnit | unit }}
+          {{ pluginParams.sentinelInterval }}
         </div>
       </div>
-      <div class="flexBox" v-if="pluginParamslist[0].count">
+      <div class="flexBox" v-if="pluginParams.sentinelCount">
         <div class="left">服务控流值:</div>
-        <div class="right">{{ pluginParamslist[0].count }}</div>
+        <div class="right">{{ pluginParams.sentinelCount }}</div>
       </div>
       <div v-if="apiTable.length > 0" class="flexBox">
         <div class="left">API控流配置:</div>
@@ -159,9 +158,9 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="apiname" label="api名称" />
-          <el-table-column prop="apiTime" label="api控流时长" />
-          <el-table-column prop="apiNum" label="api控流值" />
+          <el-table-column prop="apiName" label="api名称" />
+          <el-table-column prop="apiInterval" label="api控流时长" align="center" />
+          <el-table-column prop="apiCount" label="api控流值" align="center" />
         </el-table>
       </div>
     </div>
@@ -169,7 +168,7 @@
 </template>
 
 <script>
-import { getPlugin } from "@/api/AboutServe.js";
+import { getPlugin, getPluginDetail } from "@/api/AboutServe.js";
 
 export default {
   filters: {
@@ -237,36 +236,36 @@ export default {
   },
   props: ["drawerProps", "pluginId"],
   watch: {
-    drawerProps() {
+    drawerProps () {
       this.drawer = this.drawerProps;
     },
-    pluginId() {
+    pluginId () {
       console.log(this.pluginId);
-      this.getDetail();
+      // this.getDetail();
+      this.getPluginDetail()
     },
   },
-  data() {
+  data () {
     return {
       drawer: false,
       direction: "rtl",
       appCode: "",
       pluginsMessage: {},
       pluginParams: {},
-      pluginParamslist: [{ intervalUnit: 0 }],
       apiTable: [],
     };
   },
-  created() {
+  created () {
     this.appCode = this.$route.params.appcode || this.$route.params.appCode;
     console.log(this.appCode)
   },
   methods: {
-    handleClose(done) {
+    handleClose (done) {
       done();
       this.$emit("showChange", false);
     },
     // 时间单位的filter
-    timeunit(value) {
+    timeunit (value) {
       if (value === "0") {
         return "秒";
       } else if (value === "1") {
@@ -278,7 +277,23 @@ export default {
       }
     },
     // 获取插件详情
-    getDetail() {
+    getPluginDetail () {
+      getPluginDetail(this.pluginId).then((res) => {
+        if (res.code === 200) {
+          // console.log(res);
+          this.pluginParams = res.data;
+          if (this.pluginParams.pluginType === "sentinel") {
+            console.log("9999");
+            this.apiTable = res.data.sentinelApiConfig
+            console.log(this.apiTable);
+          } else {
+            this.apiTable = []
+          }
+        }
+      });
+    },
+    // 获取插件详情
+    getDetail () {
       getPlugin(this.pluginId, this.appCode).then((res) => {
         if (res.code === 200) {
           // console.log(res);
