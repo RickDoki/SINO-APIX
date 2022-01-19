@@ -5,11 +5,7 @@ MAINTAINER pengjiahu jiahu.peng@sinosdx.com
 ARG JAR_FILE=target/*.jar
 ARG JAR_PORT=8888
 ARG ARG_JAVA_OPTS="-server -Xms1g -Xmx1g -Xmn512m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=256m -XX:-OmitStackTraceInFastThrow"
-ARG ARG_SKYWALKING_AGENT=/usr/app/agent/skywalking-agent.jar
-ARG ARG_SKYWALKING_SERVICE_NAME=service-unknown-DIN
 ENV ENV_JAVA_OPTS=${ARG_JAVA_OPTS}
-ENV ENV_SKYWALKING_AGENT=${ARG_SKYWALKING_AGENT}
-ENV ENV_SKYWALKING_SERVICE_NAME=${ARG_SKYWALKING_SERVICE_NAME}
 
 #将打包好的spring程序拷贝到容器中的指定位置
 ADD ${JAR_FILE} /usr/app/app.jar
