@@ -347,6 +347,8 @@ public class AppPluginServiceImpl implements AppPluginService {
         String pluginType = appPlugin.getPluginType();
         if (null != appPluginClient) {
             pluginParamJson = JSONObject.parseObject(appPluginClient.getPluginParams());
+        } else {
+            pluginParamJson = JSONObject.parseObject(appPlugin.getPluginParams());
         }
         // 查询详情配置
         ApplicationPluginDetail appPluginDetail = applicationPluginDetailMapper.selectOne(new LambdaQueryWrapper<ApplicationPluginDetail>()
