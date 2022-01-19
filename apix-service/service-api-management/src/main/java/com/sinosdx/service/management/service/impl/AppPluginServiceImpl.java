@@ -368,6 +368,7 @@ public class AppPluginServiceImpl implements AppPluginService {
                 appPluginDetail.setClientSecret(pluginParamJson.getString("clientSecret"));
                 appPluginDetail.setTokenExpiration(pluginParamJson.getString("TokenExpiration"));
                 appPluginDetail.setRefreshTokenExpiration(pluginParamJson.getString("RefreshTokenExpiration"));
+                appPluginDetail.setClientCredential(true);
                 appPluginDetail.setRequestUrl("http://47.103.109.225:30000/api/auth/login");
                 appPluginDetail.setRequestType("POST");
                 appPluginDetail.setRequestParam("{{\n" +

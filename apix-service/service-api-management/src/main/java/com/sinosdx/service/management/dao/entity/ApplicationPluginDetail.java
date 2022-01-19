@@ -67,6 +67,11 @@ public class ApplicationPluginDetail implements Serializable {
     @TableField(exist = false)
     private String clientSecret;
     /**
+     * OAuth2 客户端认证
+     */
+    @TableField(exist = false)
+    private Boolean clientCredential;
+    /**
      * token过期时间
      */
     @TableField(exist = false)

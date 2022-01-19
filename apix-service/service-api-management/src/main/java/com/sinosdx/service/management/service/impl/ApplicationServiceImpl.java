@@ -1077,18 +1077,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (null == userId) {
             return R.fail(ResultCodeEnum.TOKEN_NULL);
         }
+        SysClient sysClient = sysUserService.queryClientByUserId(userId).getData();
 
         if ((null != limit && limit < 0) || (null != offset && offset < 1)) {
             limit = null;
             offset = null;
         }
 
-        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(userId);
+//        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(userId);
 
         // 根据userId 获取 对应的 clientIds
-        List<Integer> clientIds = this.changeUserIdsToClientIds(userIdList);
+//        List<Integer> clientIds = this.changeUserIdsToClientIds(userIdList);
 
-        List<Object> list = applicationMapper.querySubscribedAppList(userId, appName, appCode, appId, limit, offset, clientIds);
+        List<Object> list = applicationMapper.querySubscribedAppList(userId, appName, appCode, appId, limit, offset, sysClient.getId(), null);
         // 数据集合
         List<Object> appList = (List<Object>) list.get(0);
         // 数据总量
@@ -1169,14 +1170,15 @@ public class ApplicationServiceImpl implements ApplicationService {
     public ApplicationNumDTO queryApplicationNum(ApplicationNumVo applicationNumVo) {
         ApplicationNumDTO applicationNumDTO = new ApplicationNumDTO();
         Integer developerId = applicationNumVo.getDeveloperId();
-        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        SysClient sysClient = sysUserService.queryClientByUserId(developerId).getData();
+//        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         // 根据userId 获取 对应的 clientIds
-        List<Integer> clientIds = this.changeUserIdsToClientIds(userIdList);
+//        List<Integer> clientIds = this.changeUserIdsToClientIds(userIdList);
         // 订阅应用数
-        List<Object> list = applicationMapper.querySubscribedAppList(developerId, null, null, null, null, null, clientIds);
+        List<Object> list = applicationMapper.querySubscribedAppList(developerId, null, null, null, null, null, sysClient.getId(), null);
         Integer subscribedCount = ((List<Integer>) list.get(1)).get(0);
         // 注册应用数
-        Integer appCount = applicationMapper.queryAppVoList(developerId, null, null, null, null, null, null, null, null, null, userIdList).size();
+        Integer appCount = applicationMapper.queryAppVoList(developerId, null, null, null, null, null, null, null, null, null, null).size();
         // api 数量
         Long apiCount = apiMapper.selectCount(new LambdaQueryWrapper<Api>().eq(Objects.nonNull(developerId), Api::getCreationBy, developerId).eq(Api::getDelFlag, 0));
 

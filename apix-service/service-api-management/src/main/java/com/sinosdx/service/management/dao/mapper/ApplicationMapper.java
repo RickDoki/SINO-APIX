@@ -53,6 +53,7 @@ public interface ApplicationMapper extends BaseMapper<Application> {
                                         @Param(value = "appId") Integer appId,
                                         @Param(value = "limit") Integer limit,
                                         @Param(value = "offset") Integer offset,
+                                        @Param(value = "sysClientId") Integer sysClientId,
                                         @Param("userIdList") List<Integer> userIdList);
 
     /**
