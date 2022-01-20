@@ -154,7 +154,8 @@ public class AppApiGatewayServiceImpl implements AppApiGatewayService {
         // 查询服务插件配置
         //        List<ApplicationPluginClient> appPluginClients = applicationPluginClientMapper.queryByAppSubscribe(gatewayList.get(0).getUrlCode());
         List<ApplicationPlugin> applicationPlugins = applicationPluginMapper.selectList(new LambdaQueryWrapper<ApplicationPlugin>()
-                .eq(ApplicationPlugin::getAppId, gatewayList.get(0).getAppId()));
+                .eq(ApplicationPlugin::getAppId, gatewayList.get(0).getAppId())
+                .eq(ApplicationPlugin::getEnabled, 1));
 
         // 配置过滤器
         if (!applicationPlugins.isEmpty()) {
