@@ -37,6 +37,7 @@ public class BlacklistIpGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         final String requestIp = ReactiveAddrUtil.getRemoteAddr(req);
+        log.info("requestIp: " + requestIp);
         log.debug("BlacklistIp requestIp:{}", requestIp);
         boolean exist = Stream.of(c.getIp()).anyMatch(s -> Pattern.matches(s, requestIp));
         if (exist) {
