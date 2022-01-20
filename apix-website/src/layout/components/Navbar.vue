@@ -185,6 +185,7 @@ export default {
   .openserve {
     line-height: 55px;
     font-size: 14px;
+    cursor: pointer;
   }
   .navber_userHandle {
     margin: 0px 50px 150px 30px;
