@@ -193,7 +193,7 @@ export const asyncRoutes = [
         path: '/log/index',
         component: () => import('@/views/system/log/list'),
         name: 'Log',
-        meta: { title: '审计日志', requiresAuth: true, icon: 'log', Aicon: 'log_Aicon', affix: true }
+        meta: { title: '审计日志', mbxClick: false, requiresAuth: true, icon: 'log', Aicon: 'log_Aicon', affix: true }
       }
     ]
   },

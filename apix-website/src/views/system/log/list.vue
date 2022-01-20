@@ -3,9 +3,9 @@
     <div class="list_top list_top_bom">
       <div class="list_title titleFont">审计日志</div>
       <div class="list_search">
-        <el-input size="small" v-model="search.username" suffix-icon="el-icon-search"
+        <!-- <el-input size="small" v-model="search.username" suffix-icon="el-icon-search"
                   class="list_searchInput" placeholder="请输入用户名称查询"
-                  @change="getLogList"></el-input>
+                  @change="getLogList"></el-input> -->
         <el-input size="small" v-model="search.resourceName" suffix-icon="el-icon-search"
                   class="list_searchInput" placeholder="请输入资源名称"
                   @change="getLogList"></el-input>
@@ -36,7 +36,7 @@
       <el-table
         :data="tableData" :row-style="{height: '50px'}" highlight-current-row
         :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="username" label="用户"/>
+        <!-- <el-table-column prop="username" label="用户"/> -->
         <el-table-column prop="eventType" label="事件类型"/>
         <el-table-column prop="resourceName" label="资源名称"/>
         <el-table-column prop="eventTime" label="发生时间"/>
@@ -66,7 +66,7 @@
     >
       <div class="demo-drawer__content">
         <el-descriptions title=" " size="medium" :column="1" :labelStyle="{'font-weight':'bold', 'width': '60px'}">
-          <el-descriptions-item label="用户名称">{{ infoObj.username }}</el-descriptions-item>
+          <!-- <el-descriptions-item label="用户名称">{{ infoObj.username }}</el-descriptions-item> -->
           <el-descriptions-item label="事件类型">{{ infoObj.eventType }}</el-descriptions-item>
           <el-descriptions-item label="资源名称">{{ infoObj.resourceName }}</el-descriptions-item>
           <el-descriptions-item label="创建时间">{{ infoObj.eventTime }}</el-descriptions-item>
@@ -111,7 +111,7 @@ export default {
       drawer: false,
       infoObj: {},
       search: {
-        username: '',
+        // username: '',
         userId: '',
         eventType: '',
         resourceName: '',

@@ -15,7 +15,7 @@
         </el-dropdown>
       </div>
     </div>
-    <div class="breadcrumb" v-if="routerList[0].path === '/dashboard' ? false : true">
+    <div class="breadcrumb" v-if="routerList[0].path === '/dashboard' || routerList[0].path === '/log' ? false : true">
       <el-breadcrumb
         class="brea-div"
         separator=">"
@@ -32,6 +32,11 @@
             {{ item.meta.title }}
           </el-breadcrumb-item>
         </template>
+      </el-breadcrumb>
+    </div>
+    <div class="breadcrumb" v-if="routerList[0].path === '/log' ? true : false">
+      <el-breadcrumb class="brea-div" separator=">">
+        <el-breadcrumb-item>审计日志</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
   </div>
