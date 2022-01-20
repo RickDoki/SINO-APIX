@@ -37,7 +37,7 @@ public class WhitelistIpGatewayFilterFactory extends BaseGatewayFilter<Config> {
     public Mono<Void> customApply(ServerWebExchange exchange, GatewayFilterChain chain, Config c) {
         ServerHttpRequest req = exchange.getRequest();
         final String requestIp = ReactiveAddrUtil.getRemoteAddr(req);
-        boolean exist = Stream.of(c.getIp()).anyMatch(s -> Pattern.matches(s, requestIp));
+        boolean exist = c.getIp().contains(requestIp);
         if (!exist) {
             return HttpUtil.successResponse(exchange, ResultEnum.WHITELIST_IP, requestIp);
         }
