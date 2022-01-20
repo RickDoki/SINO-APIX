@@ -62,8 +62,11 @@ public class AuditLogServiceImpl extends SuperServiceImpl<AuditLogMapper, AuditL
             endTime = System.currentTimeMillis();
         }
         // 权限判断
-        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-        List<Object> list = auditLogMapper.queryAuditLogByCondition(username, userId, eventType, resourceName, startTime, endTime, limit, offset, userIdList);
+//        List<Integer> userIdList = sysUserService.queryAllUserIdListByRole(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        if (null == userId) {
+            userId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
+        }
+        List<Object> list = auditLogMapper.queryAuditLogByCondition(username, userId, eventType, resourceName, startTime, endTime, limit, offset, null);
         // 数据集合
         List<Object> logList = (List<Object>) list.get(0);
         // 数据总量
