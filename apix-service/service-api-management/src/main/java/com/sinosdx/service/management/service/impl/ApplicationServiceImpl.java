@@ -992,6 +992,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      * @return
      */
     @Override
+    @Deprecated
     public R<Object> removeAppLease(String appLesseeCode, String appLessorCode) {
         ApplicationLease applicationLease = applicationLeaseMapper.selectOne(new QueryWrapper<ApplicationLease>()
                 .eq("app_lessee_code", appLesseeCode)

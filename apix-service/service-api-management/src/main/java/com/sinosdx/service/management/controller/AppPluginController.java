@@ -2,6 +2,7 @@ package com.sinosdx.service.management.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.AppPluginService;
@@ -29,6 +30,7 @@ public class AppPluginController {
      * @param applicationPlugin
      * @return
      */
+    @AuditLog(type = "添加服务插件", name = "服务插件")
     @PostMapping()
     public R<Object> addAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
         return appPluginService.addAppPlugin(applicationPlugin);
@@ -40,6 +42,7 @@ public class AppPluginController {
      * @param applicationPlugin
      * @return
      */
+    @AuditLog(type = "修改服务插件", name = "服务插件")
     @PutMapping()
     public R<Object> updateAppPlugin(@RequestBody ApplicationPlugin applicationPlugin) {
         return appPluginService.updateAppPlugin(applicationPlugin);
@@ -52,6 +55,7 @@ public class AppPluginController {
      * @param appCode
      * @return
      */
+    @AuditLog(type = "获取服务插件详情", name = "服务插件")
     @GetMapping("/{pluginId}/{appCode}")
     public R<Object> getAppPlugin(@PathVariable(value = "pluginId") String pluginId, @PathVariable(value = "appCode") String appCode) {
         return appPluginService.getAppPlugin(pluginId, appCode);
@@ -76,12 +80,14 @@ public class AppPluginController {
      * @param pluginId
      * @return
      */
+    @AuditLog(type = "获取服务插件详情", name = "服务插件")
     @GetMapping("/detail")
     public R<Object> getSubscribedAppPluginDetails(@RequestParam Integer pluginId) {
         return appPluginService.getSubscribedAppPluginDetails(pluginId);
     }
 
 
+    @AuditLog(type = "测试数据", name = "服务插件")
     @GetMapping("/randomKey")
     public R<Object> get() {
         return R.success(UUID.randomUUID().toString().split("-")[0]);

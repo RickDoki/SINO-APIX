@@ -93,6 +93,7 @@ public class AppOpenController {
      * @param appSubscribedCode
      * @return
      */
+    @AuditLog(type = "订阅应用", name = "应用")
     @GetMapping("/subscribe/{appSubscribedCode}")
     public R<Object> appSubscribe(@PathVariable("appSubscribedCode") String appSubscribedCode) {
         Integer sysUserId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);

@@ -220,6 +220,7 @@ public class ApplicationController {
      * @param appCode
      * @return
      */
+    @AuditLog(type = "退订应用", name = "应用")
     @PostMapping("/unSubscribe/{appSubscribedCode}")
     public R<Object> unSubscribe(@PathVariable("appSubscribedCode") String appCode) {
         return applicationService.unSubscribe(appCode);
@@ -343,6 +344,7 @@ public class ApplicationController {
      * @param appLessorCode
      * @return
      */
+    @Deprecated
     @AuditLog(type = "移除应用订阅", name = "应用")
     @DeleteMapping("/remove/{appLesseeCode}/lease/{appLessorCode}")
     public R<Object> removeAppLease(@PathVariable("appLesseeCode") String appLesseeCode,
@@ -441,6 +443,7 @@ public class ApplicationController {
     /**
      * 更新AppVersion
      */
+    @AuditLog(type = "更新服务版本", name = "应用")
     @PostMapping("/appVersion/{appVersionId}")
     public R<Object> updateAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId,
             @RequestBody ApplicationVersionVo applicationVersionVo) {
@@ -450,6 +453,7 @@ public class ApplicationController {
     /**
      * 删除 AppVersion
      */
+    @AuditLog(type = "删除服务版本", name = "应用")
     @DeleteMapping("/appVersion/{appVersionId}")
     public R<Object> deleteAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId) {
         return applicationService.deleteAppVersion(appVersionId);
@@ -457,6 +461,7 @@ public class ApplicationController {
     /**
      * 获取 AppVersion 详情
      */
+    @AuditLog(type = "查看服务版本详情", name = "应用")
     @GetMapping("/appVersion/{appVersionId}")
     public R<Object> queryAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId) {
         return applicationService.queryAppVersion(appVersionId);
