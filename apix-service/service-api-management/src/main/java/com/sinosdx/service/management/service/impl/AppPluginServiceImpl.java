@@ -135,10 +135,14 @@ public class AppPluginServiceImpl implements AppPluginService {
         }
 
         ApplicationPlugin oldPlugin = applicationPluginMapper.selectById(applicationPlugin.getId());
+        log.info("1->" + oldPlugin.getEnabled() + "");
 
         applicationPlugin.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         applicationPlugin.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         applicationPluginMapper.updateById(applicationPlugin);
+
+        log.info("2->" + applicationPlugin.getEnabled() + "");
+        log.info("3->" + oldPlugin.getEnabled() + "");
 
         // 启停插件
         if (!Objects.equals(applicationPlugin.getEnabled(), oldPlugin.getEnabled())) {
