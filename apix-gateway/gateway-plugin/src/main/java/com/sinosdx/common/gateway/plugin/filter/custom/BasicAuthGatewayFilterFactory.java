@@ -102,6 +102,7 @@ public class BasicAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
         }
 
+        log.info("basic鉴权通过");
         redisTemplate.opsForValue().set(GatewayConstants.REDIS_PREFIX_AUTH + req.getId(), true);
         return chain.filter(exchange);
     }

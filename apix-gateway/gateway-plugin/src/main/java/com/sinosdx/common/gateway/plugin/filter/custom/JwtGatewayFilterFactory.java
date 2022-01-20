@@ -88,6 +88,7 @@ public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
 
         // jwt校验
         try {
+            jwt = jwt.substring(AuthConstant.AUTH_HEADER_PREFIX.length());
             Map<String, Claim> verifyJwt = JwtUtil.verifyJwt(null, jwt);
             if (null == verifyJwt) {
                 log.error("jwt解析错误");
@@ -104,6 +105,7 @@ public class JwtGatewayFilterFactory extends BaseGatewayFilter<Config> {
         }
 
         redisTemplate.opsForValue().set(GatewayConstants.REDIS_PREFIX_AUTH + req.getId(), true);
+        log.info("jwt鉴权通过");
         return chain.filter(exchange);
     }
 

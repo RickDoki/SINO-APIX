@@ -119,6 +119,7 @@ public class OAuthGatewayFilterFactory extends BaseGatewayFilter<Config> {
         }
 
         redisTemplate.opsForValue().set(GatewayConstants.REDIS_PREFIX_AUTH + req.getId(), true);
+        log.info("OAuth2鉴权通过");
         return chain.filter(exchange);
     }
 
