@@ -26,7 +26,7 @@ public interface IGatewayLogService extends SuperService<GatewayLog> {
      * @param offset
      * @return
      */
-    R<Object> queryGatewayLogList(String httpMethod, String domain, String requestPath, Long startTime, Long endTime, Integer limit, Integer offset);
+    R<Object> queryGatewayLogList(String httpMethod, String domain, String requestPath, Long startTime, Long endTime,String appCode,Integer statusCode,Integer limit, Integer offset);
 
 
     R<Object> queryGatewayByAppCode(List<String> appCodes, Long startDate, Long endDate);

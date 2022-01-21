@@ -2,20 +2,24 @@ package com.sinosdx.service.management.consumer;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 /**
  * @author wendy
  * @date 2021/7/22
  */
 @FeignClient("spring-cloud-gateway")
+@RequestMapping("/gateway/route")
 public interface GatewayServiceFeign {
 
-    @PostMapping("/gateway/route")
+    @PostMapping()
     Boolean create(@RequestBody JSONObject entity);
 
-    @PutMapping("/gateway/route")
+    @PutMapping()
     Boolean update(@RequestBody JSONObject entity);
+
+    @DeleteMapping("/{id}")
+    Mono<ResponseEntity<Object>> delete(@PathVariable("id") String id);
 }

@@ -39,18 +39,42 @@ spring:
           - dataId: common.yml
             group: COMMON_GROUP
             refresh: true
-          - dataId: common-rabbitmq.yml
-            group: COMMON_GROUP
-            refresh: true
       discovery:
         username: '@nacos.username@'
         password: '@nacos.password@'
         server-addr: '@nacos.server-addr@'
         namespace: '@nacos.discovery.namespace@'
+    sentinel:
+      filter:
+        enabled: false
+      transport:
+#        dashboard: 127.0.0.1:8080
+        port: 8700
+      datasource:
+        ds1:
+          nacos:
+            server-addr: '@nacos.server-addr@'
+            group-id: SENTINEL_GROUP
+            ruleType: gw-flow
+            data-id: sentinel-gw-rule
+            username: '@nacos.username@'
+            password: '@nacos.password@'
+            namespace: '@nacos.config.namespace@'
+        ds2:
+          nacos:
+            server-addr: '@nacos.server-addr@'
+            group-id: SENTINEL_GROUP
+            ruleType: gw-api-group
+            data-id: sentinel-gw-api
+            username: '@nacos.username@'
+            password: '@nacos.password@'
+            namespace: '@nacos.config.namespace@'
+      eager: true
   main:
     allow-bean-definition-overriding: true
   profiles:
     active: '@profile.active@'
+
 
 info:
   artifactId: '@project.artifactId@'

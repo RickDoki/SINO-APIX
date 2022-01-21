@@ -18,4 +18,10 @@ public interface SupportLogServiceFeign {
     R<Object> queryListByAppCode(@RequestParam(name = "appCodes", required = false) List<String> appCodes,
                      @RequestParam(name = "startTime", required = false) Long startTime,
                      @RequestParam(name = "endTime", required = false) Long endTime);
+
+    @GetMapping("gateway/log/queryGatewayLogByStatus")
+    R<Object> queryGatewayLogByStatus(@RequestParam(name = "appCode", required = false) String appCode,
+                                      @RequestParam(name = "requestUri", required = false) String requestUri,
+                                             @RequestParam(name = "startTime", required = false) Long startTime,
+                                             @RequestParam(name = "endTime", required = false) Long endTime);
 }

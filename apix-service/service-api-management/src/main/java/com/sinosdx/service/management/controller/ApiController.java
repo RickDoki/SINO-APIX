@@ -3,6 +3,7 @@ package com.sinosdx.service.management.controller;
 import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.service.management.controller.vo.ApiVersionVo;
 import com.sinosdx.service.management.controller.vo.ApiVo;
+import com.sinosdx.service.management.controller.vo.AppApiReq;
 import com.sinosdx.service.management.dao.entity.Api;
 import com.sinosdx.service.management.dao.entity.ApiVersion;
 import com.sinosdx.service.management.result.R;
@@ -218,5 +219,14 @@ public class ApiController {
     @GetMapping("/{apiId}")
     public R<Object> queryApiDetail(@PathVariable("apiId") Integer apiId) {
         return apiService.queryApiDetail(apiId);
+    }
+
+    /**
+     * 根据版本 版本id 获取 api
+     */
+    @AuditLog(type = "根据appCode 及 appVersionId 查询API集合", name = "API")
+    @PostMapping("/queryApiList")
+    public R<Object> queryApiList(@RequestBody AppApiReq req) {
+        return apiService.queryApiListByAppVersionId(req.getAppCode(),req.getAppVersionId());
     }
 }

@@ -11,6 +11,9 @@
         select SQL_CALC_FOUND_ROWS * from gateway_log
         where
               1 = 1
+        <if test="appCode != null and appCode != '' ">
+            and app_code = #{appCode}
+        </if>
         <if test="domain != null and domain != '' ">
             and domain like concat('%', #{domain}, '%')
         </if>
@@ -22,6 +25,16 @@
         </if>
         <if test="startTime != null and endTime != null">
             and event_time BETWEEN #{startTime} and #{endTime}
+        </if>
+        <if test="responseStatus != null and responseStatus != ''">
+            <choose>
+                <when test="responseStatus == 'ok'">
+                    and status_code = 200
+                </when>
+                <otherwise>
+                    and status_code != 200
+                </otherwise>
+            </choose>
         </if>
         order by event_time desc
         <if test="limit != null and offset != null">

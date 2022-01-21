@@ -5,7 +5,7 @@ package com.sinosdx.common.gateway.constants;
  * @date 2021-06-09 21:42
  * @description
  */
-public interface Constants {
+public interface GatewayConstants {
 
     String CLIENT_IP = "clientIp";
 
@@ -39,4 +39,15 @@ public interface Constants {
 
     String CACHED_REQUEST_BODY_STR = "cachedRequestBodyStr";
 
+    String PATH = "x-path";
+
+    String REAL_IP = "real-ip";
+
+    String SERVICE_CODE = "service-code";
+
+    String SYS_CLIENT_ID = "sys-client-id";
+
+    String REDIS_PREFIX_APP_PLUGIN = "app_plugin:";
+
+    String REDIS_PREFIX_AUTH = "gateway_auth_";
 }

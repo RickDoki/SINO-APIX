@@ -1,6 +1,6 @@
 package com.sinosdx.service.authentication.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sinosdx.service.authentication.controller.RevokeTokenEndpoint;
 import com.sinosdx.service.authentication.dao.entity.OauthClientDetails;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author wendy
@@ -45,26 +44,28 @@ public class OauthClientDetailsServiceImpl implements OauthClientDetailsService 
     /**
      * 删除认证客户端
      *
-     * @param appCode
+     * @param clientId
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public R<Object> deleteOAuthClientDetail(String appCode) {
-        List<OauthClientDetails> oauthClientDetails = oauthClientDetailsMapper.selectList(new QueryWrapper<OauthClientDetails>());
-        for (OauthClientDetails oauthClientDetail : oauthClientDetails) {
-            String additionalInformation = oauthClientDetail.getAdditionalInformation();
-            if (null == additionalInformation || additionalInformation.isEmpty()) {
-                continue;
-            }
-            JSONObject infoJson = JSONObject.parseObject(additionalInformation);
-            String lessorCode = infoJson.getString("lessorCode");
-            String lesseeCode = infoJson.getString("lesseeCode");
-            // 删除认证
-            if (appCode.equals(lessorCode) || appCode.equals(lesseeCode)) {
-                oauthClientDetailsMapper.deleteById(oauthClientDetail);
-            }
-        }
+    public R<Object> deleteOAuthClientDetail(String clientId) {
+        //        List<OauthClientDetails> oauthClientDetails = oauthClientDetailsMapper.selectList(new QueryWrapper<OauthClientDetails>());
+        //        for (OauthClientDetails oauthClientDetail : oauthClientDetails) {
+        //            String additionalInformation = oauthClientDetail.getAdditionalInformation();
+        //            if (null == additionalInformation || additionalInformation.isEmpty()) {
+        //                continue;
+        //            }
+        //            JSONObject infoJson = JSONObject.parseObject(additionalInformation);
+        //            String lessorCode = infoJson.getString("lessorCode");
+        //            String lesseeCode = infoJson.getString("lesseeCode");
+        //            // 删除认证
+        //            if (appCode.equals(lessorCode) || appCode.equals(lesseeCode)) {
+        //                oauthClientDetailsMapper.deleteById(oauthClientDetail);
+        //            }
+        //        }
+        oauthClientDetailsMapper.delete(new LambdaQueryWrapper<OauthClientDetails>()
+                .eq(OauthClientDetails::getClientId, clientId));
         return R.success();
     }
 

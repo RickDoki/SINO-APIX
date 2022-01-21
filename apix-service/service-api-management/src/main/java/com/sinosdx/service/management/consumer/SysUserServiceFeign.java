@@ -1,5 +1,7 @@
 package com.sinosdx.service.management.consumer;
 
+import com.alibaba.fastjson.JSONObject;
+import com.sinosdx.service.management.dao.entity.SysClient;
 import com.sinosdx.service.management.result.R;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,7 @@ public interface SysUserServiceFeign {
      * @return
      */
     @GetMapping("/user/sys/{id}")
-    R<Map<String, Object>> findUserById(@PathVariable Integer id);
+    R<Map<String, Object>> findUserById(@PathVariable("id") Integer id);
 
     /**
      * 根据角色类型查询用户信息
@@ -32,7 +34,7 @@ public interface SysUserServiceFeign {
      * @return
      */
     @GetMapping("/users/role-type/{roleType}/users")
-    R<List<Object>> selectUsersByRoleType(@PathVariable Integer roleType);
+    R<List<Object>> selectUsersByRoleType(@PathVariable("roleType") Integer roleType);
 
     /**
      * 根据姓名和手机号查询用户
@@ -52,7 +54,7 @@ public interface SysUserServiceFeign {
      * @return
      */
     @GetMapping("/user/sys/role/userId/list")
-    List<Integer> queryAllUserIdListByRole(@RequestParam Integer userId);
+    List<Integer> queryAllUserIdListByRole(@RequestParam("userId") Integer userId);
 
     /**
      * 根据用户id查询client
@@ -61,5 +63,14 @@ public interface SysUserServiceFeign {
      * @return
      */
     @GetMapping("/user/sys/client")
-    R<Object> queryClientByUserId(@RequestParam Integer sysUserId);
+    R<SysClient> queryClientByUserId(@RequestParam("sysUserId") Integer sysUserId);
+
+    /**
+     * 根据clientId查询user
+     *
+     * @param sysClientId
+     * @return
+     */
+    @GetMapping("/user/sys")
+    R<JSONObject> queryUserByClientId(@RequestParam Integer sysClientId);
 }

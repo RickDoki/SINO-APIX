@@ -1,0 +1,132 @@
+version: '3'
+# 如果执行失败,请选尝试创建 docker network create sino-apix
+networks:
+  sino-apix:
+    driver: bridge
+services:
+  nacos:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/nacos:2.0.3
+    container_name: apix-nacos
+    restart: always
+    ports:
+      - 8848:8848
+    networks:
+      - sino-apix
+  mysql:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/mysql:5.7
+    container_name: apix-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "AKrymz6()g*C"
+    ports:
+      - 30306:3306
+    networks:
+      - sino-apix
+  redis:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/redis:3.2.8
+    container_name: apix-redis
+    restart: always
+    ports:
+      - 30379:6379
+    networks:
+      - sino-apix
+  openresty:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/openresty:1.0.0
+    container_name: apix-openresty
+    restart: always
+    external_links:
+      - web:api-web-api-management
+      - service-gateway:api-gateway
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    ports:
+      - 8080:80
+    networks:
+      - sino-apix
+  service-gateway:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-api-gateway:1.0.0
+    container_name: apix-service-gateway
+    restart: always
+    environment:
+      - JAVA_OPTS=-server -XX:+PrintGCDetails -XX:+PrintHeapAtGC -Xloggc:gc.log \
+        -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xms1024m -Xmx1024m -Xmn512m -Xss256k -XX:SurvivorRatio=8 \
+        -XX:+UseConcMarkSweepGC
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    external_links:
+      - mysql:mysql
+      - redis:redis
+    networks:
+      - sino-apix
+  service-user:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-user:1.0.0
+    container_name: apix-service-user
+    restart: always
+    environment:
+      - JAVA_OPTS=-server -Xmx512m -Xms512m
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    external_links:
+      - mysql:mysql
+      - redis:redis
+    networks:
+      - sino-apix
+  service-auth:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-auth:1.0.0
+    container_name: apix-service-auth
+    restart: always
+    environment:
+      - JAVA_OPTS=-server -Xmx512m -Xms512m
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    external_links:
+      - mysql:mysql
+      - redis:redis
+    networks:
+      - sino-apix
+  service-api-management:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-api-management:1.0.0
+    container_name: apix-service-api-management
+    restart: always
+    environment:
+      - JAVA_OPTS=-server -Xmx512m -Xms512m
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    external_links:
+      - mysql:mysql
+      - redis:redis
+    networks:
+      - sino-apix
+  service-support-log:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-support-log:1.0.0
+    container_name: apix-service-support-log
+    restart: always
+    environment:
+      - JAVA_OPTS=-server -Xmx512m -Xms512m
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    external_links:
+      - mysql:mysql
+      - redis:redis
+    networks:
+      - sino-apix
+  web:
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-web-api-management:1.0.0
+    container_name: apix-web
+    restart: always
+    ports:
+      - 80:80
+    networks:
+      - sino-apix

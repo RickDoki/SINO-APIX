@@ -9,7 +9,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.sinosdx.common.tools.http.HttpUtil.getMediaTypeCharset;
+import static com.sinosdx.common.toolkit.http.HttpUtil.getMediaTypeCharset;
 
 /**
  * @author pengjiahu

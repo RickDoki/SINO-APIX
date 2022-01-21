@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
   <version>${revision}</version>
   <name>${project.artifactId}</name>
-  <description>CSP2.0-技术中台</description>
+  <description>SINO APIX</description>
 
   <properties>
     <revision>1.0.0-SNAPSHOT</revision>

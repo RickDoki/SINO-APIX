@@ -21,6 +21,9 @@
       <distribution>manual</distribution>
     </license>
   </licenses>
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.sinosdx.cloud</groupId>

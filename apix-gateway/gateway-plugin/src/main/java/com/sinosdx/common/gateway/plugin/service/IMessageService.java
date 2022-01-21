@@ -18,4 +18,8 @@ public interface IMessageService {
      * @return
      */
     void saveLog(ServerWebExchange exchange, GatewayLogDTO gatewayLog);
+
+    void saveAnalysisLog(ServerWebExchange exchange,String logType,GatewayLogDTO gatewayLog);
+
+    void saveLog(ServerWebExchange exchange,String logType,GatewayLogDTO gatewayLog);
 }

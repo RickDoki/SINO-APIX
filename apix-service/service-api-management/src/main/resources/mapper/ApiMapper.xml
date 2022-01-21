@@ -21,7 +21,7 @@
         <result column="apiCreationUser" property="apiCreationUser" javaType="String"/>
         <result column="apiLastUpdateDate" property="apiLastUpdateDate" javaType="String"/>
         <result column="apiLastUpdateUser" property="apiLastUpdateUser" javaType="String"/>
-        <collection property="apiVersions" column="apiId" ofType="java.util.Map" select="queryApiVersions"/>
+<!--        <collection property="apiVersions" column="apiId" ofType="java.util.Map" select="queryApiVersions"/>-->
     </resultMap>
 
     <select id="queryApiList" resultMap="apiList">
@@ -99,5 +99,28 @@
             av.del_flag = 0 and av.api_id = #{apiId}
         </where>
         order by av.id desc
+    </select>
+
+    <select id="queryApiListByCondition" resultType="com.sinosdx.service.management.dao.entity.Api">
+        select distinct api.* from api api
+        join application_api aa on aa.api_id = api.id
+        <where>
+            api.del_flag = 0 and aa.del_flag = 0
+            <if test="appCode != null">
+                and aa.app_code = #{appCode}
+            </if>
+            <if test="appVersionId != null">
+                and aa.app_version_id = #{appVersionId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getApiDetail" resultType="com.sinosdx.service.management.controller.dto.ApiDto">
+        select api.*,date_format(api.creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,api.name AS apiName,
+        api.id AS apiId,
+        date_format(api.last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate from api api
+        <where>
+            api.del_flag = 0 and api.id = #{apiId}
+        </where>
     </select>
 </mapper>

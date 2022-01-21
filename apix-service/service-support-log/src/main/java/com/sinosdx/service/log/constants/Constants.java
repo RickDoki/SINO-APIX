@@ -26,4 +26,12 @@ public class Constants {
     public static final String THREAD_CONTEXT_PHONE = "phone";
     public static final String THREAD_CONTEXT_CLIENT_ID = "clientId";
     public static final String THREAD_CONTEXT_TOKEN = "token";
+
+
+    public static final String API = "api";
+    public static final String BIZ = "biz";
+    public static final String GATEWAY = "gateway";
+    public static final String ERROR = "error";
+    public static final String LOGIN = "login";
+    public static final String AUDIT = "audit";
 }

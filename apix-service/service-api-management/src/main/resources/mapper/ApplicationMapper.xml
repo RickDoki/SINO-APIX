@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sinosdx.service.management.dao.mapper.ApplicationMapper">
-    
+
     <resultMap id="appDetails" type="java.util.Map">
         <id column="appId" property="appId" javaType="Integer"/>
         <result column="appName" property="appName" javaType="String"/>
@@ -17,15 +17,16 @@
         <result column="appCreationUser" property="appCreationUser" javaType="String"/>
         <result column="appLastUpdateDate" property="appLastUpdateDate" javaType="String"/>
         <result column="appLastUpdateUser" property="appLastUpdateUser" javaType="String"/>
-        <collection property="app" column="appCode" ofType="java.util.Map" select="queryAppVersionDetails"/>
+        <collection property="appVersion" column="appCode" ofType="java.util.Map" select="queryAppVersionDetails"/>
     </resultMap>
-    
+
     <resultMap id="appVersion" type="java.util.Map">
+        <result column="appVersionId" property="id" javaType="Integer"/>
         <result column="appVersion" property="version" javaType="String"/>
         <result column="appVersionDesc" property="description" javaType="String"/>
-        <collection property="apiVersionList" javaType="java.util.ArrayList" ofType="java.util.Map">
-            <id column="apiVersionId" property="apiVersionId" javaType="Integer"/>
-            <result column="apiId" property="apiId" javaType="Integer"/>
+        <collection property="apiList" javaType="java.util.ArrayList" ofType="java.util.Map">
+            <!--            <id column="apiVersionId" property="apiVersionId" javaType="Integer"/>-->
+            <id column="apiId" property="apiId" javaType="Integer"/>
             <result column="apiName" property="apiName" javaType="String"/>
             <result column="apiDescription" property="description" javaType="String"/>
             <result column="apiMarkdown" property="apiMarkdown" javaType="String"/>
@@ -44,32 +45,33 @@
 
     <select id="queryAppVoList" resultType="java.util.Map">
         SELECT distinct a.id as appId,
-            a.name as appName,
-            a.code as appCode,
-            a.product_id as productId,
-            a.label as label,
-            a.description as description,
-            a.markdown as markdown,
-            a.icon_url as iconUrl,
-            a.is_published as isPublished,
-            date_format(a.creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,
-            a.creation_by_username AS creationByUsername,
-            date_format(a.last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate,
-            a.last_updated_by_username AS lastUpdatedByUsername
+        a.name as appName,
+        a.code as appCode,
+        a.product_id as productId,
+        a.label as label,
+        a.description as description,
+        a.markdown as markdown,
+        a.icon_url as iconUrl,
+        a.is_published as isPublished,
+        date_format(a.creation_date, '%Y-%m-%d %H:%i:%S') AS creationDate,
+        a.creation_by_username AS creationByUsername,
+        date_format(a.last_update_date, '%Y-%m-%d %H:%i:%S') AS lastUpdateDate,
+        a.last_updated_by_username AS lastUpdatedByUsername,
+        a.creation_date AS creationDate
         from application a
-<!--        INNER JOIN application_developer ad on a.id = ad.app_id-->
+        <!--        INNER JOIN application_developer ad on a.id = ad.app_id-->
         <where>
             a.del_flag = 0
-            <if test="userIdList.size() > 0">
+            <if test="userIdList != null and userIdList.size() > 0">
                 and a.creation_by in
                 <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
                     #{item}
                 </foreach>
-<!--                and ad.del_flag = 0-->
+                <!--                and ad.del_flag = 0-->
             </if>
-<!--            <if test="developerId != null">-->
-<!--                and ad.user_id = #{developerId} and ad.del_flag = 0-->
-<!--            </if>-->
+            <!--            <if test="developerId != null">-->
+            <!--                and ad.user_id = #{developerId} and ad.del_flag = 0-->
+            <!--            </if>-->
             <if test="isPublished != null and isPublished != '' ">
                 and a.is_published = #{isPublished}
             </if>
@@ -91,69 +93,74 @@
             <if test="startTime != null and endTime != null">
                 and a.creation_date BETWEEN #{startTime} and #{endTime}
             </if>
+            order by a.creation_date desc
             <if test="limit != null and offset !=null">
                 limit #{offset},#{limit}
             </if>
         </where>
+
     </select>
 
     <select id="queryAppDetails" resultMap="appDetails">
         SELECT
-            app.id AS appId,
-            app.`name` AS appName,
-            app.`code` AS appCode,
-            app.product_id as productId,
-            app.label as label,
-            app.description AS appDescription,
-            app.markdown AS appMarkdown,
-            app.icon_url AS iconUrl,
-            app.is_published AS appIsPublished,
-            date_format(app.creation_date, '%Y-%m-%d %H:%i:%S') AS appCreationDate,
-            app.creation_by AS appCreationBy,
-            date_format(app.last_update_date, '%Y-%m-%d %H:%i:%S') AS appLastUpdateDate,
-            app.last_updated_by AS appLastUpdateBy
+        app.id AS appId,
+        app.`name` AS appName,
+        app.`code` AS appCode,
+        app.product_id as productId,
+        app.label as label,
+        app.description AS appDescription,
+        app.markdown AS appMarkdown,
+        app.icon_url AS iconUrl,
+        app.is_published AS appIsPublished,
+        app.provider AS appProvider,
+        date_format(app.publish_date, '%Y-%m-%d %H:%i:%S') AS appPublishDate,
+        date_format(app.creation_date, '%Y-%m-%d %H:%i:%S') AS appCreationDate,
+        app.creation_by AS appCreationBy,
+        date_format(app.last_update_date, '%Y-%m-%d %H:%i:%S') AS appLastUpdateDate,
+        app.last_updated_by AS appLastUpdateBy
         FROM
-            application app
+        application app
         <where>
             app.code = #{appCode} and app.del_flag = 0
         </where>
     </select>
 
-<!--    <select id="queryAppVersionDetails" resultMap="appVersion">-->
-<!--        SELECT-->
-<!--        av.version AS appVersion,-->
-<!--        av.description AS appVersionDesc,-->
-<!--        apiv.id AS apiVersionId,-->
-<!--        apiv.api_id AS apiId,-->
-<!--        apiv.api_name AS apiName,-->
-<!--        apiv.description AS apiDescription,-->
-<!--        apiv.markdown AS apiMarkdown,-->
-<!--        apiv.version AS apiVersion,-->
-<!--        apiv.url AS url,-->
-<!--        apiv.request_method AS requestMethod,-->
-<!--        apiv.request_params AS requestParams,-->
-<!--        apiv.request_example AS requestExample,-->
-<!--        apiv.response_example AS responseExample,-->
-<!--        date_format(apiv.creation_date, '%Y-%m-%d %H:%i:%S') AS apiCreationDate,-->
-<!--        apiv.creation_by_username AS apiCreationUser,-->
-<!--        date_format(apiv.last_update_date, '%Y-%m-%d %H:%i:%S') AS apiLastUpdateDate,-->
-<!--        apiv.last_updated_by_username AS apiLastUpdateUser-->
-<!--        FROM-->
-<!--        application_version av-->
-<!--        LEFT JOIN application_api ON application_api.app_version_id = av.id-->
-<!--        LEFT JOIN api_version apiv ON application_api.api_version_id = apiv.id-->
-<!--        <where>-->
-<!--            av.app_code = #{appCode} and av.del_flag = 0 and application_api.del_flag = 0 and apiv.del_flag = 0-->
-<!--        </where>-->
-<!--        order by av.id desc-->
-<!--    </select>-->
+    <!--    <select id="queryAppVersionDetails" resultMap="appVersion">-->
+    <!--        SELECT-->
+    <!--        av.version AS appVersion,-->
+    <!--        av.description AS appVersionDesc,-->
+    <!--        apiv.id AS apiVersionId,-->
+    <!--        apiv.api_id AS apiId,-->
+    <!--        apiv.api_name AS apiName,-->
+    <!--        apiv.description AS apiDescription,-->
+    <!--        apiv.markdown AS apiMarkdown,-->
+    <!--        apiv.version AS apiVersion,-->
+    <!--        apiv.url AS url,-->
+    <!--        apiv.request_method AS requestMethod,-->
+    <!--        apiv.request_params AS requestParams,-->
+    <!--        apiv.request_example AS requestExample,-->
+    <!--        apiv.response_example AS responseExample,-->
+    <!--        date_format(apiv.creation_date, '%Y-%m-%d %H:%i:%S') AS apiCreationDate,-->
+    <!--        apiv.creation_by_username AS apiCreationUser,-->
+    <!--        date_format(apiv.last_update_date, '%Y-%m-%d %H:%i:%S') AS apiLastUpdateDate,-->
+    <!--        apiv.last_updated_by_username AS apiLastUpdateUser-->
+    <!--        FROM-->
+    <!--        application_version av-->
+    <!--        LEFT JOIN application_api ON application_api.app_version_id = av.id-->
+    <!--        LEFT JOIN api_version apiv ON application_api.api_version_id = apiv.id-->
+    <!--        <where>-->
+    <!--            av.app_code = #{appCode} and av.del_flag = 0 and application_api.del_flag = 0 and apiv.del_flag = 0-->
+    <!--        </where>-->
+    <!--        order by av.id desc-->
+    <!--    </select>-->
 
-    <select id="queryAppVersionDetails" resultType="java.util.Map">
+    <select id="queryAppVersionDetails" resultMap="appVersion">
         SELECT
+        av.id AS appVersionId,
         av.version AS appVersion,
         av.description AS appVersionDesc,
-<!--        apiv.id AS apiVersionId,-->
-        apiv.api_id AS apiId,
+        <!--        apiv.id AS apiVersionId,-->
+        apiv.id AS apiId,
         apiv.name AS apiName,
         apiv.description AS apiDescription,
         apiv.markdown AS apiMarkdown,
@@ -183,21 +190,22 @@
 
     <select id="queryUsingAppList" resultType="java.util.Map">
         SELECT
-            app.id AS appId,
-            app.NAME AS appName,
-            app.CODE AS appCode,
-            al.client_id AS clientId,
-            al.client_secret AS clientSecret
+        app.id AS appId,
+        app.NAME AS appName,
+        app.CODE AS appCode,
+        al.client_id AS clientId,
+        al.client_secret AS clientSecret
         FROM
-            application app
-                JOIN application_lease al ON al.app_lessor_id = app.id
+        application app
+        JOIN application_lease al ON al.app_lessor_id = app.id
         WHERE
-            al.app_lessee_code = #{appCode} and app.del_flag = 0 and al.del_flag = 0
+        al.app_lessee_code = #{appCode} and app.del_flag = 0 and al.del_flag = 0
     </select>
 
     <select id="queryAppByCode" resultType="com.sinosdx.service.management.dao.entity.Application">
         SELECT
-        id, name, code, description, markdown, icon_url, is_published, creation_date, creation_by, creation_by_username, last_update_date, last_updated_by, last_updated_by_username
+        id, name, code, description, markdown, icon_url, is_published, creation_date, creation_by, creation_by_username,
+        last_update_date, last_updated_by, last_updated_by_username
         FROM
         application
         <where>
@@ -224,7 +232,7 @@
             <if test="developerId != null">
                 and ad.user_id = #{developerId} and ad.del_flag = 0
             </if>
-    </where>
+        </where>
     </select>
 
     <select id="queryAppForLease" resultType="com.sinosdx.service.management.dao.entity.Application">
@@ -263,15 +271,20 @@
         SELECT SQL_CALC_FOUND_ROWS DISTINCT
         app.id AS appId,
         app.`name` AS appName,
-        app.`code` AS appCode
+        app.`code` AS appCode,
+        app.`is_published` AS isPublished,
+        app.`description` AS description
         FROM
         application app
         JOIN application_subscribe appSub ON appSub.app_subscribed_id = app.id
-<!--        JOIN application_lease al ON al.app_lessor_id = app.id-->
-<!--        JOIN application_developer ad ON al.app_lessee_id = ad.app_id-->
+        <!--        JOIN application_lease al ON al.app_lessor_id = app.id-->
+        <!--        JOIN application_developer ad ON al.app_lessee_id = ad.app_id-->
         <where>
             app.del_flag = 0
-            <if test="userIdList.size() > 0">
+            <if test="sysClientId != null">
+                and appSub.subscribe_client_id = #{sysClientId} and appSub.del_flag = 0
+            </if>
+            <if test="userIdList != null and userIdList.size() > 0">
                 and appSub.subscribe_client_id in
                 <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
                     #{item}
@@ -296,14 +309,14 @@
     </select>
 
     <select id="querySubscribeCurrentAppList" resultType="com.sinosdx.service.management.dao.entity.Application">
-        SELECT distinct  app.* FROM application app
-            JOIN application_lease al on al.app_lessee_code = app.`code`
-            JOIN application_developer ad ON app.id = ad.app_id
+        SELECT distinct app.* FROM application app
+        JOIN application_lease al on al.app_lessee_code = app.`code`
+        JOIN application_developer ad ON app.id = ad.app_id
         <where>
             app.del_flag = 0 and al.del_flag = 0 and al.app_lessor_code = #{appCode}
-<!--            <if test="developerId != null">-->
-<!--                and ad.user_id = #{developerId}-->
-<!--            </if>-->
+            <!--            <if test="developerId != null">-->
+            <!--                and ad.user_id = #{developerId}-->
+            <!--            </if>-->
             <if test="userIdList.size() > 0">
                 and ad.user_id in
                 <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
@@ -312,6 +325,20 @@
                 and ad.del_flag = 0
             </if>
         </where>
+    </select>
+    <!--select a.app_code as code,CONCAT(b.prefix_path,b.url) as path-->
+    <select id="queryApiByAppId" resultType="java.util.Map">
+        select a.app_code as code,b.url as path
+        from application_api a
+        left join api b
+        on a.api_id = b.id
+        where a.app_id=#{appId}
+    </select>
+
+    <select id="querySubscribeCodeByAppId" resultType="java.lang.String">
+        select a.app_client_code
+        from application_subscribe a
+        where a.app_subscribed_id=#{appId}
     </select>
 
 </mapper>

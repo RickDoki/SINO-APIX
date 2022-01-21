@@ -38,11 +38,14 @@ public class ApplicationVo implements Serializable {
     @JSONField(serialzeFeatures = SerializerFeature.WriteMapNullValue)
     private String isPublished;
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime publishDate;
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime creationDate;
     private String creationByUsername;
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastUpdateDate;
     private String lastUpdatedByUsername;
+    private String provider;
 
     public ApplicationVo(Application application) {
         this.appId = application.getId() == null ? null : application.getId();
@@ -54,9 +57,11 @@ public class ApplicationVo implements Serializable {
         this.markdown = application.getMarkdown();
         this.iconUrl = application.getIconUrl();
         this.isPublished = application.getIsPublished();
+        this.publishDate = application.getPublishDate();
         this.creationDate = application.getCreationDate();
         this.creationByUsername = application.getCreationByUsername();
         this.lastUpdateDate = application.getLastUpdateDate();
         this.lastUpdatedByUsername = application.getLastUpdatedByUsername();
+        this.provider = application.getProvider();
     }
 }

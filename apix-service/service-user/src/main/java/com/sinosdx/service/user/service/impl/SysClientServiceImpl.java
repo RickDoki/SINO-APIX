@@ -3,7 +3,9 @@ package com.sinosdx.service.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sinosdx.common.base.result.R;
 import com.sinosdx.service.user.dao.entity.SysClient;
+import com.sinosdx.service.user.dao.entity.SysUser;
 import com.sinosdx.service.user.dao.mapper.SysClientMapper;
+import com.sinosdx.service.user.dao.mapper.SysUserMapper;
 import com.sinosdx.service.user.enums.SysClientEnum;
 import com.sinosdx.service.user.service.SysClientService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,9 @@ public class SysClientServiceImpl implements SysClientService {
     @Resource
     private SysClientMapper sysClientMapper;
 
+    @Resource
+    private SysUserMapper sysUserMapper;
+
     /**
      * 根据用户id查询client
      *
@@ -34,5 +39,16 @@ public class SysClientServiceImpl implements SysClientService {
                 .eq(SysClient::getResourceId, sysUserId)
                 .eq(SysClient::getResourceType, SysClientEnum.USER.getName()));
         return R.success(sysClient);
+    }
+
+    /**
+     * 根据clientId查询user
+     *
+     * @param sysClientId
+     * @return
+     */
+    @Override
+    public R<SysUser> queryUserByClientId(Integer sysClientId) {
+        return R.success(sysUserMapper.queryByClientId(sysClientId));
     }
 }

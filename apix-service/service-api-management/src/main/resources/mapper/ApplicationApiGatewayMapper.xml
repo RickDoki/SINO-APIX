@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sinosdx.service.management.dao.mapper.ApplicationApiGatewayMapper">
+
+    <select id="queryListByCondition"
+            resultType="com.sinosdx.service.management.dao.entity.ApplicationApiGateway">
+        SELECT * from application_api_gateway
+        <where>
+            1=1
+            <if test="gatewayId != null">
+                and gateway_id = #{gatewayId}
+            </if>
+            <if test="apiId != null">
+                AND api_id = #{apiId}
+            </if>
+            <if test="appId != null">
+                and app_id = #{appId}
+            </if>
+            <if test="urlCode != null">
+                and url_code = #{urlCode}
+            </if>
+        </where>
+    </select>
+
+</mapper>

@@ -39,13 +39,22 @@ public class Api extends Entity<Integer> {
     private Integer isInternal;
     private String creationByUsername;
     private String lastUpdatedByUsername;
+    private String protocol;
 
     public Api(ApiVo apiVo) {
         this.id = apiVo.getApiId();
         this.name = apiVo.getApiName();
         this.description = apiVo.getDescription();
         this.markdown = apiVo.getMarkdown();
-        this.domain = apiVo.getDomain().startsWith("http") ? apiVo.getDomain() + ":" + apiVo.getPort() : apiVo.getProtocol() + "://" + apiVo.getDomain() + ":" + apiVo.getPort();
+        String domain = apiVo.getDomain();
+        if (!domain.startsWith("http")) {
+            domain = apiVo.getProtocol() + "://" + apiVo.getDomain();
+        }
+        if (!apiVo.getPort().equals(80L)) {
+            domain += ":" + apiVo.getPort();
+        }
+        this.domain = domain;
+//        this.domain = apiVo.getDomain().startsWith("http") ? apiVo.getDomain() + ":" + apiVo.getPort() : apiVo.getProtocol() + "://" + apiVo.getDomain() + ":" + apiVo.getPort();
         this.url = apiVo.getApiUrl();
         this.prefixPath = apiVo.getUpstreamPrefixPath() + apiVo.getPrefixPath();
         this.requestMethod = apiVo.getRequestMethod();
@@ -56,6 +65,7 @@ public class Api extends Entity<Integer> {
         this.version = apiVo.getApiVersion();
         this.isPublished = apiVo.getIsPublished();
         this.isInternal = apiVo.getIsInternal();
+        this.protocol = apiVo.getProtocol();
     }
 
 //    public Api(ApiVersion apiVersion) {

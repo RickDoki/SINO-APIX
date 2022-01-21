@@ -18,6 +18,7 @@ public enum ResultCodeEnum implements BaseEnum {
     BASE_VALID_PARAM(2002, "参数验证异常"),
 
     USER_BANNED(820010, "该用户已被禁用，请联系管理员"),
+    CREATE_JWT_ERROR(822006, "生成jwt失败"),
     TOKEN_NULL(824003, "登录失效，请重新登录认证"),
     TOKEN_ERROR(824004, "token解析错误"),
     TOKEN_EXPIRED(824005, "token已过期"),

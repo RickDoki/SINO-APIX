@@ -1,19 +1,15 @@
 package com.sinosdx.gateway.controller;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.sinosdx.common.gateway.constants.Constants;
-import com.sinosdx.common.model.log.entity.gateway.GatewayLogDTO;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.stream.function.StreamBridge;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author pengjiahu
@@ -27,8 +23,6 @@ import java.util.Map;
 public class DiscoveryClientController {
 
     private final DiscoveryClient discoveryClient;
-    @Autowired
-    private StreamBridge streamBridge;
 
     /**
      * 获取服务实例
@@ -42,19 +36,6 @@ public class DiscoveryClientController {
             instances.put(s, list);
         });
         return instances;
-    }
-
-    /**
-     * 自定义日志记录
-     *
-     * @return
-     */
-    @PostMapping("log")
-    public GatewayLogDTO customGatewayLog(@RequestBody GatewayLogDTO gatewayLog) {
-        GatewayLogDTO gatewayLogDTO = new GatewayLogDTO();
-        BeanUtil.copyProperties(gatewayLog, gatewayLogDTO);
-        streamBridge.send(Constants.LOG_TOPIC, gatewayLogDTO);
-        return gatewayLogDTO;
     }
 
 }

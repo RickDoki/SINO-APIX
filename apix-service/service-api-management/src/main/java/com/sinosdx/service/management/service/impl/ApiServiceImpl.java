@@ -1,19 +1,18 @@
 package com.sinosdx.service.management.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Maps;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
+import com.sinosdx.service.management.controller.dto.ApiDto;
+import com.sinosdx.service.management.controller.dto.ApplicationVersionDetailDto;
+import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
 import com.sinosdx.service.management.controller.vo.ApiVersionVo;
 import com.sinosdx.service.management.controller.vo.ApiVo;
-import com.sinosdx.service.management.dao.entity.Api;
-import com.sinosdx.service.management.dao.entity.ApiTemplate;
-import com.sinosdx.service.management.dao.entity.ApiVersion;
-import com.sinosdx.service.management.dao.entity.ApplicationApi;
-import com.sinosdx.service.management.dao.mapper.ApiMapper;
-import com.sinosdx.service.management.dao.mapper.ApiTemplateMapper;
-import com.sinosdx.service.management.dao.mapper.ApiVersionMapper;
-import com.sinosdx.service.management.dao.mapper.ApplicationApiMapper;
+import com.sinosdx.service.management.dao.entity.*;
+import com.sinosdx.service.management.dao.mapper.*;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApiService;
@@ -21,6 +20,7 @@ import com.sinosdx.service.management.utils.ThreadContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author wendy
@@ -57,6 +58,9 @@ public class ApiServiceImpl implements ApiService {
     @Autowired
     private SysUserServiceFeign sysUserService;
 
+    @Autowired
+    private ApplicationVersionMapper applicationVersionMapper;
+
     /**
      * 创建API
      *
@@ -67,7 +71,7 @@ public class ApiServiceImpl implements ApiService {
     @Transactional(rollbackFor = Exception.class)
     public R<Object> createApi(Api api) {
         String domain = api.getDomain();
-        if (StringUtils.isAnyEmpty(api.getName(), api.getUrl(), api.getVersion(), domain)) {
+        if (StringUtils.isAnyEmpty(api.getName(), api.getUrl(), domain)) {
             return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
         }
 
@@ -81,7 +85,7 @@ public class ApiServiceImpl implements ApiService {
         if (!url.startsWith("/")) {
             api.setUrl("/" + url);
         }
-
+        Integer userId = ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID);
         // 判断api是否已存在
         Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
                 .eq("url", api.getUrl())
@@ -89,6 +93,8 @@ public class ApiServiceImpl implements ApiService {
                 .eq("prefix_path", api.getPrefixPath())
                 .eq("domain", domain)
                 .eq("version", api.getVersion())
+                //新增 创建人条件
+                .eq("creation_by",userId)
                 .eq("del_flag", 0));
         if (count1 > 0) {
             return R.fail(ResultCodeEnum.API_IS_EXIST);
@@ -157,12 +163,13 @@ public class ApiServiceImpl implements ApiService {
         }
 
         // 判断修改后的api是否重复
-        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
-                .eq("url", oldApi.getUrl()).eq("request_method", oldApi.getRequestMethod())
-                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
-        if (count1 > 0) {
-            return R.fail(ResultCodeEnum.API_IS_EXIST);
-        }
+//        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
+//                .eq("url", oldApi.getUrl())
+//                .eq("request_method", oldApi.getRequestMethod())
+//                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
+//        if (count1 > 0) {
+//            return R.fail(ResultCodeEnum.API_IS_EXIST);
+//        }
 //        Integer count2 = apiMapper.selectCount(new QueryWrapper<Api>()
 //                .eq("url", oldApi.getUrl()).eq("name", oldApi.getName())
 //                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
@@ -378,6 +385,45 @@ public class ApiServiceImpl implements ApiService {
      */
     @Override
     public R<Object> queryApiDetail(Integer apiId) {
-        return R.success(apiMapper.selectById(apiId));
+//        return R.success(apiMapper.selectById(apiId));
+        // 默认过滤通用参数,自己写sql
+        return R.success(apiMapper.getApiDetail(apiId));
+    }
+
+    @Override
+    public R<Object> queryApiListByAppVersionId(String appCode, Integer appVersionId) {
+        ApplicationVersionDetailDto applicationVersionDetailDto = applicationVersionMapper.queryByIdWithDate(appVersionId);
+        List<ApplicationApi> applicationApis = applicationApiMapper.selectList(new LambdaQueryWrapper<ApplicationApi>()
+                .eq(ApplicationApi::getAppCode, appCode)
+                .eq(ApplicationApi::getAppVersionId, appVersionId)
+                .eq(ApplicationApi::getDelFlag, 0)
+        );
+        List<ApiDto> apiList = applicationApis.stream().map(a -> apiMapper.getApiDetail(a.getApiId())).collect(Collectors.toList());
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("applicationVersion",applicationVersionDetailDto);
+        data.put("apiList",apiList);
+        return R.success(data);
+    }
+
+    /**
+     * 查询api列表中未被其他服务版本使用的api
+     *
+     * @param apiList
+     * @param appId
+     * @return
+     */
+    @Override
+    public R<List<Api>> getApiListNotUsedByOtherAppOrAppVersion(List<Api> apiList, Integer appId) {
+        List<Api> orphanApiList = new ArrayList<>();
+        for (Api api : apiList) {
+            Long count = applicationApiMapper.selectCount(new LambdaQueryWrapper<ApplicationApi>()
+                    .eq(ApplicationApi::getApiId, api.getId())
+                    .eq(ApplicationApi::getAppId, appId));
+            // 如果是孤儿api应该只能查到一条
+            if (count == 1) {
+                orphanApiList.add(api);
+            }
+        }
+        return R.success(orphanApiList);
     }
 }

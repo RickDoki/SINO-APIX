@@ -19,4 +19,5 @@ public class ApplicationVersion extends Entity<Integer> {
     private String appCode;
     private String version;
     private String description;
+    private String markdown;
 }

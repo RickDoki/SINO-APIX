@@ -1,14 +1,16 @@
 package com.sinosdx.common.gateway.utils;
 
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author pengjiahu
@@ -18,6 +20,8 @@ import java.util.zip.GZIPOutputStream;
 @Slf4j
 @UtilityClass
 public class GzipUtil {
+
+    public static final String GZIP = "gzip";
 
     public byte[] unCompress(byte[] bytes) {
         if (bytes == null || bytes.length == 0) {
@@ -56,4 +60,17 @@ public class GzipUtil {
 
     }
 
+    public String getGzipContent(byte[] content, String data) {
+        try (
+                GZIPInputStream gzipInputStream = new GZIPInputStream(new ByteArrayInputStream(content),
+                        content.length);
+        ) {
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(gzipInputStream, writer, StandardCharsets.UTF_8);
+            data = writer.toString();
+        } catch (IOException e) {
+            log.error("request log response filter gzip IO error", e);
+        }
+        return data;
+    }
 }

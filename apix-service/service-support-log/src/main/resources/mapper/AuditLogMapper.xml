@@ -27,7 +27,7 @@
         <if test="userId != null and userId != '' ">
             and user_id = #{userId}
         </if>
-        <if test="userIdList.size() > 0 and userId == null">
+        <if test="userIdList != null and userIdList.size() > 0 and userId == null">
             and user_id in
             <foreach collection="userIdList" item="item" index="index" open="(" close=")" separator=",">
                 #{item}

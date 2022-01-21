@@ -25,12 +25,12 @@ public interface OauthClientDetailsService {
     /**
      * 删除认证客户端
      *
-     * @param appCode
+     * @param clientId
      *
      * @return
      */
-    @DeleteMapping("/auth/oauth_client/delete/{appCode}")
-    R<Object> deleteOAuthClientDetail(@PathVariable("appCode") String appCode);
+    @DeleteMapping("/auth/oauth_client/delete/{clientId}")
+    R<Object> deleteOAuthClientDetail(@PathVariable("clientId") String clientId);
 
     /**
      * 查询client信息

@@ -95,9 +95,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (StringUtils.isEmpty(sysRegisterDTO.getPassword())) {
             return R.fail(ResultCodeEnum.USER_REGISTER_PASSWORD_EMPTY);
         }
-        if (StringUtils.isEmpty(sysRegisterDTO.getOrgName())) {
-            return R.fail(ResultCodeEnum.ORGANIZATION_NAME_EMPTY);
-        }
+//        if (StringUtils.isEmpty(sysRegisterDTO.getOrgName())) {
+//            return R.fail(ResultCodeEnum.ORGANIZATION_NAME_EMPTY);
+//        }
+        // 随机生成组织
+        sysRegisterDTO.setOrgName(UUID.randomUUID().toString().split("-")[0]);
 
         // 查询存量用户
         SysUser sysUser = sysUserMapper.queryByMobile(sysRegisterDTO.getMobile());

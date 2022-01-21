@@ -1,5 +1,6 @@
 package com.sinosdx.service.management.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.common.base.annotation.AuditLog;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVo;
@@ -197,6 +198,7 @@ public class ApplicationController {
      * @param appLessorCode
      * @return
      */
+    @Deprecated
     @AuditLog(type = "订阅应用", name = "应用")
     @ApiOperation("绑定应用服务（使用资源市场应用服务）")
     @ApiImplicitParams({
@@ -210,6 +212,18 @@ public class ApplicationController {
     public R<Object> appLease(@PathVariable("appLesseeCode") String appLesseeCode,
                               @PathVariable("appLessorCode") String appLessorCode) {
         return applicationService.appLease(appLesseeCode, appLessorCode);
+    }
+
+    /**
+     * 解绑应用服务
+     *
+     * @param appCode
+     * @return
+     */
+    @AuditLog(type = "退订应用", name = "应用")
+    @PostMapping("/unSubscribe/{appSubscribedCode}")
+    public R<Object> unSubscribe(@PathVariable("appSubscribedCode") String appCode) {
+        return applicationService.unSubscribe(appCode);
     }
 
     /**
@@ -330,6 +344,7 @@ public class ApplicationController {
      * @param appLessorCode
      * @return
      */
+    @Deprecated
     @AuditLog(type = "移除应用订阅", name = "应用")
     @DeleteMapping("/remove/{appLesseeCode}/lease/{appLessorCode}")
     public R<Object> removeAppLease(@PathVariable("appLesseeCode") String appLesseeCode,
@@ -426,13 +441,44 @@ public class ApplicationController {
     }
 
     /**
-     * 服务添加插件
-     *
-     * @param applicationPlugin
+     * 更新AppVersion
+     */
+    @AuditLog(type = "更新服务版本", name = "应用")
+    @PostMapping("/appVersion/{appVersionId}")
+    public R<Object> updateAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId,
+            @RequestBody ApplicationVersionVo applicationVersionVo) {
+        return applicationService.updateAppVersion(appVersionId,applicationVersionVo);
+    }
+
+    /**
+     * 删除 AppVersion
+     */
+    @AuditLog(type = "删除服务版本", name = "应用")
+    @DeleteMapping("/appVersion/{appVersionId}")
+    public R<Object> deleteAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId) {
+        return applicationService.deleteAppVersion(appVersionId);
+    }
+    /**
+     * 获取 AppVersion 详情
+     */
+    @AuditLog(type = "查看服务版本详情", name = "应用")
+    @GetMapping("/appVersion/{appVersionId}")
+    public R<Object> queryAppVersion (@PathVariable(name = "appVersionId") Integer appVersionId) {
+        return applicationService.queryAppVersion(appVersionId);
+    }
+
+
+    /**
+     *  获取我的应用的所有appCodes
+     * @param developId
      * @return
      */
-    @PostMapping("/plugin")
-    public R<Object> addAppPlugin(ApplicationPlugin applicationPlugin) {
-        return applicationService.addAppPlugin(applicationPlugin);
+    @GetMapping("/appList/{developId}")
+    public R<Object> getMyAppCodes (@PathVariable(name = "developId") Integer developId) {
+        return applicationService.getMyAppCodes(developId);
     }
+
+
+
+
 }

@@ -1,6 +1,7 @@
 package com.sinosdx.service.management.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.sinosdx.common.base.constants.ThreadContextConstant;
 import com.sinosdx.service.management.constants.Constants;
 import com.sinosdx.service.management.dao.entity.UpstreamServer;
 import com.sinosdx.service.management.dao.mapper.UpstreamServerMapper;
@@ -46,7 +47,9 @@ public class UpstreamServerServiceImpl implements UpstreamServerService {
             offset = null;
         }
 
-        List<Object> list = upstreamServerMapper.queryUpstreamServerList(name, limit, offset);
+        Integer userId = ThreadContext.get(ThreadContextConstant.THREAD_CONTEXT_USER_ID);
+
+        List<Object> list = upstreamServerMapper.queryUpstreamServerList(name, userId, limit, offset);
         // 数据集合
         List<Object> upstreamList = (List<Object>) list.get(0);
         // 数据总量

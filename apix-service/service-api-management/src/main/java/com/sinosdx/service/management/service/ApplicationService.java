@@ -1,13 +1,14 @@
 package com.sinosdx.service.management.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sinosdx.service.management.controller.dto.ApplicationNumDTO;
 import com.sinosdx.service.management.controller.vo.ApplicationNumVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVersionVo;
 import com.sinosdx.service.management.controller.vo.ApplicationVo;
 import com.sinosdx.service.management.dao.entity.Application;
 import com.sinosdx.service.management.dao.entity.ApplicationPlugin;
+import com.sinosdx.service.management.dao.entity.ApplicationSubscribe;
 import com.sinosdx.service.management.result.R;
-import io.swagger.models.auth.In;
 
 import java.util.List;
 import java.util.Map;
@@ -89,9 +90,18 @@ public interface ApplicationService {
      * 订阅服务
      *
      * @param appSubscribedCode
+     * @param sysUserId
      * @return
      */
-    R<Object> appSubscribe(String appSubscribedCode);
+    R<Object> appSubscribe(String appSubscribedCode, Integer sysUserId);
+
+    /**
+     * 解除订阅服务
+     *
+     * @param appSubscribedCode
+     * @return
+     */
+    R<Object> unSubscribe(String appSubscribedCode);
 
     /**
      * 添加应用开发者
@@ -242,6 +252,13 @@ public interface ApplicationService {
      * @return
      */
     ApplicationNumDTO queryApplicationNum(ApplicationNumVo applicationNumVo);
+    /**
+     * 查询应用内部请求数、请求失败数、已订阅数
+     *
+     * @param appCode
+     * @return
+     */
+    Long applicationSubscribeNum(String appCode, Long startTime,Long endTime);
 
     /**
      * 查询订阅当前应用的应用列表
@@ -253,26 +270,48 @@ public interface ApplicationService {
     R<Object> querySubscribedAppList(String appCode, Integer developerId);
 
     /**
-     * 服务添加插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    R<Object> addAppPlugin(ApplicationPlugin applicationPlugin);
-
-    /**
-     * 修改服务插件
-     *
-     * @param applicationPlugin
-     * @return
-     */
-    R<Object> updateAppPlugin(ApplicationPlugin applicationPlugin);
-
-    /**
      * UserIds 转换为  ClientIds
      * @param userIds
      * @return
      */
     List<Integer> changeUserIdsToClientIds(List<Integer> userIds);
 
+    /**
+     * 更新appVersion
+     * @param applicationVersionVo
+     * @return
+     */
+    R<Object> updateAppVersion(Integer appVersionId,ApplicationVersionVo applicationVersionVo);
+
+    /**
+     * 删除appVersion
+     * @param appVersionId
+     * @return
+     */
+    R<Object> deleteAppVersion(Integer appVersionId);
+
+    /**
+     * 查询appVersion详情
+     * @param appVersionId
+     * @return
+     */
+    R<Object> queryAppVersion(Integer appVersionId);
+
+    /**
+     * 根据订阅编号查询订阅信息
+     *
+     * @param subscribeCode
+     * @return
+     */
+    R<ApplicationSubscribe> queryAppCodeBySubscribeCode(String subscribeCode);
+
+    R<Object> getMyAppCodes(Integer developId);
+
+    /**
+     * 查询鉴权过滤器链
+     *
+     * @param appCode
+     * @return
+     */
+    R<List<String>> queryAppAuthPluginNameList(String appCode);
 }

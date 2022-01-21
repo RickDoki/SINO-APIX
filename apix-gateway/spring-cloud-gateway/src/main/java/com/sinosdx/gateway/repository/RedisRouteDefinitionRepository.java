@@ -1,6 +1,9 @@
 package com.sinosdx.gateway.repository;
 
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionRepository;
@@ -9,9 +12,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author pengjiahu
@@ -67,9 +67,7 @@ public class RedisRouteDefinitionRepository implements RouteDefinitionRepository
 //                        JSONUtil.toJsonStr(jsonObject));
 //                return Mono.empty();
 //            }
-
-            redisTemplate.opsForHash().put(GATEWAY_ROUTES, routeDefinition.getId(),
-                    JSONUtil.toJsonStr(routeDefinition));
+            redisTemplate.opsForHash().put(GATEWAY_ROUTES, routeDefinition.getId(), JSON.toJSONString(routeDefinition));
             return Mono.empty();
         });
     }

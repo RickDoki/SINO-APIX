@@ -1,6 +1,7 @@
 package com.sinosdx.service.management.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.sinosdx.service.management.controller.dto.ApiDto;
 import com.sinosdx.service.management.dao.entity.Api;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +27,9 @@ public interface ApiMapper extends BaseMapper<Api> {
                                            @Param(value = "offset") Integer offset,
                                            @Param(value = "developerId") Integer developerId,
                                            @Param("userIdList") List<Integer> userIdList);
+
+    List<Api> queryApiListByCondition(@Param("appCode") String appCode,
+                                      @Param("appVersionId") Integer appVersionId);
+
+    ApiDto getApiDetail(@Param("apiId") Integer apiId);
 }
