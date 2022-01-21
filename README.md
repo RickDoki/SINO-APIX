@@ -13,8 +13,10 @@
 ## 演示环境（Demo）
 
 >平台地址：http://47.103.109.225:30000 
-
->账号：自助式
+>
+>账号：15216660001   Sino123456789
+>
+>可自助注册使用
 
 ### 模块结构
 ```lua
@@ -135,6 +137,16 @@ cd website，将命令提示符跳转到front目录
 
 ## 界面预览
 
+![](docs/img/reg.png)
+![](docs/img/login.png)
+![](docs/img/index.png)
+![](docs/img/dashbord.png)
+![](docs/img/api.png)
+![](docs/img/service.png)
+![](docs/img/serviceinfo.png)
+![](docs/img/plug.png)
+![](docs/img/userinfo.png)
+![](docs/img/audit.png)
 ## QA
 
 1. 很多类缺少get/set方法？

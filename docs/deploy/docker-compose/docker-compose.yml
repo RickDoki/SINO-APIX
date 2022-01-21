@@ -31,7 +31,7 @@ services:
     networks:
       - sino-apix
   openresty:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/openresty:prod
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/openresty:1.0.0
     container_name: apix-openresty
     restart: always
     external_links:
@@ -46,7 +46,7 @@ services:
     networks:
       - sino-apix
   service-gateway:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-api-gateway:latest
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-api-gateway:1.0.0
     container_name: apix-service-gateway
     restart: always
     environment:
@@ -63,7 +63,7 @@ services:
     networks:
       - sino-apix
   service-user:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-user:latest
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-user:1.0.0
     container_name: apix-service-user
     restart: always
     environment:
@@ -78,7 +78,7 @@ services:
     networks:
       - sino-apix
   service-auth:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-auth:latest
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-auth:1.0.0
     container_name: apix-service-auth
     restart: always
     environment:
@@ -93,7 +93,7 @@ services:
     networks:
       - sino-apix
   service-api-management:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-api-management:latest
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-api-management:1.0.0
     container_name: apix-service-api-management
     restart: always
     environment:
@@ -108,7 +108,7 @@ services:
     networks:
       - sino-apix
   service-support-log:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-support-log:latest
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-service-support-log:1.0.0
     container_name: apix-service-support-log
     restart: always
     environment:
@@ -123,7 +123,7 @@ services:
     networks:
       - sino-apix
   web:
-    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-web-api-management:latest
+    image: registry.cn-shanghai.aliyuncs.com/sinosdx/api-web-api-management:1.0.0
     container_name: apix-web
     restart: always
     ports:

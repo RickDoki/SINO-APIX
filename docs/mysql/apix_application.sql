@@ -11,7 +11,7 @@
  Target Server Version : 50736
  File Encoding         : 65001
 
- Date: 08/01/2022 15:51:56
+ Date: 21/01/2022 12:09:53
 */
 
 SET NAMES utf8mb4;
@@ -44,17 +44,15 @@ CREATE TABLE `api`  (
   `is_internal` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否为中台内部接口',
   `prefix_path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'api前置请求路径',
   `response_params` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT 'api返回参数',
+  `protocol` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '协议',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 97 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 118 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of api
 -- ----------------------------
-INSERT INTO `api` VALUES (92, 'discovery', '', NULL, '1.5', '/api/discovery/instances', 'GET', '60012', '2021-12-09 18:08:28', 1, 'admin', '2021-12-09 18:08:28', 0, NULL, 0, 'http://47.103.109.225:30000', '[]', '\"\"', '\"\"', 0, '', '[]');
-INSERT INTO `api` VALUES (93, '百度新闻', 'http://news.baidu.com/widget?id=LocalNews&ajax=json&t=1639119700299', NULL, '1.0', '/widget', 'GET', '60012', '2021-12-10 15:04:04', 1, 'admin', '2021-12-10 15:04:04', 0, NULL, 0, 'http://news.baidu.com:80', '[{\"parame\":\"ajax\",\"type\":\"Object\",\"isHaveto\":\"\",\"describe\":\"\",\"default\":\"\",\"_XID\":\"row_15\"},{\"parame\":\"id\",\"type\":\"String\",\"isHaveto\":\"\",\"describe\":\"\",\"default\":\"\",\"_XID\":\"row_16\"}]', '\"\"', '\"\"', 0, '', '[]');
-INSERT INTO `api` VALUES (94, 'bbb', 'test', NULL, '1.8', '/appbbb', 'POST', '60012', '2021-12-27 14:09:00', 1, 'admin', '2021-12-27 14:09:00', 0, NULL, 0, 'http://www.baidu.com:9090', '[]', '\"\"', '\"\"', 0, '/apiroundRobin', '[]');
-INSERT INTO `api` VALUES (95, 'tttt', '', NULL, '1.test', '/list', 'POST', '60012', '2022-01-07 14:48:18', 1, 'admin', '2022-01-07 14:48:18', 0, NULL, 0, 'http://www.sinosdx.com:8080', '[]', '\"\"', '\"\"', 0, '', '[]');
-INSERT INTO `api` VALUES (96, 'tttt01', '', NULL, '1.test', '/list011', 'POST', '60012', '2022-01-07 14:49:42', 0, NULL, '2022-01-07 14:57:53', 0, NULL, 0, 'www.sinosdx.com', '[]', '\"\"', '\"\"', 0, '', '[]');
+INSERT INTO `api` VALUES (116, '获取每日本地新闻', '', NULL, '', '/widget?id=LocalNews&ajax=json&t=1642041193240', 'GET', '60012', '2022-01-21 11:26:52', 65, '15216660001', '2022-01-21 11:26:52', 0, NULL, 0, 'http://news.baidu.com', '[{\"parame\":\"id\",\"type\":\"String\",\"isHaveto\":\"是\",\"describe\":\"\",\"default\":\"LocalNews\",\"_XID\":\"row_15\"},{\"parame\":\"ajax\",\"type\":\"String\",\"isHaveto\":\"是\",\"describe\":\"\",\"default\":\"json\",\"_XID\":\"row_16\"},{\"parame\":\"t\",\"type\":\"Integer\",\"isHaveto\":\"是\",\"describe\":\"\",\"default\":\"1642041193240\",\"_XID\":\"row_17\"}]', '\"http://news.baidu.com/widget?id=LocalNews&ajax=json&t=1642041193240\"', '\"{\\n  \\\"errno\\\": 0,\\n  \\\"request_id\\\": \\\"1339394591\\\",\\n  \\\"timestamp\\\": 1642735339,\\n  \\\"data\\\": {\\n    \\\"LocalNews\\\": {\\n      \\\"errno\\\": 0,\\n      \\\"data\\\": {\\n        \\\"rows\\\": {\\n          \\\"first\\\": [\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369221\\\",\\n              \\\"title\\\": \\\"上海GDP突破4万亿，2021年增长8.1%\\\",\\n              \\\"time\\\": \\\"2022-01-20 09:16:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369457\\\",\\n              \\\"title\\\": \\\"上海市长龚正：今年将新增就业岗位55万个以上\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:16:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369409\\\",\\n              \\\"title\\\": \\\"龚正：今年要有序推动重点领域、重点行业开展碳达峰专项行动\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:16:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369470\\\",\\n              \\\"title\\\": \\\"龚正：上海要建儿童友好城市，一半以上幼儿园今年开托班\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:16:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369364\\\",\\n              \\\"title\\\": \\\"上海将筹建国有资本投资母基金，适时组建新的国企集团\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:16:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369473\\\",\\n              \\\"title\\\": \\\"龚正：坚持房住不炒，将建设筹措17.3万套保障性租赁住房\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:16:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369357\\\",\\n              \\\"title\\\": \\\"龚正：临港将建全球动力之城核心区，将实行更大程度压力测试\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:06:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369360\\\",\\n              \\\"title\\\": \\\"上海市长：做大做强免退税经济等，加快建设国际消费中心城市\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:06:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            }\\n          ],\\n          \\\"second\\\": [\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369394\\\",\\n              \\\"title\\\": \\\"上海市长：打造30个制造业数字化赋能平台\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:06:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369350\\\",\\n              \\\"title\\\": \\\"上海市长龚正：精心办好第五届进博会\\\",\\n              \\\"time\\\": \\\"2022-01-20 09:46:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369321\\\",\\n              \\\"title\\\": \\\"上海市长龚正：“一网通办”已接入服务事项3458项\\\",\\n              \\\"time\\\": \\\"2022-01-20 09:46:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369351\\\",\\n              \\\"title\\\": \\\"实现更多“从0到1”的突破！上海市长：新建一批重大科技基础项目\\\",\\n              \\\"time\\\": \\\"2022-01-20 09:46:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369353\\\",\\n              \\\"title\\\": \\\"强化新赛道布局！上海这些产业今年将有大动作\\\",\\n              \\\"time\\\": \\\"2022-01-20 09:46:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369318\\\",\\n              \\\"title\\\": \\\"龚正：制定实施“沪十条”等政策，房地产市场保持平稳健康发展\\\",\\n              \\\"time\\\": \\\"2022-01-20 09:46:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369337\\\",\\n              \\\"title\\\": \\\"上海明确2022年GDP增长预期：5.5%左右\\\",\\n              \\\"time\\\": \\\"2022-01-20 09:46:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369467\\\",\\n              \\\"title\\\": \\\"上海市长再谈疫情防控：严格落实高风险人员等闭环管理措施\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:16:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            },\\n            {\\n              \\\"url\\\": \\\"https://www.thepaper.cn/newsDetail_forward_16369370\\\",\\n              \\\"title\\\": \\\"上海政府工作报告首次将教育与科创、人才建设列入同一板块\\\",\\n              \\\"time\\\": \\\"2022-01-20 10:36:22\\\",\\n              \\\"imgUrl\\\": \\\"\\\"\\n            }\\n          ],\\n          \\\"pic\\\": {\\n            \\\"title\\\": \\\"向世界发出“上海的邀请”\\\",\\n            \\\"url\\\": \\\"https://www.jfdaily.com/staticsg/res/html/journal/detail.html?date=2021-09-30&id=321943&page=02\\\",\\n            \\\"imgUrl\\\": \\\"https://b.bdstatic.com/boxlib/20220121/2022012111130097464073263.jpg\\\",\\n            \\\"time\\\": \\\"2021-09-30 12:40:28\\\"\\n          }\\n        },\\n        \\\"cityid\\\": 2354,\\n        \\\"total\\\": 0,\\n        \\\"result_num\\\": 19,\\n        \\\"name\\\": \\\"上海\\\",\\n        \\\"province\\\": 2354\\n      },\\n      \\\"ad\\\": null\\n    }\\n  }\\n}\"', 0, '', '[{\"parame\":\"url\",\"type\":\"String\",\"isHaveto\":\"是\",\"describe\":\"\",\"default\":\"\",\"_XID\":\"row_28\"},{\"parame\":\"title\",\"type\":\"String\",\"isHaveto\":\"是\",\"describe\":\"\",\"default\":\"\",\"_XID\":\"row_29\"},{\"parame\":\"time\",\"type\":\"Integer\",\"isHaveto\":\"是\",\"describe\":\"\",\"default\":\"\",\"_XID\":\"row_30\"},{\"parame\":\"imageUrl\",\"type\":\"String\",\"isHaveto\":\"是\",\"describe\":\"\",\"default\":\"\",\"_XID\":\"row_31\"}]', 'http');
+INSERT INTO `api` VALUES (117, '百度本地每日新闻2', '', NULL, '', '/widget*', 'GET', '60012', '2022-01-21 11:39:12', 65, '15216660001', '2022-01-21 11:39:12', 0, NULL, 0, 'http://news.baidu.com', '[]', '\"\"', '\"\"', 0, '', '[]', 'http');
 
 -- ----------------------------
 -- Table structure for api_template
@@ -118,9 +116,6 @@ CREATE TABLE `api_version`  (
 -- ----------------------------
 -- Records of api_version
 -- ----------------------------
-INSERT INTO `api_version` VALUES (88, 92, 'discovery', '', NULL, '1.5', '/api/discovery/instances', 'GET', '60012', '2021-12-09 18:08:28', 1, 'admin', '2021-12-09 18:08:28', 0, NULL, 0, 'http://47.103.109.225:30000', '[]', '\"\"', '\"\"', 0, '', '[]');
-INSERT INTO `api_version` VALUES (89, 93, '百度新闻', 'http://news.baidu.com/widget?id=LocalNews&ajax=json&t=1639119700299', NULL, '1.0', '/widget', 'GET', '60012', '2021-12-10 15:04:04', 1, 'admin', '2021-12-10 15:04:04', 0, NULL, 0, 'http://news.baidu.com:80', '[{\"parame\":\"ajax\",\"type\":\"Object\",\"isHaveto\":\"\",\"describe\":\"\",\"default\":\"\",\"_XID\":\"row_15\"},{\"parame\":\"id\",\"type\":\"String\",\"isHaveto\":\"\",\"describe\":\"\",\"default\":\"\",\"_XID\":\"row_16\"}]', '\"\"', '\"\"', 0, '', '[]');
-INSERT INTO `api_version` VALUES (90, 94, 'bbb', 'test', NULL, '1.8', '/appbbb', 'POST', '60012', '2021-12-27 14:09:00', 1, 'admin', '2021-12-27 14:09:00', 0, NULL, 0, 'http://www.baidu.com:9090', '[]', '\"\"', '\"\"', 0, '/apiroundRobin', '[]');
 
 -- ----------------------------
 -- Table structure for application
@@ -134,6 +129,8 @@ CREATE TABLE `application`  (
   `icon_url` varchar(2555) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '图标地址',
   `code` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '应用编号',
   `is_published` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '是否发布到资源市场',
+  `provider` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务商',
+  `publish_date` datetime(0) NULL DEFAULT NULL COMMENT '发布时间',
   `creation_date` datetime(0) NULL DEFAULT NULL,
   `creation_by` int(11) NULL DEFAULT NULL,
   `creation_by_username` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '创建者用户名',
@@ -145,20 +142,12 @@ CREATE TABLE `application`  (
   `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '应用标签',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `app_code_index`(`code`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 121 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 151 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of application
 -- ----------------------------
-INSERT INTO `application` VALUES (112, 'hwd', 'hwd', NULL, NULL, '12a3a180', '60005', '2021-12-09 18:07:14', 1, 'admin', '2022-01-08 15:46:41', 4, 'hcz', 0, '', '');
-INSERT INTO `application` VALUES (113, 'sms', 'sms', NULL, NULL, '50530ac9', '60005', '2021-12-09 18:08:48', 1, 'admin', '2021-12-09 18:11:32', 1, 'admin', 0, '', '');
-INSERT INTO `application` VALUES (114, 'test', 'test', NULL, NULL, '580e7e33', '60002', '2021-12-10 14:57:56', 1, 'admin', '2021-12-10 15:05:18', 1, 'admin', 0, '', '');
-INSERT INTO `application` VALUES (115, 'aaaaa', 'aaaa', NULL, NULL, 'ef2ac47b', '60005', '2021-12-20 17:26:01', 1, 'admin', '2021-12-21 15:43:43', 1, 'admin', 0, '', 'aaa');
-INSERT INTO `application` VALUES (116, 'aaa', 'aaaa', NULL, NULL, '27008420', '60001', '2022-01-07 16:49:16', 1, 'admin', '2022-01-07 16:49:16', 0, NULL, 0, '', '');
-INSERT INTO `application` VALUES (117, 'aaa001', '001', NULL, NULL, '69f5c85b', '60001', '2022-01-07 16:49:58', 1, 'admin', '2022-01-07 16:49:58', 0, NULL, 0, '', '');
-INSERT INTO `application` VALUES (118, 'aaa0011', '0011', NULL, NULL, '974434be', '60001', '2022-01-07 17:07:51', 1, 'admin', '2022-01-07 17:07:51', 0, NULL, 0, '', '');
-INSERT INTO `application` VALUES (119, 'aaa00111222', '0011', '', NULL, 'dcd50a3e', '60001', '2022-01-07 17:08:29', 1, 'admin', '2022-01-07 17:31:03', 0, NULL, 0, '', '');
-INSERT INTO `application` VALUES (120, '123', '123', '', NULL, '6ddf5d07', '60001', '2022-01-08 15:24:21', 4, 'hcz', '2022-01-08 15:45:33', 4, 'hcz', 0, '', '123');
+INSERT INTO `application` VALUES (150, '百度本地每日新闻（示例服务）', '这是百度本地每日新闻服务', '', NULL, '7fc55237', '60005', '15216660001', '2022-01-21 11:40:33', '2022-01-21 11:27:49', 65, '15216660001', '2022-01-21 11:40:33', 65, '15216660001', 0, '', 'baidu');
 
 -- ----------------------------
 -- Table structure for application_api
@@ -177,16 +166,13 @@ CREATE TABLE `application_api`  (
   `last_updated_by` int(11) NULL DEFAULT NULL,
   `del_flag` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 95 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 165 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of application_api
 -- ----------------------------
-INSERT INTO `application_api` VALUES (76, 112, '12a3a180', 46, 92, 88, '2021-12-09 18:09:26', 0, '2021-12-09 18:09:26', 0, 0);
-INSERT INTO `application_api` VALUES (77, 114, '580e7e33', 47, 93, 89, '2021-12-10 15:04:59', 0, '2021-12-10 15:04:59', 0, 0);
-INSERT INTO `application_api` VALUES (92, 115, 'ef2ac47b', 56, 92, 88, '2021-12-21 09:54:22', 0, '2021-12-21 09:54:22', 0, 0);
-INSERT INTO `application_api` VALUES (93, 115, 'ef2ac47b', 56, 93, 89, '2021-12-21 09:54:22', 0, '2021-12-21 09:54:22', 0, 0);
-INSERT INTO `application_api` VALUES (94, 112, '12a3a180', 61, 93, NULL, '2021-12-29 16:29:30', 0, '2021-12-29 16:29:30', 0, 0);
+INSERT INTO `application_api` VALUES (163, 150, '7fc55237', 94, 116, NULL, '2022-01-21 11:28:05', 0, '2022-01-21 11:28:05', 0, 0);
+INSERT INTO `application_api` VALUES (164, 150, '7fc55237', 95, 117, NULL, '2022-01-21 11:39:24', 0, '2022-01-21 11:39:24', 0, 0);
 
 -- ----------------------------
 -- Table structure for application_api_gateway
@@ -203,15 +189,13 @@ CREATE TABLE `application_api_gateway`  (
   `is_internal` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否为中台内部接口',
   `prefix_path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'api前置请求路径',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 56 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 208 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of application_api_gateway
 -- ----------------------------
-INSERT INTO `application_api_gateway` VALUES (38, '12a3a180', 112, 92, '/api/discovery/instances', 'http://47.103.109.225:30000', '12a3a180_31ceb00a', 0, '');
-INSERT INTO `application_api_gateway` VALUES (39, '580e7e33', 114, 93, '/widget', 'http://news.baidu.com:80', '580e7e33_f2dfd4f9', 0, '');
-INSERT INTO `application_api_gateway` VALUES (54, 'ef2ac47b', 115, 92, '/api/discovery/instances', 'http://47.103.109.225:30000', 'ef2ac47b_4f1951b7', 0, '');
-INSERT INTO `application_api_gateway` VALUES (55, 'ef2ac47b', 115, 93, '/widget', 'http://news.baidu.com:80', 'ef2ac47b_feb9b94f', 0, '');
+INSERT INTO `application_api_gateway` VALUES (206, '7ccefc91', 150, 116, '/widget?id=LocalNews&ajax=json&t=1642041193240', 'http://news.baidu.com', '7ccefc91_946a86eb', 0, '');
+INSERT INTO `application_api_gateway` VALUES (207, '7ccefc91', 150, 117, '/widget*', 'http://news.baidu.com', '7ccefc91_946a86eb', 0, '');
 
 -- ----------------------------
 -- Table structure for application_developer
@@ -231,20 +215,11 @@ CREATE TABLE `application_developer`  (
   `last_updated_by` int(11) NULL DEFAULT NULL,
   `del_flag` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 77 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 79 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of application_developer
 -- ----------------------------
-INSERT INTO `application_developer` VALUES (68, '12a3a180', 112, 'admin', NULL, 1, 1, '2021-12-09 18:07:14', 0, '2021-12-09 18:07:14', 0, 0);
-INSERT INTO `application_developer` VALUES (69, '50530ac9', 113, 'admin', NULL, 1, 1, '2021-12-09 18:08:48', 0, '2021-12-09 18:08:48', 0, 0);
-INSERT INTO `application_developer` VALUES (70, '580e7e33', 114, 'admin', NULL, 1, 1, '2021-12-10 14:57:56', 0, '2021-12-10 14:57:56', 0, 0);
-INSERT INTO `application_developer` VALUES (71, 'ef2ac47b', 115, 'admin', NULL, 1, 1, '2021-12-20 17:26:01', 0, '2021-12-20 17:26:01', 0, 0);
-INSERT INTO `application_developer` VALUES (72, '27008420', 116, 'admin', NULL, 1, 1, '2022-01-07 16:49:16', 0, '2022-01-07 16:49:16', 0, 0);
-INSERT INTO `application_developer` VALUES (73, '69f5c85b', 117, 'admin', NULL, 1, 1, '2022-01-07 16:49:58', 0, '2022-01-07 16:49:58', 0, 0);
-INSERT INTO `application_developer` VALUES (74, '974434be', 118, 'admin', NULL, 1, 1, '2022-01-07 17:07:51', 0, '2022-01-07 17:07:51', 0, 0);
-INSERT INTO `application_developer` VALUES (75, 'dcd50a3e', 119, 'admin', NULL, 1, 1, '2022-01-07 17:08:29', 0, '2022-01-07 17:08:29', 0, 0);
-INSERT INTO `application_developer` VALUES (76, '6ddf5d07', 120, 'hcz', NULL, 4, 1, '2022-01-08 15:24:21', 0, '2022-01-08 15:24:21', 0, 0);
 
 -- ----------------------------
 -- Table structure for application_lease
@@ -273,8 +248,6 @@ CREATE TABLE `application_lease`  (
 -- ----------------------------
 -- Records of application_lease
 -- ----------------------------
-INSERT INTO `application_lease` VALUES (34, '50530ac9', 113, '12a3a180', 112, '50530ac9-12a3a180', '0f87ab4edce54e0a695ddd80a3517ca3', '2021-12-09 18:11:42', 1, '2021-12-09 18:11:42', 0, 0, 'admin', NULL, 'sms', 'hwd');
-INSERT INTO `application_lease` VALUES (35, '50530ac9', 113, '580e7e33', 114, '50530ac9-580e7e33', 'f2fd99986de3f8f5553cc946d45f4369', '2021-12-10 15:05:53', 1, '2021-12-10 15:05:53', 0, 0, 'admin', NULL, 'sms', 'test');
 
 -- ----------------------------
 -- Table structure for application_plugin
@@ -284,20 +257,22 @@ CREATE TABLE `application_plugin`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `app_id` int(11) NOT NULL COMMENT '应用id',
   `app_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '应用编号',
-  `plugin_type` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '插件类型',
+  `plugin_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '插件类型',
   `plugin_params` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '插件参数',
-  `enabled` tinyint(1) NULL DEFAULT NULL COMMENT '是否启用 0-启用 1-关闭',
+  `enabled` tinyint(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '是否启用 1-启用 0-关闭',
   `creation_date` datetime(0) NULL DEFAULT NULL,
   `creation_by` int(11) NULL DEFAULT NULL,
   `last_update_date` datetime(0) NULL DEFAULT NULL,
   `last_updated_by` int(11) NULL DEFAULT NULL,
   `del_flag` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 109 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of application_plugin
 -- ----------------------------
+INSERT INTO `application_plugin` VALUES (107, 150, '7fc55237', 'error_log', NULL, 1, '2022-01-21 11:41:09', 65, '2022-01-21 11:41:09', 0, 0);
+INSERT INTO `application_plugin` VALUES (108, 150, '7fc55237', 'http_log', NULL, 1, '2022-01-21 11:41:19', 65, '2022-01-21 11:41:19', 0, 0);
 
 -- ----------------------------
 -- Table structure for application_plugin_client
@@ -307,7 +282,7 @@ CREATE TABLE `application_plugin_client`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sys_client_id` int(11) NOT NULL COMMENT 'client_id',
   `app_plugin_id` int(11) NULL DEFAULT NULL COMMENT '插件Id',
-  `plugin_type` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '插件类型',
+  `plugin_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '插件类型',
   `plugin_params` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '插件参数',
   `creation_date` datetime(0) NULL DEFAULT NULL,
   `creation_by` int(11) NULL DEFAULT NULL,
@@ -315,11 +290,42 @@ CREATE TABLE `application_plugin_client`  (
   `last_updated_by` int(11) NULL DEFAULT NULL,
   `del_flag` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 74 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of application_plugin_client
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for application_plugin_detail
+-- ----------------------------
+DROP TABLE IF EXISTS `application_plugin_detail`;
+CREATE TABLE `application_plugin_detail`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `plugin_type` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '插件类型',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '插件名称',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '文档',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of application_plugin_detail
+-- ----------------------------
+INSERT INTO `application_plugin_detail` VALUES (1, 'base_auth', 'basic-auth', 'basic-auth鉴权插件用于给调用服务的用户添加基本身份认证。该插件检查Authorization请求头中的用户凭据。');
+INSERT INTO `application_plugin_detail` VALUES (2, 'jwt', 'jwt-auth', 'jwt-auth鉴权插件用于验证包含 HS256 签名的 JSON Web 令牌的请求。该插件检查Authorization请求头中的用户凭据。');
+INSERT INTO `application_plugin_detail` VALUES (3, 'oauth2', 'OAuth2', 'OAuth2鉴权插件用于给服务接口请求提供基于OAuth2协议的鉴权。该插件检查Authorization请求头中的用户凭据。');
+INSERT INTO `application_plugin_detail` VALUES (4, 'black_list_ip', 'ip黑名单', '为限制访问资源的用户，提升服务的安全性，您可以设置黑名单或白名单，实现对访客身份的识别和过滤。添加IP到黑名单，那么该IP无法访问当前服务。');
+INSERT INTO `application_plugin_detail` VALUES (5, 'white_list_ip', 'ip白名单', '为限制访问资源的用户，提升服务的安全性，您可以设置黑名单或白名单，实现对访客身份的识别和过滤。添加IP到白名单，那么只有该IP能够访问当前服务。');
+INSERT INTO `application_plugin_detail` VALUES (6, 'cors', 'cors跨域', 'CORS跨域插件用于动态配置接口跨域资源访问，关于CORS跨域资源访问的基础知识可参考跨域资源共享（CORS）机制。');
+INSERT INTO `application_plugin_detail` VALUES (7, 'sign', 'sign-auth（数据防篡改签名）', 'sign-auth插件用于保护请求数据中途不被篡改，相当于您给API网关颁发了一个token，开启插件后，请求接口时需要根据约定的加签处理方法和key生成签名并放到请求头中，网关会对比签名和服务器端计算的签名是否一致，实现身份验证。');
+INSERT INTO `application_plugin_detail` VALUES (8, 'error_log', 'ERROR_LOG', '添加此插件可观测服务调用失败的日志');
+INSERT INTO `application_plugin_detail` VALUES (9, 'http_log', 'HTTP_LOG', '添加此插件可观测服务调用成功的日志');
+INSERT INTO `application_plugin_detail` VALUES (10, 'gzip', 'GZIP 请求压缩', 'gzip协议压缩就是依据HTTP协议进行压缩，不需要程序员进行压缩，解压编码，而是把压缩过程交给WEB服务器，将解压过程交给客户端。 如果客户端为支持GZIP压缩的浏览器，那么解压过程也不需要程序员参与，浏览器会按照一定的规则自动进行解压缩。');
+INSERT INTO `application_plugin_detail` VALUES (11, 'proxy_cache', 'proxy_cache', 'proxy-cache插件用于动态缓存请求的返回数据，可以将后端返回的应答缓存在API网关服务层面，有效降低后端的负荷，增加平滑度，开启插件后第一次请求会真实转发到服务端获取数据，之后在过期时间内的请求会从缓存中获取，默认使用redis分布式缓存。');
+INSERT INTO `application_plugin_detail` VALUES (12, 'real_ip', 'real_ip', 'real-ip插件用于获取客户端获取真实ip，默认情况下经过多层代理或转发后，服务端会获取多个不同ip，开启后网关层会自动解析判断获取客户端真实ip并通过响应头返回');
+INSERT INTO `application_plugin_detail` VALUES (13, 'replay_attacks', '防网络重放攻击', '重放攻击(Replay Attacks)又称重播攻击、回放攻击，是指攻击者发送一个目的主机已接收过的包，来达到欺骗系统的目的。 防重放的核心在于，防止抓取请求报文，从而进行重播攻击，也就意味我们不能允许客户端，用相同参数在特定时间内，请求第二次。');
+INSERT INTO `application_plugin_detail` VALUES (14, 'response_rewrite', 'response-rewrite (返回值重写)', '发布的服务，当接口还不可用时，开启返回值重写可以拦截掉对服务的请求，并给请求返回一个固定值的响应');
+INSERT INTO `application_plugin_detail` VALUES (15, 'sentinel', 'sentinel限流', '对服务和服务下的api进行流量控制，限流规则持久化到nacos配置中心，网关服务监听该配置文件，实时更新生效。');
 
 -- ----------------------------
 -- Table structure for application_subscribe
@@ -337,12 +343,12 @@ CREATE TABLE `application_subscribe`  (
   `last_updated_by` int(11) NULL DEFAULT NULL,
   `del_flag` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of application_subscribe
 -- ----------------------------
-INSERT INTO `application_subscribe` VALUES (1, 1, '12a3a180', 112, 'adfadf', '2021-12-29 13:33:17', 1, '2021-12-29 13:33:26', 1, 0);
+INSERT INTO `application_subscribe` VALUES (86, 22, '7fc55237', 150, '7ccefc91', '2022-01-21 11:28:58', 65, '2022-01-21 11:28:58', 0, 0);
 
 -- ----------------------------
 -- Table structure for application_version
@@ -354,23 +360,20 @@ CREATE TABLE `application_version`  (
   `app_code` varchar(21) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '应用编号',
   `version` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '应用版本',
   `description` varchar(2555) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '应用版本说明',
+  `markdown` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   `creation_date` datetime(0) NULL DEFAULT NULL,
   `creation_by` int(11) NULL DEFAULT NULL,
   `last_update_date` datetime(0) NULL DEFAULT NULL,
   `last_updated_by` int(11) NULL DEFAULT NULL,
   `del_flag` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 64 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 96 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of application_version
 -- ----------------------------
-INSERT INTO `application_version` VALUES (46, 112, '12a3a180', '1.0', '', '2021-12-09 18:09:26', 0, '2021-12-09 18:09:26', 0, 0);
-INSERT INTO `application_version` VALUES (47, 114, '580e7e33', '2.0', '百度新闻', '2021-12-10 15:04:59', 0, '2021-12-10 15:04:59', 0, 0);
-INSERT INTO `application_version` VALUES (56, 115, 'ef2ac47b', '111', '1111', '2021-12-21 09:54:22', 0, '2021-12-21 09:54:22', 0, 0);
-INSERT INTO `application_version` VALUES (61, 112, '12a3a180', 'smsTest', 'smsTest', '2021-12-29 16:29:30', 0, '2021-12-29 16:29:30', 0, 0);
-INSERT INTO `application_version` VALUES (62, 112, '12a3a180', 'smsTest333', 'smsTest333', '2022-01-07 16:16:19', 0, '2022-01-07 16:19:05', 0, 0);
-INSERT INTO `application_version` VALUES (63, 112, '12a3a180', 'smsTest666', 'smsTest666', '2022-01-07 16:36:30', 0, '2022-01-07 16:36:30', 0, 0);
+INSERT INTO `application_version` VALUES (94, 150, '7fc55237', 'V1', 'V1版本', NULL, '2022-01-21 11:28:05', 0, '2022-01-21 11:28:05', 0, 0);
+INSERT INTO `application_version` VALUES (95, 150, '7fc55237', 'V2', 'V2', NULL, '2022-01-21 11:39:24', 0, '2022-01-21 11:39:24', 0, 0);
 
 -- ----------------------------
 -- Table structure for platform_markdown
@@ -435,12 +438,11 @@ CREATE TABLE `upstream_server`  (
   `last_updated_by` int(11) NULL DEFAULT NULL,
   `del_flag` tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of upstream_server
 -- ----------------------------
-INSERT INTO `upstream_server` VALUES (21, 'aaaa', 'aaa', 'http', 'www.baidu.com', '9090', '', 'roundRobin', '2021-12-27 13:59:56', 1, '2021-12-27 14:03:26', 1, 0);
-INSERT INTO `upstream_server` VALUES (22, 'sms-test-022', 'update', 'http', 'www.sionsdx.com', '8080', '', 'roundRobin', '2022-01-07 15:13:14', 1, '2022-01-07 15:25:27', 1, 0);
+INSERT INTO `upstream_server` VALUES (28, '百度新闻服务', '百度新闻', 'http', 'news.baidu.com', '80', '', 'roundRobin', '2022-01-21 11:23:17', 65, '2022-01-21 11:23:31', 65, 0);
 
 SET FOREIGN_KEY_CHECKS = 1;
