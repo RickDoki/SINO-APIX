@@ -1,7 +1,7 @@
 <template>
   <div class="main_open">
     <navbar></navbar>
-    <div style="min-height: calc(100vh - 238px - 60px)">
+    <div style="min-height: calc(100vh - 160px - 60px)">
       <div class="apiMain_content">
         <div class="welcome">{{ pageInfo.title || '欢迎访问我们的开放服务平台' }}</div>
         <div class="all_services">{{ pageInfo.description || '您可以在我们所有的服务中找到需要的那一个' }}</div>
@@ -73,10 +73,9 @@
         <img src="../../../src/assets/img/img_sinosdx_logo.png" style="width: 119px;height: 43px;opacity: 1;">
       </div>
       <div class="footer_text1">
-        <div style="margin-right: 50px">上海博冀信息科技有限公司</div>
-        <div>联系电话 000-0000-8888</div>
+        <div class="footer_text2">Copyright © {{ new Date().getFullYear() }} 上海博冀信息科技有限公司</div>
+        <div class="footer_text2" style="margin-left: 20px">联系电话 021-5168-8281</div>
       </div>
-      <div class="footer_text2">Copyright © 2021 上海博冀信息科技有限公司</div>
     </div>
   </div>
 </template>
@@ -173,9 +172,9 @@ export default {
             }
           })
         })
-        .catch(()=>{
-          
-        })
+          .catch(() => {
+
+          })
       } else {
         this.$router.push({
           path: '/login',
@@ -312,12 +311,19 @@ export default {
         .list_item_title {
           margin-left: 24px;
           width: 100px;
-          height: 20px;
+          //height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
           font-weight: bold;
           color: #000000;
           line-height: 20px;
+          text-overflow: -o-ellipsis-lastline;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
 
         .list_item_content {
@@ -419,12 +425,19 @@ export default {
 
         .list_item_title {
           margin-left: 24px;
-          height: 20px;
+          //height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
           font-weight: bold;
           color: #000000;
           line-height: 20px;
+          text-overflow: -o-ellipsis-lastline;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
 
         .list_item_content {
@@ -577,6 +590,13 @@ export default {
           font-weight: bold;
           color: #000000;
           line-height: 20px;
+          text-overflow: -o-ellipsis-lastline;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          line-clamp: 1;
+          -webkit-box-orient: vertical;
         }
 
         .cards_item_content {
@@ -622,7 +642,7 @@ export default {
   .service_footer {
     padding: 20px 0;
     width: 100%;
-    min-height: 238px;
+    min-height: 160px;
     background: #1d1c35;
     opacity: 1;
     display: flex;
@@ -638,6 +658,7 @@ export default {
       color: #ffffff;
       line-height: 20px;
       display: flex;
+      justify-content: center;
     }
 
     .footer_text2 {
