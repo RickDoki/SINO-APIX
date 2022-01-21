@@ -33,10 +33,11 @@
               <span @click="gotoDteail(scope.row)" class="text_detail">{{scope.row.apiName}}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="requestMethod" label="请求方式" align="center"></el-table-column>
+          <el-table-column prop="requestMethod" label="请求方式" align="center" min-width="100"></el-table-column>
           <el-table-column prop="domain" label="域名" show-overflow-tooltip min-width="250"></el-table-column>
           <el-table-column prop="apiUrl" label="路径" show-overflow-tooltip min-width="200"></el-table-column>
-          <el-table-column prop="description" label="API描述" show-overflow-tooltip min-width="200"></el-table-column>
+          <el-table-column prop="description" label="API描述" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="apiCreationDate" label="创建时间" show-overflow-tooltip min-width="160"></el-table-column>
           <el-table-column label="操作" min-width="90">
             <template slot-scope="scope">
               <el-button type="text" @click="gotoDteail(scope.row)">查看</el-button>
