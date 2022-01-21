@@ -37,12 +37,6 @@
     <dependency>
       <groupId>com.sinosdx.cloud</groupId>
       <artifactId>sinosdx-log-spring-boot-starter</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
-          <groupId>org.springframework.cloud</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.sinosdx.cloud</groupId>
