@@ -4,22 +4,28 @@
       <div class="list_top">
         <div class="list_title">{{ serveAllMeaasge.appName }}</div>
         <div class="list_search">
-          <el-button type="primary" size="small" class="td-but">退订</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            class="td-but"
+            @click="unSubscribe"
+            >退订</el-button
+          >
         </div>
       </div>
       <div class="secondTitle">{{ serveAllMeaasge.appDescription }}</div>
       <div class="status">
         <div class="left-span">
-          <span>服务商 : </span> <span> 博冀信息</span>
+          <span>发布者 : </span> <span> 博冀信息</span>
         </div>
         <div class="time">
           <div>
             <span>发布时间 : </span>
-            <span>{{serveAllMeaasge.appPublishDate}}</span>
+            <span>{{ serveAllMeaasge.appPublishDate }}</span>
           </div>
           <div>
             <span>订阅时间 : </span>
-            <span>{{serveAllMeaasge.subscribeDate}}</span>
+            <span>{{ serveAllMeaasge.subscribeDate }}</span>
           </div>
         </div>
       </div>
@@ -30,7 +36,12 @@
           @tab-click="handleClick"
         >
           <el-tab-pane label="API详情" name="first">
-            <api-detail :list="versionList" :defaultApiList='apiList' @changeVersion="changeVersion"></api-detail>
+            <api-detail
+              :list="versionList"
+              :defaultApiList="apiList"
+              :gatewayDomain="serveAllMeaasge.gatewayDomain"
+              @changeVersion="changeVersion"
+            ></api-detail>
           </el-tab-pane>
           <el-tab-pane label="插件详情" name="second">
             <plug-in></plug-in>
@@ -45,20 +56,20 @@
 import "./../mainCss/index.scss";
 import apiDetail from "./component/apiDetail.vue";
 import plugIn from "./component/plug-in.vue";
-import { subscribed } from "@/api/AboutServe.js";
+import { subscribed, gounSubscribe } from "@/api/AboutServe.js";
 
 export default {
-  data() {
+  data () {
     return {
       activeName: "first",
       appCode: "",
       serveAllMeaasge: {},
       loading: false,
       versionList: [],
-      apiList:[]
+      apiList: [],
     };
   },
-  created() {
+  created () {
     this.appCode = this.$route.params.appCode;
     this.getSubscribed();
   },
@@ -68,9 +79,9 @@ export default {
   },
   methods: {
     // 切换tab
-    handleClick() {},
+    handleClick () { },
     // 查询订阅详情
-    getSubscribed() {
+    getSubscribed () {
       this.loading = true;
       subscribed(this.appCode).then((res) => {
         if (res.code === 200) {
@@ -83,14 +94,35 @@ export default {
               value: res.data.appVersion[index].id,
             });
           }
-          this.apiList = res.data.appVersion[0].apiList
+          this.apiList = res.data.appVersion[0].apiList;
         }
       });
     },
     // 选择服务版本
-    changeVersion(e) {
-      this.apiList = e
-    }
+    changeVersion (e) {
+      this.apiList = e;
+    },
+    // 退订
+    unSubscribe () {
+      // console.log(e)
+      this.$confirm(
+        "确认退订服务" + this.serveAllMeaasge.appName + "?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          gounSubscribe(this.appCode).then((res) => {
+            if (res.code === 200) {
+              this.$router.push({ path: "/serve/subscribe" });
+            }
+          });
+        })
+        .catch(() => { });
+    },
   },
 };
 </script>

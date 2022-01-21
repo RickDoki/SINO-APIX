@@ -51,26 +51,28 @@
               </el-select>
             </div>
           </div>
-          <div id="myChart" :style="{width: '100%', height: '555px'}"></div>
+          <div id="myChart" class="box_chart"></div>
         </div>
       </el-col>
       <el-col :span="8">
         <div class="bottom_right">
-          <div class="commonUse_title">常用入口</div>
-          <div class="commonUse_content" @click="go_serve_add">
-            <img src="./../../assets/img/create_serve.png"/>
-            <div class="content_title">创建服务</div>
-            <i class="el-icon-arrow-right"></i>
-          </div>
-          <div class="commonUse_content" @click="go_upstream_detail">
-            <img src="./../../assets/img/create_upstream.png"/>
-            <div class="content_title">创建上游服务</div>
-            <i class="el-icon-arrow-right"></i>
-          </div>
-          <div class="commonUse_content" @click="go_api_add">
-            <img src="./../../assets/img/create_api.png"/>
-            <div class="content_title">创建API</div>
-            <i class="el-icon-arrow-right"></i>
+          <div style="min-height: 452px;">
+            <div class="commonUse_title">常用入口</div>
+            <div class="commonUse_content" @click="go_serve_add">
+              <img src="./../../assets/img/create_serve.png"/>
+              <div class="content_title">创建服务</div>
+              <i class="el-icon-arrow-right"></i>
+            </div>
+            <div class="commonUse_content" @click="go_upstream_detail">
+              <img src="./../../assets/img/create_upstream.png"/>
+              <div class="content_title">创建上游服务</div>
+              <i class="el-icon-arrow-right"></i>
+            </div>
+            <div class="commonUse_content" @click="go_api_add">
+              <img src="./../../assets/img/create_api.png"/>
+              <div class="content_title">创建API</div>
+              <i class="el-icon-arrow-right"></i>
+            </div>
           </div>
         </div>
       </el-col>
@@ -270,6 +272,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .main {
+  // margin-top: 0px;
   /deep/ .el-input__inner {
     border-radius: 25px 25px 25px 25px;
     border: 1px solid #f3f3f3;
@@ -312,8 +315,8 @@ export default {
       background: #ffffff;
       border-radius: 16px 16px 16px 16px;
       box-shadow: #f3f3f3 0px 0px 10px;
-      min-height: 652px;
-      padding-bottom: 24px;
+      min-height: calc(100vh - 320px);
+      // min-height: 497px;
       .box-top {
         width: 100%;
         height: 70px;
@@ -335,17 +338,19 @@ export default {
           padding-top: 22px;
         }
       }
-      .box-chart {
-        height: 600px;
+      .box_chart {
+        // min-height: calc(100vh - 386px);
+        min-height: 403px;
         width: 100%;
       }
     }
     .bottom_right {
-      padding: 10px 24px;
+      padding: 10px 40px;
       background: #ffffff;
       border-radius: 16px 16px 16px 16px;
       box-shadow: #f3f3f3 0px 0px 10px;
-      min-height: 652px;
+      min-height: calc(100vh - 320px);
+      // min-height: 497px;
       .commonUse_title {
         height: 70px;
         line-height: 70px;
@@ -370,6 +375,7 @@ export default {
       .commonUse_content:hover {
         box-shadow: 0px 0px 8px 1px rgba(38, 80, 255, 0.3);
         border: 1px solid #2650ff;
+        cursor: pointer;
       }
     }
   }

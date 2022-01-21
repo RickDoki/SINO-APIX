@@ -3,8 +3,8 @@
     <navbar></navbar>
     <div style="min-height: calc(100vh - 238px - 60px)">
       <div class="apiMain_content">
-        <div class="welcome">欢迎访问我们的开放服务平台</div>
-        <div class="all_services">您可以在我们所有的服务中找到需要的那一个</div>
+        <div class="welcome">{{ pageInfo.title || '欢迎访问我们的开放服务平台' }}</div>
+        <div class="all_services">{{ pageInfo.description || '您可以在我们所有的服务中找到需要的那一个' }}</div>
         <div class="input-with-select">
           <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
           <el-button type="primary" slot="append" @click="search">搜一下</el-button>
@@ -26,9 +26,10 @@
                  @click="goDetail(item)">
               <div class="list_item_title">{{ item.appName }}</div>
               <div class="list_item_content">{{ item.description }}</div>
-              <div style="width: 50px">
-                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+              <div style="width: 140px">
+                <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
+                     width="20px" height="20px" style="margin-right: 5px">
+                <span v-if="item.plugins.length>5">...</span>
               </div>
               <div style="width: 100px;text-align: center">
                 <div class="list_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
@@ -46,9 +47,10 @@
               <div class="cards_item_button_dis" v-else>已订阅</div>
               <div class="cards_item_title">{{ item.appName }}</div>
               <div class="cards_item_content">{{ item.description }}</div>
-              <div>
-                <img src="../../../src/assets/img/guanjun.png" style="width: 20px;height: 20px;margin-right: 10px">
-                <img src="../../../src/assets/img/xunzhang.png" style="width: 20px;height: 20px">
+              <div style="display: flex;width: 100%">
+                <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
+                     width="20px" height="20px" style="margin-right: 5px">
+                <span v-if="item.plugins.length>5">...</span>
               </div>
               <div>
                 <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
@@ -60,6 +62,9 @@
             <div v-if="serviceList.length%4===2" style="width: 270px;height: 300px">
             </div>
           </div>
+        </transition>
+        <transition name="el-fade-in-linear" v-if="serviceList.length===0">
+          <el-empty description="暂无开放服务"></el-empty>
         </transition>
       </div>
     </div>
@@ -77,9 +82,11 @@
 </template>
 
 <script>
+import {getDoorConfig, updateDoorConfig} from "@/api/user"
 import {openList, subscribe} from "@/api/AboutApp";
 import navbar from "@/views/openServe/component/Navbar";
 import {getToken} from "@/utils/auth";
+import plugin from "@/views/serve/plugin";
 
 export default {
   components: {navbar},
@@ -88,17 +95,60 @@ export default {
       searchKey: "",
       items: [],
       isshow: 1,
-      serviceList: []
+      serviceList: [],
+      pageInfo: {},
+      plugin: plugin
     };
   },
   created() {
     this.search()
+    this.getPageInfo()
   },
   methods: {
+    getPageInfo() {
+      getDoorConfig().then((res) => {
+        this.pageInfo = res.data
+      });
+    },
+    plugName: function (value) {
+      const nameFiter = {
+        jwt: "Jwt-auth",
+        base_auth: "basic_auth",
+        oauth2: "OAuth2.0",
+        black_list_ip: "IP 黑名单控制",
+        white_list_ip: "IP 白名单控制",
+        cors: "cors跨域",
+        sign: "防篡改签名",
+        replay_attacks: "防网络重放攻击",
+        error_log: "error log",
+        http_log: "http log",
+        sentinel: "sentinel",
+        gzip: "gzip",
+        proxy_cache: "proxy-cache",
+        real_ip: "real_ip",
+        response_rewrite: "response-rewrite",
+      };
+      if (!value) return "";
+      return nameFiter[value];
+    },
     search() {
       const query = "?market=true&appName=" + this.searchKey;
       openList(query).then((res) => {
         this.serviceList = res.data.appList
+        let arr = []
+        this.plugin.forEach(item => {
+          arr.push(...item.content)
+        })
+        this.serviceList.map((item, index) => {
+          item.plugins.map((items, indexs) => {
+            items.pluginType = this.plugName(items.pluginType)
+            arr.forEach((itemss, indexss) => {
+              if (items.pluginType === itemss.name) {
+                items.icon = itemss.icon
+              }
+            })
+          })
+        })
       });
     },
     goDetail(item) {
@@ -123,6 +173,9 @@ export default {
             }
           })
         })
+        .catch(()=>{
+          
+        })
       } else {
         this.$router.push({
           path: '/login',
@@ -138,7 +191,7 @@ export default {
 
 <style lang='scss' scoped>
 .main_open {
-  background: #FFFFFF;
+  background: #ffffff;
   margin: 0px;
   min-height: calc(100vh - 60px);
 
@@ -218,7 +271,7 @@ export default {
 
     .input-with-select {
       display: flex;
-      width: 60vh;
+      width: 500px;
       text-align: center;
       margin: 5vh auto;
     }
@@ -542,9 +595,7 @@ export default {
         .cards_item_v {
           padding: 5px;
           display: inline-block;
-          //display: flex;
-          //justify-content: center;
-          //align-items: center;
+          margin-top: 5px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;

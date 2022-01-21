@@ -114,14 +114,14 @@ export function log (query) {
   })
 }
 // 我的订阅服务详情
-export function subscribed(query) {
+export function subscribed (query) {
   return request({
     url: '/app/subscribed/' + query,
     method: 'get',
   })
 }
 // 查询api详情
-export function apiMessage(query) {
+export function apiMessage (query) {
   return request({
     url: '/app/api/' + query,
     method: 'get',
@@ -131,7 +131,7 @@ export function apiMessage(query) {
 2022 1 12
 */
 // 添加插件
-export function postPlugin(data) {
+export function postPlugin (data) {
   return request({
     url: '/app/plugin',
     method: 'post',
@@ -139,36 +139,64 @@ export function postPlugin(data) {
   })
 }
 // 获取随机值
-export function randomKey() {
+export function randomKey () {
   return request({
     url: '/app/plugin/randomKey',
     method: 'get',
   })
 }
 // 保存限流规则
-export function save(data) {
+export function save (data) {
   return request({
-    url: '/sentinel/save',
+    url: '/app/rateLimit/save',
     method: 'post',
     data
   })
 }
-// 限流启用
-export function open(data) {
-  return request({
-    url: '/sentinel/open',
-    method: 'post',
-    data
-  })
-}
+
 /*
 2022 1 13
 */
 // 更新插件
-export function putPlugin(data) {
+export function putPlugin (data) {
   return request({
     url: '/app/plugin',
     method: 'put',
     data
+  })
+}
+// 退订服务
+export function gounSubscribe (appcode) {
+  return request({
+    url: '/app/unSubscribe/' + appcode,
+    method: 'post',
+  })
+}
+// 查询插件详情
+export function getPlugin (id, code) {
+  return request({
+    url: '/app/plugin/' + id + '/' + code,
+    method: 'get',
+  })
+}
+export function getPluginDetail (id) {
+  return request({
+    url: '/app/plugin/detail?pluginId=' + id,
+    method: 'get',
+  })
+}
+// 限流启用
+export function open (appId) {
+  return request({
+    url: '/app/rateLimit/open?appId=' + appId,
+    method: 'post',
+  })
+}
+// 限流停用
+// 限流启用
+export function close (appId) {
+  return request({
+    url: '/app/rateLimit/close?appId=' + appId,
+    method: 'post',
   })
 }

@@ -20,7 +20,7 @@
           label-position="top"
           size="small"
         >
-          <el-form-item label="已有模板" prop="name">
+          <el-form-item label="上游服务模板" prop="name">
             <el-select
               v-model="form.name"
               placeholder="请选择上游服务"
@@ -212,7 +212,7 @@
               show-word-limit
             />
           </el-form-item>
-          <el-form-item label="是否为中台接口">
+          <!-- <el-form-item label="是否为中台接口">
             <el-select
               v-model="ruleForm.isInternal"
               class="inputWidth"
@@ -221,7 +221,7 @@
               <el-option label="是" value="1" />
               <el-option label="否" value="0" />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="API描述">
             <el-input
               v-model="ruleForm.description"
@@ -416,6 +416,15 @@ export default {
     ElxStepsHorizontal
   },
   data () {
+    const isIPorWEB = (rule, value, callback) => {
+      const ipTest = this.isValidIP(value)
+      const webTest = this.isValidWeb(value)
+      if (!ipTest && !webTest) {
+        callback(new Error("请输入合法的ip地址或域名, 域名不需要加http等前缀"));
+      } else {
+        callback();
+      }
+    };
     const checkMobile = (rule, value, callback) => {
       // 验证手机号的正则表达式
       const regMobile =
@@ -497,7 +506,8 @@ export default {
           { required: true, message: '请选择负载均衡算法', trigger: 'change' }
         ],
         serverAddress: [
-          { required: true, message: '请输入服务地址', trigger: 'change' }
+          { required: true, message: '请输入服务地址', trigger: 'change' },
+          { required: true, validator: isIPorWEB, trigger: "blur" }
         ],
         upstreamPrefixPath: [
           // { pattern: /^\/(\w+\/?)+$/, message: '请输入合法的路径：以"/"开头，允许字母，数字，下划线' }
@@ -727,13 +737,6 @@ export default {
     goNext (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const ipTest = this.isValidIP(this.form.serverAddress);
-          const webTest = this.isValidWeb(this.form.serverAddress);
-          if (!ipTest && !webTest) {
-            this.$message("请输入合法的ip地址或服务地址！");
-            this.addressFlag = true;
-            return;
-          }
           this.active = 1;
         } else {
           return;

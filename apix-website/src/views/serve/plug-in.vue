@@ -32,7 +32,7 @@
             <div class="title">{{ item.name }}</div>
             <div class="middle">
               <div class="middle-img">
-                <img src="" alt="" />
+                <img :src="item.imgUrl" alt="" />
                 <span>{{ item.message }}</span>
               </div>
             </div>
@@ -48,6 +48,7 @@
 import "./../mainCss/index.scss";
 import plugs from "./plugin";
 import { postPlugin } from "@/api/AboutServe.js";
+// import  jwt from '@/assets/pluginImgs/icon_jwt-auth.png'
 export default {
   data() {
     return {
@@ -220,7 +221,7 @@ export default {
             img {
               width: 80px;
               height: 80px;
-              background-color: #ccc;
+              background-color: #fff;
               vertical-align: middle;
               display: inline-block;
             }

@@ -1,14 +1,31 @@
 <template>
-  <div style="background: #FFFFFF;min-height: calc(100vh - 24px )">
+  <div class="main_open">
     <navbar></navbar>
-    <div class="main">
-      <div style="padding: 90px 30px 0 30px;position: relative;height: 100%">
-        <div class="list_top">
-          <div>
-            <div class="list_top_title">{{ appName }}</div>
-            <div class="introduction">{{ appDescription }}</div>
+    <div class="content">
+      <div class="list_top">
+        <div>
+          <div class="list_top_title">{{ appName }}</div>
+          <div class="introduction">{{ appDescription }}
           </div>
-          <div class="">
+          <div class="service_providers" style="margin-top: 30px">发布者：
+            <span style="display: inline-block;margin-left: 40px">{{ appProvider || '--' }}</span>
+          </div>
+          <div style="display:flex;margin-top: 10px">
+            <div class="service_providers" style="margin-right: 0" v-if="plugins.length>0">已添加的插件：</div>
+            <div style="width: 669px;display: flex;flex-wrap: wrap;">
+              <div class="plug-in service_providers" style="display: flex" v-for="(item,index) in plugins" :key="index">
+                <el-tooltip class="item" effect="light" :content="item.msg" placement="bottom-start">
+                  <div class="chajian_qian">
+                    <img :src="item.icon" style="width: 100%;height: 100%">
+                  </div>
+                </el-tooltip>
+                <div>{{ item.pluginType }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div>
             <el-button type="primary" size="small" v-if="subscribed" :disabled="true" style="width: 100px"
                        @click="subscribe">已订阅
             </el-button>
@@ -18,24 +35,11 @@
               返回
             </el-button>
           </div>
+          <div class="release_time">发布时间：{{ appCreationDate }}</div>
         </div>
-        <div class="list_top2">
-          <div class="service_providers">服务商：{{ appProvider }}</div>
-          <div class="service_providers">已添加的插件：</div>
-          <div style="width: 669px;display: flex;flex-wrap: wrap;">
-            <div class="plug-in service_providers" style="display: flex" v-for="(item,index) in plugins" :key="index">
-              <el-tooltip class="item" effect="light" :content="item.msg" placement="bottom-start">
-                <div class="chajian_qian"></div>
-              </el-tooltip>
-              <div>{{ item.pluginType }}</div>
-            </div>
-          </div>
-          <div class="release_time">发布时间：2021-10-05 08:05:00</div>
-        </div>
-        <div
-          style="padding-left:30px;position: absolute;left: 0;right: 0;width: 100%;height: 55vh; background: #FFFFFF">
-          <api-detail :apiOptions="appVersion"></api-detail>
-        </div>
+      </div>
+      <div class="list_content">
+        <api-detail :apiOptions="appVersion"></api-detail>
       </div>
     </div>
   </div>
@@ -69,7 +73,6 @@ export default {
       plugins: [],
       tooltipList: plugin,
       subscribed: true,
-      subscribed: true
     };
   },
   created() {
@@ -115,7 +118,8 @@ export default {
             item.pluginType = this.plugName(item.pluginType)
             arr.forEach((items, indexs) => {
               if (item.pluginType === items.name) {
-                item.msg = items.message
+                item.msg = items.bigMessage
+                item.icon = items.icon
               }
             })
           })
@@ -152,7 +156,16 @@ export default {
 
 <style lang='scss' scoped>
 .main_open {
+  min-height: calc(100vh);
+  width: 100%;
   background: #ffffff;
+}
+
+.content {
+  max-width: 1200px;
+  padding: 2rem 3rem var(--bottom-padding);
+  margin: 0px auto;
+  padding-top: 100px;
 }
 
 .list_top {
@@ -169,19 +182,14 @@ export default {
   }
 
   .introduction {
+    width: 720px;
     margin-top: 5px;
-    height: 20px;
     font-size: 14px;
     font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
     font-weight: 400;
     color: #727491;
     line-height: 20px;
   }
-}
-
-.list_top2 {
-  margin: 24px 0px;
-  display: flex;
 
   .service_providers {
     height: 20px;
@@ -202,19 +210,25 @@ export default {
       margin-right: 10px;
       width: 20px;
       height: 20px;
-      background: #f1f1f1;
       border-radius: 0px 0px 0px 0px;
       opacity: 1;
     }
   }
 
   .release_time {
+    margin-top: 40px;
     height: 20px;
     font-size: 12px;
     font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
     font-weight: 400;
     color: #727491;
     line-height: 20px;
+    text-align: right;
   }
+}
+
+.list_top2 {
+  margin: 24px 0px;
+  display: flex;
 }
 </style>

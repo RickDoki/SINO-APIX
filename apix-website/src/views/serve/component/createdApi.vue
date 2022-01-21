@@ -6,7 +6,7 @@
     :before-close="handleClose"
     size="80%"
   >
-    <div class="main">
+    <div class="main" style="margin-left: 30px; width: 95%">
       <div class="top">
         <elx-steps-horizontal
           v-model="active"
@@ -24,7 +24,7 @@
             label-position="top"
             size="small"
           >
-            <el-form-item label="已有模板" prop="name">
+            <el-form-item label="上游服务模板" prop="name">
               <el-select
                 v-model="form.name"
                 placeholder="请选择上游服务"
@@ -173,269 +173,263 @@
           </el-form>
         </div>
         <div v-if="active === 1" class="formBox">
-          <el-form
-            ref="ruleForm"
-            :model="ruleForm"
-            :rules="rulesapi"
-            label-width="150px"
-            label-position="top"
-            size="small"
-          >
-            <el-form-item label="API名称" prop="apiName">
-              <el-input
-                v-model="ruleForm.apiName"
-                maxlength="20"
-                class="inputWidth"
-                show-word-limit
-              />
-            </el-form-item>
-            <el-form-item label="API路径" prop="apiUrl">
-              <el-input
-                v-model="ruleForm.apiUrl"
-                class="inputWidth"
-                maxlength="500"
-                show-word-limit
-              />
-            </el-form-item>
-            <el-form-item label="请求方式" prop="requestMethod">
-              <el-select
-                v-model="ruleForm.requestMethod"
-                class="inputWidth"
-                placeholder=""
-              >
-                <el-option label="GET" value="GET" />
-                <el-option label="POST" value="POST" />
-                <el-option label="PUT" value="PUT" />
-                <el-option label="DELETE" value="DELETE" />
-              </el-select>
-            </el-form-item>
-            <!-- <el-form-item label="API版本号" prop="apiVersion">
-            <el-input
-              v-model="ruleForm.apiVersion"
-              maxlength="20"
-              class="inputWidth"
-              show-word-limit
-            />
-          </el-form-item> -->
-            <el-form-item label="API前置路径" prop="prefixPath">
-              <el-input
-                v-model="ruleForm.prefixPath"
-                maxlength="500"
-                class="inputWidth"
-                show-word-limit
-              />
-            </el-form-item>
-            <el-form-item label="是否为中台接口">
-              <el-select
-                v-model="ruleForm.isInternal"
-                class="inputWidth"
-                placeholder=""
-              >
-                <el-option label="是" value="1" />
-                <el-option label="否" value="0" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="API描述">
-              <el-input
-                v-model="ruleForm.description"
-                type="textarea"
-                class="inputWidth"
-                :autosize="{ minRows: 8, maxRows: 15 }"
-                maxlength="500"
-                show-word-limit
-              />
-            </el-form-item>
-            <el-form-item label="请求参数">
-              <div @contextmenu="showMenu" class="content-boder">
-                <vxe-table
-                  :header-cell-style="{
-                    backgroundColor: '#fff',
-                    color: '#494E6A',
-                  }"
-                  ref="xTable"
-                  border="none"
-                  max-height="280"
-                  show-overflow
-                  stripe
-                  :row-config="{ isCurrent: true, isHover: true }"
-                  :data="requestParams"
-                  :edit-config="{
-                    trigger: 'click',
-                    mode: 'cell',
-                    showIcon: false,
-                  }"
+          <div>
+            <el-form
+              ref="ruleForm"
+              :model="ruleForm"
+              :rules="rulesapi"
+              label-width="150px"
+              label-position="top"
+              size="small"
+            >
+              <el-form-item label="API名称" prop="apiName">
+                <el-input
+                  v-model="ruleForm.apiName"
+                  maxlength="20"
+                  class="inputWidth"
+                  show-word-limit
+                />
+              </el-form-item>
+              <el-form-item label="API路径" prop="apiUrl">
+                <el-input
+                  v-model="ruleForm.apiUrl"
+                  class="inputWidth"
+                  maxlength="500"
+                  show-word-limit
+                />
+              </el-form-item>
+              <el-form-item label="请求方式" prop="requestMethod">
+                <el-select
+                  v-model="ruleForm.requestMethod"
+                  class="inputWidth"
+                  placeholder=""
                 >
-                  <vxe-table-column type="checkbox" width="60" />
-                  <vxe-table-column
-                    field="parame"
-                    title="参数"
-                    :edit-render="{ name: 'input' }"
-                  />
-                  <vxe-table-column
-                    field="type"
-                    title="类型"
-                    :edit-render="{
-                      name: '$select',
-                      options: [
-                        { value: 'Integer', label: 'Num' },
-                        { value: 'String', label: 'String' },
-                        { value: 'Object', label: 'Object' },
-                        { value: 'Float', label: 'Float' },
-                        { value: 'List', label: 'List' },
-                        { value: 'Long', label: 'Long' },
-                        { value: 'Boolean', label: 'Boolean' },
-                        { value: 'Integer', label: 'Integer' },
-                      ],
-                    }"
-                  />
-                  <vxe-table-column
-                    field="isHaveto"
-                    title="是否必选"
-                    :edit-render="{
-                      name: '$select',
-                      options: [
-                        { value: '是', label: '是' },
-                        { value: '否', label: '否' },
-                      ],
-                    }"
-                  />
-                  <vxe-table-column
-                    field="describe"
-                    title="描述"
-                    :edit-render="{ name: 'input' }"
-                  />
-                  <vxe-table-column
-                    field="default"
-                    title="默认值"
-                    :edit-render="{ name: 'input' }"
-                  />
-                </vxe-table>
-                <div class="table-button">
-                  <el-button
-                    plain
-                    type="primary"
-                    size="mini"
-                    @click="savedata"
-                    class="add-but"
-                  >
-                    新增
-                  </el-button>
-                  <el-button
-                    plain
-                    type="danger"
-                    size="mini"
-                    @click="newdata"
-                    class="del-but"
-                  >
-                    删除
-                  </el-button>
-                </div>
-              </div>
-            </el-form-item>
-            <el-form-item label="请求示例">
-              <prism-editor
-                v-model="requestExample"
-                class="my-editor height-300"
-                :highlight="highlighter"
-                :line-numbers="lineNumbers"
-              />
-            </el-form-item>
-            <el-form-item label="返回参数">
-              <div @contextmenu="showMenu" class="content-boder">
-                <vxe-table
-                  :header-cell-style="{
-                    backgroundColor: '#fff',
-                    color: '#494E6A',
-                  }"
-                  ref="xTableres"
-                  border="none"
-                  max-height="280"
-                  show-overflow
-                  stripe
-                  :row-config="{ isCurrent: true, isHover: true }"
-                  :data="responseParams"
-                  :edit-config="{
-                    trigger: 'click',
-                    mode: 'cell',
-                    showIcon: false,
-                  }"
+                  <el-option label="GET" value="GET" />
+                  <el-option label="POST" value="POST" />
+                  <el-option label="PUT" value="PUT" />
+                  <el-option label="DELETE" value="DELETE" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="API前置路径" prop="prefixPath">
+                <el-input
+                  v-model="ruleForm.prefixPath"
+                  maxlength="500"
+                  class="inputWidth"
+                  show-word-limit
+                />
+              </el-form-item>
+              <!-- <el-form-item label="是否为中台接口">
+                <el-select
+                  v-model="ruleForm.isInternal"
+                  class="inputWidth"
+                  placeholder=""
                 >
-                  <vxe-table-column type="checkbox" width="60" />
-                  <vxe-table-column
-                    field="parame"
-                    title="参数"
-                    :edit-render="{ name: 'input' }"
-                  />
-                  <vxe-table-column
-                    field="type"
-                    title="类型"
-                    :edit-render="{
-                      name: '$select',
-                      options: [
-                        { value: 'Integer', label: 'Num' },
-                        { value: 'String', label: 'String' },
-                        { value: 'Object', label: 'Object' },
-                        { value: 'Float', label: 'Float' },
-                        { value: 'List', label: 'List' },
-                        { value: 'Long', label: 'Long' },
-                        { value: 'Boolean', label: 'Boolean' },
-                        { value: 'Integer', label: 'Integer' },
-                      ],
+                  <el-option label="是" value="1" />
+                  <el-option label="否" value="0" />
+                </el-select>
+              </el-form-item> -->
+              <el-form-item label="API描述">
+                <el-input
+                  v-model="ruleForm.description"
+                  type="textarea"
+                  class="inputWidth"
+                  :autosize="{ minRows: 8, maxRows: 15 }"
+                  maxlength="500"
+                  show-word-limit
+                />
+              </el-form-item>
+              <el-form-item label="请求参数">
+                <div @contextmenu="showMenu" class="content-boder">
+                  <vxe-table
+                    :header-cell-style="{
+                      backgroundColor: '#fff',
+                      color: '#494E6A',
                     }"
-                  />
-                  <vxe-table-column
-                    field="isHaveto"
-                    title="是否必选"
-                    :edit-render="{
-                      name: '$select',
-                      options: [
-                        { value: '是', label: '是' },
-                        { value: '否', label: '否' },
-                      ],
+                    ref="xTable"
+                    border="none"
+                    max-height="280"
+                    show-overflow
+                    stripe
+                    :row-config="{ isCurrent: true, isHover: true }"
+                    :data="requestParams"
+                    :edit-config="{
+                      trigger: 'click',
+                      mode: 'cell',
+                      showIcon: false,
                     }"
-                  />
-                  <vxe-table-column
-                    field="describe"
-                    title="描述"
-                    :edit-render="{ name: 'input' }"
-                  />
-                  <vxe-table-column
-                    field="default"
-                    title="默认值"
-                    :edit-render="{ name: 'input' }"
-                  />
-                </vxe-table>
-                <div class="table-button">
-                  <el-button
-                    plain
-                    type="primary"
-                    size="mini"
-                    @click="savedatares"
-                    class="add-but"
                   >
-                    新增
-                  </el-button>
-                  <el-button
-                    plain
-                    type="danger"
-                    size="mini"
-                    @click="newdatares"
-                    class="del-but"
-                  >
-                    删除
-                  </el-button>
+                    <vxe-table-column type="checkbox" width="60" />
+                    <vxe-table-column
+                      field="parame"
+                      title="参数"
+                      :edit-render="{ name: 'input' }"
+                    />
+                    <vxe-table-column
+                      field="type"
+                      title="类型"
+                      :edit-render="{
+                        name: '$select',
+                        options: [
+                          { value: 'Integer', label: 'Num' },
+                          { value: 'String', label: 'String' },
+                          { value: 'Object', label: 'Object' },
+                          { value: 'Float', label: 'Float' },
+                          { value: 'List', label: 'List' },
+                          { value: 'Long', label: 'Long' },
+                          { value: 'Boolean', label: 'Boolean' },
+                          { value: 'Integer', label: 'Integer' },
+                        ],
+                      }"
+                    />
+                    <vxe-table-column
+                      field="isHaveto"
+                      title="是否必选"
+                      :edit-render="{
+                        name: '$select',
+                        options: [
+                          { value: '是', label: '是' },
+                          { value: '否', label: '否' },
+                        ],
+                      }"
+                    />
+                    <vxe-table-column
+                      field="describe"
+                      title="描述"
+                      :edit-render="{ name: 'input' }"
+                    />
+                    <vxe-table-column
+                      field="default"
+                      title="默认值"
+                      :edit-render="{ name: 'input' }"
+                    />
+                  </vxe-table>
+                  <div class="table-button">
+                    <el-button
+                      plain
+                      type="primary"
+                      size="mini"
+                      @click="savedata"
+                      class="add-but"
+                    >
+                      新增
+                    </el-button>
+                    <el-button
+                      plain
+                      type="danger"
+                      size="mini"
+                      @click="newdata"
+                      class="del-but"
+                    >
+                      删除
+                    </el-button>
+                  </div>
                 </div>
-              </div>
-            </el-form-item>
-            <el-form-item label="返回示例">
-              <prism-editor
-                v-model="responseExample"
-                class="my-editor height-300"
-                :highlight="highlighter"
-                :line-numbers="lineNumbers"
-              />
-            </el-form-item>
-          </el-form>
+              </el-form-item>
+              <el-form-item label="请求示例">
+                <prism-editor
+                  v-model="requestExample"
+                  class="my-editor height-300"
+                  :highlight="highlighter"
+                  :line-numbers="lineNumbers"
+                />
+              </el-form-item>
+              <el-form-item label="返回参数">
+                <div @contextmenu="showMenu" class="content-boder">
+                  <vxe-table
+                    :header-cell-style="{
+                      backgroundColor: '#fff',
+                      color: '#494E6A',
+                    }"
+                    ref="xTableres"
+                    border="none"
+                    max-height="280"
+                    show-overflow
+                    stripe
+                    :row-config="{ isCurrent: true, isHover: true }"
+                    :data="responseParams"
+                    :edit-config="{
+                      trigger: 'click',
+                      mode: 'cell',
+                      showIcon: false,
+                    }"
+                  >
+                    <vxe-table-column type="checkbox" width="60" />
+                    <vxe-table-column
+                      field="parame"
+                      title="参数"
+                      :edit-render="{ name: 'input' }"
+                    />
+                    <vxe-table-column
+                      field="type"
+                      title="类型"
+                      :edit-render="{
+                        name: '$select',
+                        options: [
+                          { value: 'Integer', label: 'Num' },
+                          { value: 'String', label: 'String' },
+                          { value: 'Object', label: 'Object' },
+                          { value: 'Float', label: 'Float' },
+                          { value: 'List', label: 'List' },
+                          { value: 'Long', label: 'Long' },
+                          { value: 'Boolean', label: 'Boolean' },
+                          { value: 'Integer', label: 'Integer' },
+                        ],
+                      }"
+                    />
+                    <vxe-table-column
+                      field="isHaveto"
+                      title="是否必选"
+                      :edit-render="{
+                        name: '$select',
+                        options: [
+                          { value: '是', label: '是' },
+                          { value: '否', label: '否' },
+                        ],
+                      }"
+                    />
+                    <vxe-table-column
+                      field="describe"
+                      title="描述"
+                      :edit-render="{ name: 'input' }"
+                    />
+                    <vxe-table-column
+                      field="default"
+                      title="默认值"
+                      :edit-render="{ name: 'input' }"
+                    />
+                  </vxe-table>
+                  <div class="table-button">
+                    <el-button
+                      plain
+                      type="primary"
+                      size="mini"
+                      @click="savedatares"
+                      class="add-but"
+                    >
+                      新增
+                    </el-button>
+                    <el-button
+                      plain
+                      type="danger"
+                      size="mini"
+                      @click="newdatares"
+                      class="del-but"
+                    >
+                      删除
+                    </el-button>
+                  </div>
+                </div>
+              </el-form-item>
+              <el-form-item label="返回示例">
+                <prism-editor
+                  v-model="responseExample"
+                  class="my-editor height-300"
+                  :highlight="highlighter"
+                  :line-numbers="lineNumbers"
+                />
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
       </div>
       <div class="bottom">
@@ -483,7 +477,7 @@ export default {
     PrismEditor,
     ElxStepsHorizontal,
   },
-  data() {
+  data () {
     const checkMobile = (rule, value, callback) => {
       // 验证手机号的正则表达式
       const regMobile =
@@ -616,20 +610,20 @@ export default {
   },
   props: ["drawerProps"],
   watch: {
-    drawerProps() {
+    drawerProps () {
       this.drawer = this.drawerProps;
     },
   },
-  created() {
+  created () {
     this.getList();
   },
   methods: {
-    handleClose(done) {
+    handleClose (done) {
       done();
       this.$emit("showChange", false);
     },
     // 点击步骤条切换
-    stepChange() {
+    stepChange () {
       if (this.active === 1) {
         this.active = 0;
       } else {
@@ -637,14 +631,15 @@ export default {
       }
     },
     // 展开剩余配置
-    changeShow() {
+    changeShow () {
       this.showTimeFlag = !this.showTimeFlag;
     },
     // 返回列表
-    backList() {
-      this.$router.push("/api/list");
+    backList () {
+      // this.$router.push("/api/list");
+      this.$emit("showChange");
     },
-    addSure(formName) {
+    addSure (formName) {
       console.log(JSON.stringify(this.$refs.xTable.afterFullData));
       console.log(JSON.stringify(this.$refs.xTableres.afterFullData));
 
@@ -677,7 +672,8 @@ export default {
                 message: res.msg,
                 type: "success",
               });
-              this.$router.push("/api/list");
+              // this.$router.push("/api/list");
+              this.$emit("showChange");
             } else {
               this.ruleForm = {};
               this.$message({
@@ -689,15 +685,15 @@ export default {
         }
       });
     },
-    goBACK() {
+    goBACK () {
       this.active = 0;
       this.$refs["ruleForm"].resetFields();
     },
-    highlighter(code) {
+    highlighter (code) {
       return highlight(code, languages.js);
     },
     // 新增行
-    async insertEvent() {
+    async insertEvent () {
       const row = -1;
       const $table = this.$refs.xTable;
       const record = {
@@ -710,7 +706,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    async insertEventres() {
+    async insertEventres () {
       const row = -1;
       const $table = this.$refs.xTableres;
       const record = {
@@ -723,7 +719,7 @@ export default {
       const { row: newRow } = await $table.insertAt(record, row);
       await $table.setActiveCell(newRow, "parame");
     },
-    showMenu() {
+    showMenu () {
       event.preventDefault();
       var x = event.clientX;
       var y = event.clientY;
@@ -732,35 +728,35 @@ export default {
         y,
       };
     },
-    savedata() {
+    savedata () {
       // 新增一列
       this.insertEvent();
     },
-    savedatares() {
+    savedatares () {
       // 新增一列
       this.insertEventres();
     },
-    newdata() {
+    newdata () {
       // 删除一列
       this.$refs.xTable.removeCheckboxRow();
     },
-    newdatares() {
+    newdatares () {
       // 删除一列
       this.$refs.xTableres.removeCheckboxRow();
     },
     // 校验ip
-    isValidIP(ip) {
+    isValidIP (ip) {
       var reg =
         /^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$/;
       return reg.test(ip);
     },
     // 校验域名
-    isValidWeb(web) {
+    isValidWeb (web) {
       var reg =
         /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/;
       return reg.test(web);
     },
-    getList() {
+    getList () {
       getUpstreamList("").then((res) => {
         if (res.code === 200) {
           const array = res.data.upstreamList;
@@ -774,7 +770,7 @@ export default {
         }
       });
     },
-    upstreamChange() {
+    upstreamChange () {
       console.log("change");
       console.log(this.form.name);
       if (this.form.name === "") {
@@ -804,7 +800,7 @@ export default {
         }
       }
     },
-    goNext(formName) {
+    goNext (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const ipTest = this.isValidIP(this.form.serverAddress);

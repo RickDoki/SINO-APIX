@@ -170,8 +170,7 @@ export default {
 <style scoped lang='scss'>
 .he_main {
   // min-height: inherit;
-  height: 100%;
-  overflow: hidden;
+  //  height: 100%;
 }
 
 .apiList {
@@ -188,12 +187,10 @@ export default {
 }
 
 .apiMessage {
-  overflow: auto;
   border-left: 1px solid #e1e6ee;
   padding: 24px;
   margin-left: 16px;
   height: 100%;
-  padding-bottom: 150px;
   // margin-bottom: 20px;
   .api-info {
     margin-bottom: 24px;

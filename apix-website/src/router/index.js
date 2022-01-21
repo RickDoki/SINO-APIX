@@ -48,132 +48,140 @@ export const asyncRoutes = [
       }
     ]
   },
-  {
-    path: '/openServe',
-    children: [
-      {
-        path: '/openServe',
-        name: 'openServe',
-        meta: { title: '开放服务', requiresAuth: false, icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
-      },
-    ]
-  },
+  // {
+  //   path: '/openServe',
+  //   children: [
+  //     {
+  //       path: '/openServe',
+  //       name: 'openServe',
+  //       meta: { title: '开放服务', requiresAuth: false, icon: 'openServe', Aicon: 'openServe_Aicon', affix: true }
+  //     },
+  //   ]
+  // },
   {
     path: '/serve',
     component: Layout,
     alwaysShow: true,
-    meta: { title: '服务管理', requiresAuth: true, icon: 'serve', Aicon: 'serve_Aicon' },
+    meta: { title: '服务管理', mbxClick: false, requiresAuth: true, icon: 'serve', Aicon: 'serve_Aicon' },
     children: [
       {
         path: '/serve/center',
         component: () => import('@/views/serve/serveCenter'),
-        name: 'center',
-        meta: { title: '我的服务', requiresAuth: true }
+        name: 'serveCenter',
+        meta: { title: '我的服务', mbxClick: true, golist: true, requiresAuth: true },
+        children: [
+          {
+            path: '/serve/create',
+            component: () => import('@/views/serve/createServe'),
+            name: 'create',
+            hidden: true,
+            meta: { title: '创建服务', requiresAuth: true }
+          },
+          {
+            path: '/serve/serveDetail/:appcode',
+            component: () => import('@/views/serve/serveDetail'),
+            name: 'serveDteail',
+            hidden: true,
+            meta: { title: '服务详情', mbxClick: true, requiresAuth: true },
+            children: [
+              {
+                path: '/serve/serveDetail/editionDetail',
+                component: () => import('@/views/serve/editionDetail'),
+                name: 'editionDetail',
+                hidden: true,
+                meta: { title: '版本详情', requiresAuth: true }
+              },
+              {
+                path: '/serve/newEdition',
+                component: () => import('@/views/serve/newEdition'),
+                hidden: true,
+                name: 'newEdition',
+                meta: { title: '添加新版本', requiresAuth: true }
+              },
+              {
+                path: '/serve/serveDetail/plug-in',
+                component: () => import('@/views/serve/plug-in'),
+                name: 'plug-in',
+                hidden: true,
+                meta: { title: '插件中心', requiresAuth: true }
+              },
+              {
+                path: '/serve/serveDetail/pluginConfig/:plugincode',
+                component: () => import('@/views/serve/plugInConfig'),
+                name: 'plugInConfig',
+                hidden: true,
+                meta: { title: '插件配置', requiresAuth: true }
+              }
+            ]
+          }
+        ]
       },
       {
         path: '/serve/subscribe/',
         component: () => import('@/views/serve/subscribe'),
         name: 'subscribe',
-        meta: { title: '我的订阅', requiresAuth: true }
-      },
-      {
-        path: '/serve/create',
-        component: () => import('@/views/serve/createServe'),
-        name: 'create',
-        hidden: true,
-        meta: { title: '创建服务', requiresAuth: true }
-      },
-      {
-        path: '/serve/editionDetail',
-        component: () => import('@/views/serve/editionDetail'),
-        name: 'editionDetail',
-        hidden: true,
-        meta: { title: '版本详情', requiresAuth: true }
-      },
-      {
-        path: '/serve/subscribeDetail/:appCode',
-        component: () => import('@/views/serve/subscribeDetail'),
-        name: 'subscribeDetail',
-        hidden: true,
-        meta: { title: '订阅服务详情', requiresAuth: true }
-      },
-      {
-        path: '/serve/serveDetail/:appcode',
-        component: () => import('@/views/serve/serveDetail'),
-        name: 'serveDteail',
-        hidden: true,
-        meta: { title: '服务详情', requiresAuth: true },
+        meta: { title: '我的订阅', mbxClick: true, golist: true, requiresAuth: true },
         children: [
           {
-            path: '/serve/serveDetail/plug-in',
-            component: () => import('@/views/serve/plug-in'),
-            name: 'plug-in',
+            path: '/serve/subscribeDetail/:appCode',
+            component: () => import('@/views/serve/subscribeDetail'),
+            name: 'subscribeDetail',
             hidden: true,
-            meta: { title: '插件中心', requiresAuth: true }
-          },
-          {
-            path: '/serve/serveDetail/pluginConfig/:plugincode',
-            component: () => import('@/views/serve/plugInConfig'),
-            name: 'plugInConfig',
-            hidden: true,
-            meta: { title: '插件配置', requiresAuth: true }
+            meta: { title: '订阅服务详情', requiresAuth: true }
           }
         ]
       },
-      {
-        path: '/serve/newEdition',
-        component: () => import('@/views/serve/newEdition'),
-        hidden: true,
-        name: 'newEdition',
-        meta: { title: '添加新版本', requiresAuth: true }
-      }
     ]
   },
   {
     path: '/api',
     component: Layout,
     alwaysShow: true,
-    meta: { title: 'API管理', requiresAuth: true, icon: 'api', Aicon: 'api_Aicon' },
+    meta: { title: 'API管理', mbxClick: false, requiresAuth: true, icon: 'api', Aicon: 'api_Aicon' },
     children: [
       {
         path: '/api/list',
         component: () => import('@/views/api/list'),
-        name: 'App',
-        meta: { title: 'API列表', requiresAuth: true }
-      },
-      {
-        path: '/api/add',
-        component: () => import('@/views/api/add'),
-        name: 'release',
-        hidden: true,
-        meta: { title: '创建API', requiresAuth: true }
-      },
-      {
-        path: '/api/detail/:id',
-        component: () => import('@/views/api/detail'),
-        name: 'detail',
-        hidden: true,
-        meta: { title: 'API详情', requiresAuth: true }
+        name: 'ApiList',
+        meta: { title: 'API列表', mbxClick: true, golist: true, requiresAuth: true },
+        children: [
+          {
+            path: '/api/add',
+            component: () => import('@/views/api/add'),
+            name: 'CreateApi',
+            hidden: true,
+            meta: { title: '创建API', requiresAuth: true }
+          },
+          {
+            path: '/api/detail/:id',
+            component: () => import('@/views/api/detail'),
+            name: 'ApiDetail',
+            hidden: true,
+            meta: { title: 'API详情', requiresAuth: true }
+          },
+        ]
       },
       {
         path: '/api/upstream',
         component: () => import('@/views/upstream/index'),
-        name: 'Upstream',
-        meta: { title: '上游管理', requiresAuth: true, affix: true }
-      },
-      {
-        path: '/api/upstream/create',
-        component: () => import('@/views/upstream/detail'),
-        hidden: true,
-        name: 'UpstreamCreate',
-        meta: { title: '创建上游服务', requiresAuth: true, affix: true }
-      },
-      {
-        path: '/api/upstream/edit/:id',
-        component: () => import('@/views/upstream/detail'),
-        hidden: true,
-        name: 'UpstreamEdit',
-        meta: { title: '配置上游服务', requiresAuth: true, affix: true }
+        name: 'UpstreamList',
+        meta: { title: '上游管理', mbxClick: true, golist: true, requiresAuth: true },
+        children: [
+          {
+            path: '/api/upstream/create',
+            component: () => import('@/views/upstream/detail'),
+            hidden: true,
+            name: 'UpstreamCreate',
+            meta: { title: '创建上游服务', requiresAuth: true }
+          },
+          {
+            path: '/api/upstream/edit/:id',
+            component: () => import('@/views/upstream/detail'),
+            hidden: true,
+            name: 'UpstreamEdit',
+            meta: { title: '配置上游服务', requiresAuth: true }
+          }
+        ]
       }
     ]
   },
@@ -185,28 +193,30 @@ export const asyncRoutes = [
         path: '/log/index',
         component: () => import('@/views/system/log/list'),
         name: 'Log',
-        meta: { title: '审计日志', requiresAuth: true, icon: 'log', Aicon: 'log_Aicon', affix: true }
+        meta: { title: '审计日志', mbxClick: false, requiresAuth: true, icon: 'log', Aicon: 'log_Aicon', affix: true }
       }
+    ]
+  },
+  {
+    path: '/docsEdit',
+    component: Layout,
+    children: [
+      {
+        path: '/docsEdit/:type',
+        hidden: true,
+        component: () => import('@/views/system/docsEdit'),
+        name: 'docsEdit',
+        meta: { title: '文档编辑', requiresAuth: true, affix: true }
+      },
     ]
   },
   {
     path: '/system',
     component: Layout,
     alwaysShow: true,
-    meta: { title: '系统设置', requiresAuth: true, icon: 'system', Aicon: 'system_Aicon' },
+    mbxClick: false,
+    meta: { title: '系统设置', mbxClick: false, requiresAuth: true, icon: 'system', Aicon: 'system_Aicon' },
     children: [
-      // {
-      //   path: '/system/user',
-      //   component: () => import('@/views/system/user/list'),
-      //   name: 'User',
-      //   meta: { title: '用户管理', affix: true }
-      // },
-      // {
-      //   path: '/system/role',
-      //   component: () => import('@/views/system/role/list'),
-      //   name: 'Role',
-      //   meta: { title: '角色管理', affix: true }
-      // },
       {
         path: '/system/index',
         component: () => import('@/views/user/index'),
@@ -218,13 +228,6 @@ export const asyncRoutes = [
         component: () => import('@/views/system/config'),
         name: 'config',
         meta: { title: '开放门户配置', requiresAuth: true, affix: true }
-      },
-      {
-        path: '/docsEdit/:type',
-        hidden: true,
-        component: () => import('@/views/system/docsEdit'),
-        name: 'docsEdit',
-        meta: { title: '文档编辑', requiresAuth: true, affix: true }
       }
     ]
   },

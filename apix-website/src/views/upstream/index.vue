@@ -1,47 +1,50 @@
 <template>
   <div class="main">
-    <div class="list_top list_top_bom">
-      <div class="list_title">上游列表</div>
-      <div class="list_search">
-        <el-input
-          size="small"
-          placeholder="搜索"
-          suffix-icon="el-icon-search"
-          v-model="search.name"
-          class="list_searchInput"
-          @change="getUpstreamList()"
-        >
-        </el-input>
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="gotoDetail">添加新上游</el-button>
+    <div v-if="!routerView">
+      <div class="list_top list_top_bom">
+        <div class="list_title">上游列表</div>
+        <div class="list_search">
+          <el-input
+            size="small"
+            placeholder="搜索"
+            suffix-icon="el-icon-search"
+            v-model="search.name"
+            class="list_searchInput"
+            @change="getUpstreamList()"
+          >
+          </el-input>
+          <el-button type="primary" size="small" icon="el-icon-plus" @click="gotoDetail">添加新上游</el-button>
+        </div>
+      </div>
+      <div class="table_box">
+        <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
+          <el-table-column prop="name" label="上游名称" show-overflow-tooltip min-width="150">
+            <template slot-scope="scope">
+              <span @click="view(scope.row)" class="text_detail">{{scope.row.name}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="protocol" label="协议" width="120" align="center"></el-table-column>
+          <el-table-column prop="server_address" label="服务地址" show-overflow-tooltip min-width="250"></el-table-column>
+          <el-table-column prop="description" label="服务描述" show-overflow-tooltip min-width="250"></el-table-column>
+          <el-table-column label="操作" min-width="200">
+            <template slot-scope="scope">
+              <el-button type="text" @click="edit(scope.row)">配置</el-button>
+              <span class="handle">|</span>
+              <el-button type="text" @click="delCert(scope.row)" class="textBut-danger">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          background
+          class="list-pagination"
+          :current-page.sync="page"
+          layout="prev, pager, next"
+          :total="total"
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
-    <div class="table_box">
-      <el-table :row-style="{height: '50px'}" :data="tableData" highlight-current-row :header-cell-style="{'font-weight': 400, 'font-size':'16px', color:'#1D1C35'}">
-        <el-table-column prop="name" label="上游名称" show-overflow-tooltip min-width="150">
-          <template slot-scope="scope">
-            <span @click="view(scope.row)" class="text_detail">{{scope.row.name}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="protocol" label="协议" width="120" align="center"></el-table-column>
-        <el-table-column prop="server_address" label="服务地址" show-overflow-tooltip min-width="250"></el-table-column>
-        <el-table-column prop="description" label="服务描述" show-overflow-tooltip min-width="250"></el-table-column>
-        <el-table-column label="操作" min-width="200">
-          <template slot-scope="scope">
-            <el-button type="text" @click="edit(scope.row)">配置</el-button>
-            <span class="handle">|</span>
-            <el-button type="text" @click="delCert(scope.row)" class="textBut-danger">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        class="list-pagination"
-        :current-page.sync="page"
-        layout="prev, pager, next"
-        :total="total"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <router-view v-if="routerView"></router-view>
     <el-drawer
       title="数据编辑器"
       :before-close="handleClose"
@@ -114,6 +117,7 @@ export default {
   },
   data () {
     return {
+      routerView: false,
       codeType: 'json',
       requestExample: '{}',
       // 可编辑模式
@@ -145,7 +149,12 @@ export default {
     }
   },
   created () {
-    this.getUpstreamList()
+    if (this.$route.name === "UpstreamList") {
+      this.routerView = false
+      this.getUpstreamList()
+    } else {
+      this.routerView = true
+    }
   },
   methods: {
     // 跳转创建上游管理信息页面

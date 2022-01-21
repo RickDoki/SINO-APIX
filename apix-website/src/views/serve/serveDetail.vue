@@ -1,5 +1,19 @@
 <template>
   <div class="main">
+    <el-drawer
+      title="日志详情"
+      :visible.sync="drawer"
+      :direction="direction"
+      :before-close="handleClose"
+      size="50%"
+    >
+      <json-view
+        :data="this.historylist"
+        theme="index"
+        :deep="2"
+        :fontSize="12"
+      />
+    </el-drawer>
     <div v-if="!routerView">
       <div class="list_top">
         <div class="list_title">{{ serveData.appName }}</div>
@@ -83,7 +97,11 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="version" label="版本名称" />
+          <el-table-column prop="version" label="版本名称">
+            <template slot-scope="scope">
+              <span @click="edition(scope.row)" class="text_detail">{{scope.row.version}}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="description" label="版本描述" />
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
@@ -149,18 +167,23 @@
           </el-table-column>
           <el-table-column label="操作" width="180px">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)"
+              <el-button type="text" @click="getPluginMessage(scope.row)"
                 >查看</el-button
               >
-              <span class="handle">|</span>
-              <el-button type="text" @click="getMessage(scope.row)"
+              <span class="handle" v-if="goConfig(scope.row.pluginType)"
+                >|</span
+              >
+              <el-button
+                type="text"
+                v-if="goConfig(scope.row.pluginType)"
+                @click="pluginConfig(scope.row)"
                 >配置</el-button
               >
             </template>
           </el-table-column>
         </el-table>
       </div>
-      <div class="table_box mode-margin">
+      <div v-if="ishttplogShow" class="table_box mode-margin">
         <div class="serve-table">
           <div class="table-tilelong">请求日志</div>
         </div>
@@ -176,7 +199,7 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="requestUri" label="请求地址" width="280px" />
+          <el-table-column prop="requestUri" label="请求地址" width="280px" show-overflow-tooltip />
           <el-table-column prop="httpMethod" label="请求方式" />
           <el-table-column prop="remoteIp" label="客户端IP" />
           <el-table-column prop="serverIp" label="服务端IP" />
@@ -188,7 +211,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)"
+              <el-button type="text" @click="getlogs(scope.row)"
                 >查看</el-button
               >
             </template>
@@ -203,7 +226,7 @@
           @current-change="handleCurrentChangeRequest"
         />
       </div>
-      <div class="table_box mode-margin">
+      <div v-if="iserrlogShow" class="table_box mode-margin">
         <div class="serve-table">
           <div class="table-tilelong">错误日志</div>
         </div>
@@ -218,7 +241,7 @@
             color: '#1D1C35',
           }"
         >
-          <el-table-column prop="requestUri" label="请求地址" width="280px" />
+          <el-table-column prop="requestUri" label="请求地址" width="280px" show-overflow-tooltip />
           <el-table-column prop="httpMethod" label="请求方式" />
           <el-table-column prop="remoteIp" label="客户端IP" />
           <el-table-column prop="serverIp" label="服务端IP" />
@@ -230,7 +253,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button type="text" @click="getMessage(scope.row)"
+              <el-button type="text" @click="getlogs(scope.row)"
                 >查看</el-button
               >
             </template>
@@ -247,6 +270,11 @@
       </div>
     </div>
     <router-view v-if="routerView"></router-view>
+    <plugins-message
+      :drawerProps="drawerIsshow"
+      :pluginId="pluginId"
+      @showChange="showChange"
+    ></plugins-message>
   </div>
 </template>
 
@@ -260,9 +288,16 @@ import {
   delApiversion,
   log,
   putPlugin,
+  open,
+  close,
 } from "@/api/AboutServe.js";
-
+import jsonView from "./json-view/index.vue";
+import pluginsMessage from "./plugins/pluginsMessage.vue";
 export default {
+  components: {
+    jsonView,
+    pluginsMessage,
+  },
   filters: {
     plugName: function (value) {
       const nameFiter = {
@@ -286,9 +321,16 @@ export default {
       return nameFiter[value];
     },
   },
-  data() {
+  data () {
     return {
+      iserrlogShow: false,
+      ishttplogShow: false,
+      drawerIsshow: false,
       routerView: false,
+      pluginId: "",
+      drawer: false,
+      historylist: {},
+      direction: "rtl",
       table: [],
       pluginsTable: [],
       dropdownItems: [],
@@ -309,7 +351,7 @@ export default {
       errorLoading: false,
     };
   },
-  created() {
+  created () {
     if (this.$route.name === "serveDteail") {
       this.routerView = false;
       // 获取appcode
@@ -323,18 +365,35 @@ export default {
     }
   },
   methods: {
+    showChange () {
+      this.drawerIsshow = false;
+    },
+    getPluginMessage (e) {
+      this.drawerIsshow = true;
+      this.pluginId = e.id;
+      console.log(e);
+    },
+    //操作抽屉
+    handleClose (done) {
+      done();
+    },
+    getlogs (e) {
+      // console.log('查看日志')
+      this.drawer = true;
+      this.historylist = e;
+    },
     // 编辑服务文档
-    docsEdit() {
+    docsEdit () {
       this.$router.push(
         "/docsEdit/" +
-          "serve?id=" +
-          this.appCode +
-          "&name=" +
-          this.serveData.appName
+        "serve?id=" +
+        this.appCode +
+        "&name=" +
+        this.serveData.appName
       );
     },
     // 通过appcode查询详情
-    getServeDeatil() {
+    getServeDeatil () {
       this.versionLoading = true;
       serveDetail(this.appCode).then((res) => {
         if (res.code === 200) {
@@ -343,7 +402,24 @@ export default {
           this.appId = res.data.appId;
 
           this.pluginsTable = res.data.plugins;
-          console.log(this.pluginsTable);
+          this.iserrlogShow = false;
+          this.ishttplogShow = false
+          for (let index = 0; index < res.data.plugins.length; index++) {
+            if (res.data.plugins[index].pluginType === 'http_log') {
+              if (res.data.plugins[index].enabled === 1) {
+                this.ishttplogShow = true
+              } else {
+                this.ishttplogShow = false
+              }
+            }
+            if (res.data.plugins[index].pluginType === 'error_log') {
+              if (res.data.plugins[index].enabled === 1) {
+                this.iserrlogShow = true
+              } else {
+                this.iserrlogShow = false
+              }
+            }
+          }
           if (res.data.isPublished === "60005") {
             this.dropdownItems = ["下架"];
           } else {
@@ -353,7 +429,7 @@ export default {
       });
     },
     // 内部详情
-    getAppNum() {
+    getAppNum () {
       appNum(this.appCode).then((res) => {
         // console.log(res);
         if (res.code === 200) {
@@ -362,7 +438,7 @@ export default {
       });
     },
     // 操作
-    handleCommand(command) {
+    handleCommand (command) {
       // console.log(command)
       if (command === "下架") {
         const query = {
@@ -391,15 +467,21 @@ export default {
       }
     },
     // 删除服务版本
-    delversion(e) {
-      delApiversion(e.id).then((res) => {
-        if (res.code === 200) {
-          this.getServeDeatil();
-        }
+    delversion (e) {
+      this.$confirm("确认删除版本：" + e.version + ", 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        delApiversion(e.id).then((res) => {
+          if (res.code === 200) {
+            this.getServeDeatil();
+          }
+        });
       });
     },
     // 请求日志
-    getLog(e) {
+    getLog (e) {
       if (e === "request") {
         this.requestLoding = true;
         const query =
@@ -435,17 +517,17 @@ export default {
       }
     },
     // 请求日志页面跳转
-    handleCurrentChangeRequest(val) {
+    handleCurrentChangeRequest (val) {
       this.getLog("request");
     },
     // 错误日志页面跳转
-    handleCurrentChangeError(val) {
+    handleCurrentChangeError (val) {
       this.getLog("error");
     },
-    gonewEdition() {
+    gonewEdition () {
       this.$router.push({ path: "/serve/newEdition?appcode=" + this.appCode });
     },
-    goplugin() {
+    goplugin () {
       this.$router.push({
         path:
           "/serve/serveDetail/plug-in?appcode=" +
@@ -455,29 +537,98 @@ export default {
       });
     },
     // 版本详情
-    edition(e) {
+    edition (e) {
       this.$router.push({
         path:
-          "/serve/editionDetail?appCode=" +
+          "/serve/serveDetail/editionDetail?appCode=" +
           this.appCode +
           "&appVersionId=" +
           e.id,
       });
     },
     // 插件切换状态
-    enabledChange(e) {
-      // console.log(e)
-      const query = {
-        appId: e.appId,
-        appCode: e.appCode,
-        pluginType: e.pluginType,
-        enabled: e.enabled,
-      };
-      putPlugin(query).then((res) => {
-        if (res.code === 200) {
-          this.getServeDeatil();
+    enabledChange (e) {
+      if (e.pluginType === "sentinel") {
+        if (e.enabled === 1) {
+          open(e.appId).then((res) => {
+            if (res.code === 200) {
+              const query = {
+                appId: e.appId,
+                appCode: e.appCode,
+                pluginType: e.pluginType,
+                enabled: e.enabled,
+                id: e.id,
+              };
+              putPlugin(query).then((res) => {
+                if (res.code === 200) {
+                  this.getServeDeatil();
+                }
+              });
+            }
+          });
+        } else {
+          close(e.appId).then((res) => {
+            if (res.code === 200) {
+              const query = {
+                appId: e.appId,
+                appCode: e.appCode,
+                pluginType: e.pluginType,
+                enabled: e.enabled,
+                id: e.id,
+              };
+              putPlugin(query).then((res) => {
+                if (res.code === 200) {
+                  this.getServeDeatil();
+                }
+              });
+            }
+          });
         }
-      });
+      } else {
+        const query = {
+          appId: e.appId,
+          appCode: e.appCode,
+          pluginType: e.pluginType,
+          enabled: e.enabled,
+          id: e.id,
+        };
+        putPlugin(query).then((res) => {
+          if (res.code === 200) {
+            this.getServeDeatil();
+          }
+        });
+      }
+    },
+    // 跳转修改插件配置
+    pluginConfig (e) {
+      console.log(e);
+      this.$router.push(
+        "/serve/serveDetail/pluginConfig/" +
+        e.pluginType +
+        "?appcode=" +
+        e.appCode +
+        "&appid=" +
+        e.appId +
+        "&id=" +
+        e.id +
+        "&pluginParams=true"
+      );
+    },
+    // 控制配置显示
+    goConfig (value) {
+      if (
+        value === "jwt" ||
+        value === "oauth2" ||
+        value === "black_list_ip" ||
+        value === "white_list_ip" ||
+        value === "cors" ||
+        value === "sign" ||
+        value === "sentinel"
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };
@@ -522,5 +673,12 @@ export default {
   .table-tilelong {
     line-height: 30px;
   }
+}
+::v-deep .el-drawer__body::-webkit-scrollbar {
+  display: none;
+}
+::v-deep .el-drawer__body {
+  margin-right: 20px;
+  margin-bottom: 40px;
 }
 </style>

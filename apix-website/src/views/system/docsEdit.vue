@@ -2,6 +2,9 @@
   <div class="main">
     <div class="list_top">
       <div class="list_title">{{docsName}} - {{pageTitle}}</div>
+      <div class="list_search">
+        <el-button size="small" @click="goBack()"><i class="el-icon-back"/>返回</el-button>
+      </div>
     </div>
     <div>
       <span class="secondTitle">用户自定义文档信息。</span>
@@ -140,6 +143,9 @@ export default {
     this.getDetail();
   },
   methods: {
+    goBack () {
+      this.$router.go(-1)
+    },
     /**
     * 取消编辑
     */
