@@ -14,7 +14,7 @@
         <div v-show="isLogin">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
             <el-form-item prop="username">
-              <el-input placeholder="请输入账号" v-model="ruleForm.username"/>
+              <el-input placeholder="请输入手机号" v-model="ruleForm.username"/>
             </el-form-item>
             <el-form-item prop="password" class="paws-input">
               <el-input show-password placeholder="请输入密码" v-model="ruleForm.password"/>
@@ -74,7 +74,7 @@ export default {
         password: "",
       },
       rules: {
-        username: { required: true, message: "请输入账号", trigger: "blur" },
+        username: { required: true, message: "请输入手机号", trigger: "blur" },
         password: { required: true, message: "请输入密码", trigger: "blur" },
       },
       re_ruleForm: {
@@ -182,6 +182,20 @@ export default {
     },
   },
   created () {
+    // 回车键触发
+    const that = this
+    document.onkeydown = function(e){
+      var key = window.event.keyCode;
+      // 小键盘和大键盘
+      if(key == 13 || key == 100){
+        if (that.isLogin) {
+          that.login('ruleForm'); //自己写的登录方法，点击事件
+        } else {
+          // 注册
+          that.register('re_ruleForm')
+        }
+      }
+    }
     this.year = (new Date()).getFullYear()
     removeToken("apiPhone");
     removeToken("token");
