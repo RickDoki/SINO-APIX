@@ -1,10 +1,8 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 47.103.109.225（sino apix）
  Source Server Type    : MySQL
  Source Server Version : 50736
- Source Host           : 47.103.109.225:30306
  Source Schema         : apix_user
 
  Target Server Type    : MySQL
