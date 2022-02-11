@@ -40,6 +40,7 @@ public class Api extends Entity<Integer> {
     private String creationByUsername;
     private String lastUpdatedByUsername;
     private String protocol;
+    private Long port;
 
     public Api(ApiVo apiVo) {
         this.id = apiVo.getApiId();
@@ -66,6 +67,7 @@ public class Api extends Entity<Integer> {
         this.isPublished = apiVo.getIsPublished();
         this.isInternal = apiVo.getIsInternal();
         this.protocol = apiVo.getProtocol();
+        this.port = apiVo.getPort();
     }
 
 //    public Api(ApiVersion apiVersion) {
