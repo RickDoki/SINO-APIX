@@ -153,6 +153,13 @@ export const asyncRoutes = [
             meta: { title: '创建API', requiresAuth: true }
           },
           {
+            path: '/api/edit/:id',
+            component: () => import('@/views/api/add'),
+            hidden: true,
+            name: 'EditApi',
+            meta: { title: '编辑API', requiresAuth: true }
+          },
+          {
             path: '/api/detail/:id',
             component: () => import('@/views/api/detail'),
             name: 'ApiDetail',
@@ -271,11 +278,6 @@ export const constantRoutes = [
     path: '/',
     component: () => import('@/views/openServe/index'),
     redirect: '/openServe',
-    hidden: true
-  },
-  {
-    path: '/market',
-    component: () => import('@/views/marketing/index'),
     hidden: true
   },
   {

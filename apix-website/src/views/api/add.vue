@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="list_top">
-      <div class="list_title">创建API</div>
+      <div class="list_title">{{editFlag?'编辑API':'创建API'}}</div>
     </div>
     <div class="top">
       <elx-steps-horizontal
@@ -402,7 +402,7 @@
 
 <script>
 import { getUpstreamList } from '@/api/upstream'
-import { create } from '@/api/AboutApi'
+import { create, detail } from '@/api/AboutApi'
 import { PrismEditor } from 'vue-prism-editor'
 import ElxStepsHorizontal from '@/components/ElxStepsHorizontal'
 import 'vue-prism-editor/dist/prismeditor.min.css' // import the styles somewhere
@@ -435,6 +435,9 @@ export default {
       callback(new Error('请输入正确的api地址'))
     }
     return {
+      // 是否编辑API
+      editFlag: false,
+      apiId: '',
       // 展示折叠配置
       showTimeFlag: false,
       // 默认步骤数
@@ -555,9 +558,32 @@ export default {
     }
   },
   created () {
+    if(this.$route.name === "EditApi"){
+      this.editFlag = true
+      this.apiId = this.$route.params.id
+    }
+    this.getDetail()
     this.getList()
   },
   methods: {
+    // 获取api详情
+    getDetail () {
+      detail(this.apiId).then((res) => {
+        if (res.code === 200) {
+          this.apiInfo = res.data
+          this.paramsTable = JSON.parse(res.data.requestParams)
+          // this.form = {
+          //   name: '',
+          //   description: '',
+          //   protocol: '',
+          //   serverAddress: '',
+          //   port: '',
+          //   upstreamPrefixPath: '',
+          //   loadBalance: 'roundRobin'
+          // },
+        }
+      });
+    },
     // 点击步骤条切换
     stepChange () {
       if (this.active === 1) {

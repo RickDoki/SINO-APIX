@@ -129,12 +129,6 @@ export default {
       search: {
         name: ''
       },
-      form: {
-        name: '',
-        email: '',
-        password: '',
-        role: []
-      },
       options: [{
         value: 'json',
         label: 'JSON'

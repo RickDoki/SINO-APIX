@@ -118,7 +118,6 @@ export default {
     };
   },
   created () {
-    console.log(this.$route);
     this.apiId = this.$route.params.id
     this.getDetail()
     this.getDetailNum()
