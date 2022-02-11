@@ -26,7 +26,20 @@
       <el-col style="height:100%" :span="20">
         <div class="apiMessage">
           <div class="api-info">
-            <div class="title">{{ apiMessageAll.apiName }}</div>
+            <span class="label-color">版本名称 : </span>
+            <span class="title">{{ applicationVersion.version }}
+              <el-button type="text" @click="goDocxV">详细文档</el-button>
+            </span>
+          </div>
+          <div class="api-info">
+            <span class="label-color">版本描述 : </span>
+            <span class="conten-color">{{ applicationVersion.description }}</span>
+          </div>
+          <el-divider></el-divider>
+          <div class="api-info">
+            <div class="title">{{ apiMessageAll.apiName }}
+              <el-button type="text" @click="goDocx">详细文档</el-button>
+            </div>
             <div class="secondTitle">{{ apiMessageAll.description }}</div>
           </div>
           <div class="api-info">
@@ -100,6 +113,7 @@ export default {
       queryApiList(query).then((res) => {
         if (res.code === 200) {
           this.defaultApiList = res.data.apiList
+          this.applicationVersion = res.data.applicationVersion
           this.classList = []
         }
       });
@@ -111,6 +125,30 @@ export default {
           this.table = JSON.parse(res.data.requestParams);
         }
       });
+    },
+    goDocxV() {
+      this.$router.push({
+        name: 'openServedocxDetail',
+        query: {
+          name: this.applicationVersion.version,
+          id: this.apiValue
+        },
+        params: {
+          type: 'version'
+        }
+      })
+    },
+    goDocx() {
+      this.$router.push({
+        name: 'openServedocxDetail',
+        query: {
+          name: this.apiMessageAll.apiName,
+          id: this.apiMessageAll.apiId
+        },
+        params: {
+          type: 'api'
+        }
+      })
     },
     choseApi(e, i) {
       this.classList = [];
@@ -133,6 +171,7 @@ export default {
       apiValue: '',
       defaultApiList: [],
       apiMessageAll: {},
+      applicationVersion: {},
       statusTable: [
         {
           statusCode: 200,

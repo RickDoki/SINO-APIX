@@ -6,7 +6,7 @@
         <div class="welcome">{{ pageInfo.title || '欢迎访问我们的开放服务平台' }}</div>
         <div class="all_services">{{ pageInfo.description || '您可以在我们所有的服务中找到需要的那一个' }}</div>
         <div class="input-with-select">
-          <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
+          <el-input placeholder="请输入服务名称或服务标签" v-model="searchKey"></el-input>
           <el-button type="primary" slot="append" @click="search">搜一下</el-button>
         </div>
       </div>
