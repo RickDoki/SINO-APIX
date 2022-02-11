@@ -4,7 +4,9 @@
     <div class="content">
       <div class="list_top">
         <div>
-          <div class="list_top_title">{{ appName }}</div>
+          <div class="list_top_title">{{ appName }}
+            <el-button type="text" @click="goDocx">详细文档</el-button>
+          </div>
           <div class="introduction">{{ appDescription }}
           </div>
           <div class="service_providers" style="margin-top: 30px">发布者：
@@ -149,6 +151,18 @@ export default {
           }
         })
       }
+    },
+    goDocx() {
+      this.$router.push({
+        name: 'openServedocxDetail',
+        query: {
+          name: this.appName,
+          id: this.$route.query.code
+        },
+        params: {
+          type: 'serve'
+        }
+      })
     }
   }
 };
