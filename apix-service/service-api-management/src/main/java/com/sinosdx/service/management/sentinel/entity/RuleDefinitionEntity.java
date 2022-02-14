@@ -34,10 +34,10 @@ public class RuleDefinitionEntity {
     //限流时间单位 0-秒 1-分 2-时 3-天
     private Integer intervalUnit;
 
-    //资源类型 0-routeId 1-api_group_name
+    //资源类型 0-routeId 1-api_group_name  1
     private Integer resourceMode;
 
-    //限流类型 0-线程数 1-QPS
+    //限流类型 0-线程数 1-QPS  1
     private Integer grade;
 
     //流控方式 0-快速失败 2-匀速排队

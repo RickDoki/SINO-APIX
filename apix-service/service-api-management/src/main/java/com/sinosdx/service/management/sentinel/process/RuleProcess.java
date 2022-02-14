@@ -96,6 +96,8 @@ public class RuleProcess {
         limitInfo.setCount(rule.getCount());
         limitInfo.setInterval(rule.getInterval());
         limitInfo.setIntervalUnit(rule.getIntervalUnit());
+        limitInfo.setControlBehavior(rule.getControlBehavior());
+        limitInfo.setMaxQueueingTimeoutMs(rule.getMaxQueueingTimeoutMs());
         return limitInfo;
     }
 

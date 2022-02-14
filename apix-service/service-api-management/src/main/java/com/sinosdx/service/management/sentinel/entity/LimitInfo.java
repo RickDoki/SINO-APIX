@@ -37,6 +37,13 @@ public class LimitInfo {
     //限流时间单位 0-秒 1-分 2-时 3-天
     private Integer intervalUnit;
 
+    //流控方式 0-快速失败 2-匀速排队
+    private Integer controlBehavior;
+
+
+    //匀速排队-最大时间/毫秒
+    private Integer maxQueueingTimeoutMs;
+
     public RuleDefinitionEntity generateRule(){
         RuleDefinitionEntity entity = new RuleDefinitionEntity();
 
@@ -65,9 +72,9 @@ public class LimitInfo {
 //        entity.setResourceMode(this.getLimitType());
         entity.setResourceMode(1);
         entity.setGrade(1);
-        entity.setControlBehavior(0);
+        entity.setControlBehavior(this.getControlBehavior());//0
         entity.setBurst(0);
-        entity.setMaxQueueingTimeoutMs(1000);
+        entity.setMaxQueueingTimeoutMs(this.maxQueueingTimeoutMs);//1000
         return entity;
     }
 
