@@ -145,7 +145,7 @@ public class ApiServiceImpl implements ApiService {
         }
 
         oldApi.setUrl(Optional.ofNullable(apiVo.getApiUrl()).orElse(oldApi.getUrl()));
-        oldApi.setDomain(Optional.ofNullable(apiVo.getDomain()).orElse(oldApi.getDomain()));
+        oldApi.setDomain(Optional.ofNullable(apiVo.getDomain()).orElse(oldApi.getSimpleDomain()));
         oldApi.setName(Optional.ofNullable(apiVo.getApiName()).orElse(oldApi.getName()));
         oldApi.setVersion(Optional.ofNullable(apiVo.getApiVersion()).orElse(oldApi.getVersion()));
         oldApi.setDescription(Optional.ofNullable(apiVo.getDescription()).orElse(oldApi.getDescription()));
@@ -159,7 +159,8 @@ public class ApiServiceImpl implements ApiService {
         oldApi.setProtocol(Optional.ofNullable(apiVo.getProtocol()).orElse(oldApi.getProtocol()));
         oldApi.setPort(Optional.ofNullable(apiVo.getPort()).orElse(oldApi.getPort()));
         oldApi.setUpstreamId(Optional.ofNullable(apiVo.getUpstreamId()).orElse(oldApi.getUpstreamId()));
-        oldApi.setPrefixPath(Optional.ofNullable(apiVo.getPrefixPath()).orElse(oldApi.getPrefixPath()));
+        oldApi.setPrefixPath(Optional.ofNullable(apiVo.getPrefixPath()).orElse(oldApi.getSimplePrefixPath()));
+        oldApi.setUpstreamPrefixPath(Optional.ofNullable(apiVo.getUpstreamPrefixPath()).orElse(oldApi.getUpstreamPrefixPath()));
         // 判断修改后的api是否重复
         //        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
         //                .eq("url", oldApi.getUrl())

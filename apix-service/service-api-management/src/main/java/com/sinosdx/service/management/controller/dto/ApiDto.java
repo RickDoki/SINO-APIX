@@ -44,5 +44,13 @@ public class ApiDto  {
     private Integer apiId;
     private Integer upstreamId;
     private String upstreamPrefixPath;
+    /**
+     * 前端传值域名，不拼接协议和端口
+     */
+    private String simpleDomain;
+    /**
+     * 前端传值前置路径，不拼接上游前置路径
+     */
+    private String simplePrefixPath;
 
 }

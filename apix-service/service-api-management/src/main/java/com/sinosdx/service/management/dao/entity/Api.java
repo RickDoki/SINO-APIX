@@ -25,7 +25,15 @@ public class Api extends Entity<Integer> {
     private String markdown;
     private String version;
     private String domain;
+    /**
+     * 前端传值域名，不拼接协议和端口
+     */
+    private String simpleDomain;
     private String url;
+    /**
+     * 前端传值前置路径，不拼接上游前置路径
+     */
+    private String simplePrefixPath;
     private String upstreamPrefixPath;
     private String prefixPath;
     private String requestMethod;
@@ -49,6 +57,8 @@ public class Api extends Entity<Integer> {
         this.name = apiVo.getApiName();
         this.description = apiVo.getDescription();
         this.markdown = apiVo.getMarkdown();
+        this.simpleDomain = apiVo.getDomain();
+        // 域名拼接
         String domain = apiVo.getDomain();
         if (!domain.startsWith("http")) {
             domain = apiVo.getProtocol() + "://" + apiVo.getDomain();
@@ -57,9 +67,10 @@ public class Api extends Entity<Integer> {
             domain += ":" + apiVo.getPort();
         }
         this.domain = domain;
-//        this.domain = apiVo.getDomain().startsWith("http") ? apiVo.getDomain() + ":" + apiVo.getPort() : apiVo.getProtocol() + "://" + apiVo.getDomain() + ":" + apiVo.getPort();
+        //        this.domain = apiVo.getDomain().startsWith("http") ? apiVo.getDomain() + ":" + apiVo.getPort() : apiVo.getProtocol() + "://" + apiVo.getDomain() + ":" + apiVo.getPort();
         this.url = apiVo.getApiUrl();
         this.upstreamPrefixPath = apiVo.getUpstreamPrefixPath();
+        this.simplePrefixPath = apiVo.getPrefixPath();
         this.prefixPath = apiVo.getUpstreamPrefixPath() + apiVo.getPrefixPath();
         this.requestMethod = apiVo.getRequestMethod();
         this.requestParams = apiVo.getRequestParams();
