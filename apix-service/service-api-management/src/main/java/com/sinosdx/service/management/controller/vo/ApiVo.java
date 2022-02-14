@@ -71,5 +71,6 @@ public class ApiVo implements Serializable {
         this.protocol = api.getProtocol();
         this.port = api.getPort();
         this.upstreamId = api.getUpstreamId();
+        this.upstreamPrefixPath = api.getUpstreamPrefixPath();
     }
 }

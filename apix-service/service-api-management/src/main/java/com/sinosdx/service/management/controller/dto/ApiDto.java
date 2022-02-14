@@ -39,8 +39,10 @@ public class ApiDto  {
     private String creationDate;
     private String lastUpdateDate;
     private String protocol;
+    private Long port;
     private String apiName;
     private Integer apiId;
     private Integer upstreamId;
+    private String upstreamPrefixPath;
 
 }

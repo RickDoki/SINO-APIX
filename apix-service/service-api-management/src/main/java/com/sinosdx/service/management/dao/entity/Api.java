@@ -26,6 +26,7 @@ public class Api extends Entity<Integer> {
     private String version;
     private String domain;
     private String url;
+    private String upstreamPrefixPath;
     private String prefixPath;
     private String requestMethod;
     private String requestParams;
@@ -58,6 +59,7 @@ public class Api extends Entity<Integer> {
         this.domain = domain;
 //        this.domain = apiVo.getDomain().startsWith("http") ? apiVo.getDomain() + ":" + apiVo.getPort() : apiVo.getProtocol() + "://" + apiVo.getDomain() + ":" + apiVo.getPort();
         this.url = apiVo.getApiUrl();
+        this.upstreamPrefixPath = apiVo.getUpstreamPrefixPath();
         this.prefixPath = apiVo.getUpstreamPrefixPath() + apiVo.getPrefixPath();
         this.requestMethod = apiVo.getRequestMethod();
         this.requestParams = apiVo.getRequestParams();
