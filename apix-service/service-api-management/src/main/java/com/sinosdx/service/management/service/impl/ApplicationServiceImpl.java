@@ -453,7 +453,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId, idList));
         }
         // 删除对应客户端认证信息
-        for (ClientAppSecret secret : tokenService.querySecretByAppCode(appCode).getData()) {
+        ClientAppSecret secret = tokenService.querySecretByAppCode(appCode).getData();
+        if (null != secret) {
             oauthClientDetailsService.deleteOAuthClientDetail(secret.getSecretKey());
             redisService.del("client_id_to_access:" + secret.getSecretKey());
         }
