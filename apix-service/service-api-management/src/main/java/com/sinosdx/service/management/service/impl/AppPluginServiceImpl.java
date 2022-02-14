@@ -157,10 +157,23 @@ public class AppPluginServiceImpl implements AppPluginService {
         }
 
         // 修改插件配置
-        if (!Objects.equals(applicationPlugin.getPluginParams(), oldPlugin.getPluginType())) {
+        // sentinel特殊处理
+        if (PluginTypeEnum.SENTINEL.getType().equals(applicationPlugin.getPluginType())) {
+            String json = applicationPlugin.getPluginParams();
+            List<LimitInfo> list = JSON.parseObject(json, new TypeReference<List<LimitInfo>>() {
+            });
+            String save = service.save(list);
+            if (!save.endsWith("ok")) {
+                return R.fail();
+            }
+        } else {
             // 重新发布订阅相关路由
-            this.reSubscribeApp(applicationPlugin.getAppCode());
+            if (!Objects.equals(applicationPlugin.getPluginParams(), oldPlugin.getPluginType())) {
+                // 重新发布订阅相关路由
+                this.reSubscribeApp(applicationPlugin.getAppCode());
+            }
         }
+
 
         return R.success();
     }
