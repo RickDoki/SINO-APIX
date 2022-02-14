@@ -154,6 +154,7 @@ public class ApiServiceImpl implements ApiService {
         oldApi.setRequestMethod(Optional.ofNullable(apiVo.getRequestMethod()).orElse(oldApi.getRequestMethod()));
         oldApi.setRequestParams(Optional.ofNullable(apiVo.getRequestParams()).orElse(oldApi.getRequestParams()));
         oldApi.setRequestExample(Optional.ofNullable(apiVo.getRequestExample()).orElse(oldApi.getRequestExample()));
+        oldApi.setResponseParams(Optional.ofNullable(apiVo.getResponseParams()).orElse(oldApi.getResponseParams()));
         oldApi.setResponseExample(Optional.ofNullable(apiVo.getResponseExample()).orElse(oldApi.getResponseExample()));
         oldApi.setProtocol(Optional.ofNullable(apiVo.getProtocol()).orElse(oldApi.getProtocol()));
         oldApi.setPort(Optional.ofNullable(apiVo.getPort()).orElse(oldApi.getPort()));
