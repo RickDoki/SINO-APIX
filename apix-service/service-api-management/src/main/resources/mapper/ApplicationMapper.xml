@@ -82,7 +82,7 @@
                 </foreach>
             </if>
             <if test="appName != null and appName != '' ">
-                and a.name like concat('%', #{appName}, '%')
+                and a.name like concat('%', #{appName}, '%') or a.label like concat('%', #{appName}, '%')
             </if>
             <if test="appCode != null and appCode != '' ">
                 and a.code like concat('%', #{appCode}, '%')
