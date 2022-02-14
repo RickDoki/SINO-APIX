@@ -46,6 +46,7 @@ public class ApiVo implements Serializable {
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastUpdateDate;
     private String lastUpdatedByUsername;
+    private Integer upstreamId;
 
     public ApiVo(Api api) {
         this.apiId = api.getId();
@@ -68,5 +69,7 @@ public class ApiVo implements Serializable {
         this.lastUpdateDate = api.getLastUpdateDate();
         this.lastUpdatedByUsername = api.getLastUpdatedByUsername();
         this.protocol = api.getProtocol();
+        this.port = api.getPort();
+        this.upstreamId = api.getUpstreamId();
     }
 }
