@@ -301,8 +301,7 @@ export default {
     bottom: 0px;
     line-height: 50px;
     height: 70px;
-    background: url('./../../assets/img/img_login_bg.png') no-repeat center
-      center fixed;
+    background: url('./../../assets/img/img_login_bg.png') no-repeat fixed;
   }
 }
 </style>
