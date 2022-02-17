@@ -22,6 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+    <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <sinosdx.nexus.version>
       http://47.103.141.217:8081/repository/maven-public/
     </sinosdx.nexus.version>
@@ -111,6 +112,32 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>${license-maven-plugin.version}</version>
+        <configuration>
+          <properties>
+            <year>2022</year>
+            <owner>SinoSDX</owner>
+            <email>biz@sinosdx.com</email>
+          </properties>
+          <licenseSets>
+            <licenseSet>
+              <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+              <excludes>
+                <exclude>**/*.properties</exclude>
+                <exclude>*.sh</exclude>
+                <exclude>*.yml</exclude>
+                <exclude>.editorconfig</exclude>
+                <exclude>.gitignore</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>**/*.xml</exclude>
+              </excludes>
+            </licenseSet>
+          </licenseSets>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -122,7 +149,7 @@
       </activation>
       <properties>
         <profile.active>dev</profile.active>
-        <nacos.server-addr>47.103.109.225:30848</nacos.server-addr>
+        <nacos.server-addr>nacos:8848</nacos.server-addr>
         <nacos.username>nacos</nacos.username>
         <nacos.password>AKrymz6()g*C</nacos.password>
         <nacos.config.namespace>b6db7ffa-da1a-4600-9f96-f581bb660b5e</nacos.config.namespace>
