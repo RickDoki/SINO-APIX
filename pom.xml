@@ -22,6 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+    <license-maven-plugin.version>4.1</license-maven-plugin.version>
     <sinosdx.nexus.version>
       http://47.103.141.217:8081/repository/maven-public/
     </sinosdx.nexus.version>
@@ -110,6 +111,32 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>${license-maven-plugin.version}</version>
+        <configuration>
+          <properties>
+            <year>2022</year>
+            <owner>SinoSDX</owner>
+            <email>biz@sinosdx.com</email>
+          </properties>
+          <licenseSets>
+            <licenseSet>
+              <header>com/mycila/maven/plugin/license/templates/APACHE-2.txt</header>
+              <excludes>
+                <exclude>**/*.properties</exclude>
+                <exclude>*.sh</exclude>
+                <exclude>*.yml</exclude>
+                <exclude>.editorconfig</exclude>
+                <exclude>.gitignore</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>**/*.xml</exclude>
+              </excludes>
+            </licenseSet>
+          </licenseSets>
+        </configuration>
       </plugin>
     </plugins>
   </build>
