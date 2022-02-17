@@ -103,7 +103,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private AppApiGatewayService appApiGatewayService;
 
-    @Value("${domain.gateway:http://47.103.109.225:30000/api}")
+    @Value("${domain.gateway:https://apix.sinosdx.cn/api}")
     private String gatewayDomain;
 
     @Autowired
