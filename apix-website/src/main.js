@@ -16,9 +16,7 @@ import store from './store'
 import router from './router'
 import 'xe-utils'
 import VXETable from 'vxe-table'
-// import 'vxe-table/lib/style.css'
 import './styles/vxe-table.scss'
-import './icons' // icon
 import './permission' // permission control
 import './utils/error-log' // error log
 import VueContextMenu from 'vue-contextmenu'
@@ -28,12 +26,6 @@ import Moment from 'moment'
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
 Vue.use(VXETable)
-// VXETable.setup({
-//   headerCellStyle: { backgroundColor: '#fff', color: '#494E6A' },
-//   border: "none",
-//   rowConfig: { isCurrent: true, isHover: true },
-//   editConfig: { trigger: 'click', mode: 'cell', showIcon: false }
-// })
 Vue.use(VueContextMenu)
 Vue.use(VueClipboard)
 Vue.filter('formatDate', function (value) {

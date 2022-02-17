@@ -197,10 +197,6 @@ export default {
       }
     }
     this.year = (new Date()).getFullYear()
-    removeToken("apiPhone");
-    removeToken("token");
-    removeToken("userId_api");
-    removeToken("userName_api");
     const ischecked = getToken("ischecked");
     if (ischecked === "true") {
       this.ruleForm = {

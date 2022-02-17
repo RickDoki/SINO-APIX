@@ -20,9 +20,9 @@
           label-position="top"
           size="small"
         >
-          <el-form-item label="上游服务模板" prop="name">
+          <el-form-item label="上游服务模板" prop="id">
             <el-select
-              v-model="form.name"
+              v-model="form.upstreamId"
               placeholder="请选择上游服务"
               class="inputWidth"
               clearable
@@ -196,14 +196,6 @@
               <el-option label="DELETE" value="DELETE" />
             </el-select>
           </el-form-item>
-          <!-- <el-form-item label="API版本号" prop="apiVersion">
-            <el-input
-              v-model="ruleForm.apiVersion"
-              maxlength="20"
-              class="inputWidth"
-              show-word-limit
-            />
-          </el-form-item> -->
           <el-form-item label="API前置路径" prop="prefixPath">
             <el-input
               v-model="ruleForm.prefixPath"
@@ -390,10 +382,10 @@
     <div class="bottom">
       <div class="bottom_button_a">
         <el-button size="small" v-if="active === 0" @click="backList">取消</el-button>
-        <el-button size="small" type="primary" v-if="active === 0" @click="goNext('form')">下一步</el-button>
+        <el-button size="small" type="primary" v-if="active === 0" @click="stepChange">下一步</el-button>
       </div>
       <div class="bottom_button_b">
-        <el-button size="small" v-if="active === 1" @click="goBACK">上一步</el-button>
+        <el-button size="small" v-if="active === 1" @click="stepChange">上一步</el-button>
         <el-button size="small" type="primary" v-if="active === 0 ? false : true" @click="addSure('ruleForm')">提交</el-button>
       </div>
     </div>
@@ -402,7 +394,7 @@
 
 <script>
 import { getUpstreamList } from '@/api/upstream'
-import { create, detail } from '@/api/AboutApi'
+import { create, detail, edit } from '@/api/AboutApi'
 import { PrismEditor } from 'vue-prism-editor'
 import ElxStepsHorizontal from '@/components/ElxStepsHorizontal'
 import 'vue-prism-editor/dist/prismeditor.min.css' // import the styles somewhere
@@ -476,8 +468,7 @@ export default {
       requestExample: '',
       responseExample: '',
       form: {
-        name: '',
-        description: '',
+        upstreamId: '',
         protocol: '',
         serverAddress: '',
         port: '',
@@ -489,19 +480,12 @@ export default {
         description: '',
         apiUrl: '',
         requestMethod: '',
-        apiVersion: '',
         markdown: '',
-        domain: '',
         prefixPath: '',
         requestParams: '',
-        requestExample: '',
-        responseExample: '',
         isInternal: '0'
       },
       rules: {
-        // name: [
-        //   { required: true, message: "请输入上游服务名称", trigger: "change" },
-        // ],
         protocol: [
           { required: true, message: '请选择上游服务协议', trigger: 'change' }
         ],
@@ -550,9 +534,6 @@ export default {
         ],
         requestMethod: [
           { required: true, message: '请求方式不能为空', trigger: 'change' }
-        ],
-        apiVersion: [
-          { required: true, message: '版本号不能为空', trigger: 'change' }
         ]
       }
     }
@@ -561,8 +542,8 @@ export default {
     if(this.$route.name === "EditApi"){
       this.editFlag = true
       this.apiId = this.$route.params.id
+      this.getDetail()
     }
-    this.getDetail()
     this.getList()
   },
   methods: {
@@ -570,17 +551,30 @@ export default {
     getDetail () {
       detail(this.apiId).then((res) => {
         if (res.code === 200) {
-          this.apiInfo = res.data
-          this.paramsTable = JSON.parse(res.data.requestParams)
-          // this.form = {
-          //   name: '',
-          //   description: '',
-          //   protocol: '',
-          //   serverAddress: '',
-          //   port: '',
-          //   upstreamPrefixPath: '',
-          //   loadBalance: 'roundRobin'
-          // },
+          // 设置上游信息回显
+          this.form = {
+            upstreamId: res.data.upstreamId,
+            protocol: res.data.protocol,
+            serverAddress: res.data.simpleDomain,
+            port: res.data.port,
+            upstreamPrefixPath: res.data.upstreamPrefixPath,
+            loadBalance: 'roundRobin'
+          }
+          console.log(this.form.serverAddress)
+          // 设置API信息回显
+          this.ruleForm = {
+            apiName: res.data.apiName,
+            description: res.data.description,
+            apiUrl: res.data.url,
+            requestMethod: res.data.requestMethod,
+            markdown: res.data.markdown,
+            prefixPath: res.data.simplePrefixPath,
+            isInternal: res.data.isInternal
+          }
+          this.requestParams = JSON.parse(res.data.requestParams)
+          this.responseParams = JSON.parse(res.data.responseParams)
+          this.requestExample = JSON.parse(res.data.requestExample)
+          this.responseExample = JSON.parse(res.data.responseExample)
         }
       });
     },
@@ -591,6 +585,7 @@ export default {
       } else {
         this.goNext('form')
       }
+      // if (this.active++ > 2) this.active = 0;
     },
     // 展开剩余配置
     changeShow () {
@@ -612,13 +607,13 @@ export default {
             apiName: this.ruleForm.apiName,
             description: this.ruleForm.description,
             domain: this.form.serverAddress,
+            upstreamId: this.form.upstreamId,
             apiUrl: this.ruleForm.apiUrl,
             requestMethod: this.ruleForm.requestMethod,
             requestParams: JSON.stringify(this.$refs.xTable.afterFullData),
             responseParams: JSON.stringify(this.$refs.xTableres.afterFullData),
             requestExample: JSON.stringify(this.requestExample),
             responseExample: JSON.stringify(this.responseExample),
-            apiVersion: this.ruleForm.apiVersion,
             isInternal: this.ruleForm.isInternal,
             upstreamPrefixPath: this.form.upstreamPrefixPath,
             prefixPath: this.ruleForm.prefixPath,
@@ -626,28 +621,42 @@ export default {
             loadBalance: this.form.loadBalance,
             port: this.form.port
           }
-          create(params).then((res) => {
-            // console.log(res)
-            if (res.code === 200) {
-              this.$message({
-                message: res.msg,
-                type: 'success'
-              })
-              this.$router.push('/api/list')
-            } else {
-              this.ruleForm = {}
-              this.$message({
-                message: res.msg,
-                type: 'error'
-              })
-            }
-          })
+          if(this.editFlag){
+            edit(this.apiId, params).then((res) => {
+              if (res.code === 200) {
+                this.$message({
+                  message: res.msg,
+                  type: 'success'
+                })
+                this.$router.push('/api/list')
+              } else {
+                this.ruleForm = {}
+                this.$message({
+                  message: res.msg,
+                  type: 'error'
+                })
+              }
+            })
+          } else {
+            create(params).then((res) => {
+              // console.log(res)
+              if (res.code === 200) {
+                this.$message({
+                  message: res.msg,
+                  type: 'success'
+                })
+                this.$router.push('/api/list')
+              } else {
+                this.ruleForm = {}
+                this.$message({
+                  message: res.msg,
+                  type: 'error'
+                })
+              }
+            })
+          }
         }
       })
-    },
-    goBACK () {
-      this.active = 0
-      this.$refs['ruleForm'].resetFields()
     },
     highlighter (code) {
       return highlight(code, languages.js)
@@ -723,7 +732,7 @@ export default {
           this.upstreamList = res.data.upstreamList
           array.forEach((items) => {
             this.options.push({
-              value: items.name,
+              value: items.id,
               label: items.name
             })
           })
@@ -732,12 +741,11 @@ export default {
     },
     upstreamChange () {
       console.log('change')
-      console.log(this.form.name)
-      if (this.form.name === '') {
+      console.log(this.form)
+      if (this.form.upstreamId === '') {
         console.log('ppp')
         this.form = {
-          name: '',
-          description: '',
+          upstreamId: '',
           protocol: '',
           serverAddress: '',
           port: '',
@@ -746,10 +754,9 @@ export default {
         }
       } else {
         for (let index = 0; index < this.upstreamList.length; index++) {
-          if ((this.upstreamList[index].name == this.form.name)) {
+          if ((this.upstreamList[index].id == this.form.upstreamId)) {
             this.form = {
-              name: this.form.name,
-              description: this.upstreamList[index].description,
+              upstreamId: this.form.upstreamId,
               protocol: this.upstreamList[index].protocol,
               serverAddress: this.upstreamList[index].server_address,
               port: this.upstreamList[index].port,

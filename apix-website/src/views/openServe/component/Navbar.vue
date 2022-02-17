@@ -61,6 +61,10 @@ export default {
       if (command == 'a') {
         this.$router.push({ path: '/system/index' })
       } else {
+        removeToken("apiPhone");
+        removeToken("token");
+        removeToken("userId_api");
+        removeToken("userName_api");
         this.$router.push({ path: '/login' })
       }
     },

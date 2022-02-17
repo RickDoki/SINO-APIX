@@ -28,7 +28,7 @@
               <div class="list_item_content">{{ item.description }}</div>
               <div style="width: 140px">
                 <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
-                     width="20px" height="20px" style="margin-right: 5px">
+                     width="26px" height="26px" style="margin-right: 5px">
                 <span v-if="item.plugins.length>5">...</span>
               </div>
               <div style="width: 100px;text-align: center">
@@ -350,8 +350,8 @@ export default {
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
           color: #2650ff;
-          height: 20px;
-          line-height: 10px;
+          height: 26px;
+          line-height: 16px;
           background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
@@ -464,7 +464,8 @@ export default {
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
           color: #2650ff;
-          height: 20px;
+          height: 26px;
+          line-height: 16px;
           background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
