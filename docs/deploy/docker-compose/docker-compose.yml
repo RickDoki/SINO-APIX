@@ -20,6 +20,8 @@ services:
       MYSQL_ROOT_PASSWORD: "AKrymz6()g*C"
     ports:
       - 30306:3306
+    volumes:
+      - /apix/mysql/data:/var/lib/mysql
     networks:
       - sino-apix
   redis:
@@ -28,6 +30,9 @@ services:
     restart: always
     ports:
       - 30379:6379
+    volumes:
+      - /apix/redis/data:/data
+      - /apix/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       - sino-apix
   openresty:
