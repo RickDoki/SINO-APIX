@@ -24,6 +24,7 @@ mvn clean install
 - 导入MySQL脚本，目录`/docs/mysql/`下四个数据库脚本文件。
 - 导入Nacos脚本，目录`/docs/nacos/`下配置文件，在Nacos控制台导入即可。
 - 进入Nacos控制台，修改`common-mysql.yml`数据库配置和`common-redis.yml`缓存配置成部署环境的配置。
+- 进入sino-apix 修改 pom.xml 中 Nacos配置
 
 2、后端构建
 

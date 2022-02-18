@@ -38,8 +38,8 @@ services:
       MYSQL_ROOT_PASSWORD: "AKrymz6()g*C"
     ports:
       - 30306:3306
-    volumes:
-      - /apix/mysql/data:/var/lib/mysql
+#    volumes:
+#      - /apix/mysql/data:/var/lib/mysql
     networks:
       - sino-apix
   redis:
