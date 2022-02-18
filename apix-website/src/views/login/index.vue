@@ -182,6 +182,10 @@ export default {
     },
   },
   created () {
+    removeToken("apiPhone");
+    removeToken("token");
+    removeToken("userId_api");
+    removeToken("userName_api");
     // 回车键触发
     const that = this
     document.onkeydown = function(e){
