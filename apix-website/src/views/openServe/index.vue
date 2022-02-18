@@ -69,9 +69,9 @@
       </div>
     </div>
     <div class="service_footer">
-      <div>
-        <img src="../../../src/assets/img/img_sinosdx_logo.png" style="width: 119px;height: 43px;opacity: 1;">
-      </div>
+      <!--      <div>-->
+      <!--        <img src="../../../src/assets/img/img_sinosdx_logo.png" style="width: 119px;height: 43px;opacity: 1;">-->
+      <!--      </div>-->
       <div class="footer_text1">
         <div class="footer_text2">Copyright © {{ new Date().getFullYear() }} 上海博冀信息科技有限公司</div>
         <div class="footer_text2" style="margin-left: 20px">联系电话 021-5168-8281</div>
@@ -81,7 +81,8 @@
           <span class="footer_text2">沪ICP备19012003号-1</span>
         </a>
         <img style="margin-left: 20px" src="../../../src/assets/img/img_beian.png">
-        <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010502004006" target="_blank"><span class="footer_text2">沪公网安备 31010502004006号</span>
+        <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010502004006" target="_blank"><span
+          class="footer_text2">沪公网安备 31010502004006号</span>
         </a>
       </div>
     </div>
@@ -651,8 +652,8 @@ export default {
   .service_footer {
     padding: 20px 0;
     width: 100%;
-    min-height: 160px;
-    background: #1d1c35;
+    min-height: 80px;
+    background: #f1f4fe91;
     opacity: 1;
     display: flex;
     flex-direction: column;
@@ -664,7 +665,7 @@ export default {
       font-size: 14px;
       font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
       font-weight: 400;
-      color: #ffffff;
+      color: black;
       line-height: 20px;
       display: flex;
       justify-content: center;
@@ -675,7 +676,7 @@ export default {
       font-size: 12px;
       font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
       font-weight: 400;
-      color: #ffffff;
+      color: black;
       // line-height: 14px;
       line-height: 22px;
     }
