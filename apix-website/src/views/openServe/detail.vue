@@ -206,12 +206,12 @@ export default {
   }
 
   .service_providers {
-    height: 26px;
+    height: 32px;
     font-size: 14px;
     font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
     font-weight: 400;
     color: #1d1c35;
-    line-height: 26px;
+    line-height: 32px;
     margin-right: 40px;
   }
 
@@ -222,8 +222,8 @@ export default {
 
     .chajian_qian {
       margin-right: 10px;
-      width: 26px;
-      height: 26px;
+      width: 32px;
+      height: 32px;
       border-radius: 0px 0px 0px 0px;
       opacity: 1;
     }

@@ -26,11 +26,14 @@
                  @click="goDetail(item)">
               <div class="list_item_title">{{ item.appName }}</div>
               <div class="list_item_content">{{ item.description }}</div>
-              <div style="width: 140px">
-                <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
-                     width="26px" height="26px" style="margin-right: 5px">
-                <span v-if="item.plugins.length>5">...</span>
+              <div v-for="(items,indexs) in item.plugins" :key="indexs">
+                <el-tooltip class="item" effect="light" :content="items.pluginType" placement="bottom-start">
+                  <div class="chajian_qian" v-show="indexs<5">
+                    <img :src="items.icon" width="32px" height="32px" style="margin-right: 5px">
+                  </div>
+                </el-tooltip>
               </div>
+              <span v-if="item.plugins.length>5">...</span>
               <div style="width: 100px;text-align: center">
                 <div class="list_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
               </div>
@@ -48,9 +51,17 @@
               <div class="cards_item_title">{{ item.appName }}</div>
               <div class="cards_item_content">{{ item.description }}</div>
               <div style="display: flex;width: 100%">
-                <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
-                     width="20px" height="20px" style="margin-right: 5px">
+                <div v-for="(items,indexs) in item.plugins" :key="indexs">
+                  <el-tooltip class="item" effect="light" :content="items.pluginType" placement="bottom-start">
+                    <div class="chajian_qian" v-show="indexs<5">
+                      <img :src="items.icon" width="32px" height="32px" style="margin-right: 5px">
+                    </div>
+                  </el-tooltip>
+                </div>
                 <span v-if="item.plugins.length>5">...</span>
+                <!-- <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
+                     width="32px" height="32px" style="margin-right: 5px">
+                <span v-if="item.plugins.length>5">...</span> -->
               </div>
               <div>
                 <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
