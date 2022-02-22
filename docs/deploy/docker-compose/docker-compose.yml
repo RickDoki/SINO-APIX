@@ -38,8 +38,8 @@ services:
       MYSQL_ROOT_PASSWORD: "AKrymz6()g*C"
     ports:
       - 30306:3306
-#    volumes:
-#      - /apix/mysql/data:/var/lib/mysql
+    #    volumes:
+    #      - /apix/mysql/data:/var/lib/mysql
     networks:
       - sino-apix
   redis:
@@ -84,6 +84,9 @@ services:
     external_links:
       - mysql:mysql
       - redis:redis
+    #volumes:
+    #  - ./wait-for.sh:/usr/app/wait-for.sh
+    entrypoint: sh -c 'sleep 60 && java -jar /usr/app/app.jar'
     networks:
       - sino-apix
   service-user:
@@ -154,3 +157,4 @@ services:
       - 80:80
     networks:
       - sino-apix
+
