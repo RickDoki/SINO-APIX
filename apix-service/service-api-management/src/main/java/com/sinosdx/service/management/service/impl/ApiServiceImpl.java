@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2022 SinoSDX (biz@sinosdx.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.sinosdx.service.management.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -8,19 +23,25 @@ import com.sinosdx.service.management.consumer.GatewayServiceFeign;
 import com.sinosdx.service.management.consumer.SysUserServiceFeign;
 import com.sinosdx.service.management.controller.dto.ApiDto;
 import com.sinosdx.service.management.controller.dto.ApplicationVersionDetailDto;
-import com.sinosdx.service.management.controller.dto.ApplicationVersionDto;
 import com.sinosdx.service.management.controller.vo.ApiVersionVo;
 import com.sinosdx.service.management.controller.vo.ApiVo;
-import com.sinosdx.service.management.dao.entity.*;
-import com.sinosdx.service.management.dao.mapper.*;
+import com.sinosdx.service.management.dao.entity.Api;
+import com.sinosdx.service.management.dao.entity.ApiTemplate;
+import com.sinosdx.service.management.dao.entity.ApiVersion;
+import com.sinosdx.service.management.dao.entity.ApplicationApi;
+import com.sinosdx.service.management.dao.mapper.ApiMapper;
+import com.sinosdx.service.management.dao.mapper.ApiTemplateMapper;
+import com.sinosdx.service.management.dao.mapper.ApplicationApiMapper;
+import com.sinosdx.service.management.dao.mapper.ApplicationVersionMapper;
 import com.sinosdx.service.management.enums.ResultCodeEnum;
 import com.sinosdx.service.management.result.R;
 import com.sinosdx.service.management.service.ApiService;
+import com.sinosdx.service.management.service.AppApiGatewayService;
+import com.sinosdx.service.management.service.AppPluginService;
 import com.sinosdx.service.management.utils.ThreadContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +50,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -46,8 +68,8 @@ public class ApiServiceImpl implements ApiService {
     @Resource
     private ApplicationApiMapper applicationApiMapper;
 
-//    @Resource
-//    private ApiVersionMapper apiVersionMapper;
+    //    @Resource
+    //    private ApiVersionMapper apiVersionMapper;
 
     @Autowired
     private GatewayServiceFeign gatewayService;
@@ -60,6 +82,15 @@ public class ApiServiceImpl implements ApiService {
 
     @Autowired
     private ApplicationVersionMapper applicationVersionMapper;
+
+    @Autowired
+    private AppPluginService appPluginService;
+
+    @Autowired
+    private AppApiGatewayService appApiGatewayService;
+
+    @Autowired
+    private ExecutorService executorService;
 
     /**
      * 创建API
@@ -94,7 +125,7 @@ public class ApiServiceImpl implements ApiService {
                 .eq("domain", domain)
                 .eq("version", api.getVersion())
                 //新增 创建人条件
-                .eq("creation_by",userId)
+                .eq("creation_by", userId)
                 .eq("del_flag", 0));
         if (count1 > 0) {
             return R.fail(ResultCodeEnum.API_IS_EXIST);
@@ -106,11 +137,11 @@ public class ApiServiceImpl implements ApiService {
         api.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
         apiMapper.insert(api);
 
-//        ApiVersion apiVersion = new ApiVersion(api);
-//        apiVersion.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-//        apiVersion.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-//        apiVersion.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-//        apiVersionMapper.insert(apiVersion);
+        //        ApiVersion apiVersion = new ApiVersion(api);
+        //        apiVersion.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        //        apiVersion.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        //        apiVersion.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+        //        apiVersionMapper.insert(apiVersion);
 
         return R.success(api);
     }
@@ -128,59 +159,54 @@ public class ApiServiceImpl implements ApiService {
             return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
         }
 
-        if (StringUtils.isNotEmpty(apiVo.getApiUrl())) {
-            oldApi.setUrl(apiVo.getApiUrl());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getDomain())) {
-            oldApi.setDomain(apiVo.getDomain());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getApiName())) {
-            oldApi.setName(apiVo.getApiName());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getApiVersion())) {
-            oldApi.setVersion(apiVo.getApiVersion());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getDescription())) {
-            oldApi.setDescription(apiVo.getDescription());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getMarkdown())) {
-            oldApi.setMarkdown(apiVo.getMarkdown());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getIsPublished())) {
-            oldApi.setIsPublished(apiVo.getIsPublished());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getRequestMethod())) {
-            oldApi.setRequestMethod(apiVo.getRequestMethod());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getRequestParams())) {
-            oldApi.setRequestParams(apiVo.getRequestParams());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getRequestExample())) {
-            oldApi.setRequestExample(apiVo.getRequestExample());
-        }
-        if (StringUtils.isNotEmpty(apiVo.getResponseExample())) {
-            oldApi.setResponseExample(apiVo.getResponseExample());
-        }
-
+        oldApi.setUrl(Optional.ofNullable(apiVo.getApiUrl()).orElse(oldApi.getUrl()));
+        oldApi.setDomain(Optional.ofNullable(apiVo.getDomain()).orElse(oldApi.getSimpleDomain()));
+        oldApi.setName(Optional.ofNullable(apiVo.getApiName()).orElse(oldApi.getName()));
+        oldApi.setVersion(Optional.ofNullable(apiVo.getApiVersion()).orElse(oldApi.getVersion()));
+        oldApi.setDescription(Optional.ofNullable(apiVo.getDescription()).orElse(oldApi.getDescription()));
+        oldApi.setMarkdown(Optional.ofNullable(apiVo.getMarkdown()).orElse(oldApi.getMarkdown()));
+        oldApi.setIsPublished(Optional.ofNullable(apiVo.getIsPublished()).orElse(oldApi.getIsPublished()));
+        oldApi.setRequestMethod(Optional.ofNullable(apiVo.getRequestMethod()).orElse(oldApi.getRequestMethod()));
+        oldApi.setRequestParams(Optional.ofNullable(apiVo.getRequestParams()).orElse(oldApi.getRequestParams()));
+        oldApi.setRequestExample(Optional.ofNullable(apiVo.getRequestExample()).orElse(oldApi.getRequestExample()));
+        oldApi.setResponseParams(Optional.ofNullable(apiVo.getResponseParams()).orElse(oldApi.getResponseParams()));
+        oldApi.setResponseExample(Optional.ofNullable(apiVo.getResponseExample()).orElse(oldApi.getResponseExample()));
+        oldApi.setProtocol(Optional.ofNullable(apiVo.getProtocol()).orElse(oldApi.getProtocol()));
+        oldApi.setPort(Optional.ofNullable(apiVo.getPort()).orElse(oldApi.getPort()));
+        oldApi.setUpstreamId(Optional.ofNullable(apiVo.getUpstreamId()).orElse(oldApi.getUpstreamId()));
+        oldApi.setPrefixPath(Optional.ofNullable(apiVo.getPrefixPath()).orElse(oldApi.getSimplePrefixPath()));
+        oldApi.setUpstreamPrefixPath(Optional.ofNullable(apiVo.getUpstreamPrefixPath()).orElse(oldApi.getUpstreamPrefixPath()));
         // 判断修改后的api是否重复
-//        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
-//                .eq("url", oldApi.getUrl())
-//                .eq("request_method", oldApi.getRequestMethod())
-//                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
-//        if (count1 > 0) {
-//            return R.fail(ResultCodeEnum.API_IS_EXIST);
-//        }
-//        Integer count2 = apiMapper.selectCount(new QueryWrapper<Api>()
-//                .eq("url", oldApi.getUrl()).eq("name", oldApi.getName())
-//                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
-//        if (count2 > 0) {
-//            return R.fail(ResultCodeEnum.API_IS_EXIST);
-//        }
+        //        Long count1 = apiMapper.selectCount(new QueryWrapper<Api>()
+        //                .eq("url", oldApi.getUrl())
+        //                .eq("request_method", oldApi.getRequestMethod())
+        //                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
+        //        if (count1 > 0) {
+        //            return R.fail(ResultCodeEnum.API_IS_EXIST);
+        //        }
+        //        Integer count2 = apiMapper.selectCount(new QueryWrapper<Api>()
+        //                .eq("url", oldApi.getUrl()).eq("name", oldApi.getName())
+        //                .eq("version", oldApi.getVersion()).eq("del_flag", 0));
+        //        if (count2 > 0) {
+        //            return R.fail(ResultCodeEnum.API_IS_EXIST);
+        //        }
 
         oldApi.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
         oldApi.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
         oldApi.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
         apiMapper.updateById(oldApi);
+
+        // 删除api相关路由
+        executorService.execute(() ->
+                appApiGatewayService.deleteApiGatewayConfig(null, Collections.singletonList(oldApi), null));
+
+        // 修改api后需要重新发布订阅
+        Set<String> appCodeSet = applicationApiMapper.selectList(new LambdaQueryWrapper<ApplicationApi>()
+                        .eq(ApplicationApi::getApiId, apiVo.getApiId()).eq(ApplicationApi::getDelFlag, 0))
+                .stream().map(ApplicationApi::getAppCode).collect(Collectors.toSet());
+        appCodeSet.forEach(appCode -> {
+            appPluginService.reSubscribeApp(appCode);
+        });
         return R.success(oldApi);
     }
 
@@ -201,8 +227,8 @@ public class ApiServiceImpl implements ApiService {
 
         apiMapper.deleteById(apiId);
 
-//        apiVersionMapper.delete(new QueryWrapper<ApiVersion>()
-//                .eq("api_id", apiId).eq("del_flag", 0));
+        //        apiVersionMapper.delete(new QueryWrapper<ApiVersion>()
+        //                .eq("api_id", apiId).eq("del_flag", 0));
         return R.success();
     }
 
@@ -255,39 +281,39 @@ public class ApiServiceImpl implements ApiService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public R<Object> addNewApiVersion(ApiVersion apiVersion) {
-//        Api api = apiMapper.selectOne(new QueryWrapper<Api>()
-//                .eq("id", apiVersion.getApiId()).eq("del_flag", 0));
-//        if (null == api) {
-//            return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
-//        }
-//
-//        if (StringUtils.isAnyEmpty(apiVersion.getApiName(), apiVersion.getUrl(), apiVersion.getVersion(), apiVersion.getDomain())) {
-//            return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
-//        }
+        //        Api api = apiMapper.selectOne(new QueryWrapper<Api>()
+        //                .eq("id", apiVersion.getApiId()).eq("del_flag", 0));
+        //        if (null == api) {
+        //            return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
+        //        }
+        //
+        //        if (StringUtils.isAnyEmpty(apiVersion.getApiName(), apiVersion.getUrl(), apiVersion.getVersion(), apiVersion.getDomain())) {
+        //            return R.fail(ResultCodeEnum.PARAM_NOT_COMPLETE);
+        //        }
 
-//        Long count = apiVersionMapper.selectCount(new QueryWrapper<ApiVersion>()
-//                .eq("api_id", apiVersion.getApiId()).eq("version", apiVersion.getVersion())
-//                .eq("del_flag", 0));
-//        if (count > 0) {
-//            return R.fail(ResultCodeEnum.API_VERSION_IS_EXIST);
-//        }
+        //        Long count = apiVersionMapper.selectCount(new QueryWrapper<ApiVersion>()
+        //                .eq("api_id", apiVersion.getApiId()).eq("version", apiVersion.getVersion())
+        //                .eq("del_flag", 0));
+        //        if (count > 0) {
+        //            return R.fail(ResultCodeEnum.API_VERSION_IS_EXIST);
+        //        }
 
-//        apiVersion.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-//        apiVersion.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-//        apiVersion.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-//        apiVersionMapper.insert(apiVersion);
+        //        apiVersion.setCreationDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        //        apiVersion.setCreationBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        //        apiVersion.setCreationByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+        //        apiVersionMapper.insert(apiVersion);
 
         // 修改api最新版本号
-//        api = new Api(apiVersion);
-//        api.setVersion(apiVersion.getVersion());
-//        api.setUrl(apiVersion.getUrl());
-//        api.setRequestMethod(apiVersion.getRequestMethod());
-//        api.setDescription(apiVersion.getDescription());
-//        api.setMarkdown(apiVersion.getMarkdown());
-//        api.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-//        api.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-//        api.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-//        apiMapper.updateById(api);
+        //        api = new Api(apiVersion);
+        //        api.setVersion(apiVersion.getVersion());
+        //        api.setUrl(apiVersion.getUrl());
+        //        api.setRequestMethod(apiVersion.getRequestMethod());
+        //        api.setDescription(apiVersion.getDescription());
+        //        api.setMarkdown(apiVersion.getMarkdown());
+        //        api.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        //        api.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        //        api.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+        //        apiMapper.updateById(api);
 
         return R.success();
     }
@@ -300,38 +326,38 @@ public class ApiServiceImpl implements ApiService {
      */
     @Override
     public R<Object> modifyApiVersion(ApiVersionVo apiVersionVo) {
-//        ApiVersion oldApiVersion = apiVersionMapper.selectById(apiVersionVo.getApiVersionId());
-//        if (null == oldApiVersion) {
-//            return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
-//        }
-//
-//        if (StringUtils.isNotEmpty(apiVersionVo.getUrl())) {
-//            oldApiVersion.setUrl(apiVersionVo.getUrl());
-//        }
-//        if (StringUtils.isNotEmpty(apiVersionVo.getApiName())) {
-//            oldApiVersion.setApiName(apiVersionVo.getApiName());
-//        }
-//        if (StringUtils.isNotEmpty(apiVersionVo.getVersion())) {
-//            oldApiVersion.setVersion(apiVersionVo.getVersion());
-//        }
-//        if (StringUtils.isNotEmpty(apiVersionVo.getDescription())) {
-//            oldApiVersion.setDescription(apiVersionVo.getDescription());
-//        }
-//        if (StringUtils.isNotEmpty(apiVersionVo.getMarkdown())) {
-//            oldApiVersion.setMarkdown(apiVersionVo.getMarkdown());
-//        }
-//        if (StringUtils.isNotEmpty(apiVersionVo.getIsPublished())) {
-//            oldApiVersion.setIsPublished(apiVersionVo.getIsPublished());
-//        }
-//        if (StringUtils.isNotEmpty(apiVersionVo.getRequestMethod())) {
-//            oldApiVersion.setRequestMethod(apiVersionVo.getRequestMethod());
-//        }
-//
-//        oldApiVersion.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
-//        oldApiVersion.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
-//        oldApiVersion.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
-//        apiVersionMapper.updateById(oldApiVersion);
-//        return R.success(oldApiVersion);
+        //        ApiVersion oldApiVersion = apiVersionMapper.selectById(apiVersionVo.getApiVersionId());
+        //        if (null == oldApiVersion) {
+        //            return R.fail(ResultCodeEnum.API_IS_NOT_EXIST);
+        //        }
+        //
+        //        if (StringUtils.isNotEmpty(apiVersionVo.getUrl())) {
+        //            oldApiVersion.setUrl(apiVersionVo.getUrl());
+        //        }
+        //        if (StringUtils.isNotEmpty(apiVersionVo.getApiName())) {
+        //            oldApiVersion.setApiName(apiVersionVo.getApiName());
+        //        }
+        //        if (StringUtils.isNotEmpty(apiVersionVo.getVersion())) {
+        //            oldApiVersion.setVersion(apiVersionVo.getVersion());
+        //        }
+        //        if (StringUtils.isNotEmpty(apiVersionVo.getDescription())) {
+        //            oldApiVersion.setDescription(apiVersionVo.getDescription());
+        //        }
+        //        if (StringUtils.isNotEmpty(apiVersionVo.getMarkdown())) {
+        //            oldApiVersion.setMarkdown(apiVersionVo.getMarkdown());
+        //        }
+        //        if (StringUtils.isNotEmpty(apiVersionVo.getIsPublished())) {
+        //            oldApiVersion.setIsPublished(apiVersionVo.getIsPublished());
+        //        }
+        //        if (StringUtils.isNotEmpty(apiVersionVo.getRequestMethod())) {
+        //            oldApiVersion.setRequestMethod(apiVersionVo.getRequestMethod());
+        //        }
+        //
+        //        oldApiVersion.setLastUpdateDate(LocalDateTime.now(TimeZone.getTimeZone("Asia/Shanghai").toZoneId()));
+        //        oldApiVersion.setLastUpdatedBy(ThreadContext.get(Constants.THREAD_CONTEXT_USER_ID));
+        //        oldApiVersion.setLastUpdatedByUsername(ThreadContext.get(Constants.THREAD_CONTEXT_USERNAME));
+        //        apiVersionMapper.updateById(oldApiVersion);
+        //        return R.success(oldApiVersion);
         return R.success();
     }
 
@@ -385,7 +411,7 @@ public class ApiServiceImpl implements ApiService {
      */
     @Override
     public R<Object> queryApiDetail(Integer apiId) {
-//        return R.success(apiMapper.selectById(apiId));
+        //        return R.success(apiMapper.selectById(apiId));
         // 默认过滤通用参数,自己写sql
         return R.success(apiMapper.getApiDetail(apiId));
     }
@@ -400,8 +426,8 @@ public class ApiServiceImpl implements ApiService {
         );
         List<ApiDto> apiList = applicationApis.stream().map(a -> apiMapper.getApiDetail(a.getApiId())).collect(Collectors.toList());
         Map<String, Object> data = Maps.newHashMap();
-        data.put("applicationVersion",applicationVersionDetailDto);
-        data.put("apiList",apiList);
+        data.put("applicationVersion", applicationVersionDetailDto);
+        data.put("apiList", apiList);
         return R.success(data);
     }
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2022 SinoSDX (biz@sinosdx.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.sinosdx.service.management.sentinel.entity;
 
 import lombok.AllArgsConstructor;
@@ -34,10 +49,10 @@ public class RuleDefinitionEntity {
     //限流时间单位 0-秒 1-分 2-时 3-天
     private Integer intervalUnit;
 
-    //资源类型 0-routeId 1-api_group_name
+    //资源类型 0-routeId 1-api_group_name  1
     private Integer resourceMode;
 
-    //限流类型 0-线程数 1-QPS
+    //限流类型 0-线程数 1-QPS  1
     private Integer grade;
 
     //流控方式 0-快速失败 2-匀速排队

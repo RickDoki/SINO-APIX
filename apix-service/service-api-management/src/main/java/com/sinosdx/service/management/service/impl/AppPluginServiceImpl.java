@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2022 SinoSDX (biz@sinosdx.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.sinosdx.service.management.service.impl;
 
 import com.alibaba.fastjson.JSON;
@@ -157,10 +172,23 @@ public class AppPluginServiceImpl implements AppPluginService {
         }
 
         // 修改插件配置
-        if (!Objects.equals(applicationPlugin.getPluginParams(), oldPlugin.getPluginType())) {
+        // sentinel特殊处理
+        if (PluginTypeEnum.SENTINEL.getType().equals(applicationPlugin.getPluginType())) {
+            String json = applicationPlugin.getPluginParams();
+            List<LimitInfo> list = JSON.parseObject(json, new TypeReference<List<LimitInfo>>() {
+            });
+            String save = service.save(list);
+            if (!save.endsWith("ok")) {
+                return R.fail();
+            }
+        } else {
             // 重新发布订阅相关路由
-            this.reSubscribeApp(applicationPlugin.getAppCode());
+            if (!Objects.equals(applicationPlugin.getPluginParams(), oldPlugin.getPluginType())) {
+                // 重新发布订阅相关路由
+                this.reSubscribeApp(applicationPlugin.getAppCode());
+            }
         }
+
 
         return R.success();
     }

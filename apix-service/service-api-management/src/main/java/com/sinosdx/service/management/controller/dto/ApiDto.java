@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2022 SinoSDX (biz@sinosdx.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.sinosdx.service.management.controller.dto;
 
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -39,7 +54,18 @@ public class ApiDto  {
     private String creationDate;
     private String lastUpdateDate;
     private String protocol;
+    private Long port;
     private String apiName;
-    private String apiId;
+    private Integer apiId;
+    private Integer upstreamId;
+    private String upstreamPrefixPath;
+    /**
+     * 前端传值域名，不拼接协议和端口
+     */
+    private String simpleDomain;
+    /**
+     * 前端传值前置路径，不拼接上游前置路径
+     */
+    private String simplePrefixPath;
 
 }

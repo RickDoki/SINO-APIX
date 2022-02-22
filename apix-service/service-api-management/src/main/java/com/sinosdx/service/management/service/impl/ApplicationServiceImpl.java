@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2022 SinoSDX (biz@sinosdx.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.sinosdx.service.management.service.impl;
 
 import cn.hutool.core.date.DateUtil;
@@ -103,7 +118,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private AppApiGatewayService appApiGatewayService;
 
-    @Value("${domain.gateway:http://47.103.109.225:30000/api}")
+    @Value("${domain.gateway:https://apix.sinosdx.cn/api}")
     private String gatewayDomain;
 
     @Autowired
@@ -453,7 +468,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationPluginClientMapper.delete(new LambdaQueryWrapper<ApplicationPluginClient>().in(ApplicationPluginClient::getAppPluginId, idList));
         }
         // 删除对应客户端认证信息
-        for (ClientAppSecret secret : tokenService.querySecretByAppCode(appCode).getData()) {
+        ClientAppSecret secret = tokenService.querySecretByAppCode(appCode).getData();
+        if (null != secret) {
             oauthClientDetailsService.deleteOAuthClientDetail(secret.getSecretKey());
             redisService.del("client_id_to_access:" + secret.getSecretKey());
         }
