@@ -26,7 +26,19 @@
       <el-col style="height:100%" :span="20">
         <div class="apiMessage">
           <div class="api-info">
-            <div class="title">{{ apiMessageAll.apiName }}</div>
+            <span class="title">{{ applicationVersion.version }}
+              <el-button type="text" @click="goDocxV">详细文档</el-button>
+            </span>
+          </div>
+          <div class="api-info">
+            <span class="label-color">版本描述 : </span>
+            <span class="conten-color">{{ applicationVersion.description }}</span>
+          </div>
+          <el-divider></el-divider>
+          <div class="api-info">
+            <div class="title">{{ apiMessageAll.apiName }}
+              <el-button type="text" @click="goDocx">详细文档</el-button>
+            </div>
             <div class="secondTitle">{{ apiMessageAll.description }}</div>
           </div>
           <div class="api-info">
@@ -49,7 +61,7 @@
             <span class="label-color">请求参数 : </span>
             <div class="table_box table_top">
               <el-table
-                :data="table"
+                :data="requestParamsTable"
                 empty-text="暂无数据"
                 :row-style="{ height: '50px' }"
                 highlight-current-row
@@ -61,6 +73,48 @@
                 <el-table-column prop="describe" label="描述"/>
                 <el-table-column prop="default" label="默认值"/>
               </el-table>
+            </div>
+          </div>
+          <div class="api-info">
+            <span class="label-color">请求示例 : </span>
+            <div class="table_top">
+              <prism-editor
+                readonly
+                v-model="requestExample"
+                class="my-editor height-300"
+                :highlight="highlighter"
+                :line-numbers="lineNumbers"
+              />
+            </div>
+          </div>
+          <div class="api-info">
+            <span class="label-color">返回参数 : </span>
+            <div class="table_box table_top">
+              <el-table
+                :data="responseParamsTable"
+                empty-text="暂无数据"
+                :row-style="{ height: '50px' }"
+                highlight-current-row
+                :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+              >
+                <el-table-column prop="parame" label="名称" />
+                <el-table-column prop="type" label="类型" />
+                <el-table-column prop="isHaveto" label="是否必选" />
+                <el-table-column prop="describe" label="描述" />
+                <el-table-column prop="default" label="默认值" />
+              </el-table>
+            </div>
+          </div>
+          <div class="api-info">
+            <span class="label-color">返回示例 : </span>
+            <div class="table_top">
+              <prism-editor
+                readonly
+                v-model="responseExample"
+                class="my-editor height-300"
+                :highlight="highlighter"
+                :line-numbers="lineNumbers"
+              />
             </div>
           </div>
           <div class="api-info">
@@ -85,9 +139,18 @@
 </template>
 
 <script>
-import {apiMessage, queryApiList} from "@/api/AboutServe.js";
+import { queryApiList, apiMessage } from "@/api/AboutServe.js";
+import { PrismEditor } from 'vue-prism-editor'
+import 'vue-prism-editor/dist/prismeditor.min.css' // import the styles somewhere
+import { highlight, languages } from 'prismjs/components/prism-core'
+import 'prismjs/components/prism-clike'
+import 'prismjs/components/prism-javascript'
+import 'prismjs/themes/prism-tomorrow.css' // import syntax highlighting styles
 
 export default {
+  components: {
+    PrismEditor
+  },
   props: ['apiOptions'],
   created() {
   },
@@ -100,17 +163,48 @@ export default {
       queryApiList(query).then((res) => {
         if (res.code === 200) {
           this.defaultApiList = res.data.apiList
+          this.applicationVersion = res.data.applicationVersion
           this.classList = []
         }
       });
+    },
+    highlighter (code) {
+      return highlight(code, languages.js)
     },
     getapiMessage(e) {
       apiMessage(e).then((res) => {
         if (res.code === 200) {
           this.apiMessageAll = res.data
-          this.table = JSON.parse(res.data.requestParams);
+          this.requestParamsTable = JSON.parse(res.data.requestParams);
+          this.responseParamsTable = JSON.parse(res.data.responseParams)
+          this.requestExample = JSON.parse(res.data.requestExample)
+          this.responseExample = JSON.parse(res.data.responseExample)
         }
       });
+    },
+    goDocxV() {
+      this.$router.push({
+        name: 'openServedocxDetail',
+        query: {
+          name: this.applicationVersion.version,
+          id: this.apiValue
+        },
+        params: {
+          type: 'version'
+        }
+      })
+    },
+    goDocx() {
+      this.$router.push({
+        name: 'openServedocxDetail',
+        query: {
+          name: this.apiMessageAll.apiName,
+          id: this.apiMessageAll.apiId
+        },
+        params: {
+          type: 'api'
+        }
+      })
     },
     choseApi(e, i) {
       this.classList = [];
@@ -128,11 +222,16 @@ export default {
   },
   data() {
     return {
-      table: [],
+      lineNumbers: true,
+      requestParamsTable: [],
+      responseParamsTable: [],
+      requestExample: '',
+      responseExample: '',
       classList: [],
       apiValue: '',
       defaultApiList: [],
       apiMessageAll: {},
+      applicationVersion: {},
       statusTable: [
         {
           statusCode: 200,
@@ -168,6 +267,23 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.my-editor {
+  background: #f4f6ff;
+  color: #373753;
+  border: 0px;
+  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 5px;
+}
+/* optional */
+.prism-editor__textarea:focus {
+  outline: none;
+}
+/* not required: */
+.height-300 {
+  height: 150px;
+}
 .he_main {
   // min-height: inherit;
   //  height: 100%;

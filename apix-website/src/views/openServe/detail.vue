@@ -4,7 +4,9 @@
     <div class="content">
       <div class="list_top">
         <div>
-          <div class="list_top_title">{{ appName }}</div>
+          <div class="list_top_title">{{ appName }}
+            <el-button type="text" @click="goDocx">详细文档</el-button>
+          </div>
           <div class="introduction">{{ appDescription }}
           </div>
           <div class="service_providers" style="margin-top: 30px">发布者：
@@ -149,6 +151,18 @@ export default {
           }
         })
       }
+    },
+    goDocx() {
+      this.$router.push({
+        name: 'openServedocxDetail',
+        query: {
+          name: this.appName,
+          id: this.$route.query.code
+        },
+        params: {
+          type: 'serve'
+        }
+      })
     }
   }
 };
@@ -192,12 +206,12 @@ export default {
   }
 
   .service_providers {
-    height: 20px;
+    height: 32px;
     font-size: 14px;
     font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
     font-weight: 400;
     color: #1d1c35;
-    line-height: 20px;
+    line-height: 32px;
     margin-right: 40px;
   }
 
@@ -208,8 +222,8 @@ export default {
 
     .chajian_qian {
       margin-right: 10px;
-      width: 20px;
-      height: 20px;
+      width: 32px;
+      height: 32px;
       border-radius: 0px 0px 0px 0px;
       opacity: 1;
     }

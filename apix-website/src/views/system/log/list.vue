@@ -62,10 +62,10 @@
       :before-close="handleClose"
       :visible.sync="drawer"
       direction="rtl"
-      size="40%"
+      size="50%"
     >
       <div class="demo-drawer__content">
-        <el-descriptions title=" " size="medium" :column="1" :labelStyle="{'font-weight':'bold', 'width': '60px'}">
+        <el-descriptions title=" " size="medium" :column="1" :labelStyle="{'font-weight':'bold', 'width': '80px'}">
           <!-- <el-descriptions-item label="用户名称">{{ infoObj.username }}</el-descriptions-item> -->
           <el-descriptions-item label="事件类型">{{ infoObj.eventType }}</el-descriptions-item>
           <el-descriptions-item label="资源名称">{{ infoObj.resourceName }}</el-descriptions-item>

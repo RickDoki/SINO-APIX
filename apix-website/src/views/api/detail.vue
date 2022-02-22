@@ -9,7 +9,7 @@
               操作<i class="el-icon-arrow-down el-icon--conten-color"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <!-- <el-dropdown-item>编辑API</el-dropdown-item> -->
+              <el-dropdown-item command="editAPI">编辑API</el-dropdown-item>
               <el-dropdown-item command="delAPI">删除API</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -69,7 +69,7 @@
         <span class="label-color">请求参数 : </span>
         <div class="table_box table_top">
           <el-table
-            :data="paramsTable"
+            :data="requestParamsTable"
             empty-text="暂无数据"
             :row-style="{ height: '50px' }"
             highlight-current-row
@@ -81,6 +81,48 @@
             <el-table-column prop="describe" label="描述" />
             <el-table-column prop="default" label="默认值" />
           </el-table>
+        </div>
+      </div>
+      <div class="api-info">
+        <span class="label-color">请求示例 : </span>
+        <div class="table_top">
+          <prism-editor
+            readonly
+            v-model="requestExample"
+            class="my-editor height-300"
+            :highlight="highlighter"
+            :line-numbers="lineNumbers"
+          />
+        </div>
+      </div>
+      <div class="api-info">
+        <span class="label-color">返回参数 : </span>
+        <div class="table_box table_top">
+          <el-table
+            :data="responseParamsTable"
+            empty-text="暂无数据"
+            :row-style="{ height: '50px' }"
+            highlight-current-row
+            :header-cell-style="{ 'font-weight': 400, color: '#494E6A' }"
+          >
+            <el-table-column prop="parame" label="名称" />
+            <el-table-column prop="type" label="类型" />
+            <el-table-column prop="isHaveto" label="是否必选" />
+            <el-table-column prop="describe" label="描述" />
+            <el-table-column prop="default" label="默认值" />
+          </el-table>
+        </div>
+      </div>
+      <div class="api-info">
+        <span class="label-color">返回示例 : </span>
+        <div class="table_top">
+          <prism-editor
+            readonly
+            v-model="responseExample"
+            class="my-editor height-300"
+            :highlight="highlighter"
+            :line-numbers="lineNumbers"
+          />
         </div>
       </div>
       <div class="api-info">
@@ -104,26 +146,41 @@
 
 <script>
 import { detail, detailNum, deleteApi } from "@/api/AboutApi";
+import { PrismEditor } from 'vue-prism-editor'
+import 'vue-prism-editor/dist/prismeditor.min.css' // import the styles somewhere
+import { highlight, languages } from 'prismjs/components/prism-core'
+import 'prismjs/components/prism-clike'
+import 'prismjs/components/prism-javascript'
+import 'prismjs/themes/prism-tomorrow.css' // import syntax highlighting styles
 import "./../mainCss/index.scss";
 export default {
+  components: {
+    PrismEditor
+  },
   data () {
     return {
       apiId: '',
       apiInfo: {},
       numbers: {},
-      paramsTable: [],
+      lineNumbers: true,
+      requestParamsTable: [],
+      responseParamsTable: [],
+      requestExample: '',
+      responseExample: '',
       statusTable: [
         { code: '200', desc: '操作成功' }
       ]
     };
   },
   created () {
-    console.log(this.$route);
     this.apiId = this.$route.params.id
     this.getDetail()
     this.getDetailNum()
   },
   methods: {
+    highlighter (code) {
+      return highlight(code, languages.js)
+    },
     // 编辑API文档
     docsEdit () {
       this.$router.push('/docsEdit/' + 'api?id=' + this.apiId + '&name=' + this.apiInfo.name)
@@ -133,7 +190,10 @@ export default {
       detail(this.apiId).then((res) => {
         if (res.code === 200) {
           this.apiInfo = res.data
-          this.paramsTable = JSON.parse(res.data.requestParams)
+          this.requestParamsTable = JSON.parse(res.data.requestParams)
+          this.responseParamsTable = JSON.parse(res.data.responseParams)
+          this.requestExample = JSON.parse(res.data.requestExample)
+          this.responseExample = JSON.parse(res.data.responseExample)
         }
       });
     },
@@ -148,6 +208,8 @@ export default {
     handleCommand (command) {
       if (command === 'delAPI') {
         this.delAPI()
+      } else {
+        this.$router.push({ path: '/api/edit/' + this.apiId })
       }
     },
     // 删除API数据信息
@@ -176,4 +238,21 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.my-editor {
+  background: #f4f6ff;
+  color: #373753;
+  border: 0px;
+  font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 5px;
+}
+/* optional */
+.prism-editor__textarea:focus {
+  outline: none;
+}
+/* not required: */
+.height-300 {
+  height: 150px;
+}
 </style>

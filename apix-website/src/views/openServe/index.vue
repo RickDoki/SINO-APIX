@@ -1,12 +1,12 @@
 <template>
   <div class="main_open">
     <navbar></navbar>
-    <div style="min-height: calc(100vh - 238px - 60px)">
+    <div style="min-height: calc(100vh - 160px - 60px)">
       <div class="apiMain_content">
         <div class="welcome">{{ pageInfo.title || '欢迎访问我们的开放服务平台' }}</div>
         <div class="all_services">{{ pageInfo.description || '您可以在我们所有的服务中找到需要的那一个' }}</div>
         <div class="input-with-select">
-          <el-input placeholder="请输入服务名称" v-model="searchKey"></el-input>
+          <el-input placeholder="请输入服务名称或服务标签" v-model="searchKey"></el-input>
           <el-button type="primary" slot="append" @click="search">搜一下</el-button>
         </div>
       </div>
@@ -26,11 +26,14 @@
                  @click="goDetail(item)">
               <div class="list_item_title">{{ item.appName }}</div>
               <div class="list_item_content">{{ item.description }}</div>
-              <div style="width: 140px">
-                <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
-                     width="20px" height="20px" style="margin-right: 5px">
-                <span v-if="item.plugins.length>5">...</span>
+              <div v-for="(items,indexs) in item.plugins" :key="indexs">
+                <el-tooltip class="item" effect="light" :content="items.pluginType" placement="bottom-start">
+                  <div class="chajian_qian" v-show="indexs<5">
+                    <img :src="items.icon" width="32px" height="32px" style="margin-right: 5px">
+                  </div>
+                </el-tooltip>
               </div>
+              <span v-if="item.plugins.length>5">...</span>
               <div style="width: 100px;text-align: center">
                 <div class="list_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
               </div>
@@ -48,9 +51,17 @@
               <div class="cards_item_title">{{ item.appName }}</div>
               <div class="cards_item_content">{{ item.description }}</div>
               <div style="display: flex;width: 100%">
-                <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
-                     width="20px" height="20px" style="margin-right: 5px">
+                <div v-for="(items,indexs) in item.plugins" :key="indexs">
+                  <el-tooltip class="item" effect="light" :content="items.pluginType" placement="bottom-start">
+                    <div class="chajian_qian" v-show="indexs<5">
+                      <img :src="items.icon" width="32px" height="32px" style="margin-right: 5px">
+                    </div>
+                  </el-tooltip>
+                </div>
                 <span v-if="item.plugins.length>5">...</span>
+                <!-- <img v-for="(items,indexs) in item.plugins" v-show="indexs<5" :key="indexs" :src="items.icon"
+                     width="32px" height="32px" style="margin-right: 5px">
+                <span v-if="item.plugins.length>5">...</span> -->
               </div>
               <div>
                 <div class="cards_item_v" v-if="item.appVersions[0]">{{ item.appVersions[0] }}</div>
@@ -69,14 +80,22 @@
       </div>
     </div>
     <div class="service_footer">
-      <div>
-        <img src="../../../src/assets/img/img_sinosdx_logo.png" style="width: 119px;height: 43px;opacity: 1;">
+      <!--      <div>-->
+      <!--        <img src="../../../src/assets/img/img_sinosdx_logo.png" style="width: 119px;height: 43px;opacity: 1;">-->
+      <!--      </div>-->
+      <div class="footer_text1">
+        <div class="footer_text2">Copyright © {{ new Date().getFullYear() }} 上海博冀信息科技有限公司</div>
+        <div class="footer_text2" style="margin-left: 20px">联系电话 021-5168-8281</div>
       </div>
       <div class="footer_text1">
-        <div style="margin-right: 50px">上海博冀信息科技有限公司</div>
-        <div>联系电话 000-0000-8888</div>
+        <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">
+          <span class="footer_text2">沪ICP备19012003号-1</span>
+        </a>
+        <img style="margin-left: 20px" src="../../../src/assets/img/img_beian.png">
+        <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010502004006" target="_blank"><span
+          class="footer_text2">沪公网安备 31010502004006号</span>
+        </a>
       </div>
-      <div class="footer_text2">Copyright © 2021 上海博冀信息科技有限公司</div>
     </div>
   </div>
 </template>
@@ -173,9 +192,9 @@ export default {
             }
           })
         })
-        .catch(()=>{
-          
-        })
+          .catch(() => {
+
+          })
       } else {
         this.$router.push({
           path: '/login',
@@ -312,12 +331,19 @@ export default {
         .list_item_title {
           margin-left: 24px;
           width: 100px;
-          height: 20px;
+          //height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
           font-weight: bold;
           color: #000000;
           line-height: 20px;
+          text-overflow: -o-ellipsis-lastline;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
 
         .list_item_content {
@@ -344,8 +370,8 @@ export default {
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
           color: #2650ff;
-          height: 20px;
-          line-height: 10px;
+          height: 26px;
+          line-height: 16px;
           background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
@@ -419,12 +445,19 @@ export default {
 
         .list_item_title {
           margin-left: 24px;
-          height: 20px;
+          //height: 20px;
           font-size: 14px;
           font-family: Microsoft YaHei UI-Bold, Microsoft YaHei UI;
           font-weight: bold;
           color: #000000;
           line-height: 20px;
+          text-overflow: -o-ellipsis-lastline;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
 
         .list_item_content {
@@ -451,7 +484,8 @@ export default {
           font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
           font-weight: 400;
           color: #2650ff;
-          height: 20px;
+          height: 26px;
+          line-height: 16px;
           background: #e0e6ff;
           border-radius: 4px 4px 4px 4px;
         }
@@ -577,6 +611,13 @@ export default {
           font-weight: bold;
           color: #000000;
           line-height: 20px;
+          text-overflow: -o-ellipsis-lastline;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          line-clamp: 1;
+          -webkit-box-orient: vertical;
         }
 
         .cards_item_content {
@@ -622,8 +663,8 @@ export default {
   .service_footer {
     padding: 20px 0;
     width: 100%;
-    min-height: 238px;
-    background: #1d1c35;
+    min-height: 80px;
+    background: #f1f4fe91;
     opacity: 1;
     display: flex;
     flex-direction: column;
@@ -635,9 +676,10 @@ export default {
       font-size: 14px;
       font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
       font-weight: 400;
-      color: #ffffff;
+      color: black;
       line-height: 20px;
       display: flex;
+      justify-content: center;
     }
 
     .footer_text2 {
@@ -645,8 +687,9 @@ export default {
       font-size: 12px;
       font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
       font-weight: 400;
-      color: #ffffff;
-      line-height: 14px;
+      color: black;
+      // line-height: 14px;
+      line-height: 22px;
     }
   }
 }

@@ -2,7 +2,9 @@
   <div class="main">
     <div class="he_height">
       <div class="list_top">
-        <div class="list_title">{{ serveAllMeaasge.appName }}</div>
+        <div class="list_title">{{ serveAllMeaasge.appName }}
+          <el-button type="text" @click="goDocx">详细文档</el-button>
+        </div>
         <div class="list_search">
           <el-button
             type="primary"
@@ -78,6 +80,18 @@ export default {
     plugIn,
   },
   methods: {
+    goDocx() {
+      this.$router.push({
+        name: 'openServedocxDetail',
+        query: {
+          name: this.appName,
+          id: this.appCode
+        },
+        params: {
+          type: 'serve'
+        }
+      })
+    },
     // 切换tab
     handleClick () { },
     // 查询订阅详情

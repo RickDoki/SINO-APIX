@@ -96,46 +96,64 @@ export default {
     addPulgin(e) {
       // console.log(e)
       if (e.configuration) {
-        this.$confirm(e.name + " 插件需要配置后才能添加", "提示", {
-          confirmButtonText: "去配置",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
-          .then(() => {
-            this.$router.push({
-              path:
-                "/serve/serveDetail/pluginConfig/" +
-                e.code +
-                "?appcode=" +
-                this.appCode +
-                "&appid=" +
-                this.appId,
-            });
-          })
-          .catch(() => {});
+        this.$router.push({
+          path:
+            "/serve/serveDetail/pluginConfig/" +
+            e.code +
+            "?appcode=" +
+            this.appCode +
+            "&appid=" +
+            this.appId,
+        });
+        // this.$confirm(e.name + " 插件需要配置后才能添加", "提示", {
+        //   confirmButtonText: "去配置",
+        //   cancelButtonText: "取消",
+        //   type: "warning",
+        // })
+        //   .then(() => {
+        //     this.$router.push({
+        //       path:
+        //         "/serve/serveDetail/pluginConfig/" +
+        //         e.code +
+        //         "?appcode=" +
+        //         this.appCode +
+        //         "&appid=" +
+        //         this.appId,
+        //     });
+        //   })
+        //   .catch(() => {});
       } else {
-        this.$confirm("是否将 " + e.name + " 插件添加到当前服务?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "success",
-        })
-          .then(() => {
-            // 添加插件
-            console.log(e);
-            const query = {
-              pluginType: e.code,
-              appCode: this.appCode,
-              appId: this.appId,
-            };
-            postPlugin(query).then((res) => {
-              if (res.code === 200) {
-                this.$router.push({
-                  path: "/serve/serveDetail/" + this.appCode,
-                });
-              }
-            });
-          })
-          .catch(() => {});
+        this.$router.push({
+          path:
+            "/serve/serveDetail/pluginConfig/" +
+            e.code +
+            "?appcode=" +
+            this.appCode +
+            "&appid=" +
+            this.appId,
+        });
+        // this.$confirm("是否将 " + e.name + " 插件添加到当前服务?", "提示", {
+        //   confirmButtonText: "确定",
+        //   cancelButtonText: "取消",
+        //   type: "success",
+        // })
+        //   .then(() => {
+        //     // 添加插件
+        //     console.log(e);
+        //     const query = {
+        //       pluginType: e.code,
+        //       appCode: this.appCode,
+        //       appId: this.appId,
+        //     };
+        //     postPlugin(query).then((res) => {
+        //       if (res.code === 200) {
+        //         this.$router.push({
+        //           path: "/serve/serveDetail/" + this.appCode,
+        //         });
+        //       }
+        //     });
+        //   })
+        //   .catch(() => {});
       }
     },
   },

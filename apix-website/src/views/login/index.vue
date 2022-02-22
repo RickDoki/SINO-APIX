@@ -14,7 +14,7 @@
         <div v-show="isLogin">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
             <el-form-item prop="username">
-              <el-input placeholder="请输入账号" v-model="ruleForm.username"/>
+              <el-input placeholder="请输入手机号" v-model="ruleForm.username"/>
             </el-form-item>
             <el-form-item prop="password" class="paws-input">
               <el-input show-password placeholder="请输入密码" v-model="ruleForm.password"/>
@@ -56,7 +56,20 @@
       </div>
     </div>
     <div class="main-bottom">
-      <span>Copyright © {{ year }} 上海博冀信息科技有限公司</span>
+      <!-- <span>Copyright © {{ year }} 上海博冀信息科技有限公司</span> -->
+      <div class="footer_text1">
+        <div class="footer_text2">Copyright © {{ year }} 上海博冀信息科技有限公司</div>
+        <div class="footer_text2" style="margin-left: 20px">联系电话 021-5168-8281</div>
+      </div>
+      <div class="footer_text1">
+        <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">
+          <span class="footer_text2">沪ICP备19012003号-1</span>
+        </a>
+        <img style="margin-left: 20px" src="../../../src/assets/img/img_beian.png">
+        <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010502004006" target="_blank"><span
+          class="footer_text2">沪公网安备 31010502004006号</span>
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -74,7 +87,7 @@ export default {
         password: "",
       },
       rules: {
-        username: { required: true, message: "请输入账号", trigger: "blur" },
+        username: { required: true, message: "请输入手机号", trigger: "blur" },
         password: { required: true, message: "请输入密码", trigger: "blur" },
       },
       re_ruleForm: {
@@ -182,11 +195,25 @@ export default {
     },
   },
   created () {
-    this.year = (new Date()).getFullYear()
     removeToken("apiPhone");
     removeToken("token");
     removeToken("userId_api");
     removeToken("userName_api");
+    // 回车键触发
+    const that = this
+    document.onkeydown = function(e){
+      var key = window.event.keyCode;
+      // 小键盘和大键盘
+      if(key == 13 || key == 100){
+        if (that.isLogin) {
+          that.login('ruleForm'); //自己写的登录方法，点击事件
+        } else {
+          // 注册
+          that.register('re_ruleForm')
+        }
+      }
+    }
+    this.year = (new Date()).getFullYear()
     const ischecked = getToken("ischecked");
     if (ischecked === "true") {
       this.ruleForm = {
@@ -291,8 +318,26 @@ export default {
     bottom: 0px;
     line-height: 50px;
     height: 70px;
-    background: url('./../../assets/img/img_login_bg.png') no-repeat center
-      center fixed;
+    background: url('./../../assets/img/img_login_bg.png') no-repeat fixed;
+    .footer_text1 {
+      height: 20px;
+      font-size: 14px;
+      font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+      font-weight: 400;
+      color: black;
+      line-height: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .footer_text2 {
+      height: 15px;
+      font-size: 12px;
+      font-family: Microsoft YaHei UI-Regular, Microsoft YaHei UI;
+      font-weight: 400;
+      color: black;
+      // line-height: 14px;
+      line-height: 22px;
+    }
   }
 }
 </style>
